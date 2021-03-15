@@ -285,7 +285,7 @@ void Junction::copy(const Chromosome& P1,const Chromosome& P2)
 }
 void Junction::mutate()
 {
-	number = randNumber(1.0,9.0);
+	number = randNumber(1.0,3.0);
 	algorit = randAlgt();
 }
 geneUS Junction::get_number()const
@@ -300,9 +300,18 @@ geneUS Junction::randAlgt()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> distr(ae::Junction::AlgCode::COMBINE, ae::Junction::AlgCode::COPYCOMBINE);
-	
-	return distr(gen);
+	std::uniform_real_distribution<> distr(1.0, 100.0);
+	float randNum = distr(gen);
+	if(randNum < 10.0)
+	{
+		return COPY;
+	}
+	else if(randNum < 30.0)
+	{
+		return COPYCOMBINE;
+	}
+
+	return COMBINE;
 }
 
 
@@ -324,6 +333,10 @@ unsigned short Single::getID()
 unsigned short Single::getAge() const
 {
 	return age;
+}
+unsigned short Single::getStrength() const
+{
+	return strength;
 }
 void Single::add(Chromosome& c)
 {

@@ -26,6 +26,7 @@
 #include <random>
 #include <list>
 #include <algorithm>
+#include <math.h>
 
 #include "GA.hh"
 
@@ -64,7 +65,7 @@ public:
 	};
 	virtual void junction(MaxMin& single,std::vector<MaxMin*>& chils,unsigned short& count)
 	{
-		std::cout << "\t" << getID() << "\tpuede tener " << juntion.get_number() << " hijos\n";
+		//std::cout << "\t" << getID() << "\tpuede tener " << juntion.get_number() << " hijos\n";
 		for(ae::geneUC i = 0; i < juntion.get_number(); i++)
 		{
 			ae::MaxMin_R newmm;
@@ -85,7 +86,7 @@ public:
 				break;
 			}
 			float mutate = ae::randNumber(100.0);
-			if(mutate >= 15.0 and mutate <= 20.0)
+			if(mutate <= 20.0)
 			{
 				newmm.mutate();
 				newj.mutate();
@@ -158,7 +159,7 @@ bool cmpfloatMax(const MaxMin_By_Value& f,const MaxMin_By_Value& s)
 }
 bool cmpfloatMin(const MaxMin_By_Value& f,const MaxMin_By_Value& s)
 {
-	return fabs(f.value) > fabs(s.value);
+	return fabs(f.value) < fabs(s.value);
 }
 void remove(std::vector<MaxMin*>& p, MaxMin* s)
 {
@@ -183,10 +184,12 @@ void junction(std::vector<MaxMin*>& p,std::map<MaxMin*,Notas>& e,unsigned short&
 		v.value = e.find(single)->second.x2_max;
 		lsmx.push_back(v);
 
+		if(isnan(single->getMaxMin().get_x2_mx())) remove(p,single);
+		if(isnan(single->getMaxMin().get_x2_mn())) remove(p,single);
 		if(single->efficiency() < 1.0)
 		{
-			float randNumRem = ae::randNumber(100.0);
-			if(randNumRem < 15.0) remove(p,single);
+			float randNumRem = ae::randNumber(1.0,100.0);
+			if(randNumRem < 60.0) remove(p,single);
 		}
 	}
 	lsmx.sort(cmpfloatMax);	
@@ -257,31 +260,45 @@ void junction(std::vector<MaxMin*>& p,std::map<MaxMin*,Notas>& e,unsigned short&
 	}
 
 	//
-	for(std::list<MaxMin*>::iterator single1 =  better1.begin(); single1 != better1.end();single1++)
+	//float numrnJun = ae::randNumber(100.0);
+	//if(numrnJun < 50.0)
 	{
-		for(std::list<MaxMin*>::iterator single2 = std::next(single1); single2 != better1.end();single2++)
+		for(std::list<MaxMin*>::iterator single1 =  better1.begin(); single1 != better1.end();single1++)
 		{
-			std::vector<MaxMin*> chils;
-			(*single1)->junction(**single2,chils,idCount);
-			for(MaxMin* s : chils)//agregar los nuevos hijos a la poblacion
+			for(std::list<MaxMin*>::iterator single2 = std::next(single1); single2 != better1.end();single2++)
 			{
-				p.push_back(s);
+				std::vector<MaxMin*> chils;
+				(*single1)->junction(**single2,chils,idCount);
+				for(MaxMin* s : chils)//agregar los nuevos hijos a la poblacion
+				{
+					if(isnan(s->getMaxMin().get_x2_mx()) or isnan(s->getMaxMin().get_x2_mn()))
+					{
+						delete s;
+					}
+					else
+					{
+						p.push_back(s);
+					}
+				}
 			}
 		}
 	}
-	for(std::list<MaxMin*>::iterator single1 =  better2.begin(); single1 != better2.end();single1++)
+	/*else
 	{
-		for(std::list<MaxMin*>::iterator single2 = std::next(single1); single2 != better2.end();single2++)
+		for(std::list<MaxMin*>::reverse_iterator single1 =  better1.rbegin(); single1 != better1.rend();++single1)
 		{
-			std::vector<MaxMin*> chils;
-			(*single1)->junction(**single2,chils,idCount);
-			for(MaxMin* s : chils)//agregar los nuevos hijos a la poblacion
+			for(std::list<MaxMin*>::reverse_iterator single2 = std::next(single1); single2 != better1.rend();++single2)
 			{
-				p.push_back(s);
+				std::vector<MaxMin*> chils;
+				(*single1)->junction(**single2,chils,idCount);
+				for(MaxMin* s : chils)//agregar los nuevos hijos a la poblacion
+				{
+					p.push_back(s);
+				}
 			}
 		}
-	}
-		
+	}*/
+	
 		
 }
 float randFloat()
@@ -305,6 +322,15 @@ float randFloatDigit()
 	std::cout << "f " << f << "\n";
 	return f;
 }
+float randFloatChild()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> distr(1.0, 3.0);
+	float f = distr(gen);
+	std::cout << "f " << f << "\n";
+	return f;
+}
 ae::geneUC randFloatAlgt()
 {
 	std::random_device rd;
@@ -316,15 +342,17 @@ ae::geneUC randFloatAlgt()
 int main()
 {
 	unsigned short itActual,itLimit,idCount;
-	
+
+	std::cout << "Iteracion iniciales. : ";
+	std::cin >> itLimit;
 	itActual = 0;
-	itLimit = 3;
+	
 	std::vector<MaxMin*> population;
 	for(idCount = 1; idCount < 100; idCount++)
 	{
-		unsigned short numchlids = randFloatDigit();
+		unsigned short numchlids = randFloatChild();
 		//std::cout << "numchlids " << numchlids << "\n";
-		population.push_back(new MaxMin(idCount,randFloat(),randFloat(),numchlids,randFloatAlgt()));
+		population.push_back(new MaxMin(idCount,randFloat(),randFloat(),numchlids,ae::Junction::randAlgt()));
 	}
 
 	repeat:

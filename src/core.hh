@@ -103,7 +103,7 @@ public:
 	unsigned short getID();
 	const std::vector<Chromosome*>& getChromosome()const;
 	unsigned short getAge() const;
-
+	unsigned short getStrength() const;
 	void add(Chromosome&);
 	void deltaAge();
 	void deltaStrength();
