@@ -15,6 +15,7 @@ namespace ae::ga
 class Single : public ae::Single
 {
 public:
+	Single(unsigned int id,const Junction& junction);
 	Single(unsigned int id);
 };
 

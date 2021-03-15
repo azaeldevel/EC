@@ -11,6 +11,23 @@ namespace ae::ga
 {
 
 
+class MaxMin_R : public Chromosome
+{
+public:
+	MaxMin_R();
+	MaxMin_R(geneF x2_mx,geneF x2_mn);
+	geneF get_x2_mx()const;
+	geneF get_x2_mn()const;
+	virtual void combine(const Chromosome& P1,const Chromosome& P2);
+	virtual void copycombine(const Chromosome& P1,const Chromosome& P2);
+	virtual void copy(const Chromosome& P1,const Chromosome& P2);
+	virtual void mutate();
+
+private:
+	geneF x2_mx;
+	geneF x2_mn;
+};
+
 struct Notas
 {
 	float x2_max;//la tendecia hacia 0 es mejor
@@ -22,7 +39,7 @@ class MaxMin_x2 : public ae::ga::Single
 {
 public:
 	MaxMin_x2(unsigned int id,geneF x2_mx,geneF x2_min,geneUS number,geneUS algorit);
-	MaxMin_x2(unsigned int id,MaxMin_R mm,Junction j);
+	MaxMin_x2(unsigned int id,MaxMin_R mm,const Junction& j);
 
 public:
 	MaxMin_R& getMaxMin();
@@ -35,7 +52,7 @@ public:
 	static int main(int argc, const char* argv[]);
 private:
 	MaxMin_R maxmin;
-	Junction juntion;
+	//Junction juntion;
 };
 struct MaxMin_By_Value
 {

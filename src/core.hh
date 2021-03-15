@@ -52,22 +52,7 @@ private:
 	std::string name;
 };
 
-class MaxMin_R : public Chromosome
-{
-public:
-	MaxMin_R();
-	MaxMin_R(geneF x2_mx,geneF x2_mn);
-	geneF get_x2_mx()const;
-	geneF get_x2_mn()const;
-	virtual void combine(const Chromosome& P1,const Chromosome& P2);
-	virtual void copycombine(const Chromosome& P1,const Chromosome& P2);
-	virtual void copy(const Chromosome& P1,const Chromosome& P2);
-	virtual void mutate();
 
-private:
-	geneF x2_mx;
-	geneF x2_mn;
-};
 
 class Junction : public Chromosome
 {
@@ -101,15 +86,19 @@ class Single
 {
 public:
 	Single(unsigned int id);	
+	Single(unsigned int id,const Junction& junction);
 	
 	unsigned short getID();
 	const std::vector<Chromosome*>& getChromosome()const;
 	unsigned short getAge() const;
 	unsigned short getStrength() const;
+	const Junction& getJunction()const;
+
 	void add(Chromosome&);
 	void deltaAge();
 	void deltaStrength();
 	float efficiency()const;
+	
 protected:
 	
 private:
@@ -117,6 +106,7 @@ private:
 	std::vector<Chromosome*> chromosomes;
 	unsigned short age;
 	unsigned short strength;
+	Junction junction;
 
 };
 
