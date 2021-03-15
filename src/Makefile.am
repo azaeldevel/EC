@@ -1,6 +1,4 @@
-## Process this file with automake to produce Makefile.in
 
-## Created by Anjuta
 
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
@@ -13,7 +11,7 @@ AM_CFLAGS =\
 
 bin_PROGRAMS = ae
 
-ae_SOURCES = core.cc GA.cc main.cc 
+ae_SOURCES = core.cc GA.cc MaxMin_x2.cc main.cc 
 
 ae_LDFLAGS = 
 

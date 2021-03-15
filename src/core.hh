@@ -24,6 +24,7 @@
 
 #include <string>
 
+
 namespace ae
 {
 
@@ -83,6 +84,7 @@ public:
 	geneUS get_number()const;
 	geneUS get_algorit()const;
 	static geneUS randAlgt();
+	static geneUS randChild();
 	
 	virtual void combine(const Chromosome& P1,const Chromosome& P2);
 	virtual void copycombine(const Chromosome& P1,const Chromosome& P2);

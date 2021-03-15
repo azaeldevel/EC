@@ -313,7 +313,13 @@ geneUS Junction::randAlgt()
 
 	return COMBINE;
 }
-
+geneUS Junction::randChild()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> distr(1.0, 3.0);
+	return distr(gen);
+}
 
 
 Single::Single(unsigned int id)
