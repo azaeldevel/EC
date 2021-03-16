@@ -1,6 +1,8 @@
 
 #include <random>
 #include <octetos/core/Error.hh>
+#include <iostream>
+#include <algorithm>
 
 #include "core.hh"
 
@@ -9,7 +11,10 @@ namespace ae
 {
 
 
-
+bool cmpStrength(const Single* f,const Single* s)
+{
+	return f->getStrength() > s->getStrength();
+}
 float randNumber()
 {
 	std::random_device rd;
@@ -40,9 +45,21 @@ struct caret4B_half
 };
 struct caret2B_half
 {
-	unsigned char a:8,b:8;
+	unsigned short a:8,b:8,c:4;
 };
 
+struct caret2B_half_Digits1
+{
+	unsigned short a:4,e:12;
+};
+struct caret2B_half_Digits2
+{
+	unsigned short a:2,b:2,e:12;
+};
+struct caret2B_half_Digits3
+{
+	unsigned short a:1,b:1,c:1,d:1,e:12;
+};
 
 
 
@@ -67,19 +84,44 @@ geneF Chromosome::combine(const geneF& P1,const geneF& P2)
 	return child;
 }
 
-geneUS Chromosome::combine(const geneUS& P1,const geneUS& P2)
+geneUS Chromosome::combineDigits(const geneUS& P1,const geneUS& P2)
 {
-	if(sizeof(geneUS) != sizeof(caret2B_half)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
+	if(sizeof(geneUS) != sizeof(caret2B_half_Digits2)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
 	
 	geneUS child;
-	caret2B_half* crChild = reinterpret_cast<caret2B_half*>(&child);
-	const caret2B_half* crP1 = reinterpret_cast<const caret2B_half*>(&P1);
-	const caret2B_half* crP2 = reinterpret_cast<const caret2B_half*>(&P2);
+	caret2B_half_Digits2* crChild = reinterpret_cast<caret2B_half_Digits2*>(&child);
+	const caret2B_half_Digits2* crP1 = reinterpret_cast<const caret2B_half_Digits2*>(&P1);
+	const caret2B_half_Digits2* crP2 = reinterpret_cast<const caret2B_half_Digits2*>(&P2);
 	crChild->b = crP1->a;
 	crChild->a = crP2->b;
 	return child;
 }
+geneUS Chromosome::mutateDigits(const geneUS& P1)
+{
+	if(sizeof(geneUS) != sizeof(caret2B_half_Digits3)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
 
+	geneUS child = 0;
+	caret2B_half_Digits3* crChild = reinterpret_cast<caret2B_half_Digits3*>(&child);
+	const caret2B_half_Digits3* crP1 = reinterpret_cast<const caret2B_half_Digits3*>(&P1);
+	float numrnd1 = randNumber(0.0,1.0);
+	if(numrnd1 < 0.25)
+	{
+		crChild->a = !crP1->a;
+	}
+	else if(numrnd1 < 0.50)
+	{
+		crChild->b = !crP1->b;
+	}
+	else if(numrnd1 < 0.75)
+	{
+		crChild->c = !crP1->c;
+	}
+	else
+	{
+		crChild->d = !crP1->d;
+	}
+	return child;
+}
 
 
 
@@ -125,10 +167,12 @@ void Junction::copy(const Chromosome& P1,const Chromosome& P2)
 		algorit = ((Junction&)P1).algorit;
 	}
 }
-void Junction::mutate()
+void Junction::mutate(float p)
 {
-	number = randNumber(1.0,6.0);
-	algorit = randAlgt();
+	float numrd1 = randNumber(0.0,1.0);
+	if(numrd1 <= p) number = randNumber(1.0,10.0);
+	numrd1 = randNumber(0.0,1.0);
+	if(numrd1 <= p) algorit = randAlgt();
 }
 geneUS Junction::get_number()const
 {
@@ -159,9 +203,17 @@ geneUS Junction::randChild()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> distr(1.0, 3.0);
+	std::uniform_real_distribution<float> distr(1.0, 5.0);
 	return distr(gen);
 }
+void Junction::randFill()
+{
+	number = randNumber(1.0,4.0);
+	algorit = randAlgt();
+}
+
+
+
 
 
 Single::Single(unsigned int id)
@@ -169,20 +221,22 @@ Single::Single(unsigned int id)
 	this->id = id;
 	age = 0;
 	strength = 0;
-	mutatepercen = 5.0;
+	pMutationEvent = 0.05;
+	pMutableGene = 0.3;
 }
 Single::Single(unsigned int id,const Junction& j) : junction(j)
 {
 	this->id = id;
 	age = 0;
 	strength = 0;
-	mutatepercen = 5.0;
+	pMutationEvent = 0.05;
+	pMutableGene = 0.3;
 }
 /*const std::vector<Chromosome*>& Single::getChromosome()const
 {
 	return chromosomes;
 }*/
-unsigned short Single::getID()
+ID Single::getID()const
 {
 	return id;
 }
@@ -198,9 +252,14 @@ const Junction& Single::getJunction()const
 {
 	return junction;
 }
-
-
-
+float Single::getProbabilityMutationEvent()const
+{
+	return pMutationEvent;
+}
+float Single::getProbabilityMutableGene()const
+{
+	return pMutableGene;
+}
 
 /*void Single::add(Chromosome& c)
 {
@@ -214,20 +273,20 @@ void Single::deltaAge()
 {
 	strength++;
 }*/
-float Single::efficiency()const
+/*float Single::efficiency()const
 {
 	if(age == 0) return 1.0;
 
 	return ((float)strength)/((float)age);
-}
+}*/
 bool Single::mutate()const
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> distr(0.0, 100.0);
+	std::uniform_real_distribution<float> distr(0.0, 1.0);
 
 	float numrand = distr(gen);
-	if(numrand <= mutatepercen) return true;
+	if(numrand <= pMutationEvent) return true;
 	else return false;	
 }
 

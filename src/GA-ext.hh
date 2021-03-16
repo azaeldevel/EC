@@ -62,29 +62,35 @@ struct MaxMin_By_Value
 };
 */
 
+
 class SudokuChromosome : public Chromosome
 {
 public:
 	SudokuChromosome();
 	geneUS getNumber(unsigned short i,unsigned short j) const;
 	
-	geneUS& set(unsigned short i,unsigned short j);
-	virtual void combine(const Chromosome& P1,const Chromosome& P2);
-	virtual void copycombine(const Chromosome& P1,const Chromosome& P2);
-	virtual void copy(const Chromosome& P1,const Chromosome& P2);
-	virtual void mutate();
+	geneUS& number(unsigned short i,unsigned short j);
+	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
+	virtual void copycombine(const ae::Chromosome& P1,const ae::Chromosome& P2);
+	virtual void copy(const ae::Chromosome& P1,const ae::Chromosome& P2);
+	virtual void mutate(float p);
+	virtual void randFill();
 private:
-	geneUS number[3][3];
+	geneUS numbers[3][3];
 };
 
 class SudokuSingle : public Single
 {
 public:
 	SudokuSingle(unsigned int id,const SudokuChromosome[3][3]);
+	SudokuSingle(unsigned int id,const SudokuChromosome[3][3],const Junction& junction);
 	const SudokuChromosome& getTalba(unsigned short i,unsigned short j)const;
 	
 	static int main(int argc, const char* argv[]);
 	virtual void eval();
+	virtual void randFill();
+	virtual void juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single* single);
+	virtual void saveEval(const std::string& prefixfn, const std::list<ae::Single*>& result, unsigned short iteration);
 private:
 	SudokuChromosome tabla[3][3];
 };
