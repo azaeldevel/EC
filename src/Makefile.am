@@ -11,10 +11,9 @@ AM_CFLAGS =\
 
 bin_PROGRAMS = ae
 
-ae_SOURCES = core.cc GA.cc MaxMin_x2.cc main.cc 
-
+ae_SOURCES = core.cc GA.cc sudoku.cc main.cc 
 ae_LDFLAGS = 
-
-ae_LDADD = 
+ae_CXXFLAGS = $(OCTETOS_CORE_CFLAGS)
+ae_LDADD = $(OCTETOS_CORE_LIBS)
 
 

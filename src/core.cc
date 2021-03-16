@@ -1,6 +1,6 @@
 
 #include <random>
-
+#include <octetos/core/Error.hh>
 
 #include "core.hh"
 
@@ -34,14 +34,51 @@ float randNumber(float min,float max)
 	
 	return distr(gen);
 }
+struct caret4B_half
+{
+	short a:16,b:16;
+};
+struct caret2B_half
+{
+	unsigned char a:8,b:8;
+};
+
+
+
+
+
+
 
 
 	
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
+geneF Chromosome::combine(const geneF& P1,const geneF& P2)
+{
+	if(sizeof(geneF) != sizeof(caret4B_half)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
+	
+	geneF child;
+	caret4B_half* crChild = reinterpret_cast<caret4B_half*>(&child);
+	const caret4B_half* crP1 = reinterpret_cast<const caret4B_half*>(&P1);
+	const caret4B_half* crP2 = reinterpret_cast<const caret4B_half*>(&P2);
+	crChild->b = crP1->a;
+	crChild->a = crP2->b;
+	return child;
+}
 
-
+geneUS Chromosome::combine(const geneUS& P1,const geneUS& P2)
+{
+	if(sizeof(geneUS) != sizeof(caret2B_half)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
+	
+	geneUS child;
+	caret2B_half* crChild = reinterpret_cast<caret2B_half*>(&child);
+	const caret2B_half* crP1 = reinterpret_cast<const caret2B_half*>(&P1);
+	const caret2B_half* crP2 = reinterpret_cast<const caret2B_half*>(&P2);
+	crChild->b = crP1->a;
+	crChild->a = crP2->b;
+	return child;
+}
 
 
 
@@ -113,10 +150,10 @@ geneUS Junction::randAlgt()
 	}
 	else if(randNum < 30.0)
 	{
-		return COPYCOMBINE;
+		return COMBINE;
 	}
 
-	return COMBINE;
+	return COPYCOMBINE;
 }
 geneUS Junction::randChild()
 {
@@ -132,17 +169,19 @@ Single::Single(unsigned int id)
 	this->id = id;
 	age = 0;
 	strength = 0;
+	mutatepercen = 5.0;
 }
 Single::Single(unsigned int id,const Junction& j) : junction(j)
 {
 	this->id = id;
 	age = 0;
 	strength = 0;
+	mutatepercen = 5.0;
 }
-const std::vector<Chromosome*>& Single::getChromosome()const
+/*const std::vector<Chromosome*>& Single::getChromosome()const
 {
 	return chromosomes;
-}
+}*/
 unsigned short Single::getID()
 {
 	return id;
@@ -151,7 +190,7 @@ unsigned short Single::getAge() const
 {
 	return age;
 }
-unsigned short Single::getStrength() const
+float Single::getStrength() const
 {
 	return strength;
 }
@@ -163,23 +202,33 @@ const Junction& Single::getJunction()const
 
 
 
-void Single::add(Chromosome& c)
+/*void Single::add(Chromosome& c)
 {
 	chromosomes.push_back(&c);
-}
+}*/
 void Single::deltaAge()
 {
 	age++;
 }
-void Single::deltaStrength()
+/*void Single::deltaStrength()
 {
 	strength++;
-}
+}*/
 float Single::efficiency()const
 {
 	if(age == 0) return 1.0;
 
 	return ((float)strength)/((float)age);
+}
+bool Single::mutate()const
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> distr(0.0, 100.0);
+
+	float numrand = distr(gen);
+	if(numrand <= mutatepercen) return true;
+	else return false;	
 }
 
 }

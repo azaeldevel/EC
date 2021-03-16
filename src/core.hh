@@ -28,12 +28,10 @@
 namespace ae
 {
 
-typedef int geneI;
+
 typedef float geneF;
-typedef long geneL;
 typedef unsigned short geneUS;
-typedef double geneD;
-typedef unsigned char geneUC;
+
 
 float randNumber();
 float randNumber(float max);
@@ -47,6 +45,8 @@ public:
 	virtual void copycombine(const Chromosome& P1,const Chromosome& P2) = 0;
 	virtual void copy(const Chromosome& P1,const Chromosome& P2) = 0;
 	virtual void mutate() = 0;
+	static geneF combine(const geneF& P1,const geneF& P2);
+	static geneUS combine(const geneUS& P1,const geneUS& P2);	
 
 private:
 	std::string name;
@@ -89,24 +89,28 @@ public:
 	Single(unsigned int id,const Junction& junction);
 	
 	unsigned short getID();
-	const std::vector<Chromosome*>& getChromosome()const;
+	//const std::vector<Chromosome*>& getChromosome()const;
 	unsigned short getAge() const;
-	unsigned short getStrength() const;
+	float getStrength() const;
 	const Junction& getJunction()const;
 
 	void add(Chromosome&);
 	void deltaAge();
-	void deltaStrength();
+	//void deltaStrength();
 	float efficiency()const;
-	
+	bool mutate()const;
+
+	virtual void eval() = 0;
+
 protected:
+	float strength;
 	
 private:
-	unsigned short id;
-	std::vector<Chromosome*> chromosomes;
+	unsigned int id;
+	//std::vector<Chromosome*> chromosomes;
 	unsigned short age;
-	unsigned short strength;
 	Junction junction;
+	float mutatepercen;
 
 };
 

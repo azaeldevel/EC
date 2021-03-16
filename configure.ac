@@ -19,7 +19,7 @@ AC_PROG_CXX
 
 LT_INIT
 
-
+PKG_CHECK_MODULES(OCTETOS_CORE,octetos-core)
 
 
 

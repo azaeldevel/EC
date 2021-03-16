@@ -29,8 +29,7 @@
 
 int main(int argc, const char* argv[])
 {
-	
-	return ae::ga::MaxMin_x2::main(argc,argv);
+	return ae::ga::SudokuSingle::main(argc,argv);
 }
 
 

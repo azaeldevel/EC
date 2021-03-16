@@ -16,7 +16,7 @@ namespace ae::ga
 
 
 
-	struct caretFloat
+struct caretFloat
 {
 	short a:16,b:16;
 };
@@ -34,97 +34,70 @@ MaxMin_R::MaxMin_R(geneF x2_mx,geneF x2_mn) : Chromosome("MaxMin_R")
 }
 void MaxMin_R::combine(const Chromosome& with,const Chromosome& P2)
 {
-	caretFloat* cfLocal = reinterpret_cast<caretFloat*>(&x2_mn);
-	caretFloat* cfPar = reinterpret_cast<caretFloat*>(&((MaxMin_R&)with).x2_mn);
 	float rdnum2 = randNumber();
 	if(rdnum2 < 50.0)
 	{
-		float child;
-		caretFloat* crChild = reinterpret_cast<caretFloat*>(&child);
-		crChild->a = cfPar->b;
-		crChild->b = cfLocal->a;
-		x2_mn = child;
+		x2_mn = Chromosome::combine(((MaxMin_R&)with).x2_mn,((MaxMin_R&)P2).x2_mn);
 	}
 	else
 	{
-		float child;
-		caretFloat* crChild = reinterpret_cast<caretFloat*>(&child);
-		crChild->b = cfPar->a;
-		crChild->a = cfLocal->b;
-		x2_mn = child;
+		x2_mn = Chromosome::combine(((MaxMin_R&)P2).x2_mn,((MaxMin_R&)with).x2_mn);
 	}
 	
-	cfLocal = reinterpret_cast<caretFloat*>(&x2_mx);
-	cfPar = reinterpret_cast<caretFloat*>(&((MaxMin_R&)with).x2_mx);
 	rdnum2 = randNumber();
 	if(rdnum2 < 50.0)
 	{
-			float child;
-			caretFloat* crChild = reinterpret_cast<caretFloat*>(&child);
-			crChild->a = cfPar->b;
-			crChild->b = cfLocal->a;
-			x2_mx = child;
+		x2_mx = Chromosome::combine(((MaxMin_R&)with).x2_mx,((MaxMin_R&)P2).x2_mx);
 	}
 	else
 	{
-		float child;
-		caretFloat* crChild = reinterpret_cast<caretFloat*>(&child);
-		crChild->b = cfPar->a;
-		crChild->a = cfLocal->b;
-		x2_mx = child;
+		x2_mx = Chromosome::combine(((MaxMin_R&)P2).x2_mx,((MaxMin_R&)with).x2_mx);
 	}
 }
 void MaxMin_R::copycombine(const Chromosome& with,const Chromosome& P2)
 {
-float rdnum = randNumber();
-	if(rdnum < 50.0)
+	float rdnum1 = randNumber();
+	if(rdnum1 < 50.0)
 	{
-		x2_mx = ((MaxMin_R&)with).x2_mx;//copy
-		//x2_mn = with.x2_mn;//combine
-		caretFloat* cfLocal = reinterpret_cast<caretFloat*>(&x2_mn);
-		caretFloat* cfPar = reinterpret_cast<caretFloat*>(&((MaxMin_R&)with).x2_mn);
 		float rdnum2 = randNumber();
 		if(rdnum2 < 50.0)
 		{
-			float child;
-			caretFloat* crChild = reinterpret_cast<caretFloat*>(&child);
-			crChild->a = cfPar->b;
-			crChild->b = cfLocal->a;
-			x2_mn = child;
+			x2_mn = Chromosome::combine(((MaxMin_R&)with).x2_mn,((MaxMin_R&)P2).x2_mn);
 		}
 		else
 		{
-			float child;
-			caretFloat* crChild = reinterpret_cast<caretFloat*>(&child);
-			crChild->b = cfPar->a;
-			crChild->a = cfLocal->b;
-			x2_mn = child;
+			x2_mn = Chromosome::combine(((MaxMin_R&)P2).x2_mn,((MaxMin_R&)with).x2_mn);
 		}
+		float rdnum3 = randNumber();
+		if(rdnum3 < 50.0)
+		{
+			x2_mx = ((MaxMin_R&)with).x2_mx;
+		}
+		else
+		{
+			x2_mx = ((MaxMin_R&)P2).x2_mx;
+		}		
 	}
 	else
 	{
-		//x2_mx = with.x2_mx;//combine
-		caretFloat* cfLocal = reinterpret_cast<caretFloat*>(&x2_mx);
-		caretFloat* cfPar = reinterpret_cast<caretFloat*>(&((MaxMin_R&)with).x2_mx);
 		float rdnum2 = randNumber();
 		if(rdnum2 < 50.0)
 		{
-			float child;
-			caretFloat* crChild = reinterpret_cast<caretFloat*>(&child);
-			crChild->a = cfPar->b;
-			crChild->b = cfLocal->a;
-			x2_mx = child;
+			x2_mn = ((MaxMin_R&)with).x2_mn;
 		}
 		else
 		{
-			float child;
-			caretFloat* crChild = reinterpret_cast<caretFloat*>(&child);
-			crChild->b = cfPar->a;
-			crChild->a = cfLocal->b;
-			x2_mx = child;
+			x2_mn = ((MaxMin_R&)P2).x2_mn;
 		}
-		
-		x2_mn = ((MaxMin_R&)with).x2_mn;//copy
+		float rdnum3 = randNumber();
+		if(rdnum3 < 50.0)
+		{
+			x2_mx = Chromosome::combine(((MaxMin_R&)with).x2_mx,((MaxMin_R&)P2).x2_mx);
+		}
+		else
+		{
+			x2_mx = Chromosome::combine(((MaxMin_R&)P2).x2_mx,((MaxMin_R&)with).x2_mx);
+		}
 	}
 }
 void MaxMin_R::copy(const Chromosome& with,const Chromosome& P2)
@@ -271,7 +244,7 @@ float randFloatDigit()
 	return f;
 }
 
-ae::geneUC randFloatAlgt()
+ae::geneUS randFloatAlgt()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -300,7 +273,7 @@ MaxMin_R& MaxMin_x2::getMaxMin()
 	{
 		//std::cout << "\t" << getID() << "\tpuede tener " << juntion.get_number() << " hijos\n";
 		
-		for(ae::geneUC i = 0; i < getJunction().get_number(); i++,count++)
+		for(ae::geneUS i = 0; i < getJunction().get_number(); i++,count++)
 		{
 			ae::ga::MaxMin_R newmm;
 			ae::Junction newj;
@@ -319,8 +292,8 @@ MaxMin_R& MaxMin_x2::getMaxMin()
 				newj.copycombine(getJunction(),single.getJunction());
 				break;
 			}
-			float mutate = ae::randNumber(100.0);
-			if(mutate <= 5.0)
+			
+			if(mutate())
 			{
 				newmm.mutate();
 				newj.mutate();

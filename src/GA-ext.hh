@@ -10,7 +10,7 @@
 namespace ae::ga
 {
 
-
+/*
 class MaxMin_R : public Chromosome
 {
 public:
@@ -28,6 +28,7 @@ private:
 	geneF x2_mn;
 };
 
+
 struct Notas
 {
 	float x2_max;//la tendecia hacia 0 es mejor
@@ -35,7 +36,7 @@ struct Notas
 
 	float strength;
 };
-class MaxMin_x2 : public ae::ga::Single
+class MaxMin_x2 : public Single
 {
 public:
 	MaxMin_x2(unsigned int id,geneF x2_mx,geneF x2_min,geneUS number,geneUS algorit);
@@ -59,6 +60,35 @@ struct MaxMin_By_Value
 	ae::ga::MaxMin_x2* maxmin;
 	float value;
 };
+*/
+
+class SudokuChromosome : public Chromosome
+{
+public:
+	SudokuChromosome();
+	geneUS getNumber(unsigned short i,unsigned short j) const;
+	
+	geneUS& set(unsigned short i,unsigned short j);
+	virtual void combine(const Chromosome& P1,const Chromosome& P2);
+	virtual void copycombine(const Chromosome& P1,const Chromosome& P2);
+	virtual void copy(const Chromosome& P1,const Chromosome& P2);
+	virtual void mutate();
+private:
+	geneUS number[3][3];
+};
+
+class SudokuSingle : public Single
+{
+public:
+	SudokuSingle(unsigned int id,const SudokuChromosome[3][3]);
+	const SudokuChromosome& getTalba(unsigned short i,unsigned short j)const;
+	
+	static int main(int argc, const char* argv[]);
+	virtual void eval();
+private:
+	SudokuChromosome tabla[3][3];
+};
+
 
 }
 
