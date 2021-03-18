@@ -52,8 +52,7 @@ void SudokuChromosome::combine(const ae::Chromosome& P1,const ae::Chromosome& P2
 			else
 			{
 				numbers[i][j] = ((const SudokuChromosome&)P2).numbers[i][j];
-			}
-			
+			}			
 		}
 	}
 }
@@ -333,6 +332,8 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 void SudokuSingle::saveEval(std::ofstream& fn)
 {	
 	fn << getID();
+	fn << ",";
+	fn << getStrength();
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -356,16 +357,15 @@ void SudokuSingle::saveEval(std::ofstream& fn)
 
 SudokuEnviroment::SudokuEnviroment()
 {
-	maxPopulation = 500;
+	maxPopulation = 1000;
 	initPopulation = maxPopulation;
-
+	maxProgenitor = maxPopulation / 10;
 	idCount = 1;
 
 	loglevel = 1;
 	sigma = 0.0;
 	media = 0.0;
 	sigmaReduccion = 2.0;
-	mediaStop = 9.8;
 	
 	selection = MethodeSelection::INCREMENTING_MEDIA;
 
@@ -453,11 +453,11 @@ void SudokuEnviroment::run()
 		//la poblacion progenitora se eleige de acuaerdo al valor de la desviacion estandar
 
 		//selecionar n-sigmnas por debajo de la media
-		float electStrength = 0.0;
+		double electStrength = 0.0;
 		switch(selection)
 		{
 		case MethodeSelection::INCREMENTING_MEDIA:
-			electStrength = media - (sigmaReduccion * sigma);
+			electStrength = media;
 			break;
 		case MethodeSelection::LEADER_STRONG:
 			electStrength = (*population.begin())->getStrength() + (sigmaReduccion * sigma);
@@ -468,18 +468,25 @@ void SudokuEnviroment::run()
 		if(loglevel > 0) std::cout << "\tSelecion por strength : " << electStrength << "\n";
 		
 		unsigned short countActual = population.size();
+		unsigned short countProgenitor = 0;
 		std::list<ae::Single*>::iterator toDelete = population.end();
 		for(std::list<ae::Single*>::iterator it = population.begin(); it != population.end(); it++)
 		{
+			countProgenitor++;
 			if(toDelete != population.end()) 
 			{
 				population.remove(*toDelete);
 				toDelete = population.end();
 			}
-			if((*it)->getStrength() < electStrength)
+			if((*it)->getStrength() < electStrength and countProgenitor <= population.size() )
 			{
 				toDelete = it;
 			}
+		}
+		if(toDelete != population.end()) 
+		{
+			population.remove(*toDelete);
+			toDelete = population.end();
 		}
 		unsigned short countEliminened = countActual - population.size();
 		if(loglevel > 0) 
@@ -499,7 +506,7 @@ void SudokuEnviroment::run()
 		fn.flush();
 		fn.close();
 				
-		if(mediaStop < media)
+		/*if(mediaStop < media)
 		{
 			std::string strfn = "Sudoku-" + std::to_string(actualIteration) + "-end.csv";
 			std::ofstream fn(strfn);
@@ -519,14 +526,14 @@ void SudokuEnviroment::run()
 				fn.close();
 				return;
 			}
-		}
-		
+		}*/
+		if(loglevel > 0) std::cout << "\tGenerando decendencia..\n";
 		std::list<ae::Single*> newschils;
-		std::list<ae::Single*>::iterator single2 = population.begin();
-		std::advance (single2 , population.size()/2);//divide la pobacion en 2 para realizar los cruces
+		//std::list<ae::Single*>::iterator single2 = population.begin();
+		//std::advance (single2 , population.size() / 2);//divide la pobacion en 2 para realizar los cruces
 		for(
 		    std::list<ae::Single*>::iterator single1 =  population.begin(); 
-		    single1 != population.end() and single1 != single2;
+		    single1 != population.end();
 		    single1++
 		    )
 		{
@@ -534,18 +541,34 @@ void SudokuEnviroment::run()
 			{
 				break;
 			}
-			for(; single2 != population.end();single2++)
+			for(
+				std::list<ae::Single*>::reverse_iterator single2 = population.rbegin();
+			    single2 != population.rend();
+			    ++single2
+			    )
 			{
 				if(newschils.size() + population.size() >= maxPopulation)
 				{
 					break;
 				}
 				(*single1)->juncting(idCount,newschils,*single2,loglevel);
+				if(loglevel > 1) std::cout << "\tSe ha unido " << (*single1)->getID() << " con " << (*single2)->getID() << "\n"; 
 			}
 		}
+		std::string strfn2 = "log/Sudoku-" + std::to_string(actualIteration) + "-childs.csv";
+		std::ofstream fn2(strfn2);
+		if(not fn2.is_open()) throw "No se logro abrier el archivo";
+		for(ae::Single* s : population)
+		{
+			s->saveEval(fn2);
+		}
+		fn2.flush();
+		fn2.close();
 		for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
-			population.push_back(s);			
+			float rdnum = randNumber(0.0,1.0);
+			if(rdnum < 0.5) population.push_front(s);
+			else population.push_back(s);						
 		}
 		if(loglevel > 0) std::cout << "\tNuevos Hijos : " << newschils.size() << "\n";
 		

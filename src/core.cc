@@ -19,7 +19,7 @@ float randNumber()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> distr(1.0, 100.0);
+	std::uniform_real_distribution<> distr(0.0, 1.0);
 	
 	return distr(gen);
 }
@@ -27,7 +27,7 @@ float randNumber(float max)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> distr(1.0, max);
+	std::uniform_real_distribution<> distr(0.0, max);
 	
 	return distr(gen);
 }
@@ -104,15 +104,15 @@ geneUS Chromosome::mutateDigits(const geneUS& P1)
 	caret2B_half_Digits3* crChild = reinterpret_cast<caret2B_half_Digits3*>(&child);
 	const caret2B_half_Digits3* crP1 = reinterpret_cast<const caret2B_half_Digits3*>(&P1);
 	float numrnd1 = randNumber(0.0,1.0);
-	if(numrnd1 < 0.25)
+	if(numrnd1 < 0.30)
 	{
 		crChild->a = !crP1->a;
 	}
-	else if(numrnd1 < 0.50)
+	else if(numrnd1 < 0.60)
 	{
 		crChild->b = !crP1->b;
 	}
-	else if(numrnd1 < 0.75)
+	else if(numrnd1 < 0.90)
 	{
 		crChild->c = !crP1->c;
 	}
@@ -153,8 +153,8 @@ void Junction::combine(const Chromosome& P1,const Chromosome& P2)
 
 void Junction::copy(const Chromosome& P1,const Chromosome& P2)
 {
-	float rdnum = randNumber();
-	if(rdnum < 50.0)
+	float rdnum = randNumber(0.0,1.0);
+	if(rdnum < 0.5)
 	{
 		number = ((Junction&)P1).number;
 		algorit = ((Junction&)P2).algorit;
@@ -182,23 +182,14 @@ geneUS Junction::get_algorit()const
 }
 geneUS Junction::randAlgt()
 {
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> distr(1.0, 100.0);
-	float randNum = distr(gen);
-	if(randNum < 10.0)
-	{
-		return COPY;
-	}
+	float randNum = randNumber(0.0,1.0);
+	if(randNum < 0.01) return COPY;
 
 	return COMBINE;
 }
 geneUS Junction::randChild()
 {
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> distr(1.0, 5.0);
-	return distr(gen);
+	return randNumber(1.0, 5.0);
 }
 void Junction::randFill()
 {
@@ -209,22 +200,22 @@ void Junction::randFill()
 
 
 
-
-Single::Single(unsigned int id)
+void Single::init()
 {
-	this->id = id;
 	age = 0;
 	strength = 0;
 	pMutationEvent = 0.05;
 	pMutableGene = 0.3;
 }
+Single::Single(unsigned int id)
+{
+	this->id = id;
+	init();
+}
 Single::Single(unsigned int id,const Junction& j) : junction(j)
 {
 	this->id = id;
-	age = 0;
-	strength = 0;
-	pMutationEvent = 0.05;
-	pMutableGene = 0.3;
+	init();
 }
 /*const std::vector<Chromosome*>& Single::getChromosome()const
 {
@@ -238,7 +229,7 @@ unsigned short Single::getAge() const
 {
 	return age;
 }
-float Single::getStrength() const
+double Single::getStrength() const
 {
 	return strength;
 }
@@ -275,11 +266,7 @@ void Single::deltaAge()
 }*/
 bool Single::mutate()const
 {
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> distr(0.0, 1.0);
-
-	float numrand = distr(gen);
+	float numrand = randNumber(0.0,1.0);
 	if(numrand <= pMutationEvent) return true;
 	else return false;	
 }
@@ -292,5 +279,6 @@ Enviroment::Enviroment()
 	loglevel = 0;
 	sigmaReduccion = 1.0;
 	minSolutions = 1;
+	maxProgenitor = 2;
 }
 }

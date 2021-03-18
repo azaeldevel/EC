@@ -102,7 +102,7 @@ public:
 	ID getID()const;
 	//const std::vector<Chromosome*>& getChromosome()const;
 	unsigned short getAge() const;
-	float getStrength() const;
+	double getStrength() const;
 	const Junction& getJunction()const;
 	float getProbabilityMutationEvent()const;
 	float getProbabilityMutableGene()const;
@@ -112,6 +112,7 @@ public:
 	//void deltaStrength();
 	float efficiency()const;
 	bool mutate()const;
+	void init();
 
 	virtual void eval() = 0;
 	virtual void randFill() = 0;
@@ -122,7 +123,7 @@ protected:
 	/**
 	*\brief numero entre 0 y 1 que determina la cercania al valor esperado(tiende a 1)
 	*/
-	float strength;
+	double strength;
 	
 private:
 	/**
@@ -158,15 +159,13 @@ protected:
 	ae::ID initPopulation;
 
 	ae::ID idCount = 1;
-
+	ae::ID maxProgenitor;
+	
 	bool loglevel;
-	float sigma;
-	float media;
-	float sigmaReduccion;
+	double sigma;
+	double media;
+	double sigmaReduccion;
 
-	float mediaStop;
-
-	//unsigned short elect;// los que se elegiran desde el pricipio de la lista
 
 	bool fixedPopupation;
 	bool requiereCertainty;

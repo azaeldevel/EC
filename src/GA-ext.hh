@@ -99,7 +99,6 @@ class SudokuEnviroment : public Enviroment
 {
 public:
 	SudokuEnviroment();
-
 	
 	virtual void run();
 };
