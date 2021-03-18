@@ -71,7 +71,7 @@ struct caret2B_half_Digits3
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
-geneF Chromosome::combine(const geneF& P1,const geneF& P2)
+geneF Chromosome::mixture(const geneF& P1,const geneF& P2)
 {
 	if(sizeof(geneF) != sizeof(caret4B_half)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
 	
@@ -84,7 +84,7 @@ geneF Chromosome::combine(const geneF& P1,const geneF& P2)
 	return child;
 }
 
-geneUS Chromosome::combineDigits(const geneUS& P1,const geneUS& P2)
+geneUS Chromosome::mixtureDigits(const geneUS& P1,const geneUS& P2)
 {
 	if(sizeof(geneUS) != sizeof(caret2B_half_Digits2)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
 	
@@ -145,14 +145,12 @@ Junction::Junction(geneUS n,geneUS a): Chromosome("Junction")
 	number = n;
 	algorit = a;
 }
+
 void Junction::combine(const Chromosome& P1,const Chromosome& P2)
 {
 	copy(P1,P2);
 }
-void Junction::copycombine(const Chromosome& P1,const Chromosome& P2)
-{
-	copy(P1,P2);
-}
+
 void Junction::copy(const Chromosome& P1,const Chromosome& P2)
 {
 	float rdnum = randNumber();
@@ -192,12 +190,8 @@ geneUS Junction::randAlgt()
 	{
 		return COPY;
 	}
-	else if(randNum < 30.0)
-	{
-		return COMBINE;
-	}
 
-	return COPYCOMBINE;
+	return COMBINE;
 }
 geneUS Junction::randChild()
 {
@@ -290,4 +284,13 @@ bool Single::mutate()const
 	else return false;	
 }
 
+
+Enviroment::Enviroment()
+{
+	idCount = 1;
+	actualIteration = 1;
+	loglevel = 0;
+	sigmaReduccion = 1.0;
+	minSolutions = 1;
+}
 }

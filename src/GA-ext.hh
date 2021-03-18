@@ -71,10 +71,10 @@ public:
 	
 	geneUS& number(unsigned short i,unsigned short j);
 	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
-	virtual void copycombine(const ae::Chromosome& P1,const ae::Chromosome& P2);
 	virtual void copy(const ae::Chromosome& P1,const ae::Chromosome& P2);
 	virtual void mutate(float p);
 	virtual void randFill();
+	
 private:
 	geneUS numbers[3][3];
 };
@@ -82,19 +82,27 @@ private:
 class SudokuSingle : public Single
 {
 public:
-	SudokuSingle(unsigned int id,const SudokuChromosome[3][3]);
-	SudokuSingle(unsigned int id,const SudokuChromosome[3][3],const Junction& junction);
+	SudokuSingle(unsigned int id,SudokuChromosome[3][3]);
+	SudokuSingle(unsigned int id,SudokuChromosome[3][3],const Junction& junction);
 	const SudokuChromosome& getTalba(unsigned short i,unsigned short j)const;
-	
-	static int main(int argc, const char* argv[]);
+		
 	virtual void eval();
 	virtual void randFill();
-	virtual void juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single* single);
-	virtual void saveEval(const std::string& prefixfn, const std::list<ae::Single*>& result, unsigned short iteration);
+	virtual void juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
+	virtual void saveEval(std::ofstream& fn);
 private:
 	SudokuChromosome tabla[3][3];
+	SudokuChromosome** intiVals;
 };
 
+class SudokuEnviroment : public Enviroment
+{
+public:
+	SudokuEnviroment();
+
+	
+	virtual void run();
+};
 
 }
 

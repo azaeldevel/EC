@@ -29,7 +29,10 @@
 
 int main(int argc, const char* argv[])
 {
-	return ae::ga::SudokuSingle::main(argc,argv);
+	ae::ga::SudokuEnviroment sudoku;
+	sudoku.run();
+	
+	return EXIT_SUCCESS;
 }
 
 

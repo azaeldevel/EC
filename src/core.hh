@@ -44,15 +44,17 @@ class Chromosome
 public:
 	Chromosome(const std::string name);
 	virtual void combine(const Chromosome& P1,const Chromosome& P2) = 0;
-	virtual void copycombine(const Chromosome& P1,const Chromosome& P2) = 0;
 	virtual void copy(const Chromosome& P1,const Chromosome& P2) = 0;
 	/**
 	*\brief p numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
 	*/
 	virtual void mutate(float p) = 0;
-	static geneF combine(const geneF& P1,const geneF& P2);
-	static geneUS combine(const geneUS& P1,const geneUS& P2);
-	static geneUS combineDigits(const geneUS& P1,const geneUS& P2);
+
+	//
+	static geneF mixture(const geneF& P1,const geneF& P2);
+
+	static geneUS mixture(const geneUS& P1,const geneUS& P2);
+	static geneUS mixtureDigits(const geneUS& P1,const geneUS& P2);
 	static geneUS mutate(const geneUS& P1);
 	static geneUS mutateDigits(const geneUS& P1);	
 	virtual void randFill() = 0;
@@ -68,9 +70,8 @@ class Junction : public Chromosome
 public:
 	enum AlgCode
 	{
-		COMBINE,
 		COPY,
-		COPYCOMBINE,
+		COMBINE,
 	};
 public:
 	Junction();
@@ -80,8 +81,8 @@ public:
 	static geneUS randAlgt();
 	static geneUS randChild();
 	
+	
 	virtual void combine(const Chromosome& P1,const Chromosome& P2);
-	virtual void copycombine(const Chromosome& P1,const Chromosome& P2);
 	virtual void copy(const Chromosome& P1,const Chromosome& P2);
 	virtual void mutate(float p);
 	virtual void randFill();
@@ -114,8 +115,9 @@ public:
 
 	virtual void eval() = 0;
 	virtual void randFill() = 0;
-	virtual void juncting(ID& idCount,std::list<Single*>& chils,Single* single) = 0;
-	virtual void saveEval(const std::string& prefixfn, const std::list<Single*>& result, unsigned short iteration) = 0;
+	virtual void juncting(ID& idCount,std::list<Single*>& chils,Single* single,unsigned short loglevel) = 0;
+	virtual void saveEval(std::ofstream& fn) = 0;
+
 protected:
 	/**
 	*\brief numero entre 0 y 1 que determina la cercania al valor esperado(tiende a 1)
@@ -139,6 +141,47 @@ private:
 };
 bool cmpStrength(const Single* f,const Single* s);
 
+enum MethodeSelection
+{
+	INCREMENTING_MEDIA,
+	LEADER_STRONG,
+};
+class Enviroment
+{
+public:
+	Enviroment();
+	
+	virtual void run() = 0;
+	
+protected:
+	ae::ID maxPopulation;
+	ae::ID initPopulation;
+
+	ae::ID idCount = 1;
+
+	bool loglevel;
+	float sigma;
+	float media;
+	float sigmaReduccion;
+
+	float mediaStop;
+
+	//unsigned short elect;// los que se elegiran desde el pricipio de la lista
+
+	bool fixedPopupation;
+	bool requiereCertainty;
+	unsigned int actualIteration;
+	unsigned int limitIteration;
+	/*
+	*\brief si el programa encuentra al menos las soluciones indcadas podra terminar
+	*
+	*/
+	unsigned short minSolutions;
+
+	bool newIteration;
+
+	MethodeSelection selection;
+};
 
 }
 
