@@ -101,6 +101,26 @@ void SudokuChromosome::randFill()
 
 
 
+
+
+void SudokuSingle::genMD5()
+{
+	std::string strmd5;
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		for(unsigned short j = 0; j < 3; j++)
+		{
+			for(unsigned short k = 0; k < 3; k++)
+			{
+				for(unsigned short l = 0; l < 3; l++)
+				{					
+					 strmd5 += std::to_string(tabla[i][j].number(k,l));
+				}
+			}
+		}
+	}
+	md5.set(strmd5);
+}
 SudokuSingle::SudokuSingle(unsigned int id,SudokuChromosome t[3][3] ) : Single(id)
 {
 	for(unsigned short i = 0; i < 3; i++)
@@ -110,7 +130,8 @@ SudokuSingle::SudokuSingle(unsigned int id,SudokuChromosome t[3][3] ) : Single(i
 			tabla[i][j] = t[i][j];
 		}
 	}
-	intiVals = (SudokuChromosome**)t;
+	//intiVals = (SudokuChromosome**)t;
+	genMD5();
 }
 SudokuSingle::SudokuSingle(unsigned int id,SudokuChromosome t[3][3],const Junction& junction) : Single(id,junction)
 {
@@ -121,7 +142,8 @@ SudokuSingle::SudokuSingle(unsigned int id,SudokuChromosome t[3][3],const Juncti
 			tabla[i][j] = t[i][j];
 		}
 	}
-	intiVals = (SudokuChromosome**)&t[0][0];
+	//intiVals = (SudokuChromosome**)&t[0][0];
+	genMD5();
 }
 
 void SudokuSingle::eval()
@@ -333,7 +355,9 @@ void SudokuSingle::saveEval(std::ofstream& fn)
 {	
 	fn << getID();
 	fn << ",";
-	fn << getStrength();
+	fn << getStrength();	
+	fn << ",";
+	fn << getMD5();
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -350,17 +374,32 @@ void SudokuSingle::saveEval(std::ofstream& fn)
 	}		
 	fn << "\n";
 }
-
+const octetos::core::MD5sum& SudokuSingle::getMD5()const
+{
+	return md5;
+}
 
 
 ae::Single* getrandomElement(std::list<ae::Single*>& ls)
 {
 	float maxp = std::distance(ls.begin(),ls.end());
-	float rndnum = randNumber(0.0,maxp);
 	std::list<ae::Single*>::iterator it = ls.begin();
-	std::advance(it,rndnum);
-	if(it != ls.end()) return *it;
-	else return NULL;
+	
+	float rndnum = randNumber(0.0,1.0);
+	if(rndnum < 0.30)
+	{
+		rndnum = randNumber(0.0,maxp/100);
+		std::advance(it,rndnum);
+		if(it != ls.end()) return *it;
+	}
+	else
+	{
+		rndnum = randNumber(0.0,maxp);
+		std::advance(it,rndnum);
+		if(it != ls.end()) return *it;
+	}
+	
+	return NULL;
 }
 
 SudokuEnviroment::SudokuEnviroment()
@@ -375,14 +414,13 @@ SudokuEnviroment::SudokuEnviroment()
 	media = 0.0;
 	sigmaReduccion = 2.0;
 	
-	//selection = MethodeSelection::INCREMENTING_MEDIA;
-
 	fixedPopupation = true;
 	requiereCertainty = true;
 	actualIteration = 0;
 	limitIteration = 100;
 	newIteration = true;
 	epsilon = 1/(81.0*4.0*2);
+	minSolutions = 1;
 }
 void SudokuEnviroment::run()
 {
@@ -537,8 +575,17 @@ void SudokuEnviroment::run()
 		std::list<ae::Single*> newschils;
 		do
 		{
+			//std::cout << "Step 1\n";
 			ae::Single* single1 = getrandomElement(population);
+			//std::cout << "Step 2\n";
+			if(single1 == NULL) continue;
+			//std::cout << "Step 3\n";
 			ae::Single* single2 = getrandomElement(population);
+			//std::cout << "Step 4\n";
+			if(single2 == NULL) continue;
+			//std::cout << "Step 5\n";
+			if(single1 == single2) continue;
+			//std::cout << "Step 6\n";
 			single1->juncting(idCount,newschils,single2,loglevel);
 			if(loglevel > 1) std::cout << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 		}

@@ -3,6 +3,7 @@
 #ifndef AE_GA_EXT_HH
 #define AE_GA_EXT_HH
 
+#include <octetos/core/MD5sum.hh>
 
 #include "GA.hh"
 
@@ -90,9 +91,12 @@ public:
 	virtual void randFill();
 	virtual void juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
 	virtual void saveEval(std::ofstream& fn);
+	const octetos::core::MD5sum& getMD5() const;
+	void genMD5();
 private:
 	SudokuChromosome tabla[3][3];
 	SudokuChromosome** intiVals;
+	octetos::core::MD5sum md5;
 };
 
 class SudokuEnviroment : public Enviroment
