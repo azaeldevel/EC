@@ -92,7 +92,7 @@ private:
 };
 
 
-typedef unsigned int ID;
+typedef unsigned long ID;
 class Single
 {
 public:
@@ -124,7 +124,6 @@ protected:
 	*\brief numero entre 0 y 1 que determina la cercania al valor esperado(tiende a 1)
 	*/
 	double strength;
-	
 private:
 	/**
 	*\brief numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
@@ -179,7 +178,8 @@ protected:
 
 	bool newIteration;
 
-	MethodeSelection selection;
+	//MethodeSelection selection;
+	double epsilon;
 };
 
 }

@@ -207,12 +207,12 @@ void Single::init()
 	pMutationEvent = 0.05;
 	pMutableGene = 0.3;
 }
-Single::Single(unsigned int id)
+Single::Single(ae::ID id)
 {
 	this->id = id;
 	init();
 }
-Single::Single(unsigned int id,const Junction& j) : junction(j)
+Single::Single(ae::ID id,const Junction& j) : junction(j)
 {
 	this->id = id;
 	init();
@@ -278,7 +278,7 @@ Enviroment::Enviroment()
 	actualIteration = 1;
 	loglevel = 0;
 	sigmaReduccion = 1.0;
-	minSolutions = 1;
+	//minSolutions = 1;
 	maxProgenitor = 2;
 }
 }
