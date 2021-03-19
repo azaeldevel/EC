@@ -93,6 +93,7 @@ private:
 
 
 typedef unsigned long ID;
+typedef ID Population;
 class Single
 {
 public:

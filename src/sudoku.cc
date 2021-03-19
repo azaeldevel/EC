@@ -417,9 +417,9 @@ SudokuEnviroment::SudokuEnviroment()
 	fixedPopupation = true;
 	requiereCertainty = true;
 	actualIteration = 0;
-	limitIteration = 100;
+	limitIteration = 2000;
 	newIteration = true;
-	epsilon = 1/(81.0*4.0*2);
+	epsilon = 1/(81.0*4.0);
 	minSolutions = 1;
 }
 void SudokuEnviroment::run()
