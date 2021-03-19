@@ -121,7 +121,7 @@ void SudokuSingle::genMD5()
 	}
 	md5.set(strmd5);
 }
-SudokuSingle::SudokuSingle(unsigned int id,SudokuChromosome t[3][3] ) : Single(id)
+SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome t[3][3]) : Single(id)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -130,10 +130,10 @@ SudokuSingle::SudokuSingle(unsigned int id,SudokuChromosome t[3][3] ) : Single(i
 			tabla[i][j] = t[i][j];
 		}
 	}
-	//intiVals = (SudokuChromosome**)t;
+	intiVals = (SudokuChromosome**)t;
 	genMD5();
 }
-SudokuSingle::SudokuSingle(unsigned int id,SudokuChromosome t[3][3],const Junction& junction) : Single(id,junction)
+SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome t[3][3],const Junction& junction) : Single(id,junction)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -142,7 +142,7 @@ SudokuSingle::SudokuSingle(unsigned int id,SudokuChromosome t[3][3],const Juncti
 			tabla[i][j] = t[i][j];
 		}
 	}
-	//intiVals = (SudokuChromosome**)&t[0][0];
+	intiVals = (SudokuChromosome**)t;
 	genMD5();
 }
 
@@ -434,44 +434,44 @@ SudokuEnviroment::SudokuEnviroment()
 }
 void SudokuEnviroment::run()
 {
-	SudokuChromosome tabla[3][3];
-	tabla[0][0].number(0,1) = 3;
-	tabla[0][0].number(0,2) = 1;
-	tabla[0][1].number(0,0) = 9;
-	tabla[0][2].number(0,0) = 7;
-	tabla[0][2].number(0,2) = 4;
-	tabla[0][0].number(1,0) = 7;
-	tabla[0][0].number(1,2) = 8;
-	tabla[0][2].number(1,0) = 6;
-	tabla[0][2].number(1,2) = 9;
-	tabla[0][2].number(2,1) = 2;
-	tabla[0][1].number(2,1) = 1;
-	tabla[1][0].number(0,0) = 8;
-	tabla[1][1].number(0,1) = 6;
-	tabla[1][2].number(0,2) = 7;
-	tabla[1][1].number(1,2) = 2;
-	tabla[1][2].number(1,1) = 3;
-	tabla[1][0].number(2,0) = 3;
-	tabla[1][1].number(2,1) = 4;
-	tabla[1][2].number(2,2) = 2;
-	tabla[2][1].number(0,1) = 5;
-	tabla[2][0].number(1,0) = 2;
-	tabla[2][0].number(1,2) = 9;
-	tabla[2][2].number(0,1) = 8;
-	tabla[2][2].number(1,0) = 3;
-	tabla[2][2].number(1,2) = 1;
-	tabla[2][0].number(2,1) = 8;
-	tabla[2][0].number(2,2) = 6;
-	tabla[2][1].number(2,0) = 7;
-	tabla[2][2].number(2,0) = 2;
-	tabla[2][2].number(2,2) = 5;
+	SudokuChromosome sudokuInit[3][3];
+	sudokuInit[0][0].number(0,1) = 3;
+	sudokuInit[0][0].number(0,2) = 1;
+	sudokuInit[0][1].number(0,0) = 9;
+	sudokuInit[0][2].number(0,0) = 7;
+	sudokuInit[0][2].number(0,2) = 4;
+	sudokuInit[0][0].number(1,0) = 7;
+	sudokuInit[0][0].number(1,2) = 8;
+	sudokuInit[0][2].number(1,0) = 6;
+	sudokuInit[0][2].number(1,2) = 9;
+	sudokuInit[0][2].number(2,1) = 2;
+	sudokuInit[0][1].number(2,1) = 1;
+	sudokuInit[1][0].number(0,0) = 8;
+	sudokuInit[1][1].number(0,1) = 6;
+	sudokuInit[1][2].number(0,2) = 7;
+	sudokuInit[1][1].number(1,2) = 2;
+	sudokuInit[1][2].number(1,1) = 3;
+	sudokuInit[1][0].number(2,0) = 3;
+	sudokuInit[1][1].number(2,1) = 4;
+	sudokuInit[1][2].number(2,2) = 2;
+	sudokuInit[2][1].number(0,1) = 5;
+	sudokuInit[2][0].number(1,0) = 2;
+	sudokuInit[2][0].number(1,2) = 9;
+	sudokuInit[2][2].number(0,1) = 8;
+	sudokuInit[2][2].number(1,0) = 3;
+	sudokuInit[2][2].number(1,2) = 1;
+	sudokuInit[2][0].number(2,1) = 8;
+	sudokuInit[2][0].number(2,2) = 6;
+	sudokuInit[2][1].number(2,0) = 7;
+	sudokuInit[2][2].number(2,0) = 2;
+	sudokuInit[2][2].number(2,2) = 5;
 	
 		
 	//poblacion inicial
 	std::list<ae::Single*> population;
 	for(unsigned short i = 0; i < initPopulation; i++,idCount++)
 	{
-		SudokuSingle* s = new SudokuSingle(idCount,tabla);
+		SudokuSingle* s = new SudokuSingle(idCount,sudokuInit);
 		s->randFill();
 		population.push_back(s);
 	}
@@ -551,7 +551,7 @@ void SudokuEnviroment::run()
 		std::list<ae::Single*>::reverse_iterator toDelete = population.rend();
 		for(std::list<ae::Single*>::reverse_iterator it = population.rbegin(); it != population.rend(); it++)
 		{
-			if(countDeletes < countActual/4)
+			if(countDeletes < countActual/3)
 			{
 				toDelete = it;
 				countDeletes++;

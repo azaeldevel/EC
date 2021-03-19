@@ -83,8 +83,8 @@ private:
 class SudokuSingle : public Single
 {
 public:
-	SudokuSingle(unsigned int id,SudokuChromosome[3][3]);
-	SudokuSingle(unsigned int id,SudokuChromosome[3][3],const Junction& junction);
+	SudokuSingle(unsigned int id,const SudokuChromosome[3][3]);
+	SudokuSingle(unsigned int id,const SudokuChromosome[3][3],const Junction& junction);
 	const SudokuChromosome& getTalba(unsigned short i,unsigned short j)const;
 		
 	virtual void eval();
