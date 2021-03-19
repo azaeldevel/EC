@@ -401,7 +401,17 @@ ae::Single* getrandomElement(std::list<ae::Single*>& ls)
 	
 	return NULL;
 }
-
+ae::Single* getrandomElement2(std::list<ae::Single*>& ls)
+{
+	float maxp = std::distance(ls.begin(),ls.end());
+	std::list<ae::Single*>::iterator it = ls.begin();
+	
+	float rndnum = randNumber(0.0,maxp);
+	std::advance(it,rndnum);
+	if(it != ls.end()) return *it;
+	
+	return NULL;
+}
 SudokuEnviroment::SudokuEnviroment()
 {
 	maxPopulation = 1000;
@@ -494,14 +504,18 @@ void SudokuEnviroment::run()
 				countSolution++;
 				std::string strfn3 = "log/Sudoku-" + std::to_string(actualIteration) + "-solutions.csv";
 				std::ofstream fn3(strfn3);
-				if(not fn3.is_open()) throw "No se logro abrier el archivo";
+				if(not fn3.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
 				for(ae::Single* s : population)
 				{
 					s->saveEval(fn3);
+					if(countSolution > 0)
+					{
+						std::cout << "\tSe encontro una solucion.\n";
+					}
 				}
 				fn3.flush();
 				fn3.close();
-				if(countSolution > countSolution)
+				if(countSolution >= minSolutions)
 				{
 					std::cout << "\tSe alcanzo el conjuto minimo de soluciones\n";
 					return;
@@ -537,7 +551,7 @@ void SudokuEnviroment::run()
 		std::list<ae::Single*>::reverse_iterator toDelete = population.rend();
 		for(std::list<ae::Single*>::reverse_iterator it = population.rbegin(); it != population.rend(); it++)
 		{
-			if(countDeletes < countActual/2)
+			if(countDeletes < countActual/4)
 			{
 				toDelete = it;
 				countDeletes++;
@@ -576,11 +590,11 @@ void SudokuEnviroment::run()
 		do
 		{
 			//std::cout << "Step 1\n";
-			ae::Single* single1 = getrandomElement(population);
+			ae::Single* single1 = getrandomElement2(population);
 			//std::cout << "Step 2\n";
 			if(single1 == NULL) continue;
 			//std::cout << "Step 3\n";
-			ae::Single* single2 = getrandomElement(population);
+			ae::Single* single2 = getrandomElement2(population);
 			//std::cout << "Step 4\n";
 			if(single2 == NULL) continue;
 			//std::cout << "Step 5\n";
