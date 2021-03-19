@@ -68,7 +68,10 @@ class SudokuChromosome : public Chromosome
 {
 public:
 	SudokuChromosome();
+	SudokuChromosome(const SudokuChromosome& obj);
 	geneUS getNumber(unsigned short i,unsigned short j) const;
+
+	const SudokuChromosome& operator = (const SudokuChromosome&);
 	
 	geneUS& number(unsigned short i,unsigned short j);
 	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
@@ -83,8 +86,8 @@ private:
 class SudokuSingle : public Single
 {
 public:
-	SudokuSingle(unsigned int id,const SudokuChromosome[3][3]);
-	SudokuSingle(unsigned int id,const SudokuChromosome[3][3],const Junction& junction);
+	SudokuSingle(unsigned int id,const SudokuChromosome (*t)[3]);
+	SudokuSingle(unsigned int id,const SudokuChromosome (*t)[3], const Junction& junction);
 	const SudokuChromosome& getTalba(unsigned short i,unsigned short j)const;
 		
 	virtual void eval();
@@ -95,7 +98,7 @@ public:
 	void genMD5();
 private:
 	SudokuChromosome tabla[3][3];
-	SudokuChromosome** intiVals;
+	const SudokuChromosome (*intiVals)[3];
 	octetos::core::MD5sum md5;
 };
 

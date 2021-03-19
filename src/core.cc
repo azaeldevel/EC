@@ -71,6 +71,10 @@ struct caret2B_half_Digits3
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
+const Chromosome& Chromosome::operator = (const Chromosome& obj)
+{
+	name = obj.name;
+}
 geneF Chromosome::mixture(const geneF& P1,const geneF& P2)
 {
 	if(sizeof(geneF) != sizeof(caret4B_half)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);

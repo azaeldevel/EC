@@ -15,7 +15,16 @@ namespace ae::ga
 
 
 
-
+SudokuChromosome::SudokuChromosome(const SudokuChromosome& obj) : Chromosome("SudokuChromosome")
+{
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		for(unsigned short j = 0; j < 3; j++)
+		{
+			numbers[i][j] = obj.numbers[i][j];	
+		}
+	}
+}
 SudokuChromosome::SudokuChromosome() : Chromosome("SudokuChromosome")
 {
 	for(unsigned short i = 0; i < 3; i++)
@@ -26,7 +35,20 @@ SudokuChromosome::SudokuChromosome() : Chromosome("SudokuChromosome")
 		}
 	}
 }
-	
+
+const SudokuChromosome& SudokuChromosome::operator = (const SudokuChromosome& obj)
+{
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		for(unsigned short j = 0; j < 3; j++)
+		{
+			//std::cout << "numbers[" << i << "][" << j << "]" << "\n";
+			numbers[i][j] = obj.numbers[i][j];	
+		}
+	}
+
+	return *this;
+}
 geneUS SudokuChromosome::getNumber(unsigned short i,unsigned short j)const
 {
 	return numbers[i][j];	
@@ -121,20 +143,28 @@ void SudokuSingle::genMD5()
 	}
 	md5.set(strmd5);
 }
-SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome t[3][3]) : Single(id)
+SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome (*t)[3]) : Single(id)
 {
+	//std::cout << "SudokuSingle::SudokuSingle  Step 1\n";
+	//std::cout << "SudokuSingle::SudokuSingle  t** = " << t << "\n";
+	//std::cout << "SudokuSingle::SudokuSingle Step 2\n";
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
+			//std::cout << "&t[" << i << "][" << j << "]" << &t[i][j] << "\n";
+			//std::cout << "t[" << i << "][" << j << "]" << "\n";
 			tabla[i][j] = t[i][j];
 		}
 	}
-	intiVals = (SudokuChromosome**)t;
+	intiVals = t;
 	genMD5();
 }
-SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome t[3][3],const Junction& junction) : Single(id,junction)
+SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome (*t)[3],const Junction& junction) : Single(id,junction)
 {
+	//std::cout << "SudokuSingle::SudokuSingle  Step 1\n";
+	//std::cout << "SudokuSingle::SudokuSingle  t** = " << t << "\n";
+	//std::cout << "SudokuSingle::SudokuSingle Step 2\n";
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -142,7 +172,7 @@ SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome t[3][3],const 
 			tabla[i][j] = t[i][j];
 		}
 	}
-	intiVals = (SudokuChromosome**)t;
+	intiVals = t;
 	genMD5();
 }
 
@@ -328,23 +358,21 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 			newj.mutate(getProbabilityMutationEvent());
 			if(loglevel > 1) std::cout << "\tSe detecta mutacion para " << idCount << "\n";
 		}
-		//
-		/*for(unsigned short i = 0; i < 3; i++)
+
+		//los datos iniciales no se deven cambiar.
+		for(unsigned short i = 0; i < 3; i++)
 		{
 			for(unsigned short j = 0; j < 3; j++)
 			{
 				for(unsigned short k = 0; k < 3; k++)
 				{
 					for(unsigned short l = 0; l < 3; l++)
-					{				
-						if(intiVals[i][j].number(k,l) != 0)
-						{
-							newtabla[i][j].number(k,l) = intiVals[i][j].number(k,l);
-						}						
+					{		
+						if(intiVals[i][j].getNumber(k,l) != 0) newtabla[i][j].number(k,l) = intiVals[i][j].getNumber(k,l);						
 					}
 				}
 			}
-		}*/
+		}
 	
 		SudokuSingle* s = new SudokuSingle(idCount,newtabla,newj);
 		if(loglevel > 1) std::cout << "\tSe crea a " << s->getID() << "\n"; 
@@ -434,6 +462,7 @@ SudokuEnviroment::SudokuEnviroment()
 }
 void SudokuEnviroment::run()
 {
+	//std::cout << "SudokuEnviroment::run Step 1\n";
 	SudokuChromosome sudokuInit[3][3];
 	sudokuInit[0][0].number(0,1) = 3;
 	sudokuInit[0][0].number(0,2) = 1;
@@ -465,13 +494,22 @@ void SudokuEnviroment::run()
 	sudokuInit[2][1].number(2,0) = 7;
 	sudokuInit[2][2].number(2,0) = 2;
 	sudokuInit[2][2].number(2,2) = 5;
-	
-		
+
+	//std::cout << "SudokuEnviroment::run Step 2\n";
+	//std::cout << "SudokuEnviroment::run tabla** = " << sudokuInit << "\n";
+	//std::cout << "sudokuInit[1][1].number(2,1) = " << sudokuInit[1][1].getNumber(2,1) << "\n";
+	//std::cout << "sudokuInit[0][0] = " << &sudokuInit[0][0] << "\n";
+	//std::cout << "sudokuInit[1][0] = " << &sudokuInit[1][0] << "\n";	
+	//std::cout << "sudokuInit[0][0] = " << &sudokuInit[2][0] << "\n";
 	//poblacion inicial
 	std::list<ae::Single*> population;
+	
+	const SudokuChromosome (*p)[3] = sudokuInit;	
+	//std::cout << "p[1][1].number(2,1) = " << p[1][1].getNumber(2,1) << "\n";
+	
 	for(unsigned short i = 0; i < initPopulation; i++,idCount++)
 	{
-		SudokuSingle* s = new SudokuSingle(idCount,sudokuInit);
+		SudokuSingle* s = new SudokuSingle(idCount,p);
 		s->randFill();
 		population.push_back(s);
 	}

@@ -50,6 +50,8 @@ public:
 	*/
 	virtual void mutate(float p) = 0;
 
+	const Chromosome& operator = (const Chromosome&);
+
 	//
 	static geneF mixture(const geneF& P1,const geneF& P2);
 
