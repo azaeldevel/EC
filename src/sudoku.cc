@@ -386,7 +386,7 @@ ae::Single* getrandomElement(std::list<ae::Single*>& ls)
 	std::list<ae::Single*>::iterator it = ls.begin();
 	
 	float rndnum = randNumber(0.0,1.0);
-	if(rndnum < 0.30)
+	if(rndnum < 0.50)
 	{
 		rndnum = randNumber(0.0,maxp/100);
 		std::advance(it,rndnum);
@@ -466,6 +466,8 @@ void SudokuEnviroment::run()
 		population.push_back(s);
 	}
 
+	std::string strfn4 = "log/Sudoku-" + std::to_string(actualIteration) + "-history.csv";
+	std::ofstream fn4(strfn4);
 	do
 	{
 		actualIteration++;
@@ -473,6 +475,7 @@ void SudokuEnviroment::run()
 		sigma = 0.0;
 		std::cout << ">>> Iteracion : " << actualIteration << "\n";
 		if(loglevel > 0) std::cout << "\tTamano de la poblacion : " << population.size() << "\n";
+
 		
 		//(*population.begin())->eval();
 		//std::cout << "\t" << (*population.begin())->getID() << " Fortaleza : " << (*population.begin())->getStrength() << "\n";
@@ -515,22 +518,19 @@ void SudokuEnviroment::run()
 		sigma /= population.size();
 		if(loglevel > 0) std::cout << "\tDesviacion estandar : " << sigma << "\n";
 
-		//la poblacion progenitora se eleige de acuaerdo al valor de la desviacion estandar
-
-		//selecionar n-sigmnas por debajo de la media
-		/*double electStrength = 0.0;
-		switch(selection)
+		if(fn4.is_open()) 
 		{
-		case MethodeSelection::INCREMENTING_MEDIA:
-			electStrength = media;
-			break;
-		case MethodeSelection::LEADER_STRONG:
-			electStrength = (*population.begin())->getStrength() + (sigmaReduccion * sigma);
-			break;
-		default:
-			throw octetos::core::Exception("Metodo de seleccion desconocido.",__FILE__,__LINE__);
+			fn4 << actualIteration;
+			fn4 << ",";
+			fn4 << media;
+			fn4 << ",";
+			fn4 << sigma;			
+			fn4.flush();
 		}
-		if(loglevel > 0) std::cout << "\tSelecion por strength : " << electStrength << "\n";*/
+		else
+		{
+			throw "No se logro abrier el archivo";
+		}
 		
 		ae::ID countActual = population.size();
 		ae::ID countDeletes = 0;
@@ -633,6 +633,8 @@ void SudokuEnviroment::run()
 		}
 	}
 	while(newIteration);
+
+	fn4.close();
 }
 
 }
