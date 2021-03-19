@@ -74,6 +74,8 @@ Chromosome::Chromosome(const std::string n) : name(n)
 const Chromosome& Chromosome::operator = (const Chromosome& obj)
 {
 	name = obj.name;
+
+	return *this;
 }
 geneF Chromosome::mixture(const geneF& P1,const geneF& P2)
 {
@@ -208,15 +210,13 @@ void Single::init()
 {
 	age = 0;
 	strength = 0;
-	pMutationEvent = 0.05;
-	pMutableGene = 0.3;
 }
-Single::Single(ae::ID id)
+Single::Single(ae::ID id,const Enviroment& e) : env(&e)
 {
 	this->id = id;
 	init();
 }
-Single::Single(ae::ID id,const Junction& j) : junction(j)
+Single::Single(ae::ID id,const Enviroment& e,const Junction& j) : junction(j),env(&e)
 {
 	this->id = id;
 	init();
@@ -241,14 +241,11 @@ const Junction& Single::getJunction()const
 {
 	return junction;
 }
-float Single::getProbabilityMutationEvent()const
+const Enviroment& Single::getEnviroment()const
 {
-	return pMutationEvent;
+	return *env;
 }
-float Single::getProbabilityMutableGene()const
-{
-	return pMutableGene;
-}
+
 
 /*void Single::add(Chromosome& c)
 {
@@ -271,7 +268,7 @@ void Single::deltaAge()
 bool Single::mutate()const
 {
 	float numrand = randNumber(0.0,1.0);
-	if(numrand <= pMutationEvent) return true;
+	if(numrand <= env->getProbabilityMutationEvent()) return true;
 	else return false;	
 }
 
@@ -281,8 +278,44 @@ Enviroment::Enviroment()
 	idCount = 1;
 	actualIteration = 1;
 	loglevel = 0;
-	sigmaReduccion = 1.0;
+	//sigmaReduction = 1.0;
 	//minSolutions = 1;
 	maxProgenitor = 2;
+	pMutationEvent = 0.02;
+	pMutableGene = 0.4;
 }
+
+Population Enviroment::getMaxPopulation()const
+{
+	return maxPopulation;
+}
+Population Enviroment::getInitPopulation()const
+{
+	return initPopulation;
+}
+Population Enviroment::getMaxProgenitor()const
+{
+	return maxProgenitor;
+}
+double Enviroment::getSigma() const
+{
+	return sigma;
+}
+double Enviroment::Enviroment::getMedia() const
+{
+	return media;
+}
+double Enviroment::getEpsilon() const
+{
+	return epsilon;
+}
+double Enviroment::getProbabilityMutableGene()const
+{
+	return pMutableGene;
+}
+double Enviroment::getProbabilityMutationEvent()const
+{
+	return pMutationEvent;
+}
+
 }

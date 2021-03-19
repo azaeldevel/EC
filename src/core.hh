@@ -28,11 +28,15 @@
 
 namespace ae
 {
+class Enviroment;
 
 
 typedef float geneF;
 typedef unsigned short geneUS;
 
+typedef unsigned long ID;
+typedef ID Population;
+typedef unsigned int Iteration;
 
 float randNumber();
 float randNumber(float max);
@@ -94,21 +98,19 @@ private:
 };
 
 
-typedef unsigned long ID;
-typedef ID Population;
+
 class Single
 {
 public:
-	Single(ID id);	
-	Single(ID id,const Junction& junction);
+	Single(ID id,const Enviroment&);	
+	Single(ID id,const Enviroment&,const Junction& junction);
 	
 	ID getID()const;
 	//const std::vector<Chromosome*>& getChromosome()const;
 	unsigned short getAge() const;
 	double getStrength() const;
 	const Junction& getJunction()const;
-	float getProbabilityMutationEvent()const;
-	float getProbabilityMutableGene()const;
+	const Enviroment& getEnviroment()const;
 
 	void add(Chromosome&);
 	void deltaAge();
@@ -128,19 +130,11 @@ protected:
 	*/
 	double strength;
 private:
-	/**
-	*\brief numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
-	*/
-	float pMutableGene;
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
 	unsigned short age;
 	Junction junction;
-	/**
-	*\brief numero entre 0 y 1 que determina la probabilidad de cada el evento de mutacion ocurrar.
-	*/
-	float pMutationEvent;
-
+	const Enviroment* env;
 };
 bool cmpStrength(const Single* f,const Single* s);
 
@@ -149,30 +143,42 @@ enum MethodeSelection
 	INCREMENTING_MEDIA,
 	LEADER_STRONG,
 };
+
 class Enviroment
 {
 public:
 	Enviroment();
+	Population getMaxPopulation()const;
+	Population getInitPopulation()const;
+	Population getMaxProgenitor()const;
+	
+	double getSigma() const;
+	//double getSigmaReduction() const;
+	double getMedia() const;
+	double getEpsilon() const;
+	double getProbabilityMutableGene()const;
+	double getProbabilityMutationEvent()const;
+	
 	
 	virtual void run() = 0;
 	
 protected:
-	ae::ID maxPopulation;
-	ae::ID initPopulation;
+	Population maxPopulation;
+	Population initPopulation;
 
-	ae::ID idCount = 1;
-	ae::ID maxProgenitor;
+	ID idCount = 1;
+	Population maxProgenitor;
 	
 	bool loglevel;
 	double sigma;
 	double media;
-	double sigmaReduccion;
+	//double sigmaReduction;
 
 
-	bool fixedPopupation;
-	bool requiereCertainty;
-	unsigned int actualIteration;
-	unsigned int limitIteration;
+	//bool fixedPopupation;
+	//bool requiereCertainty;
+	Iteration actualIteration;
+	Iteration limitIteration;
 	/*
 	*\brief si el programa encuentra al menos las soluciones indcadas podra terminar
 	*
@@ -183,6 +189,14 @@ protected:
 
 	//MethodeSelection selection;
 	double epsilon;
+	/**
+	*\brief numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
+	*/
+	float pMutableGene;
+	/**
+	*\brief numero entre 0 y 1 que determina la probabilidad de cada el evento de mutacion ocurrar.
+	*/
+	float pMutationEvent;
 };
 
 }

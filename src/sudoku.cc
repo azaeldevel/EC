@@ -143,11 +143,8 @@ void SudokuSingle::genMD5()
 	}
 	md5.set(strmd5);
 }
-SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome (*t)[3]) : Single(id)
+SudokuSingle::SudokuSingle(unsigned int id,const Enviroment& e,const SudokuChromosome (*t)[3]) : Single(id,e)
 {
-	//std::cout << "SudokuSingle::SudokuSingle  Step 1\n";
-	//std::cout << "SudokuSingle::SudokuSingle  t** = " << t << "\n";
-	//std::cout << "SudokuSingle::SudokuSingle Step 2\n";
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -160,11 +157,8 @@ SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome (*t)[3]) : Sin
 	intiVals = t;
 	genMD5();
 }
-SudokuSingle::SudokuSingle(unsigned int id,const SudokuChromosome (*t)[3],const Junction& junction) : Single(id,junction)
+SudokuSingle::SudokuSingle(unsigned int id,const Enviroment& e,const SudokuChromosome (*t)[3],const Junction& junction) : Single(id,e,junction)
 {
-	//std::cout << "SudokuSingle::SudokuSingle  Step 1\n";
-	//std::cout << "SudokuSingle::SudokuSingle  t** = " << t << "\n";
-	//std::cout << "SudokuSingle::SudokuSingle Step 2\n";
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -291,9 +285,8 @@ void SudokuSingle::eval()
 			}
 		}
 	}
-	
-	strength = fails / (81.0 * 4.0);
-	strength = 1.0 - strength;
+	strength = (81.0 * 4.0) - fails;
+	strength = strength / (81.0 * 4.0);
 }
 	
 	
@@ -352,10 +345,10 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 			{
 				for(unsigned short j = 0; j < 3; j++)
 				{
-					newtabla[i][j].mutate(getProbabilityMutationEvent());
+					newtabla[i][j].mutate(getEnviroment().getProbabilityMutationEvent());
 				}
 			}
-			newj.mutate(getProbabilityMutationEvent());
+			newj.mutate(getEnviroment().getProbabilityMutationEvent());
 			if(loglevel > 1) std::cout << "\tSe detecta mutacion para " << idCount << "\n";
 		}
 
@@ -374,7 +367,7 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 			}
 		}
 	
-		SudokuSingle* s = new SudokuSingle(idCount,newtabla,newj);
+		SudokuSingle* s = new SudokuSingle(idCount,getEnviroment(),newtabla,newj);
 		if(loglevel > 1) std::cout << "\tSe crea a " << s->getID() << "\n"; 
 		chils.push_back(s);
 	}
@@ -450,19 +443,19 @@ SudokuEnviroment::SudokuEnviroment()
 	loglevel = 1;
 	sigma = 0.0;
 	media = 0.0;
-	sigmaReduccion = 2.0;
+	//sigmaReduction = 2.0;
 	
-	fixedPopupation = true;
-	requiereCertainty = true;
+	//fixedPopupation = true;
+	//requiereCertainty = true;
 	actualIteration = 0;
 	limitIteration = 2000;
 	newIteration = true;
 	epsilon = 1/(81.0*4.0);
 	minSolutions = 1;
+	pMutableGene = 3.0/81.0;
 }
 void SudokuEnviroment::run()
 {
-	//std::cout << "SudokuEnviroment::run Step 1\n";
 	SudokuChromosome sudokuInit[3][3];
 	sudokuInit[0][0].number(0,1) = 3;
 	sudokuInit[0][0].number(0,2) = 1;
@@ -495,21 +488,14 @@ void SudokuEnviroment::run()
 	sudokuInit[2][2].number(2,0) = 2;
 	sudokuInit[2][2].number(2,2) = 5;
 
-	//std::cout << "SudokuEnviroment::run Step 2\n";
-	//std::cout << "SudokuEnviroment::run tabla** = " << sudokuInit << "\n";
-	//std::cout << "sudokuInit[1][1].number(2,1) = " << sudokuInit[1][1].getNumber(2,1) << "\n";
-	//std::cout << "sudokuInit[0][0] = " << &sudokuInit[0][0] << "\n";
-	//std::cout << "sudokuInit[1][0] = " << &sudokuInit[1][0] << "\n";	
-	//std::cout << "sudokuInit[0][0] = " << &sudokuInit[2][0] << "\n";
+	
 	//poblacion inicial
 	std::list<ae::Single*> population;
 	
 	const SudokuChromosome (*p)[3] = sudokuInit;	
-	//std::cout << "p[1][1].number(2,1) = " << p[1][1].getNumber(2,1) << "\n";
-	
 	for(unsigned short i = 0; i < initPopulation; i++,idCount++)
 	{
-		SudokuSingle* s = new SudokuSingle(idCount,p);
+		SudokuSingle* s = new SudokuSingle(idCount,*this,sudokuInit);
 		s->randFill();
 		population.push_back(s);
 	}
