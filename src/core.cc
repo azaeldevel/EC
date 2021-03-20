@@ -280,7 +280,6 @@ Enviroment::Enviroment()
 	loglevel = 0;
 	//sigmaReduction = 1.0;
 	//minSolutions = 1;
-	maxProgenitor = 2;
 	pMutationEvent = 0.02;
 	pMutableGene = 0.4;
 }
@@ -293,9 +292,9 @@ Population Enviroment::getInitPopulation()const
 {
 	return initPopulation;
 }
-Population Enviroment::getMaxProgenitor()const
+Population Enviroment::getMaxEliminination()const
 {
-	return maxProgenitor;
+	return maxEliminination;
 }
 double Enviroment::getSigma() const
 {
@@ -316,6 +315,12 @@ double Enviroment::getProbabilityMutableGene()const
 double Enviroment::getProbabilityMutationEvent()const
 {
 	return pMutationEvent;
+}
+
+void Enviroment::remove(ae::Single* s)
+{
+	delete s;
+	std::list<ae::Single*>::remove(s);
 }
 
 }

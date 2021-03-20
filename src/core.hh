@@ -150,7 +150,7 @@ public:
 	Enviroment();
 	Population getMaxPopulation()const;
 	Population getInitPopulation()const;
-	Population getMaxProgenitor()const;
+	Population getMaxEliminination()const;
 	
 	double getSigma() const;
 	//double getSigmaReduction() const;
@@ -158,7 +158,7 @@ public:
 	double getEpsilon() const;
 	double getProbabilityMutableGene()const;
 	double getProbabilityMutationEvent()const;
-	
+	void remove(ae::Single*);
 	
 	virtual void run() = 0;
 	
@@ -167,7 +167,7 @@ protected:
 	Population initPopulation;
 
 	ID idCount = 1;
-	Population maxProgenitor;
+	Population maxEliminination;
 	
 	bool loglevel;
 	double sigma;

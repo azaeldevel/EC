@@ -345,10 +345,10 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 			{
 				for(unsigned short j = 0; j < 3; j++)
 				{
-					newtabla[i][j].mutate(getEnviroment().getProbabilityMutationEvent());
+					newtabla[i][j].mutate(getEnviroment().getProbabilityMutableGene());
 				}
 			}
-			newj.mutate(getEnviroment().getProbabilityMutationEvent());
+			newj.mutate(getEnviroment().getProbabilityMutableGene());
 			if(loglevel > 1) std::cout << "\tSe detecta mutacion para " << idCount << "\n";
 		}
 
@@ -435,9 +435,9 @@ ae::Single* SudokuEnviroment::getRandomSingle() const
 }
 SudokuEnviroment::SudokuEnviroment()
 {
-	maxPopulation = 1000;
+	maxPopulation = 4000;
 	initPopulation = maxPopulation;
-	maxProgenitor = maxPopulation / 10;
+	maxEliminination = maxPopulation / 20;
 	idCount = 1;
 
 	loglevel = 1;
@@ -448,13 +448,13 @@ SudokuEnviroment::SudokuEnviroment()
 	//fixedPopupation = true;
 	//requiereCertainty = true;
 	actualIteration = 0;
-	limitIteration = 2000;
+	limitIteration = 3000;
 	newIteration = true;
 	minSolutions = 1;
-	pMutationEvent = 0.05;
+	pMutationEvent = 0.02;
+	pMutableGene = pMutationEvent/81.0;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
-	pMutableGene = 2.0/81.0;
 	
 }
 unsigned short SudokuEnviroment::getFaltantes() const
@@ -574,8 +574,6 @@ void SudokuEnviroment::run()
 		{
 			fn4 << actualIteration;
 			fn4 << ",";
-			fn4 << gamma;
-			fn4 << ",";
 			fn4 << size();
 			fn4 << ",";
 			fn4 << media;
@@ -595,13 +593,21 @@ void SudokuEnviroment::run()
 		reverse_iterator toDelete = rend();
 		for(reverse_iterator it = rbegin(); it != rend(); it++)
 		{
-			if(countDeletes < countActual/6)
+			if(countDeletes < maxEliminination)
 			{
-				toDelete = it;
-				countDeletes++;
+				if(1.0 - (*it)->getStrength() < SudokuEnviroment::epsilon)
+				{//no eliminar si h alcanzado el valor maximo
+					continue;
+				}	
+				else
+				{
+					toDelete = it;
+					countDeletes++;
+				}
 			}
 			if(toDelete != rend()) 
 			{
+				//delete *toDelete;
 				remove(*toDelete);
 				toDelete = rend();
 			}
@@ -633,7 +639,6 @@ void SudokuEnviroment::run()
 		std::list<ae::Single*> newschils;
 		do
 		{
-			//std::cout << "Step 1\n";
 			ae::Single* single1 = getRandomSingle();
 			//std::cout << "Step 2\n";
 			if(single1 == NULL) continue;
