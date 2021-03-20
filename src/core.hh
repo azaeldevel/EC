@@ -159,6 +159,7 @@ public:
 	double getProbabilityMutableGene()const;
 	double getProbabilityMutationEvent()const;
 	void remove(ae::Single*);
+	unsigned long getSession()const;
 	
 	virtual void run() = 0;
 	

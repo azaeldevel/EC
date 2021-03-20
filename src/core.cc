@@ -3,6 +3,8 @@
 #include <octetos/core/Error.hh>
 #include <iostream>
 #include <algorithm>
+#include <ctime>
+
 
 #include "core.hh"
 
@@ -315,6 +317,20 @@ double Enviroment::getProbabilityMutableGene()const
 double Enviroment::getProbabilityMutationEvent()const
 {
 	return pMutationEvent;
+}
+unsigned long Enviroment::getSession()const
+{
+	std::time_t t = std::time(0);   // get time now
+    std::tm* now = std::localtime(&t);
+
+	unsigned long v = (now->tm_year + 1900) * 100000;
+	v += (now->tm_mon + 1 ) * 10000;
+	v += now->tm_mday * 1000;
+	v += now->tm_hour * 100;
+	v += now->tm_min * 10;
+	v += now->tm_sec;
+	
+    return v;
 }
 
 void Enviroment::remove(ae::Single* s)

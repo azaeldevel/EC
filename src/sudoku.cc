@@ -4,7 +4,7 @@
 #include <octetos/core/Error.hh>
 #include <fstream>
 #include <iterator>
-
+#include <octetos/coreutils/shell.hh>
 
 #include "GA-ext.hh"
 
@@ -379,6 +379,8 @@ void SudokuSingle::saveEval(std::ofstream& fn)
 	fn << getStrength();	
 	fn << ",";
 	fn << getMD5();
+	fn << ",";
+	fn << getAge();
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -451,7 +453,7 @@ SudokuEnviroment::SudokuEnviroment()
 	limitIteration = 3000;
 	newIteration = true;
 	minSolutions = 1;
-	pMutationEvent = 0.02;
+	pMutationEvent = 0.002;
 	pMutableGene = pMutationEvent/81.0;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
@@ -511,7 +513,11 @@ void SudokuEnviroment::run()
 		push_back(s);
 	}
 
-	std::string strfn4 = "log/Sudoku-" + std::to_string(actualIteration) + "-history.csv";
+	std::string logDir = "log-" + std::to_string(getSession());
+	coreutils::Shell shell;
+	shell.mkdir(logDir);
+
+	std::string strfn4 = logDir + "/Sudoku-" + std::to_string(actualIteration) + "-history.csv";
 	std::ofstream fn4(strfn4);
 	do
 	{
@@ -528,6 +534,7 @@ void SudokuEnviroment::run()
 		for(ae::Single* s : *this)
 		{
 			s->eval();	
+			s->deltaAge ();
 		}
 		ae::ID countSolution = 0;
 		sort(cmpStrength);
@@ -542,7 +549,7 @@ void SudokuEnviroment::run()
 			if(1.0 - s->getStrength() < SudokuEnviroment::epsilon)
 			{
 				countSolution++;
-				std::string strfn3 = "log/Sudoku-" + std::to_string(actualIteration) + "-solutions.csv";
+				std::string strfn3 = logDir + "/Sudoku-" + std::to_string(actualIteration) + "-solutions.csv";
 				std::ofstream fn3(strfn3);
 				if(not fn3.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
 				s->saveEval(fn3);
@@ -580,7 +587,11 @@ void SudokuEnviroment::run()
 			fn4 << ",";
 			fn4 << getFaltantes();
 			fn4 << ",";
-			fn4 << sigma;			
+			fn4 << sigma;	
+			fn4 << ",";
+			fn4 << pMutationEvent;
+			fn4 << ",";
+			fn4 << pMutableGene;		
 			fn4.flush();
 		}
 		else
@@ -625,7 +636,7 @@ void SudokuEnviroment::run()
 		}
 
 		
-		std::string strfn = "log/Sudoku-" + std::to_string(actualIteration) + ".csv";
+		std::string strfn = logDir +  "/Sudoku-" + std::to_string(actualIteration) + ".csv";
 		std::ofstream fn(strfn);
 		if(not fn.is_open()) throw "No se logro abrier el archivo";
 		for(ae::Single* s : *this)
@@ -654,7 +665,7 @@ void SudokuEnviroment::run()
 		}
 		while(newschils.size() + size() <= maxPopulation);
 		
-		std::string strfn2 = "log/Sudoku-" + std::to_string(actualIteration) + "-childs.csv";
+		std::string strfn2 = logDir + "/Sudoku-" + std::to_string(actualIteration) + "-childs.csv";
 		std::ofstream fn2(strfn2);
 		if(not fn2.is_open()) throw "No se logro abrier el archivo";
 		for(ae::Single* s : *this)
