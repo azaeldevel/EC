@@ -144,7 +144,7 @@ enum MethodeSelection
 	LEADER_STRONG,
 };
 
-class Enviroment
+class Enviroment : public std::list<ae::Single*>
 {
 public:
 	Enviroment();
@@ -192,11 +192,11 @@ protected:
 	/**
 	*\brief numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
 	*/
-	float pMutableGene;
+	double pMutableGene;
 	/**
 	*\brief numero entre 0 y 1 que determina la probabilidad de cada el evento de mutacion ocurrar.
 	*/
-	float pMutationEvent;
+	double pMutationEvent;
 };
 
 }

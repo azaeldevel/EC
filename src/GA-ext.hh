@@ -96,6 +96,7 @@ public:
 	virtual void saveEval(std::ofstream& fn);
 	const octetos::core::MD5sum& getMD5() const;
 	void genMD5();
+	
 private:
 	SudokuChromosome tabla[3][3];
 	const SudokuChromosome (*intiVals)[3];
@@ -106,8 +107,19 @@ class SudokuEnviroment : public Enviroment
 {
 public:
 	SudokuEnviroment();
+
+	unsigned short getFaltantes() const;
+	double getGamma() const;
+	ae::Single* getRandomSingleTop()const;
+	ae::Single* getRandomSingle()const;
 	
 	virtual void run();
+private:
+
+	/**
+	*\brief valor stadistico de cada variable.
+	*/
+	double gamma;
 };
 
 }
