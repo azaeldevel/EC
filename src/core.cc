@@ -79,7 +79,7 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 
 	return *this;
 }
-geneF Chromosome::mixture(const geneF& P1,const geneF& P2)
+/*geneF Chromosome::mixture(const geneF& P1,const geneF& P2)
 {
 	if(sizeof(geneF) != sizeof(caret4B_half)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
 	
@@ -103,8 +103,8 @@ geneUS Chromosome::mixtureDigits(const geneUS& P1,const geneUS& P2)
 	crChild->b = crP1->a;
 	crChild->a = crP2->b;
 	return child;
-}
-geneUS Chromosome::mutateDigits(const geneUS& P1)
+}*/
+/*geneUS Chromosome::mutateDigits(const geneUS& P1)
 {
 	if(sizeof(geneUS) != sizeof(caret2B_half_Digits3)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
 
@@ -129,7 +129,7 @@ geneUS Chromosome::mutateDigits(const geneUS& P1)
 		crChild->d = !crP1->d;
 	}
 	return child;
-}
+}*/
 
 
 
@@ -190,7 +190,7 @@ geneUS Junction::get_algorit()const
 }
 geneUS Junction::randAlgt()
 {
-	float randNum = randNumber(0.0,1.0);
+	float randNum = randNumber();
 	if(randNum < 0.01) return COPY;
 
 	return COMBINE;
@@ -201,7 +201,7 @@ geneUS Junction::randChild()
 }
 void Junction::randFill()
 {
-	number = randNumber(1.0,4.0);
+	number = randChild();
 	algorit = randAlgt();
 }
 
@@ -267,7 +267,7 @@ void Single::deltaAge()
 
 	return ((float)strength)/((float)age);
 }*/
-bool Single::mutate()const
+bool Single::mudable()const
 {
 	float numrand = randNumber(0.0,1.0);
 	if(numrand <= env->getProbabilityMutationEvent()) return true;
@@ -323,11 +323,11 @@ unsigned long Enviroment::getSession()const
 	std::time_t t = std::time(0);   // get time now
     std::tm* now = std::localtime(&t);
 
-	unsigned long v = (now->tm_year + 1900) * 100000;
-	v += (now->tm_mon + 1 ) * 10000;
-	v += now->tm_mday * 1000;
-	v += now->tm_hour * 100;
-	v += now->tm_min * 10;
+	unsigned long v = (now->tm_year + 1900) * 10000000000;
+	v += (now->tm_mon + 1 ) * 100000000;
+	v += now->tm_mday * 1000000;
+	v += now->tm_hour * 10000;
+	v += now->tm_min * 100;
 	v += now->tm_sec;
 	
     return v;

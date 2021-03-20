@@ -116,7 +116,7 @@ public:
 	void deltaAge();
 	//void deltaStrength();
 	float efficiency()const;
-	bool mutate()const;
+	bool mudable()const;
 	void init();
 
 	virtual void eval() = 0;

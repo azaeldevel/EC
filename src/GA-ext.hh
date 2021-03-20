@@ -96,6 +96,7 @@ public:
 	virtual void saveEval(std::ofstream& fn);
 	const octetos::core::MD5sum& getMD5() const;
 	void genMD5();
+	void print(std::ostream&) const;
 	
 private:
 	SudokuChromosome tabla[3][3];

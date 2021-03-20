@@ -85,7 +85,7 @@ void SudokuChromosome::copy(const ae::Chromosome& P1,const ae::Chromosome& P2)
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			if(numrd1 < 0.5)
+			if(numrd1 < 0.7)
 			{
 				numbers[i][j] = ((const SudokuChromosome&)P1).numbers[i][j];
 			}
@@ -103,7 +103,7 @@ void SudokuChromosome::mutate(float p)
 		for(unsigned short j = 0; j < 3; j++)
 		{
 			float numrd = randNumber(0.0,1.0);
-			if(numrd < p) numbers[i][j] = ae::Chromosome::mutateDigits(numbers[i][j]);
+			if(numrd <= p) numbers[i][j] = randNumber(1.0,9.1);
 		}
 	}
 }
@@ -115,7 +115,7 @@ void SudokuChromosome::randFill()
 		{
 			if(numbers[i][j] == 0)
 			{
-				numbers[i][j] = randNumber(1.0,9.9);
+				numbers[i][j] = randNumber(1.0,9.1);
 			}
 		}
 	}
@@ -149,8 +149,6 @@ SudokuSingle::SudokuSingle(unsigned int id,const Enviroment& e,const SudokuChrom
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			//std::cout << "&t[" << i << "][" << j << "]" << &t[i][j] << "\n";
-			//std::cout << "t[" << i << "][" << j << "]" << "\n";
 			tabla[i][j] = t[i][j];
 		}
 	}
@@ -339,7 +337,7 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 			throw octetos::core::Exception("Algoritmo desconocido",__FILE__,__LINE__);
 		}
 			
-		if(mutate())
+		if(mudable())
 		{
 			for(unsigned short i = 0; i < 3; i++)
 			{
@@ -402,6 +400,27 @@ const octetos::core::MD5sum& SudokuSingle::getMD5()const
 	return md5;
 }
 
+void SudokuSingle::print(std::ostream& out) const
+{
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		for(unsigned short j = 0; j < 3; j++)
+		{
+			unsigned short countD[] = {0,0,0,0,0,0,0,0,0};
+			for(unsigned short k = 0; k < 3; k++)
+			{
+				for(unsigned short l = 0; l < 3; l++)
+				{					
+					out << " " << tabla[i][k].getNumber(j,l) ;
+				}
+			}
+			out << "\n";
+		}
+		out << "\n";
+	}
+}
+
+
 
 ae::Single* SudokuEnviroment::getRandomSingleTop() const
 {
@@ -450,11 +469,11 @@ SudokuEnviroment::SudokuEnviroment()
 	//fixedPopupation = true;
 	//requiereCertainty = true;
 	actualIteration = 0;
-	limitIteration = 3000;
+	limitIteration = 1000;
 	newIteration = true;
 	minSolutions = 1;
 	pMutationEvent = 0.002;
-	pMutableGene = pMutationEvent/81.0;
+	pMutableGene = 0.1;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
 	
@@ -513,12 +532,13 @@ void SudokuEnviroment::run()
 		push_back(s);
 	}
 
-	std::string logDir = "log-" + std::to_string(getSession());
+	unsigned long session = getSession();
+	std::string logDir = "log-" + std::to_string(session);
 	coreutils::Shell shell;
 	shell.mkdir(logDir);
 
-	std::string strfn4 = logDir + "/Sudoku-" + std::to_string(actualIteration) + "-history.csv";
-	std::ofstream fn4(strfn4);
+	std::string strhistory = logDir + "/Sudoku-history.csv";
+	std::ofstream history (strhistory);
 	do
 	{
 		actualIteration++;
@@ -561,6 +581,7 @@ void SudokuEnviroment::run()
 				fn3.close();
 				if(countSolution <= minSolutions)
 				{
+					std::cout << "Sesion :  " << session << "\n";
 					std::cout << "\tSe alcanzo el conjuto minimo de soluciones\n";
 					return;
 				}
@@ -577,22 +598,23 @@ void SudokuEnviroment::run()
 		sigma /= size();
 		if(loglevel > 0) std::cout << "\tDesviacion estandar : " << sigma << "\n";
 
-		if(fn4.is_open()) 
+		if(history.is_open()) 
 		{
-			fn4 << actualIteration;
-			fn4 << ",";
-			fn4 << size();
-			fn4 << ",";
-			fn4 << media;
-			fn4 << ",";
-			fn4 << getFaltantes();
-			fn4 << ",";
-			fn4 << sigma;	
-			fn4 << ",";
-			fn4 << pMutationEvent;
-			fn4 << ",";
-			fn4 << pMutableGene;		
-			fn4.flush();
+			history  << actualIteration;
+			history  << ",";
+			history  << size();
+			history  << ",";
+			history  << media;
+			history  << ",";
+			history  << sigma;	
+			history  << ",";
+			history  << pMutationEvent;
+			history  << ",";
+			history  << pMutableGene;
+			history  << ",";
+			history  << getFaltantes();
+			history  << "\n";
+			history .flush();
 		}
 		else
 		{
@@ -688,6 +710,7 @@ void SudokuEnviroment::run()
 		}
 		else
 		{
+			std::cout << "Sesion :  " << session << "\n";
 			std::cout << "Se ha alcanzado la iteracion " << limitIteration << ", desea continuar?\n";
 			std::string cmd;
 			std::cin >> cmd;
@@ -708,7 +731,7 @@ void SudokuEnviroment::run()
 	}
 	while(newIteration);
 
-	fn4.close();
+	history .close();
 }
 
 }
