@@ -165,7 +165,7 @@ public:
 	
 	virtual void run() = 0;
 
-	unsigned int mutated;
+	//unsigned int mutated;
 	
 protected:
 	Population maxPopulation;

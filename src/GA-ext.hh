@@ -70,10 +70,10 @@ public:
 	SudokuChromosome();
 	SudokuChromosome(const SudokuChromosome& obj);
 	geneUS getNumber(unsigned short i,unsigned short j) const;
+	void setNumber(unsigned short i,unsigned short j,geneUS);
 
-	const SudokuChromosome& operator = (const SudokuChromosome&);
+	const SudokuChromosome& operator = (const SudokuChromosome&);	
 	
-	geneUS& number(unsigned short i,unsigned short j);
 	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
 	virtual void copy(const ae::Chromosome& P1,const ae::Chromosome& P2);
 	virtual void mutate(float p);

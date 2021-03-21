@@ -55,9 +55,9 @@ geneUS SudokuChromosome::getNumber(unsigned short i,unsigned short j)const
 {
 	return numbers[i][j];	
 }
-geneUS& SudokuChromosome::number(unsigned short i,unsigned short j)
+void SudokuChromosome::setNumber(unsigned short i,unsigned short j,geneUS g)
 {
-	return numbers[i][j];
+	numbers[i][j] = g;
 }
 
 
@@ -138,7 +138,7 @@ void SudokuSingle::genMD5()
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{					
-					 strmd5 += std::to_string(tabla[i][j].number(k,l));
+					 strmd5 += std::to_string(tabla[i][j].getNumber(k,l));
 				}
 			}
 		}
@@ -185,14 +185,14 @@ void SudokuSingle::eval()
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{				
-					if(tabla[i][j].number(k,l) > 9)
+					if(tabla[i][j].getNumber(k,l) > 9)
 					{
 						fails++;
 						//std::cout << "tabla[" << i << "]" << "[" << j << "]" << ".number(" << k << "," << l << ") is " << tabla[i][j].number(k,l) << " > 9\n";
 					}
 					else
 					{
-						if(tabla[i][j].number(k,l) > 0) countD[tabla[i][j].number(k,l) - 1]++;//cuentas la cantidad de digitos repetidos
+						if(tabla[i][j].getNumber(k,l) > 0) countD[tabla[i][j].getNumber(k,l) - 1]++;//cuentas la cantidad de digitos repetidos
 					}
 					//std::cout << "tabla[" << i << "]" << "[" << j << "]" << ".number(" << k << "," << l << ") is " << tabla[i][j].number(k,l) << "\n";
 				}
@@ -216,14 +216,14 @@ void SudokuSingle::eval()
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{					
-					if(tabla[i][k].number(j,l) > 9)
+					if(tabla[i][k].getNumber(j,l) > 9)
 					{
 						fails++;
 						//std::cout << "tabla[" << i << "]" << "[" << k << "]" << ".number(" << j << "," << l << ") is " << tabla[i][k].number(j,l) << " > 9\n";
 					}
 					else
 					{
-						if(tabla[i][k].number(j,l) > 0) countD[tabla[i][k].number(j,l) - 1]++;//cuentas la cantidad de digitos repetidos
+						if(tabla[i][k].getNumber(j,l) > 0) countD[tabla[i][k].getNumber(j,l) - 1]++;//cuentas la cantidad de digitos repetidos
 					}						
 					//std::cout << "tabla[" << i << "]" << "[" << k << "]" << ".set(" << j << "," << l << ") is " << tabla[i][k].set(j,l) << "\n"; 
 				}
@@ -246,14 +246,14 @@ void SudokuSingle::eval()
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{				
-					if(tabla[k][i].number(l,j) > 9)
+					if(tabla[k][i].getNumber(l,j) > 9)
 					{
 						fails++;
 						//std::cout << "tabla[" << k << "]" << "[" << i << "]" << ".number(" << l << "," << j << ") is " << tabla[k][i].number(l,j) << " > 9\n";
 					}
 					else
 					{
-						if(tabla[k][i].number(l,j) > 0)  countD[tabla[k][i].number(l,j) - 1]++;//cuentas la cantidad de digitos repetidos
+						if(tabla[k][i].getNumber(l,j) > 0)  countD[tabla[k][i].getNumber(l,j) - 1]++;//cuentas la cantidad de digitos repetidos
 					}						
 					//std::cout << "tabla[" << k << "]" << "[" << i << "]" << ".set(" << l << "," << j << ") is " << tabla[k][i].set(l,j) << "\n"; 
 				}	
@@ -275,7 +275,7 @@ void SudokuSingle::eval()
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{				
-					if(tabla[i][j].number(k,l) == 0)
+					if(tabla[i][j].getNumber(k,l) == 0)
 					{
 						fails++;
 						//std::cout << "tabla[" << i << "]" << "[" << j << "]" << ".number(" << k << "," << l << ") is " << tabla[i][j].number(k,l) << " > 9\n";
@@ -351,7 +351,7 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 				}
 			}
 			newj.mutate(getEnviroment().getProbabilityMutableGene());
-			getEnviroment().mutated++;
+			//getEnviroment().mutated++;
 			if(loglevel > 1) std::cout << "\tSe detecta mutacion para " << idCount << "\n";
 		}
 
@@ -363,8 +363,12 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 				for(unsigned short k = 0; k < 3; k++)
 				{
 					for(unsigned short l = 0; l < 3; l++)
-					{		
-						if(intiVals[i][j].getNumber(k,l) != 0) newtabla[i][j].number(k,l) = intiVals[i][j].getNumber(k,l);						
+					{
+						if(intiVals[i][j].getNumber(k,l) != 0) 
+						{
+							unsigned short n = intiVals[i][j].getNumber(k,l);
+							newtabla[i][j].setNumber(k,l,n);
+						}
 					}
 				}
 			}
@@ -395,7 +399,7 @@ void SudokuSingle::saveEval(std::ofstream& fn)
 				for(unsigned short l = 0; l < 3; l++)
 				{
 					fn << ",";
-					fn << tabla[i][k].number(j,l);
+					fn << tabla[i][k].getNumber(j,l);
 				}
 			}
 		}
@@ -500,48 +504,51 @@ double SudokuEnviroment::getGamma() const
 void SudokuEnviroment::run()
 {
 	SudokuChromosome sudokuInit[3][3];
-	sudokuInit[0][0].number(0,1) = 3;
-	sudokuInit[0][0].number(0,2) = 1;
-	sudokuInit[0][1].number(0,0) = 9;
-	sudokuInit[0][2].number(0,0) = 7;
-	sudokuInit[0][2].number(0,2) = 4;
-	sudokuInit[0][0].number(1,0) = 7;
-	sudokuInit[0][0].number(1,2) = 8;
-	sudokuInit[0][2].number(1,0) = 6;
-	sudokuInit[0][2].number(1,2) = 9;
-	sudokuInit[0][2].number(2,1) = 2;
-	sudokuInit[0][1].number(2,1) = 1;
-	sudokuInit[1][0].number(0,0) = 8;
-	sudokuInit[1][1].number(0,1) = 6;
-	sudokuInit[1][2].number(0,2) = 7;
-	sudokuInit[1][1].number(1,2) = 2;
-	sudokuInit[1][2].number(1,1) = 3;
-	sudokuInit[1][0].number(2,0) = 3;
-	sudokuInit[1][1].number(2,1) = 4;
-	sudokuInit[1][2].number(2,2) = 2;
-	sudokuInit[2][1].number(0,1) = 5;
-	sudokuInit[2][0].number(1,0) = 2;
-	sudokuInit[2][0].number(1,2) = 9;
-	sudokuInit[2][2].number(0,1) = 8;
-	sudokuInit[2][2].number(1,0) = 3;
-	sudokuInit[2][2].number(1,2) = 1;
-	sudokuInit[2][0].number(2,1) = 8;
-	sudokuInit[2][0].number(2,2) = 6;
-	sudokuInit[2][1].number(2,0) = 7;
-	sudokuInit[2][2].number(2,0) = 2;
-	sudokuInit[2][2].number(2,2) = 5;
+	sudokuInit[0][0].setNumber(0,1,3);
+	sudokuInit[0][0].setNumber(0,2,1);
+	sudokuInit[0][1].setNumber(0,0,9);
+	sudokuInit[0][2].setNumber(0,0,7);
+	sudokuInit[0][2].setNumber(0,2,4);
+	sudokuInit[0][0].setNumber(1,0,7);
+	sudokuInit[0][0].setNumber(1,2,8);
+	sudokuInit[0][2].setNumber(1,0,6);
+	sudokuInit[0][2].setNumber(1,2,9);
+	sudokuInit[0][2].setNumber(2,1,2);
+	sudokuInit[0][1].setNumber(2,1,1);
+	sudokuInit[1][0].setNumber(0,0,8);
+	sudokuInit[1][1].setNumber(0,1,6);
+	sudokuInit[1][2].setNumber(0,2,7);
+	sudokuInit[1][1].setNumber(1,2,2);
+	sudokuInit[1][2].setNumber(1,1,3);
+	sudokuInit[1][0].setNumber(2,0,3);
+	sudokuInit[1][1].setNumber(2,1,4);
+	sudokuInit[1][2].setNumber(2,2,2);
+	sudokuInit[2][1].setNumber(0,1,5);
+	sudokuInit[2][0].setNumber(1,0,2);
+	sudokuInit[2][0].setNumber(1,2,9);
+	sudokuInit[2][2].setNumber(0,1,8);
+	sudokuInit[2][2].setNumber(1,0,3);
+	sudokuInit[2][2].setNumber(1,2,1);
+	sudokuInit[2][0].setNumber(2,1,8);
+	sudokuInit[2][0].setNumber(2,2,6);
+	sudokuInit[2][1].setNumber(2,0,7);
+	sudokuInit[2][2].setNumber(2,0,2);
+	sudokuInit[2][2].setNumber(2,2,5);
 
 	
 	//poblacion inicial
 	//std::list<ae::Single*> population;
 	
 	const SudokuChromosome (*p)[3] = sudokuInit;	
-	for(unsigned short i = 0; i < initPopulation; i++,idCount++)
+	for(Population i = 0; i < initPopulation; i++,idCount++)
 	{
 		SudokuSingle* s = new SudokuSingle(idCount,*this,sudokuInit);
 		s->randFill();
-		push_back(s);
+		push_back(s);		
 	}
+	
+	
+	//((SudokuSingle*)*begin())->print(std::cout);
 
 	unsigned long session = getSession();
 	std::string logDir = "log-" + std::to_string(session);
@@ -561,11 +568,7 @@ void SudokuEnviroment::run()
 			std::cout << "\tTamano de la poblacion : " << size() << "\n";			
 			//std::cout << "\tgamman : " << gamma << "\n";
 		}
-
-		
-		//(*population.begin())->eval();
-		//std::cout << "\t" << (*population.begin())->getID() << " Fortaleza : " << (*population.begin())->getStrength() << "\n";
-		
+				
 		Population countSols = 0;
 		std::string cmdSol;
 		for(ae::Single* s : *this)
@@ -644,8 +647,6 @@ void SudokuEnviroment::run()
 			history  << ",";
 			history  << pMutationEvent;
 			history  << ",";
-			history  << mutated;
-			history  << ",";
 			history  << pMutableGene;
 			history  << ",";
 			history  << getFaltantes();
@@ -709,7 +710,6 @@ void SudokuEnviroment::run()
 		if(loglevel > 0) 
 		{
 			std::cout << "\tNuevos Hijos : " << newschils.size() << "\n";
-			std::cout << "\tMutaciones al momento : " << mutated << "\n";
 		}
 		
 		if(actualIteration < limitIteration)
