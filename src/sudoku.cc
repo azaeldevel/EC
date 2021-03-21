@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iterator>
 #include <octetos/coreutils/shell.hh>
+#include <algorithm>
+
 
 #include "GA-ext.hh"
 
@@ -465,9 +467,9 @@ ae::Single* SudokuEnviroment::getRandomSingle() const
 }
 SudokuEnviroment::SudokuEnviroment()
 {
-	maxPopulation = 100;
+	maxPopulation = 500;
 	initPopulation = maxPopulation;
-	maxProgenitor = 4;
+	maxProgenitor = 18;
 	idCount = 1;
 
 	loglevel = 1;
@@ -554,7 +556,6 @@ void SudokuEnviroment::run()
 		std::cout << ">>> Iteracion : " << actualIteration << "\n";
 		media = 0.0;
 		sigma = 0.0;
-		
 		if(loglevel > 0) 
 		{
 			std::cout << "\tTamano de la poblacion : " << size() << "\n";			
@@ -564,10 +565,35 @@ void SudokuEnviroment::run()
 		
 		//(*population.begin())->eval();
 		//std::cout << "\t" << (*population.begin())->getID() << " Fortaleza : " << (*population.begin())->getStrength() << "\n";
+		
+		Population countSols = 0;
+		std::string cmdSol;
 		for(ae::Single* s : *this)
 		{
 			s->eval();	
 			s->deltaAge ();
+			if(1.0 - s->getStrength () < epsilon)
+			{
+				countSols++;
+				if(countSols >= minSolutions)
+				{
+					std::cout << "\tSe completo el conju de solucion, desea cotinua?\n";
+					std::cin >> cmdSol;
+					if(cmdSol.compare("S") == 0 or cmdSol.compare("s"))
+					{
+						continue;
+					}
+					else if(cmdSol.compare("N") == 0 or cmdSol.compare("n"))
+					{
+						return;
+					}	
+					else if(std::stoi(cmdSol) > 0)
+					{
+						int add = std::stoi(cmdSol);
+						minSolutions += add;
+					}
+				}
+			}
 		}
 		//ae::ID countSolution = 0;
 		sort(cmpStrength);
@@ -645,8 +671,7 @@ void SudokuEnviroment::run()
 			std::cout << "\tProgenitores selecionados, total : " << size() << "\n";
 			std::cout << "\tEliminados : " << countBefore - size() << "\n";	
 		}
-
-		
+				
 		
 		std::list<ae::Single*> newschils;
 		do
@@ -668,17 +693,14 @@ void SudokuEnviroment::run()
 		
 		std::string strfn2 = logDir + "/Sudoku-" + std::to_string(actualIteration) + "-childs.csv";
 		std::ofstream fn2(strfn2);
-		if(not fn2.is_open()) throw "No se logro abrier el archivo";
-		for(ae::Single* s : *this)
+		if(not fn2.is_open()) throw "No se logro abrier el archivo";				
+		for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
+			push_front(s);
 			s->saveEval(fn2);
 		}
 		fn2.flush();
-		fn2.close();		
-		for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
-		{
-			push_front(s);						
-		}
+		fn2.close();
 		if(loglevel > 0) 
 		{
 			std::cout << "\tNuevos Hijos : " << newschils.size() << "\n";
@@ -713,25 +735,37 @@ void SudokuEnviroment::run()
 	while(newIteration);
 
 	history .close();
-	//compress(logDir,logDir + ".tar");
 }
+
+
 void SudokuEnviroment::selection()
 {
 	//eliminar duplicados
 	for(iterator i = begin(); i != end(); i++)
 	{
-		//std::cout << " (*i)->getID() =  " << (*i)->getID() << "\n";
+		//std::cout << "Step 1\n";
 		iterator j = i;
+		//std::cout << "Step 2\n";
 		advance(j,1);
-		for(; i != j and j != end();j++)
+		//std::cout << "Step 3\n";
+		while(i != j and j != end() and size() >= maxProgenitor)
 		{
-			//std::cout << " (*j)->getID() =  " << (*j)->getID() << "\n";
-			if(((SudokuSingle*)*i)->getMD5().compare(((SudokuSingle*)*j)->getMD5()) == 0)
+			//std::cout << "Step 3.1\n";
+			if(((SudokuSingle*)*i)->getMD5().compare(((SudokuSingle*)*j)->getMD5()) == 0 )
 			{
+				//std::cout << "Step 3.2\n";
 				delete *j;
+				//std::cout << "Step 3.3\n";
 				j = erase(j);
+				//std::cout << "Step 3.4\n";
 			}
+			else
+			{
+				j++;
+			}
+			///std::cout << "Step 3.5\n";
 		}
+		//std::cout << "Step 4\n";
 	}
 	while(size() > maxProgenitor)
 	{

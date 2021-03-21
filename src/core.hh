@@ -188,7 +188,7 @@ protected:
 	*\brief si el programa encuentra al menos las soluciones indcadas podra terminar
 	*
 	*/
-	unsigned short minSolutions;
+	Population minSolutions;
 
 	bool newIteration;
 
