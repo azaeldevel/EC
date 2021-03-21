@@ -65,6 +65,8 @@ public:
 	static geneUS mutateDigits(const geneUS& P1);	
 	virtual void randFill() = 0;
 	
+protected:
+	unsigned int mutated;
 private:
 	std::string name;
 };
@@ -98,19 +100,18 @@ private:
 };
 
 
-
 class Single
 {
 public:
-	Single(ID id,const Enviroment&);	
-	Single(ID id,const Enviroment&,const Junction& junction);
+	Single(ID id,Enviroment&);	
+	Single(ID id,Enviroment&,const Junction& junction);
 	
 	ID getID()const;
 	//const std::vector<Chromosome*>& getChromosome()const;
 	unsigned short getAge() const;
 	double getStrength() const;
 	const Junction& getJunction()const;
-	const Enviroment& getEnviroment()const;
+	Enviroment& getEnviroment()const;
 
 	void add(Chromosome&);
 	void deltaAge();
@@ -118,6 +119,7 @@ public:
 	float efficiency()const;
 	bool mudable()const;
 	void init();
+	
 
 	virtual void eval() = 0;
 	virtual void randFill() = 0;
@@ -134,7 +136,7 @@ private:
 	//std::vector<Chromosome*> chromosomes;
 	unsigned short age;
 	Junction junction;
-	const Enviroment* env;
+	Enviroment* env;
 };
 bool cmpStrength(const Single* f,const Single* s);
 
@@ -150,7 +152,7 @@ public:
 	Enviroment();
 	Population getMaxPopulation()const;
 	Population getInitPopulation()const;
-	Population getMaxEliminination()const;
+	Population getMaxProgenitor()const;
 	
 	double getSigma() const;
 	//double getSigmaReduction() const;
@@ -158,17 +160,19 @@ public:
 	double getEpsilon() const;
 	double getProbabilityMutableGene()const;
 	double getProbabilityMutationEvent()const;
-	void remove(ae::Single*);
+	//void remove(ae::Single*);
 	unsigned long getSession()const;
 	
 	virtual void run() = 0;
+
+	unsigned int mutated;
 	
 protected:
 	Population maxPopulation;
 	Population initPopulation;
 
 	ID idCount = 1;
-	Population maxEliminination;
+	Population maxProgenitor;
 	
 	bool loglevel;
 	double sigma;

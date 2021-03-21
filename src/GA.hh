@@ -15,8 +15,8 @@ namespace ae::ga
 class Single : public ae::Single
 {
 public:
-	Single(unsigned int id,const Enviroment&,const Junction& junction);
-	Single(unsigned int id,const Enviroment&);
+	Single(unsigned int id,Enviroment&,const Junction& junction);
+	Single(unsigned int id,Enviroment&);
 };
 
 

@@ -213,12 +213,12 @@ void Single::init()
 	age = 0;
 	strength = 0;
 }
-Single::Single(ae::ID id,const Enviroment& e) : env(&e)
+Single::Single(ae::ID id,Enviroment& e) : env(&e)
 {
 	this->id = id;
 	init();
 }
-Single::Single(ae::ID id,const Enviroment& e,const Junction& j) : junction(j),env(&e)
+Single::Single(ae::ID id,Enviroment& e,const Junction& j) : junction(j),env(&e)
 {
 	this->id = id;
 	init();
@@ -243,7 +243,7 @@ const Junction& Single::getJunction()const
 {
 	return junction;
 }
-const Enviroment& Single::getEnviroment()const
+Enviroment& Single::getEnviroment()const
 {
 	return *env;
 }
@@ -294,9 +294,9 @@ Population Enviroment::getInitPopulation()const
 {
 	return initPopulation;
 }
-Population Enviroment::getMaxEliminination()const
+Population Enviroment::getMaxProgenitor()const
 {
-	return maxEliminination;
+	return maxProgenitor;
 }
 double Enviroment::getSigma() const
 {
@@ -333,10 +333,10 @@ unsigned long Enviroment::getSession()const
     return v;
 }
 
-void Enviroment::remove(ae::Single* s)
+/*void Enviroment::remove(ae::Single* s)
 {
-	delete s;
+	//delete s;
 	std::list<ae::Single*>::remove(s);
-}
+}*/
 
 }

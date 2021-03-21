@@ -143,7 +143,7 @@ void SudokuSingle::genMD5()
 	}
 	md5.set(strmd5);
 }
-SudokuSingle::SudokuSingle(unsigned int id,const Enviroment& e,const SudokuChromosome (*t)[3]) : Single(id,e)
+SudokuSingle::SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome (*t)[3]) : Single(id,e)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -155,7 +155,7 @@ SudokuSingle::SudokuSingle(unsigned int id,const Enviroment& e,const SudokuChrom
 	intiVals = t;
 	genMD5();
 }
-SudokuSingle::SudokuSingle(unsigned int id,const Enviroment& e,const SudokuChromosome (*t)[3],const Junction& junction) : Single(id,e,junction)
+SudokuSingle::SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome (*t)[3],const Junction& junction) : Single(id,e,junction)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -318,7 +318,9 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 			{
 				for(unsigned short j = 0; j < 3; j++)
 				{
-					newtabla[i][j].combine(tabla[i][j],((SudokuSingle*)single)->tabla[i][j]);
+					float rnnum = randNumber();
+					if(rnnum < 0.5) newtabla[i][j].combine(tabla[i][j],((SudokuSingle*)single)->tabla[i][j]);
+					else newtabla[i][j].combine(((SudokuSingle*)single)->tabla[i][j],tabla[i][j]);
 				}
 			}
 			newj.combine(getJunction(),single->getJunction());
@@ -347,6 +349,7 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 				}
 			}
 			newj.mutate(getEnviroment().getProbabilityMutableGene());
+			getEnviroment().mutated++;
 			if(loglevel > 1) std::cout << "\tSe detecta mutacion para " << idCount << "\n";
 		}
 
@@ -376,6 +379,8 @@ void SudokuSingle::saveEval(std::ofstream& fn)
 	fn << ",";
 	fn << getStrength();	
 	fn << ",";
+	fn << getErros();
+	fn << ",";
 	fn << getMD5();
 	fn << ",";
 	fn << getAge();
@@ -399,6 +404,11 @@ const octetos::core::MD5sum& SudokuSingle::getMD5()const
 {
 	return md5;
 }
+unsigned int SudokuSingle::getErros()const
+{
+	return (1.0 - strength) * (1.0 / (((SudokuEnviroment&)getEnviroment()).getGamma()));
+}
+
 
 void SudokuSingle::print(std::ostream& out) const
 {
@@ -406,7 +416,6 @@ void SudokuSingle::print(std::ostream& out) const
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			unsigned short countD[] = {0,0,0,0,0,0,0,0,0};
 			for(unsigned short k = 0; k < 3; k++)
 			{
 				for(unsigned short l = 0; l < 3; l++)
@@ -456,9 +465,9 @@ ae::Single* SudokuEnviroment::getRandomSingle() const
 }
 SudokuEnviroment::SudokuEnviroment()
 {
-	maxPopulation = 4000;
+	maxPopulation = 100;
 	initPopulation = maxPopulation;
-	maxEliminination = maxPopulation / 20;
+	maxProgenitor = 4;
 	idCount = 1;
 
 	loglevel = 1;
@@ -472,15 +481,15 @@ SudokuEnviroment::SudokuEnviroment()
 	limitIteration = 1000;
 	newIteration = true;
 	minSolutions = 1;
-	pMutationEvent = 0.002;
-	pMutableGene = 0.1;
+	pMutationEvent = 0.9;
+	pMutableGene = 1.0/51.0;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
 	
 }
 unsigned short SudokuEnviroment::getFaltantes() const
 {
-	return (1.0 - media) * 4.0 * 81.0;
+	return (1.0 - media) * (1.0/gamma);
 }
 double SudokuEnviroment::getGamma() const
 {
@@ -542,11 +551,15 @@ void SudokuEnviroment::run()
 	do
 	{
 		actualIteration++;
+		std::cout << ">>> Iteracion : " << actualIteration << "\n";
 		media = 0.0;
 		sigma = 0.0;
-		std::cout << ">>> Iteracion : " << actualIteration << "\n";
-		std::cout << "\tgamman : " << gamma << "\n";
-		if(loglevel > 0) std::cout << "\tTamano de la poblacion : " << size() << "\n";
+		
+		if(loglevel > 0) 
+		{
+			std::cout << "\tTamano de la poblacion : " << size() << "\n";			
+			//std::cout << "\tgamman : " << gamma << "\n";
+		}
 
 		
 		//(*population.begin())->eval();
@@ -556,47 +569,37 @@ void SudokuEnviroment::run()
 			s->eval();	
 			s->deltaAge ();
 		}
-		ae::ID countSolution = 0;
+		//ae::ID countSolution = 0;
 		sort(cmpStrength);
 		for(ae::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
 			media += s->getStrength();			
 		}
-		for(ae::Single* s : *this)
-		{
-			//Verifiacion d soluciones			
-			if(1.0 - s->getStrength() < SudokuEnviroment::epsilon)
-			{
-				countSolution++;
-				std::string strfn3 = logDir + "/Sudoku-" + std::to_string(actualIteration) + "-solutions.csv";
-				std::ofstream fn3(strfn3);
-				if(not fn3.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
-				s->saveEval(fn3);
-				if(countSolution > 0)
-				{
-					std::cout << "\tSe encontro una solucion.\n";
-				}
-				fn3.flush();
-				fn3.close();
-				if(countSolution <= minSolutions)
-				{
-					std::cout << "Sesion :  " << session << "\n";
-					std::cout << "\tSe alcanzo el conjuto minimo de soluciones\n";
-					return;
-				}
-			}
-		}
 		media /= size();
-		if(loglevel > 0) std::cout << "\tmedia : " << media << "\n";
-		if(loglevel > 0) std::cout << "\tVariables faltantes : " << getFaltantes() << "\n";
 		for(ae::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
 			sigma += pow(s->getStrength() - media,2);
 		}
 		sigma /= size();
-		if(loglevel > 0) std::cout << "\tDesviacion estandar : " << sigma << "\n";
+
+		std::string strfn = logDir +  "/Sudoku-" + std::to_string(actualIteration) + ".csv";
+		std::ofstream fn(strfn);
+		if(not fn.is_open()) throw "No se logro abrier el archivo";
+		for(ae::Single* s : *this)
+		{
+			s->saveEval(fn);
+		}
+		fn.flush();
+		fn.close();
+		
+		if(loglevel > 0) 
+		{
+			std::cout << "\tmedia : " << media << "\n";
+			std::cout << "\tDesviacion estandar : " << sigma << "\n";
+			std::cout << "\tVariables faltantes : " << getFaltantes() << "\n";
+		}
 
 		if(history.is_open()) 
 		{
@@ -610,6 +613,8 @@ void SudokuEnviroment::run()
 			history  << ",";
 			history  << pMutationEvent;
 			history  << ",";
+			history  << mutated;
+			history  << ",";
 			history  << pMutableGene;
 			history  << ",";
 			history  << getFaltantes();
@@ -621,54 +626,28 @@ void SudokuEnviroment::run()
 			throw "No se logro abrier el archivo";
 		}
 		
-		ae::ID countActual = size();
-		ae::ID countDeletes = 0;
-		reverse_iterator toDelete = rend();
-		for(reverse_iterator it = rbegin(); it != rend(); it++)
+		ae::ID countBefore = size();
+		
+		selection();
+		
+		std::string strfn5 = logDir +  "/Sudoku-" + std::to_string(actualIteration) + "-selection.csv";
+		std::ofstream fn5(strfn5);
+		if(not fn5.is_open()) throw "No se logro abrier el archivo";
+		for(ae::Single* s : *this)
 		{
-			if(countDeletes < maxEliminination)
-			{
-				if(1.0 - (*it)->getStrength() < SudokuEnviroment::epsilon)
-				{//no eliminar si h alcanzado el valor maximo
-					continue;
-				}	
-				else
-				{
-					toDelete = it;
-					countDeletes++;
-				}
-			}
-			if(toDelete != rend()) 
-			{
-				//delete *toDelete;
-				remove(*toDelete);
-				toDelete = rend();
-			}
+			s->saveEval(fn5);
 		}
-		if(toDelete != rend()) 
-		{
-			remove(*toDelete);
-			toDelete = rend();
-		}
-		unsigned short countEliminened = countActual - size();
+		fn5.flush();
+		fn5.close();
+		
 		if(loglevel > 0) 
 		{
 			std::cout << "\tProgenitores selecionados, total : " << size() << "\n";
-			std::cout << "\tEliminados : " << countEliminened << "\n";			
+			std::cout << "\tEliminados : " << countBefore - size() << "\n";	
 		}
 
 		
-		std::string strfn = logDir +  "/Sudoku-" + std::to_string(actualIteration) + ".csv";
-		std::ofstream fn(strfn);
-		if(not fn.is_open()) throw "No se logro abrier el archivo";
-		for(ae::Single* s : *this)
-		{
-			s->saveEval(fn);
-		}
-		fn.flush();
-		fn.close();
-				
-		//if(loglevel > 0) std::cout << "\tGenerando decendencia..\n";
+		
 		std::list<ae::Single*> newschils;
 		do
 		{
@@ -695,14 +674,16 @@ void SudokuEnviroment::run()
 			s->saveEval(fn2);
 		}
 		fn2.flush();
-		fn2.close();
+		fn2.close();		
 		for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
-			float rdnum = randNumber(0.0,1.0);
-			if(rdnum < 0.5) push_front(s);
-			else push_back(s);						
+			push_front(s);						
 		}
-		if(loglevel > 0) std::cout << "\tNuevos Hijos : " << newschils.size() << "\n";
+		if(loglevel > 0) 
+		{
+			std::cout << "\tNuevos Hijos : " << newschils.size() << "\n";
+			std::cout << "\tMutaciones al momento : " << mutated << "\n";
+		}
 		
 		if(actualIteration < limitIteration)
 		{
@@ -732,6 +713,38 @@ void SudokuEnviroment::run()
 	while(newIteration);
 
 	history .close();
+	//compress(logDir,logDir + ".tar");
+}
+void SudokuEnviroment::selection()
+{
+	//eliminar duplicados
+	for(iterator i = begin(); i != end(); i++)
+	{
+		//std::cout << " (*i)->getID() =  " << (*i)->getID() << "\n";
+		iterator j = i;
+		advance(j,1);
+		for(; i != j and j != end();j++)
+		{
+			//std::cout << " (*j)->getID() =  " << (*j)->getID() << "\n";
+			if(((SudokuSingle*)*i)->getMD5().compare(((SudokuSingle*)*j)->getMD5()) == 0)
+			{
+				delete *j;
+				j = erase(j);
+			}
+		}
+	}
+	while(size() > maxProgenitor)
+	{
+		pop_back();
+	}
+}
+bool SudokuEnviroment::compress(const std::string& tarf,const std::string& dir)
+{
+	//zipFile zf = zipOpen64(tarf.c_str(),0);
+	//zipOpenNewFileInZip(zf,dir.c_str(),&zi,NULL,0,NULL,0,NULL,0,-1);
+	
+
+    return true;
 }
 
 }
