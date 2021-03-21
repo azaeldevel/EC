@@ -572,28 +572,6 @@ void SudokuEnviroment::run()
 		{
 			s->eval();	
 			s->deltaAge ();
-			if(1.0 - s->getStrength () < epsilon)
-			{
-				countSols++;
-				if(countSols >= minSolutions)
-				{
-					std::cout << "\tSe completo el conju de solucion, desea cotinua?\n";
-					std::cin >> cmdSol;
-					if(cmdSol.compare("S") == 0 or cmdSol.compare("s"))
-					{
-						continue;
-					}
-					else if(cmdSol.compare("N") == 0 or cmdSol.compare("n"))
-					{
-						return;
-					}	
-					else if(std::stoi(cmdSol) > 0)
-					{
-						int add = std::stoi(cmdSol);
-						minSolutions += add;
-					}
-				}
-			}
 		}
 		//ae::ID countSolution = 0;
 		sort(cmpStrength);
@@ -627,6 +605,33 @@ void SudokuEnviroment::run()
 			std::cout << "\tVariables faltantes : " << getFaltantes() << "\n";
 		}
 
+		for(ae::Single* s : *this)
+		{
+			if(1.0 - s->getStrength () < Enviroment::epsilon)
+			{
+				countSols++;
+				if(countSols >= minSolutions)
+				{
+					((SudokuSingle*)s)->print(std::cout);
+					std::cout << "\n\tSe completo el conjunto de solucion mini, desea cotinua?\n";
+					std::cin >> cmdSol;
+					if(cmdSol.compare("S") == 0 or cmdSol.compare("s") == 0)
+					{
+						continue;
+					}
+					else if(cmdSol.compare("N") == 0 or cmdSol.compare("n") == 0)
+					{
+						return;
+					}	
+					else if(std::stoi(cmdSol) > 0)
+					{
+						int add = std::stoi(cmdSol);
+						minSolutions += add;
+					}
+				}
+			}
+		}
+		
 		if(history.is_open()) 
 		{
 			history  << actualIteration;
@@ -767,9 +772,11 @@ void SudokuEnviroment::selection()
 		}
 		//std::cout << "Step 4\n";
 	}
-	while(size() > maxProgenitor)
+	iterator i = end();
+	while(size() > maxProgenitor)//elimina desde el final hasta alcanzar el conjuto maximo de progenitores
 	{
-		pop_back();
+		--i;
+		i = erase(i);
 	}
 }
 bool SudokuEnviroment::compress(const std::string& tarf,const std::string& dir)
