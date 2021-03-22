@@ -17,27 +17,27 @@ bool cmpStrength(const Single* f,const Single* s)
 {
 	return f->getStrength() > s->getStrength();
 }
-float randNumber()
+double randNumber()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> distr(0.0, 1.0);
+	std::uniform_real_distribution<double> distr(0.0, 1.0);
 	
 	return distr(gen);
 }
-float randNumber(float max)
+double randNumber(double max)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> distr(0.0, max);
+	std::uniform_real_distribution<double> distr(0.0, max);
 	
 	return distr(gen);
 }
-float randNumber(float min,float max)
+double randNumber(double min,double max)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> distr(min, max);
+	std::uniform_real_distribution<double> distr(min, max);
 	
 	return distr(gen);
 }
@@ -154,6 +154,15 @@ Junction::Junction(geneUS n,geneUS a): Chromosome("Junction")
 	algorit = a;
 }
 
+geneUS Junction::get_number()const
+{
+	return number;
+}
+geneUS Junction::get_algorit()const
+{
+	return algorit;
+}
+
 void Junction::combine(const Chromosome& P1,const Chromosome& P2)
 {
 	copy(P1,P2);
@@ -161,7 +170,7 @@ void Junction::combine(const Chromosome& P1,const Chromosome& P2)
 
 void Junction::copy(const Chromosome& P1,const Chromosome& P2)
 {
-	float rdnum = randNumber(0.0,1.0);
+	double rdnum = randNumber(0.0,1.0);
 	if(rdnum < 0.5)
 	{
 		number = ((Junction&)P1).number;
@@ -175,22 +184,14 @@ void Junction::copy(const Chromosome& P1,const Chromosome& P2)
 }
 void Junction::mutate(float p)
 {
-	float numrd1 = randNumber(0.0,1.0);
+	double numrd1 = randNumber(0.0,1.0);
 	if(numrd1 <= p) number = randNumber(1.0,10.0);
 	numrd1 = randNumber(0.0,1.0);
 	if(numrd1 <= p) algorit = randAlgt();
 }
-geneUS Junction::get_number()const
-{
-	return number;
-}
-geneUS Junction::get_algorit()const
-{
-	return algorit;
-}
 geneUS Junction::randAlgt()
 {
-	float randNum = randNumber();
+	double randNum = randNumber();
 	if(randNum < 0.01) return COPY;
 
 	return COMBINE;
@@ -208,10 +209,19 @@ void Junction::randFill()
 
 
 
-void Single::init()
+
+
+
+
+
+
+
+
+
+
+Single::Single(const Single&)
 {
-	age = 0;
-	strength = 0;
+	throw octetos::core::Exception("Operacion invalida.",__FILE__,__LINE__);
 }
 Single::Single(ae::ID id,Enviroment& e) : env(&e)
 {
@@ -223,10 +233,9 @@ Single::Single(ae::ID id,Enviroment& e,const Junction& j) : junction(j),env(&e)
 	this->id = id;
 	init();
 }
-/*const std::vector<Chromosome*>& Single::getChromosome()const
-{
-	return chromosomes;
-}*/
+
+
+
 ID Single::getID()const
 {
 	return id;
@@ -248,31 +257,28 @@ Enviroment& Single::getEnviroment()const
 	return *env;
 }
 
-
-/*void Single::add(Chromosome& c)
+bool Single::mudable()const
 {
-	chromosomes.push_back(&c);
-}*/
+	double numrand = randNumber(0.0,1.0);
+	if(numrand <= env->getProbabilityMutationEvent()) return true;
+	else return false;	
+}
 void Single::deltaAge()
 {
 	age++;
 }
-/*void Single::deltaStrength()
+void Single::init()
 {
-	strength++;
-}*/
-/*float Single::efficiency()const
-{
-	if(age == 0) return 1.0;
-
-	return ((float)strength)/((float)age);
-}*/
-bool Single::mudable()const
-{
-	float numrand = randNumber(0.0,1.0);
-	if(numrand <= env->getProbabilityMutationEvent()) return true;
-	else return false;	
+	age = 0;
+	strength = 0;
 }
+
+
+
+
+
+
+
 
 
 Enviroment::Enviroment()
@@ -332,11 +338,19 @@ unsigned long Enviroment::getSession()const
 	
     return v;
 }
-
-/*void Enviroment::remove(ae::Single* s)
+ID Enviroment::getCountID()
 {
-	//delete s;
-	std::list<ae::Single*>::remove(s);
-}*/
+	return idCount;
+}
+
+
+
+
+
+ID Enviroment::next()
+{
+	return ++idCount;
+}
+
 
 }

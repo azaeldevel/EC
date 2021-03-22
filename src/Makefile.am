@@ -9,11 +9,11 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-bin_PROGRAMS = ae
+bin_PROGRAMS = ea-sudoku
 
-ae_SOURCES = core.cc GA.cc sudoku.cc main.cc 
-ae_LDFLAGS = 
-ae_CXXFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS) $(ZLIB_CFLAGS)
-ae_LDADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS) $(ZLIB_LIBS)
+ea_sudoku_SOURCES = core.cc GA.cc sudoku.cc ea-sudoku.cc 
+ea_sudoku_LDFLAGS = 
+ea_sudoku_CXXFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS) $(ZLIB_CFLAGS)
+ea_sudoku_LDADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS) $(ZLIB_LIBS)
 
 

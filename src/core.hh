@@ -38,9 +38,9 @@ typedef unsigned long ID;
 typedef ID Population;
 typedef unsigned int Iteration;
 
-float randNumber();
-float randNumber(float max);
-float randNumber(float min, float max);
+double randNumber();
+double randNumber(double max);
+double randNumber(double min, double max);
 
 
 class Chromosome
@@ -103,6 +103,7 @@ private:
 class Single
 {
 public:
+	Single(const Single&);
 	Single(ID id,Enviroment&);	
 	Single(ID id,Enviroment&,const Junction& junction);
 	
@@ -124,7 +125,7 @@ public:
 	virtual void eval() = 0;
 	virtual void randFill() = 0;
 	virtual void juncting(ID& idCount,std::list<Single*>& chils,Single* single,unsigned short loglevel) = 0;
-	virtual void saveEval(std::ofstream& fn) = 0;
+	virtual void saveCSV(std::ofstream& fn) = 0;
 
 protected:
 	/**
@@ -162,8 +163,11 @@ public:
 	double getProbabilityMutationEvent()const;
 	//void remove(ae::Single*);
 	unsigned long getSession()const;
+	ID next();
+	ID getCountID();
 	
 	virtual void run() = 0;
+	virtual void selection() = 0;
 
 	//unsigned int mutated;
 	

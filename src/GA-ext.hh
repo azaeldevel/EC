@@ -86,17 +86,19 @@ private:
 class SudokuSingle : public Single
 {
 public:
-	SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome (*t)[3]);
-	SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome (*t)[3], const Junction& junction);
+	SudokuSingle(const SudokuSingle&);
+	SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome t[3][3]);
+	SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome t[3][3],const SudokuChromosome vi[3][3], const Junction& junction);
 	const SudokuChromosome& getTalba(unsigned short i,unsigned short j)const;
 		
 	virtual void eval();
 	virtual void randFill();
 	virtual void juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
-	virtual void saveEval(std::ofstream& fn);
+	virtual void saveCSV(std::ofstream& fn);
 	const octetos::core::MD5sum& getMD5() const;
 	
 	void print(std::ostream&) const;
+	void printInit(std::ostream&) const;
 	unsigned int getErros()const;
 	
 private:
@@ -120,7 +122,6 @@ public:
 	bool compress(const std::string& tarf,const std::string& filenameProj);
 	
 	virtual void selection();
-	
 	virtual void run();
 private:
 
@@ -128,6 +129,7 @@ private:
 	*\brief valor stadistico de cada variable.
 	*/
 	double gamma;
+	SudokuChromosome sudokuInit[3][3];
 };
 
 }
