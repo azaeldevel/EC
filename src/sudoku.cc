@@ -290,7 +290,7 @@ void SudokuSingle::eval()
 		}
 	}
 	
-	strength = 1.0 - (fails * (((const SudokuEnviroment&)getEnviroment()).getGamma()));
+	fitness = 1.0 - (fails * (((const SudokuEnviroment&)getEnviroment()).getGamma()));
 }
 	
 	
@@ -385,7 +385,7 @@ void SudokuSingle::saveCSV(std::ofstream& fn)
 {	
 	fn << getID();
 	fn << ",";
-	fn << getStrength();	
+	fn << getFitness();	
 	fn << ",";
 	fn << getErros();
 	fn << ",";
@@ -414,7 +414,7 @@ const octetos::core::MD5sum& SudokuSingle::getMD5()const
 }
 unsigned int SudokuSingle::getErros()const
 {
-	return (1.0 - strength) * (1.0 / (((SudokuEnviroment&)getEnviroment()).getGamma()));
+	return (1.0 - fitness) * (1.0 / (((SudokuEnviroment&)getEnviroment()).getGamma()));
 }
 
 
@@ -555,7 +555,7 @@ void SudokuEnviroment::run()
 	/**/
 	
 	unsigned long session = getSession();
-	std::string logDir = "log-" + std::to_string(session);
+	std::string logDir = "logs/log-" + std::to_string(session);
 	coreutils::Shell shell;
 	shell.mkdir(logDir);
 
@@ -598,21 +598,23 @@ void SudokuEnviroment::run()
 		for(ae::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
-			media += s->getStrength();			
+			media += s->getFitness();			
 		}
 		media /= size();
 		for(ae::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
-			sigma += pow(s->getStrength() - media,2);
+			sigma += pow(s->getFitness() - media,2);
 		}
 		sigma /= size();
 		
+		/*
 		SudokuSingle& s = ((SudokuSingle&)**begin());
 		s.printInit(std::cout);
 		std::cout << "\n";	
 		s.print(std::cout);
 		std::cout << "Fortaleza : " << s.getStrength() << "\n\n";
+		*/
 		
 		std::string strfn = logDir +  "/Sudoku-" + std::to_string(actualIteration) + ".csv";
 		std::ofstream fn(strfn);
@@ -633,7 +635,7 @@ void SudokuEnviroment::run()
 		
 		for(ae::Single* s : *this)
 		{
-			if(1.0 - s->getStrength () < Enviroment::epsilon)
+			if(1.0 - s->getFitness () < Enviroment::epsilon)
 			{
 				countSols++;
 				if(countSols >= minSolutions)
@@ -712,7 +714,7 @@ void SudokuEnviroment::run()
 			//if(single1 == NULL) single1 = getRandomSingle();
 			if(single1 == NULL) continue;
 			//std::cout << "Step 3\n";
-			ae::Single* single2;
+			/*ae::Single* single2;
 			double numnew = randNumber();
 			if(numnew < 0.002)
 			{
@@ -724,8 +726,8 @@ void SudokuEnviroment::run()
 			else
 			{
 				single2 = getRandomSingle();
-			}
-			
+			}*/
+			ae::Single* single2 = getRandomSingle();
 			//std::cout << "Step 4\n";
 			if(single2 == NULL) continue;
 			//std::cout << "Step 5\n";
@@ -778,6 +780,9 @@ void SudokuEnviroment::run()
 	}
 	while(newIteration);
 
+	std::cout << "Comprimiendo...";
+	compress(logDir,logDir+".tar");
+	std::cout << " hecho\n";
 	history .close();
 }
 
@@ -818,13 +823,6 @@ void SudokuEnviroment::selection()
 		i = erase(i);
 	}
 }
-bool SudokuEnviroment::compress(const std::string& tarf,const std::string& dir)
-{
-	//zipFile zf = zipOpen64(tarf.c_str(),0);
-	//zipOpenNewFileInZip(zf,dir.c_str(),&zi,NULL,0,NULL,0,NULL,0,-1);
-	
 
-    return true;
-}
 
 }

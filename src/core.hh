@@ -110,7 +110,7 @@ public:
 	ID getID()const;
 	//const std::vector<Chromosome*>& getChromosome()const;
 	unsigned short getAge() const;
-	double getStrength() const;
+	double getFitness() const;
 	const Junction& getJunction()const;
 	Enviroment& getEnviroment()const;
 
@@ -131,7 +131,7 @@ protected:
 	/**
 	*\brief numero entre 0 y 1 que determina la cercania al valor esperado(tiende a 1)
 	*/
-	double strength;
+	double fitness;
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
@@ -165,6 +165,7 @@ public:
 	unsigned long getSession()const;
 	ID next();
 	ID getCountID();
+	void compress(const std::string& in, const std::string& out);
 	
 	virtual void run() = 0;
 	virtual void selection() = 0;

@@ -4,6 +4,11 @@
 #include <iostream>
 #include <algorithm>
 #include <ctime>
+#include <libtar.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <fcntl.h>
 
 
 #include "core.hh"
@@ -15,7 +20,7 @@ namespace ae
 
 bool cmpStrength(const Single* f,const Single* s)
 {
-	return f->getStrength() > s->getStrength();
+	return f->getFitness() > s->getFitness();
 }
 double randNumber()
 {
@@ -244,9 +249,9 @@ unsigned short Single::getAge() const
 {
 	return age;
 }
-double Single::getStrength() const
+double Single::getFitness() const
 {
-	return strength;
+	return fitness;
 }
 const Junction& Single::getJunction()const
 {
@@ -270,7 +275,7 @@ void Single::deltaAge()
 void Single::init()
 {
 	age = 0;
-	strength = 0;
+	fitness = 0;
 }
 
 
@@ -351,6 +356,13 @@ ID Enviroment::next()
 {
 	return ++idCount;
 }
-
+void Enviroment::compress(const std::string& in, const std::string& out)
+{
+	TAR *pTar;
+  	tar_open(&pTar, (char*)out.c_str(), NULL, O_WRONLY | O_CREAT, 0644, TAR_IGNORE_MAGIC);
+   	tar_append_tree(pTar, (char*)in.c_str(), (char*)in.c_str());
+ 	tar_append_eof(pTar);
+   	tar_close(pTar);	
+}
 
 }

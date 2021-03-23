@@ -119,7 +119,6 @@ public:
 	double getGamma() const;
 	ae::Single* getRandomSingleTop()const;
 	ae::Single* getRandomSingle()const;
-	bool compress(const std::string& tarf,const std::string& filenameProj);
 	
 	virtual void selection();
 	virtual void run();

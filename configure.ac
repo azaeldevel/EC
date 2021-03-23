@@ -23,8 +23,8 @@ PKG_CHECK_MODULES(OCTETOS_CORE,octetos-core)
 
 PKG_CHECK_MODULES(OCTETOS_COREUTILS,octetos-coreutils)
 
-PKG_CHECK_MODULES(ZLIB,zlib)
-
+AC_SEARCH_LIBS([tar_open], [libtar tar], [], [AC_MSG_ERROR([unable to find the tar_open() function])])
+AC_CHECK_HEADERS([libtar.h],[libtar.h=yes; break;])
 
 AC_OUTPUT([
 Makefile

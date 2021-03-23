@@ -21,7 +21,11 @@
 
 int main()
 {
-	std::cout << "Hello world!" << std::endl;
+	ae::ga::SudokuEnviroment sudoku;
+
+	sudoku.compress("log-20210321012756","log-20210321012756.tar");
+
+	
 	return 0;
 }
 
