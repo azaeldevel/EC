@@ -75,7 +75,7 @@ public:
 	const SudokuChromosome& operator = (const SudokuChromosome&);	
 	
 	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
-	virtual void copy(const ae::Chromosome& P1,const ae::Chromosome& P2);
+	virtual void copy(const ae::Chromosome& P1);
 	virtual void mutate(float p);
 	virtual void randFill();
 	
@@ -114,7 +114,7 @@ class SudokuEnviroment : public Enviroment
 {
 public:
 	//
-	std::string prfixDir;
+	
 
 	//
 	SudokuEnviroment();

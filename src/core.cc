@@ -170,22 +170,13 @@ geneUS Junction::get_algorit()const
 
 void Junction::combine(const Chromosome& P1,const Chromosome& P2)
 {
-	copy(P1,P2);
+	copy(P1);
 }
 
-void Junction::copy(const Chromosome& P1,const Chromosome& P2)
+void Junction::copy(const Chromosome& P)
 {
-	double rdnum = randNumber(0.0,1.0);
-	if(rdnum < 0.5)
-	{
-		number = ((Junction&)P1).number;
-		algorit = ((Junction&)P2).algorit;
-	}
-	else
-	{
-		number = ((Junction&)P2).number;
-		algorit = ((Junction&)P1).algorit;
-	}
+	number = ((Junction&)P).number;
+	algorit = ((Junction&)P).algorit;
 }
 void Junction::mutate(float p)
 {
@@ -295,6 +286,7 @@ Enviroment::Enviroment()
 	//minSolutions = 1;
 	pMutationEvent = 0.02;
 	pMutableGene = 0.4;
+	fout = NULL;
 }
 
 Population Enviroment::getMaxPopulation()const
@@ -363,6 +355,11 @@ void Enviroment::compress(const std::string& in, const std::string& out)
    	tar_append_tree(pTar, (char*)in.c_str(), (char*)in.c_str());
  	tar_append_eof(pTar);
    	tar_close(pTar);	
+}
+void Enviroment::enableEcho(std::ostream* f, unsigned short level)
+{
+	fout = f;
+	loglevel = level;
 }
 
 }

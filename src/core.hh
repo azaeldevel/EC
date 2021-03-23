@@ -32,7 +32,11 @@ class Enviroment;
 
 
 typedef float geneF;
+typedef float geneD;
 typedef unsigned short geneUS;
+typedef unsigned geneS;
+typedef unsigned int genUI;
+typedef int genI;
 
 typedef unsigned long ID;
 typedef ID Population;
@@ -48,7 +52,7 @@ class Chromosome
 public:
 	Chromosome(const std::string name);
 	virtual void combine(const Chromosome& P1,const Chromosome& P2) = 0;
-	virtual void copy(const Chromosome& P1,const Chromosome& P2) = 0;
+	virtual void copy(const Chromosome& P1) = 0;
 	/**
 	*\brief p numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
 	*/
@@ -91,7 +95,7 @@ public:
 	
 	
 	virtual void combine(const Chromosome& P1,const Chromosome& P2);
-	virtual void copy(const Chromosome& P1,const Chromosome& P2);
+	virtual void copy(const Chromosome& P);
 	virtual void mutate(float p);
 	virtual void randFill();
 private:
@@ -139,8 +143,8 @@ private:
 	Junction junction;
 	Enviroment* env;
 };
-bool cmpStrength(const Single* f,const Single* s);
 
+bool cmpStrength(const Single* f,const Single* s);
 enum MethodeSelection
 {
 	INCREMENTING_MEDIA,
@@ -150,6 +154,10 @@ enum MethodeSelection
 class Enviroment : public std::list<ae::Single*>
 {
 public:
+	//
+	std::string logDirectory;
+
+	//
 	Enviroment();
 	Population getMaxPopulation()const;
 	Population getInitPopulation()const;
@@ -166,11 +174,10 @@ public:
 	ID next();
 	ID getCountID();
 	void compress(const std::string& in, const std::string& out);
+	void enableEcho(std::ostream* f, unsigned short level);
 	
 	virtual bool run() = 0;
 	virtual void selection() = 0;
-
-	//unsigned int mutated;
 	
 protected:
 	Population maxPopulation;
@@ -179,14 +186,10 @@ protected:
 	ID idCount = 1;
 	Population maxProgenitor;
 	
-	bool loglevel;
+	unsigned short loglevel;
 	double sigma;
 	double media;
-	//double sigmaReduction;
-
-
-	//bool fixedPopupation;
-	//bool requiereCertainty;
+	
 	Iteration actualIteration;
 	Iteration limitIteration;
 	/*
@@ -196,8 +199,7 @@ protected:
 	Population minSolutions;
 
 	bool newIteration;
-
-	//MethodeSelection selection;
+	
 	double epsilon;
 	/**
 	*\brief numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
@@ -207,6 +209,8 @@ protected:
 	*\brief numero entre 0 y 1 que determina la probabilidad de cada el evento de mutacion ocurrar.
 	*/
 	double pMutationEvent;
+
+	std::ostream* fout;
 };
 
 }

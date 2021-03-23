@@ -82,21 +82,13 @@ void SudokuChromosome::combine(const ae::Chromosome& P1,const ae::Chromosome& P2
 		}
 	}
 }
-void SudokuChromosome::copy(const ae::Chromosome& P1,const ae::Chromosome& P2)
+void SudokuChromosome::copy(const ae::Chromosome& P)
 {
-	double numrd1 = randNumber(0.0,1.0);
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			if(numrd1 < 0.7)
-			{
-				numbers[i][j] = ((const SudokuChromosome&)P1).numbers[i][j];
-			}
-			else
-			{
-				numbers[i][j] = ((const SudokuChromosome&)P2).numbers[i][j];
-			}
+			numbers[i][j] = ((const SudokuChromosome&)P).numbers[i][j];
 		}
 	}
 }
@@ -106,7 +98,7 @@ void SudokuChromosome::mutate(float p)
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			double numrd = randNumber(0.0,1.0);
+			double numrd = randNumber();
 			if(numrd <= p) numbers[i][j] = randNumber(1.0,9.1);
 		}
 	}
@@ -332,15 +324,32 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 			newj.combine(getJunction(),single->getJunction());
 			break;		
 		case ae::Junction::AlgCode::COPY:
-			for(unsigned short i = 0; i < 3; i++)
 			{
-				for(unsigned short j = 0; j < 3; j++)
+				double numrd = randNumber();
+				for(unsigned short i = 0; i < 3; i++)
 				{
-					newtabla[i][j].copy(tabla[i][j],((SudokuSingle*)single)->tabla[i][j]);
+					for(unsigned short j = 0; j < 3; j++)
+					{
+						if(numrd < 0.5)
+						{
+							newtabla[i][j].copy(tabla[i][j]);
+						}
+						else
+						{
+							newtabla[i][j].copy(((SudokuSingle*)single)->tabla[i][j]);
+						}					
+					}
 				}
+				if(numrd < 0.5)
+				{
+					newj.copy(getJunction());
+				}
+				else
+				{
+					newj.copy(single->getJunction());
+				}
+				break;
 			}
-			newj.copy(getJunction(),single->getJunction());
-			break;
 		default:
 			throw octetos::core::Exception("Algoritmo desconocido",__FILE__,__LINE__);
 		}
@@ -494,7 +503,7 @@ SudokuEnviroment::SudokuEnviroment()
 	media = 0.0;
 	
 	actualIteration = 0;
-	limitIteration = 1000;
+	limitIteration = 10;
 	newIteration = true;
 	minSolutions = 1;
 	pMutationEvent = 1.0;
@@ -554,7 +563,7 @@ double SudokuEnviroment::getGamma() const
 bool SudokuEnviroment::run()
 {
 	unsigned long session = getSession();
-	std::string logDir = prfixDir +"/" + std::to_string(session);
+	std::string logDir = logDirectory +"/" + std::to_string(session);
 	coreutils::Shell shell;
 	shell.mkdir(logDir);
 	bool retVal = false;
@@ -564,7 +573,10 @@ bool SudokuEnviroment::run()
 	do
 	{
 		actualIteration++;
-		std::cout << ">>> Iteracion : " << actualIteration << "/" << limitIteration << "\n";
+		if(loglevel > 0 and fout != NULL) 
+		{
+			(*fout) << ">>> Iteracion : " << actualIteration << "/" << limitIteration << "\n";
+		}
 		media = 0.0;
 		sigma = 0.0;
 
@@ -580,9 +592,9 @@ bool SudokuEnviroment::run()
 		{
 			pMutableGene = 1.0/81.0;
 		}*/
-		if(loglevel > 0) 
+		if(loglevel > 0 and fout != NULL) 
 		{
-			std::cout << "\tTamano de la poblacion : " << size() << "\n";			
+			(*fout) << "\tTamano de la poblacion : " << size() << "\n";			
 			//std::cout << "\tgamman : " << gamma << "\n";
 		}
 		
@@ -626,11 +638,11 @@ bool SudokuEnviroment::run()
 		fn.flush();
 		fn.close();
 		
-		if(loglevel > 0) 
+		if(loglevel > 0 and fout != NULL) 
 		{
-			std::cout << "\tmedia : " << media << "\n";
-			std::cout << "\tDesviacion estandar : " << sigma << "\n";
-			std::cout << "\tVariables faltantes : " << getFaltantes() << "\n";
+			(*fout) << "\tmedia : " << media << "\n";
+			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
+			(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 		}
 		
 		for(ae::Single* s : *this)
@@ -701,10 +713,10 @@ bool SudokuEnviroment::run()
 		fnSelection.flush();
 		fnSelection.close();
 		
-		if(loglevel > 0) 
+		if(loglevel > 0 and fout != NULL) 
 		{
-			std::cout << "\tProgenitores selecionados, total : " << size() << "\n";
-			std::cout << "\tEliminados : " << countBefore - size() << "\n";	
+			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
+			(*fout) << "\tEliminados : " << countBefore - size() << "\n";	
 		}
 				
 		
@@ -750,9 +762,9 @@ bool SudokuEnviroment::run()
 		}
 		fnChilds.flush();
 		fnChilds.close();
-		if(loglevel > 0) 
+		if(loglevel > 0 and fout != NULL) 
 		{
-			std::cout << "\tNuevos Hijos : " << newschils.size() << "\n";
+			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
 		}
 		
 		if(actualIteration < limitIteration)
@@ -761,7 +773,8 @@ bool SudokuEnviroment::run()
 		}
 		else
 		{
-			std::cout << "Sesion :  " << session << "\n";
+			/*
+			std::cout << "Session :  " << session << "\n";
 			std::cout << "Se ha alcanzado la iteracion " << limitIteration << ", desea continuar?\n";
 			std::string cmd;
 			std::cin >> cmd;
@@ -778,17 +791,19 @@ bool SudokuEnviroment::run()
 				int add = std::stoi(cmd);
 				limitIteration += add;
 			}
+			*/
+			newIteration = false;
 		}
 	}
 	while(newIteration);
 
 endIterations:
-
-	std::cout << "Comprimiendo...";
+	 
+	if(loglevel > 0 and fout != NULL) (*fout) << "Comprimiendo...";	
 	compress(logDir,logDir+".tar");
-	std::cout << " hecho\n";
-	history .close();
-
+	if(loglevel > 0 and fout != NULL) (*fout) << " hecho\n";
+	history.close();
+	
 	return retVal;
 }
 
