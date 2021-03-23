@@ -113,6 +113,10 @@ private:
 class SudokuEnviroment : public Enviroment
 {
 public:
+	//
+	std::string prfixDir;
+
+	//
 	SudokuEnviroment();
 
 	unsigned short getFaltantes() const;
@@ -121,7 +125,7 @@ public:
 	ae::Single* getRandomSingle()const;
 	
 	virtual void selection();
-	virtual void run();
+	virtual bool run();
 private:
 
 	/**
@@ -129,6 +133,7 @@ private:
 	*/
 	double gamma;
 	SudokuChromosome sudokuInit[3][3];
+	
 };
 
 }

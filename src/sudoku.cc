@@ -489,7 +489,7 @@ SudokuEnviroment::SudokuEnviroment()
 	maxProgenitor = 81;//9*a
 	idCount = 1;
 
-	loglevel = 1;
+	loglevel = 0;
 	sigma = 0.0;
 	media = 0.0;
 	
@@ -532,7 +532,6 @@ SudokuEnviroment::SudokuEnviroment()
 	sudokuInit[2][1].setNumber(2,0,7);
 	sudokuInit[2][2].setNumber(2,0,2);
 	sudokuInit[2][2].setNumber(2,2,5);
-
 	
 	//poblacion inicial
 	for(Population i = 0; i < initPopulation; i++,idCount++)
@@ -541,6 +540,8 @@ SudokuEnviroment::SudokuEnviroment()
 		s->randFill();
 		push_back(s);		
 	}
+
+	
 }
 unsigned short SudokuEnviroment::getFaltantes() const
 {
@@ -550,14 +551,13 @@ double SudokuEnviroment::getGamma() const
 {
 	return gamma;
 }
-void SudokuEnviroment::run()
-{	
-	/**/
-	
+bool SudokuEnviroment::run()
+{
 	unsigned long session = getSession();
-	std::string logDir = "logs/log-" + std::to_string(session);
+	std::string logDir = prfixDir +"/" + std::to_string(session);
 	coreutils::Shell shell;
 	shell.mkdir(logDir);
+	bool retVal = false;
 
 	std::string strhistory = logDir + "/Sudoku-history.csv";
 	std::ofstream history (strhistory);
@@ -644,20 +644,22 @@ void SudokuEnviroment::run()
 					std::cout << "\n";
 					((SudokuSingle*)s)->print(std::cout);
 					std::cout << "\n\tSe completo el conjunto de solucion mini, desea cotinua?\n";
-					std::cin >> cmdSol;
+					/*std::cin >> cmdSol;
 					if(cmdSol.compare("S") == 0 or cmdSol.compare("s") == 0)
 					{
 						break;
 					}
 					else if(cmdSol.compare("N") == 0 or cmdSol.compare("n") == 0)
 					{
-						return;
+						goto endIterations;
 					}	
 					else if(std::stoi(cmdSol) > 0)
 					{
 						int add = std::stoi(cmdSol);
 						minSolutions += add;
-					}
+					}*/
+					retVal = true;
+					goto endIterations;
 				}
 			}
 		}
@@ -780,10 +782,14 @@ void SudokuEnviroment::run()
 	}
 	while(newIteration);
 
+endIterations:
+
 	std::cout << "Comprimiendo...";
 	compress(logDir,logDir+".tar");
 	std::cout << " hecho\n";
 	history .close();
+
+	return retVal;
 }
 
 

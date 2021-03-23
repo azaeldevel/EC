@@ -167,7 +167,7 @@ public:
 	ID getCountID();
 	void compress(const std::string& in, const std::string& out);
 	
-	virtual void run() = 0;
+	virtual bool run() = 0;
 	virtual void selection() = 0;
 
 	//unsigned int mutated;

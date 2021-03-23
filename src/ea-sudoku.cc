@@ -22,15 +22,34 @@
 
 
 
-#include <math.h>
-
+#include <iostream>
+#include <fstream>
+#include <octetos/coreutils/shell.hh>
 #include "GA-ext.hh"
 
 
 int main(int argc, const char* argv[])
 {
-	ae::ga::SudokuEnviroment sudoku;
-	sudoku.run();
+	
+	ae::ga::SudokuEnviroment *sudoku;
+	std::string dir = "logs/firtsStatics";
+	coreutils::Shell shell;
+	shell.mkdir(dir,true);
+	for(int i = 1; i < 10; i++)
+	{	
+		sudoku = new ae::ga::SudokuEnviroment();
+		std::cout << "Test " << i << "\n";
+		sudoku->prfixDir = dir;		
+		if(sudoku->run())
+		{
+			ae::Single* single = *(sudoku->begin());
+			std::ofstream fnSolution(dir + "/solutions.csv");
+			single->saveCSV(fnSolution);
+			fnSolution.flush();
+			fnSolution.close();
+		}
+		delete sudoku;
+	}
 	
 	return EXIT_SUCCESS;
 }
