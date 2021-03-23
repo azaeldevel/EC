@@ -6,6 +6,9 @@
 #include <iterator>
 #include <octetos/coreutils/shell.hh>
 #include <algorithm>
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
 
 
 #include "GA-ext.hh"
@@ -493,24 +496,32 @@ ae::Single* SudokuEnviroment::getRandomSingle() const
 }
 SudokuEnviroment::SudokuEnviroment()
 {
+}
+SudokuEnviroment::SudokuEnviroment(const std::string& log,Iteration limmitIt,const std::string& initB) : ae::Enviroment(log,limmitIt)
+{
+	init(initB);
+}
+void SudokuEnviroment::init(const std::string& initB)
+{
 	maxPopulation = 1458;//81*a
 	initPopulation = maxPopulation;
-	maxProgenitor = 81;//9*a
+	maxProgenitor = 324;//81*a
 	idCount = 1;
 
 	loglevel = 0;
 	sigma = 0.0;
 	media = 0.0;
 	
-	actualIteration = 0;
-	limitIteration = 10;
+	//actualIteration = 0;
+	//limitIteration = 10;
 	newIteration = true;
 	minSolutions = 1;
 	pMutationEvent = 1.0;
 	pMutableGene = 1.0/81.0;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
-	
+
+	/*
 	sudokuInit[0][0].setNumber(0,1,3);
 	sudokuInit[0][0].setNumber(0,2,1);
 	sudokuInit[0][1].setNumber(0,0,9);
@@ -541,6 +552,8 @@ SudokuEnviroment::SudokuEnviroment()
 	sudokuInit[2][1].setNumber(2,0,7);
 	sudokuInit[2][2].setNumber(2,0,2);
 	sudokuInit[2][2].setNumber(2,2,5);
+	*/
+	initBoard(initB);
 	
 	//poblacion inicial
 	for(Population i = 0; i < initPopulation; i++,idCount++)
@@ -549,8 +562,38 @@ SudokuEnviroment::SudokuEnviroment()
 		s->randFill();
 		push_back(s);		
 	}
-
-	
+}
+void SudokuEnviroment::initBoard(const std::string& initTable)
+{
+	std::ifstream file(initTable);
+	if(not file.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
+	std::string strline; 
+	std::vector<unsigned short> inits;
+	while (std::getline(file, strline)) 
+	{
+	  	char *tok = strtok((char*)strline.c_str()," "); 
+		while (tok!=NULL) 
+		{
+		    //printf("%s\n",tok); 
+			inits.push_back(std::stoi(tok));
+		    tok=strtok(NULL," ");
+		}
+	}
+	unsigned short index = 0;
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		for(unsigned short j = 0; j < 3; j++)
+		{
+			for(unsigned short k = 0; k < 3; k++)
+			{
+				for(unsigned short l = 0; l < 3; l++)
+				{					
+					sudokuInit[i][k].setNumber(j,l,inits[index]);
+					index++;
+				}
+			}
+		}
+	}
 }
 unsigned short SudokuEnviroment::getFaltantes() const
 {
@@ -570,28 +613,14 @@ bool SudokuEnviroment::run()
 
 	std::string strhistory = logDir + "/Sudoku-history.csv";
 	std::ofstream history (strhistory);
-	do
+	for(actualIteration = 1; actualIteration <= limitIteration; actualIteration++)
 	{
-		actualIteration++;
 		if(loglevel > 0 and fout != NULL) 
 		{
 			(*fout) << ">>> Iteracion : " << actualIteration << "/" << limitIteration << "\n";
 		}
 		media = 0.0;
 		sigma = 0.0;
-
-		/*if(media < 0.9)
-		{
-			pMutableGene = 2.0/51.0;
-		}
-		else if(media < 0.94)
-		{
-			pMutableGene = 1.0/51.0;
-		}
-		else
-		{
-			pMutableGene = 1.0/81.0;
-		}*/
 		if(loglevel > 0 and fout != NULL) 
 		{
 			(*fout) << "\tTamano de la poblacion : " << size() << "\n";			
@@ -625,12 +654,12 @@ bool SudokuEnviroment::run()
 		s.printInit(std::cout);
 		std::cout << "\n";	
 		s.print(std::cout);
-		std::cout << "Fortaleza : " << s.getStrength() << "\n\n";
+		std::cout << "Fortaleza : " << s.getFitness () << "\n\n";
 		*/
 		
 		std::string strfn = logDir +  "/Sudoku-" + std::to_string(actualIteration) + ".csv";
 		std::ofstream fn(strfn);
-		if(not fn.is_open()) throw "No se logro abrier el archivo";
+		if(not fn.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
 		for(ae::Single* s : *this)
 		{
 			s->saveCSV(fn);
@@ -652,26 +681,10 @@ bool SudokuEnviroment::run()
 				countSols++;
 				if(countSols >= minSolutions)
 				{
-					((SudokuSingle*)s)->printInit(std::cout);
-					std::cout << "\n";
-					((SudokuSingle*)s)->print(std::cout);
-					std::cout << "\n\tSe completo el conjunto de solucion mini, desea cotinua?\n";
-					/*std::cin >> cmdSol;
-					if(cmdSol.compare("S") == 0 or cmdSol.compare("s") == 0)
-					{
-						break;
-					}
-					else if(cmdSol.compare("N") == 0 or cmdSol.compare("n") == 0)
-					{
-						goto endIterations;
-					}	
-					else if(std::stoi(cmdSol) > 0)
-					{
-						int add = std::stoi(cmdSol);
-						minSolutions += add;
-					}*/
-					retVal = true;
-					goto endIterations;
+					std::cout << "\n\tSe completo el conjunto de solucion mini\n";
+					((SudokuSingle*)s)->print((*fout));
+					compress(logDir,logDir+".tar");
+					return true;
 				}
 			}
 		}
@@ -724,29 +737,10 @@ bool SudokuEnviroment::run()
 		do
 		{
 			ae::Single* single1 = getRandomSingle();
-			//std::cout << "Step 2\n";
-			//if(single1 == NULL) single1 = getRandomSingle();
 			if(single1 == NULL) continue;
-			//std::cout << "Step 3\n";
-			/*ae::Single* single2;
-			double numnew = randNumber();
-			if(numnew < 0.002)
-			{
-				double oldP = pMutableGene;
-				pMutableGene = 0.5;
-				single2 = getRandomSingle();
-				pMutableGene = oldP;
-			}
-			else
-			{
-				single2 = getRandomSingle();
-			}*/
 			ae::Single* single2 = getRandomSingle();
-			//std::cout << "Step 4\n";
 			if(single2 == NULL) continue;
-			//std::cout << "Step 5\n";
 			if(single1 == single2) continue;
-			//std::cout << "Step 6\n";
 			single1->juncting(idCount,newschils,single2,loglevel);
 			if(loglevel > 1) std::cout << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 		}
@@ -766,45 +760,16 @@ bool SudokuEnviroment::run()
 		{
 			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
 		}
-		
-		if(actualIteration < limitIteration)
-		{
-			newIteration = true;
-		}
-		else
-		{
-			/*
-			std::cout << "Session :  " << session << "\n";
-			std::cout << "Se ha alcanzado la iteracion " << limitIteration << ", desea continuar?\n";
-			std::string cmd;
-			std::cin >> cmd;
-			if(cmd.compare("y") == 0 or cmd.compare("Y") == 0)
-			{
-				newIteration = true;
-			}
-			else if(cmd.compare("n") == 0 or cmd.compare("N") == 0)
-			{
-				newIteration = false;
-			}	
-			else if(std::stoi(cmd) > 0)
-			{
-				int add = std::stoi(cmd);
-				limitIteration += add;
-			}
-			*/
-			newIteration = false;
-		}
 	}
-	while(newIteration);
-
-endIterations:
 	 
 	if(loglevel > 0 and fout != NULL) (*fout) << "Comprimiendo...";	
+	sleep(1);
 	compress(logDir,logDir+".tar");
+	shell.rm(logDir);
 	if(loglevel > 0 and fout != NULL) (*fout) << " hecho\n";
 	history.close();
 	
-	return retVal;
+	return false;
 }
 
 

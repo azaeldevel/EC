@@ -117,8 +117,10 @@ public:
 	
 
 	//
-	SudokuEnviroment();
-
+	SudokuEnviroment();	
+	SudokuEnviroment(const std::string& log,Iteration limmitIt,const std::string& initTable);
+	void init(const std::string& initB);
+	void initBoard(const std::string& initTable);
 	unsigned short getFaltantes() const;
 	double getGamma() const;
 	ae::Single* getRandomSingleTop()const;

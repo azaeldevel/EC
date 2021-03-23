@@ -155,10 +155,10 @@ class Enviroment : public std::list<ae::Single*>
 {
 public:
 	//
-	std::string logDirectory;
 
 	//
 	Enviroment();
+	Enviroment(const std::string& log,Iteration limitIteration);
 	Population getMaxPopulation()const;
 	Population getInitPopulation()const;
 	Population getMaxProgenitor()const;
@@ -180,6 +180,8 @@ public:
 	virtual void selection() = 0;
 	
 protected:
+	std::string logDirectory;
+	Iteration limitIteration;
 	Population maxPopulation;
 	Population initPopulation;
 
@@ -191,7 +193,6 @@ protected:
 	double media;
 	
 	Iteration actualIteration;
-	Iteration limitIteration;
 	/*
 	*\brief si el programa encuentra al menos las soluciones indcadas podra terminar
 	*
