@@ -32,7 +32,7 @@ class Enviroment;
 
 
 typedef float geneF;
-typedef float geneD;
+typedef double geneD;
 typedef unsigned short geneUS;
 typedef unsigned geneS;
 typedef unsigned int genUI;
@@ -129,7 +129,7 @@ public:
 	virtual void eval() = 0;
 	virtual void randFill() = 0;
 	virtual void juncting(ID& idCount,std::list<Single*>& chils,Single* single,unsigned short loglevel) = 0;
-	virtual void saveCSV(std::ofstream& fn) = 0;
+	virtual void save(std::ofstream& fn) = 0;
 
 protected:
 	/**
@@ -181,7 +181,7 @@ public:
 	
 protected:
 	std::string logDirectory;
-	Iteration limitIteration;
+	Iteration maxIteration;
 	Population maxPopulation;
 	Population initPopulation;
 

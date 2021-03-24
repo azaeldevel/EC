@@ -94,7 +94,7 @@ public:
 	virtual void eval();
 	virtual void randFill();
 	virtual void juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
-	virtual void saveCSV(std::ofstream& fn);
+	virtual void save(std::ofstream& fn);
 	const octetos::core::MD5sum& getMD5() const;
 	
 	void print(std::ostream&) const;
@@ -125,6 +125,7 @@ public:
 	double getGamma() const;
 	ae::Single* getRandomSingleTop()const;
 	ae::Single* getRandomSingle()const;
+	void saveSolutions(const std::string& dir)const;
 	
 	virtual void selection();
 	virtual bool run();

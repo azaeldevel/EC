@@ -393,7 +393,7 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 		chils.push_back(s);
 	}
 }
-void SudokuSingle::saveCSV(std::ofstream& fn)
+void SudokuSingle::save(std::ofstream& fn)
 {	
 	fn << getID();
 	fn << ",";
@@ -613,11 +613,11 @@ bool SudokuEnviroment::run()
 
 	std::string strhistory = logDir + "/Sudoku-history.csv";
 	std::ofstream history (strhistory);
-	for(actualIteration = 1; actualIteration <= limitIteration; actualIteration++)
+	for(actualIteration = 1; actualIteration <= maxIteration; actualIteration++)
 	{
 		if(loglevel > 0 and fout != NULL) 
 		{
-			(*fout) << ">>> Iteracion : " << actualIteration << "/" << limitIteration << "\n";
+			(*fout) << ">>> Iteracion : " << actualIteration << "/" << maxIteration << "\n";
 		}
 		media = 0.0;
 		sigma = 0.0;
@@ -662,7 +662,7 @@ bool SudokuEnviroment::run()
 		if(not fn.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
 		for(ae::Single* s : *this)
 		{
-			s->saveCSV(fn);
+			s->save(fn);
 		}
 		fn.flush();
 		fn.close();
@@ -681,8 +681,9 @@ bool SudokuEnviroment::run()
 				countSols++;
 				if(countSols >= minSolutions)
 				{
-					std::cout << "\n\tSe completo el conjunto de solucion mini\n";
-					((SudokuSingle*)s)->print((*fout));
+					if(loglevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
+					//((SudokuSingle*)s)->print((*fout));
+					saveSolutions(logDir);
 					compress(logDir,logDir+".tar");
 					return true;
 				}
@@ -721,7 +722,7 @@ bool SudokuEnviroment::run()
 		if(not fnSelection.is_open()) throw "No se logro abrier el archivo";
 		for(ae::Single* s : *this)
 		{
-			s->saveCSV(fnSelection);
+			s->save(fnSelection);
 		}
 		fnSelection.flush();
 		fnSelection.close();
@@ -742,7 +743,7 @@ bool SudokuEnviroment::run()
 			if(single2 == NULL) continue;
 			if(single1 == single2) continue;
 			single1->juncting(idCount,newschils,single2,loglevel);
-			if(loglevel > 1) std::cout << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
+			if(loglevel > 0 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 		}
 		while(newschils.size() + size() <= maxPopulation);
 		
@@ -752,7 +753,7 @@ bool SudokuEnviroment::run()
 		for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 			push_front(s);
-			s->saveCSV(fnChilds);
+			s->save(fnChilds);
 		}
 		fnChilds.flush();
 		fnChilds.close();
@@ -808,6 +809,20 @@ void SudokuEnviroment::selection()
 		--i;
 		i = erase(i);
 	}
+}
+void SudokuEnviroment::saveSolutions(const std::string& dir)const
+{
+	std::string strfn = dir +  "/Sudoku-" + std::to_string(actualIteration) + "-solutions.csv";
+	std::ofstream fn(strfn);
+	for(ae::Single* s : *this)
+	{
+		if(1.0 - s->getFitness () < Enviroment::epsilon)
+		{
+			s->save(fn);
+		}
+	}
+	fn.flush();
+	fn.close();
 }
 
 

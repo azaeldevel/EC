@@ -288,7 +288,7 @@ Enviroment::Enviroment()
 	pMutableGene = 0.4;
 	fout = NULL;
 }
-Enviroment::Enviroment(const std::string& log,Iteration lim) : logDirectory(log),limitIteration(lim)
+Enviroment::Enviroment(const std::string& log,Iteration lim) : logDirectory(log),maxIteration(lim)
 {
 
 }
