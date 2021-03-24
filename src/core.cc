@@ -78,6 +78,10 @@ struct caret2B_half_Digits3
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
+Chromosome::~Chromosome()
+{
+
+}
 const Chromosome& Chromosome::operator = (const Chromosome& obj)
 {
 	name = obj.name;
@@ -158,7 +162,10 @@ Junction::Junction(geneUS n,geneUS a): Chromosome("Junction")
 	number = n;
 	algorit = a;
 }
+Junction::~Junction()
+{
 
+}
 geneUS Junction::get_number()const
 {
 	return number;
@@ -229,7 +236,10 @@ Single::Single(ae::ID id,Enviroment& e,const Junction& j) : junction(j),env(&e)
 	this->id = id;
 	init();
 }
+Single::~Single()
+{
 
+}
 
 
 ID Single::getID()const
@@ -288,7 +298,11 @@ Enviroment::Enviroment()
 	pMutableGene = 0.4;
 	fout = NULL;
 }
-Enviroment::Enviroment(const std::string& log,Iteration lim) : logDirectory(log),limitIteration(lim)
+Enviroment::Enviroment(const std::string& log,Iteration lim) : logDirectory(log),maxIteration(lim)
+{
+
+}
+Enviroment::~Enviroment()
 {
 
 }
@@ -342,7 +356,10 @@ ID Enviroment::getCountID()
 {
 	return idCount;
 }
-
+std::ostream* Enviroment::getFout()
+{
+	return fout;
+}
 
 
 

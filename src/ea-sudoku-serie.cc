@@ -35,24 +35,16 @@ int main(int argc, const char* argv[])
 		std::cerr << "Indique el archivo de inicialización\n";
 		return EXIT_SUCCESS;
 	}
-	
 	ae::ga::SudokuEnviroment *sudoku;
-	std::string dir = "logs/firtsStatics";
+	std::string dir = "logs/lookingSecond";
 	coreutils::Shell shell;
 	shell.mkdir(dir,true);
 	for(int i = 1; i < 10; i++)
 	{	
-		sudoku = new ae::ga::SudokuEnviroment(dir,2000,argv[1]);
+		sudoku = new ae::ga::SudokuEnviroment(dir,1000,argv[1]);
 		sudoku->enableEcho (&std::cout,1);
 		std::cout << "Test " << i << "\n";
-		if(sudoku->run())
-		{
-			ae::Single* single = *(sudoku->begin());
-			std::ofstream fnSolution(dir + "/solutions.csv");
-			single->saveCSV(fnSolution);
-			fnSolution.flush();
-			fnSolution.close();
-		}
+		sudoku->run();
 		delete sudoku;
 	}
 	

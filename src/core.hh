@@ -32,11 +32,12 @@ class Enviroment;
 
 
 typedef float geneF;
-typedef float geneD;
+typedef double geneD;
 typedef unsigned short geneUS;
 typedef unsigned geneS;
 typedef unsigned int genUI;
 typedef int genI;
+typedef void* genFC;
 
 typedef unsigned long ID;
 typedef ID Population;
@@ -51,6 +52,7 @@ class Chromosome
 {
 public:
 	Chromosome(const std::string name);
+	virtual ~Chromosome();
 	virtual void combine(const Chromosome& P1,const Chromosome& P2) = 0;
 	virtual void copy(const Chromosome& P1) = 0;
 	/**
@@ -87,6 +89,7 @@ public:
 	};
 public:
 	Junction();
+	virtual ~Junction();
 	Junction(geneUS number,geneUS algorit);
 	geneUS get_number()const;
 	geneUS get_algorit()const;
@@ -110,6 +113,7 @@ public:
 	Single(const Single&);
 	Single(ID id,Enviroment&);	
 	Single(ID id,Enviroment&,const Junction& junction);
+	virtual ~Single();
 	
 	ID getID()const;
 	//const std::vector<Chromosome*>& getChromosome()const;
@@ -129,7 +133,7 @@ public:
 	virtual void eval() = 0;
 	virtual void randFill() = 0;
 	virtual void juncting(ID& idCount,std::list<Single*>& chils,Single* single,unsigned short loglevel) = 0;
-	virtual void saveCSV(std::ofstream& fn) = 0;
+	virtual void save(std::ofstream& fn) = 0;
 
 protected:
 	/**
@@ -159,6 +163,7 @@ public:
 	//
 	Enviroment();
 	Enviroment(const std::string& log,Iteration limitIteration);
+	~Enviroment();
 	Population getMaxPopulation()const;
 	Population getInitPopulation()const;
 	Population getMaxProgenitor()const;
@@ -171,6 +176,7 @@ public:
 	double getProbabilityMutationEvent()const;
 	//void remove(ae::Single*);
 	unsigned long getSession()const;
+	std::ostream* getFout();
 	ID next();
 	ID getCountID();
 	void compress(const std::string& in, const std::string& out);
@@ -181,7 +187,7 @@ public:
 	
 protected:
 	std::string logDirectory;
-	Iteration limitIteration;
+	Iteration maxIteration;
 	Population maxPopulation;
 	Population initPopulation;
 

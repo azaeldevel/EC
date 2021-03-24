@@ -69,6 +69,7 @@ class SudokuChromosome : public Chromosome
 public:
 	SudokuChromosome();
 	SudokuChromosome(const SudokuChromosome& obj);
+	virtual ~SudokuChromosome();
 	geneUS getNumber(unsigned short i,unsigned short j) const;
 	void setNumber(unsigned short i,unsigned short j,geneUS);
 
@@ -89,12 +90,13 @@ public:
 	SudokuSingle(const SudokuSingle&);
 	SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome t[3][3]);
 	SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome t[3][3],const SudokuChromosome vi[3][3], const Junction& junction);
+	virtual ~SudokuSingle();
 	const SudokuChromosome& getTalba(unsigned short i,unsigned short j)const;
 		
 	virtual void eval();
 	virtual void randFill();
 	virtual void juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
-	virtual void saveCSV(std::ofstream& fn);
+	virtual void save(std::ofstream& fn);
 	const octetos::core::MD5sum& getMD5() const;
 	
 	void print(std::ostream&) const;
@@ -119,19 +121,21 @@ public:
 	//
 	SudokuEnviroment();	
 	SudokuEnviroment(const std::string& log,Iteration limmitIt,const std::string& initTable);
+	virtual ~SudokuEnviroment();
 	void init(const std::string& initB);
 	void initBoard(const std::string& initTable);
 	unsigned short getFaltantes() const;
 	double getGamma() const;
 	ae::Single* getRandomSingleTop()const;
 	ae::Single* getRandomSingle()const;
+	void saveSolutions(const std::string& dir)const;
 	
 	virtual void selection();
 	virtual bool run();
 private:
 
 	/**
-	*\brief valor stadistico de cada variable.
+	*\brief valor estadistico de cada variable.
 	*/
 	double gamma;
 	SudokuChromosome sudokuInit[3][3];
