@@ -30,12 +30,12 @@
 
 int main(int argc, const char* argv[])
 {
-	if(argc == 1) 
+	if(argc < 1) 
 	{
 		std::cerr << "Indique el archivo de inicialización\n";
 		return EXIT_SUCCESS;
 	}
-	ae::ga::SudokuEnviroment sudoku("logs/",2,argv[1]);
+	ae::ga::SudokuEnviroment sudoku("logs/",argv[1]);
 	sudoku.enableEcho (&std::cout,1);
 	sudoku.run();
 	return EXIT_SUCCESS;

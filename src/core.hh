@@ -120,7 +120,7 @@ public:
 	unsigned short getAge() const;
 	double getFitness() const;
 	const Junction& getJunction()const;
-	Enviroment& getEnviroment()const;
+	Enviroment& getEnviroment()const;	
 
 	void add(Chromosome&);
 	void deltaAge();
@@ -162,7 +162,7 @@ public:
 
 	//
 	Enviroment();
-	Enviroment(const std::string& log,Iteration limitIteration);
+	Enviroment(const std::string& log);
 	~Enviroment();
 	Population getMaxPopulation()const;
 	Population getInitPopulation()const;
@@ -181,6 +181,8 @@ public:
 	ID getCountID();
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);
+	unsigned short getLogLevel()const;
+	void write_archive(const char *outname, const char **filename);
 	
 	virtual bool run() = 0;
 	virtual void selection() = 0;

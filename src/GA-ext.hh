@@ -117,10 +117,9 @@ class SudokuEnviroment : public Enviroment
 public:
 	//
 	
-
 	//
 	SudokuEnviroment();	
-	SudokuEnviroment(const std::string& log,Iteration limmitIt,const std::string& initTable);
+	SudokuEnviroment(const std::string& log,const std::string& initTable);
 	virtual ~SudokuEnviroment();
 	void init(const std::string& initB);
 	void initBoard(const std::string& initTable);

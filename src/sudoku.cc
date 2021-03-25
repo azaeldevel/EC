@@ -504,7 +504,7 @@ ae::Single* SudokuEnviroment::getRandomSingle() const
 SudokuEnviroment::SudokuEnviroment()
 {
 }
-SudokuEnviroment::SudokuEnviroment(const std::string& log,Iteration limmitIt,const std::string& initB) : ae::Enviroment(log,limmitIt)
+SudokuEnviroment::SudokuEnviroment(const std::string& log,const std::string& initB) : ae::Enviroment(log)
 {
 	init(initB);
 }
@@ -519,7 +519,7 @@ void SudokuEnviroment::init(const std::string& initB)
 {
 	maxPopulation = 1458;//81*a
 	initPopulation = maxPopulation;
-	maxProgenitor = 324;//81*a
+	maxProgenitor = 162;//9*a
 	idCount = 1;
 
 	loglevel = 0;
@@ -527,46 +527,14 @@ void SudokuEnviroment::init(const std::string& initB)
 	media = 0.0;
 	
 	//actualIteration = 0;
-	//limitIteration = 10;
+	maxIteration = 1000;
 	newIteration = true;
 	minSolutions = 1;
 	pMutationEvent = 1.0;
 	pMutableGene = 1.0/81.0;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
-
-	/*
-	sudokuInit[0][0].setNumber(0,1,3);
-	sudokuInit[0][0].setNumber(0,2,1);
-	sudokuInit[0][1].setNumber(0,0,9);
-	sudokuInit[0][2].setNumber(0,0,7);
-	sudokuInit[0][2].setNumber(0,2,4);
-	sudokuInit[0][0].setNumber(1,0,7);
-	sudokuInit[0][0].setNumber(1,2,8);
-	sudokuInit[0][2].setNumber(1,0,6);
-	sudokuInit[0][2].setNumber(1,2,9);
-	sudokuInit[0][2].setNumber(2,1,2);
-	sudokuInit[0][1].setNumber(2,1,1);
-	sudokuInit[1][0].setNumber(0,0,8);
-	sudokuInit[1][1].setNumber(0,1,6);
-	sudokuInit[1][2].setNumber(0,2,7);
-	sudokuInit[1][1].setNumber(1,2,2);
-	sudokuInit[1][2].setNumber(1,1,3);
-	sudokuInit[1][0].setNumber(2,0,3);
-	sudokuInit[1][1].setNumber(2,1,4);
-	sudokuInit[1][2].setNumber(2,2,2);
-	sudokuInit[2][1].setNumber(0,1,5);
-	sudokuInit[2][0].setNumber(1,0,2);
-	sudokuInit[2][0].setNumber(1,2,9);
-	sudokuInit[2][2].setNumber(0,1,8);
-	sudokuInit[2][2].setNumber(1,0,3);
-	sudokuInit[2][2].setNumber(1,2,1);
-	sudokuInit[2][0].setNumber(2,1,8);
-	sudokuInit[2][0].setNumber(2,2,6);
-	sudokuInit[2][1].setNumber(2,0,7);
-	sudokuInit[2][2].setNumber(2,0,2);
-	sudokuInit[2][2].setNumber(2,2,5);
-	*/
+	
 	initBoard(initB);
 	
 	//poblacion inicial
@@ -821,6 +789,7 @@ void SudokuEnviroment::selection()
 	while(size() > maxProgenitor)//elimina desde el final hasta alcanzar el conjuto maximo de progenitores
 	{
 		--i;
+		delete *i;
 		i = erase(i);
 	}
 }
