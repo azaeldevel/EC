@@ -35,12 +35,13 @@ int main(int argc, const char* argv[])
 		std::cerr << "Indique el archivo de inicialización\n";
 		return EXIT_SUCCESS;
 	}
+	
 	ae::ga::SudokuEnviroment *sudoku;
 	std::string dir = "logs/try-4";
 	coreutils::Shell shell;
 	shell.mkdir(dir,true);
 	for(int i = 1; i <= 5; i++)
-	{	
+	{
 		sudoku = new ae::ga::SudokuEnviroment(dir,argv[1]);
 		sudoku->enableEcho (&std::cout,1);
 		std::cout << "Test " << i << "\n";

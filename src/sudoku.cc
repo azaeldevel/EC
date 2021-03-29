@@ -726,6 +726,7 @@ bool SudokuEnviroment::run()
 			if(single1 == single2) continue;
 			single1->juncting(idCount,newschils,single2,loglevel);
 			if(loglevel > 1 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
+
 		}
 		while(newschils.size() + size() <= maxPopulation);
 		

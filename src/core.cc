@@ -298,14 +298,12 @@ Enviroment::Enviroment()
 	pMutableGene = 0.4;
 	fout = NULL;
 }
+Enviroment::~Enviroment()
+{}
 Enviroment::Enviroment(const std::string& log) : logDirectory(log)
 {
-
 }
-Enviroment::~Enviroment()
-{
 
-}
 Population Enviroment::getMaxPopulation()const
 {
 	return maxPopulation;
