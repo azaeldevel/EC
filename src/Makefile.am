@@ -11,7 +11,7 @@ AM_CFLAGS =\
 
 bin_PROGRAMS = ea-sudoku ea-sudoku-serie develop
 
-ea_sudoku_SOURCES = core.cc GA.cc sudoku.cc ea-sudoku.cc 
+ea_sudoku_SOURCES = core.cc GA.cc sudoku.cc ea-sudoku.cc GA-trans.cc
 ea_sudoku_LDFLAGS = 
 ea_sudoku_CXXFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS) $(ZLIB_CFLAGS)
 ea_sudoku_LDADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS) $(ZLIB_LIBS)

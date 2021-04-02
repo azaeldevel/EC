@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <ctime>
-#include <libtar.h>
+//#include <libtar.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -368,7 +368,7 @@ unsigned short Enviroment::getLogLevel()const
 ID Enviroment::next()
 {
 	return ++idCount;
-}
+}/*
 void Enviroment::compress(const std::string& in, const std::string& out)
 {
 	TAR *pTar;
@@ -376,7 +376,7 @@ void Enviroment::compress(const std::string& in, const std::string& out)
    	tar_append_tree(pTar, (char*)in.c_str(), (char*)in.c_str());
  	tar_append_eof(pTar);
    	tar_close(pTar);	
-}
+}*/
 void Enviroment::enableEcho(std::ostream* f, unsigned short level)
 {
 	fout = f;

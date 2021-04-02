@@ -31,7 +31,7 @@ int main(int argc, const char* argv[])
 {
 	ae::ga::SudokuEnviroment sudoku;
 
-	sudoku.compress("log-20210321012756","log-20210321012756.tar");
+	//sudoku.compress("log-20210321012756","log-20210321012756.tar");
 	
 	return EXIT_SUCCESS;
 }

@@ -1,6 +1,6 @@
 
 
-AC_INIT(gp, 0.2.0-alpha, azael.devel@gmail.com)
+AC_INIT(gp, 0.3.0-alpha, azael.devel@gmail.com)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -23,8 +23,8 @@ PKG_CHECK_MODULES(OCTETOS_CORE,octetos-core)
 
 PKG_CHECK_MODULES(OCTETOS_COREUTILS,octetos-coreutils)
 
-AC_SEARCH_LIBS([tar_open], [libtar tar], [], [AC_MSG_ERROR([unable to find the tar_open() function])])
-AC_CHECK_HEADERS([libtar.h],[libtar.h=yes; break;])
+dnl AC_SEARCH_LIBS([tar_open], [libtar tar], [], [AC_MSG_ERROR([unable to find the tar_open() function])])
+dnl AC_CHECK_HEADERS([libtar.h],[libtar.h=yes; break;])
 
 AC_OUTPUT([
 Makefile

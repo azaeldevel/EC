@@ -666,7 +666,7 @@ bool SudokuEnviroment::run()
 					if(loglevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
 					((SudokuSingle*)s)->print((*fout));
 					saveSolutions(logDir);
-					compress(logDir,logDir+".tar");
+					//compress(logDir,logDir+".tar");
 					return true;
 				}
 			}
@@ -748,7 +748,7 @@ bool SudokuEnviroment::run()
 	 
 	if(loglevel > 0 and fout != NULL) (*fout) << "Comprimiendo...";	
 	sleep(1);
-	compress(logDir,logDir+".tar");
+	//compress(logDir,logDir+".tar");
 	shell.rm(logDir);
 	if(loglevel > 0 and fout != NULL) (*fout) << " hecho\n";
 	history.close();

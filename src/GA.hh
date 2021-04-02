@@ -16,8 +16,8 @@ class Single : public ae::Single
 {
 public:
 	Single(const Single&);
-	Single(unsigned int id,Enviroment&,const Junction& junction);
-	Single(unsigned int id,Enviroment&);
+	Single(ID id,Enviroment&,const Junction& junction);
+	Single(ID id,Enviroment&);
 };
 
 
