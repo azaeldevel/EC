@@ -181,7 +181,8 @@ public:
 	ID getCountID();
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);
-	unsigned short getLogLevel()const;
+	void enableLog(unsigned short level);
+	unsigned short getEchoLevel()const;
 	void write_archive(const char *outname, const char **filename);
 	
 	virtual bool run() = 0;
@@ -196,7 +197,7 @@ protected:
 	ID idCount = 1;
 	Population maxProgenitor;
 	
-	unsigned short loglevel;
+	unsigned short echolevel;
 	double sigma;
 	double media;
 	

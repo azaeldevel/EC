@@ -291,7 +291,7 @@ Enviroment::Enviroment()
 {
 	idCount = 1;
 	actualIteration = 1;
-	loglevel = 0;
+	echolevel = 0;
 	//sigmaReduction = 1.0;
 	//minSolutions = 1;
 	pMutationEvent = 0.02;
@@ -358,9 +358,9 @@ std::ostream* Enviroment::getFout()
 {
 	return fout;
 }
-unsigned short Enviroment::getLogLevel()const
+unsigned short Enviroment::getEchoLevel()const
 {
-	return loglevel;
+	return echolevel;
 }
 
 
@@ -380,7 +380,7 @@ void Enviroment::compress(const std::string& in, const std::string& out)
 void Enviroment::enableEcho(std::ostream* f, unsigned short level)
 {
 	fout = f;
-	loglevel = level;
+	echolevel = level;
 }
 /*void Enviroment::write_archive(const char *outname, const char **filename)
 {

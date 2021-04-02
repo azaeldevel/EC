@@ -5,7 +5,7 @@
 #include <octetos/core/MD5sum.hh>
 
 #include "GA.hh"
-
+#include <list>
 
 namespace ae::ga
 {
@@ -113,7 +113,7 @@ public:
 	virtual void randFill();
 	
 private:
-	
+	//std::list<Node*> path;
 };
 
 

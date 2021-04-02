@@ -374,7 +374,7 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 				}
 			}
 			newj.mutate(getEnviroment().getProbabilityMutableGene());
-			if(loglevel > 1 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe detecta mutacion para " << idCount << "\n";
+			if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe detecta mutacion para " << idCount << "\n";
 		}
 
 		//los datos iniciales no se deven cambiar.
@@ -396,7 +396,7 @@ void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single
 		}
 	
 		SudokuSingle* s = new SudokuSingle(idCount,getEnviroment(),newtabla,intiVals,newj);
-		if(loglevel > 1 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n"; 
+		if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n"; 
 		chils.push_back(s);
 	}
 }
@@ -522,7 +522,7 @@ void SudokuEnviroment::init(const std::string& initB)
 	maxProgenitor = 162;//9*a
 	idCount = 1;
 
-	loglevel = 0;
+	echolevel = 0;
 	sigma = 0.0;
 	media = 0.0;
 	
@@ -597,13 +597,13 @@ bool SudokuEnviroment::run()
 	std::ofstream history (strhistory);
 	for(actualIteration = 1; actualIteration <= maxIteration; actualIteration++)
 	{
-		if(loglevel > 0 and fout != NULL) 
+		if(echolevel > 0 and fout != NULL) 
 		{
 			(*fout) << ">>> Iteracion : " << actualIteration << "/" << maxIteration << "\n";
 		}
 		media = 0.0;
 		sigma = 0.0;
-		if(loglevel > 0 and fout != NULL) 
+		if(echolevel > 1 and fout != NULL) 
 		{
 			(*fout) << "\tTamano de la poblacion : " << size() << "\n";			
 			//std::cout << "\tgamman : " << gamma << "\n";
@@ -649,7 +649,7 @@ bool SudokuEnviroment::run()
 		fn.flush();
 		fn.close();
 		
-		if(loglevel > 0 and fout != NULL) 
+		if(echolevel > 1 and fout != NULL) 
 		{
 			(*fout) << "\tmedia : " << media << "\n";
 			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
@@ -663,7 +663,7 @@ bool SudokuEnviroment::run()
 				countSols++;
 				if(countSols >= minSolutions)
 				{
-					if(loglevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
+					if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
 					((SudokuSingle*)s)->print((*fout));
 					saveSolutions(logDir);
 					//compress(logDir,logDir+".tar");
@@ -709,7 +709,7 @@ bool SudokuEnviroment::run()
 		fnSelection.flush();
 		fnSelection.close();
 		
-		if(loglevel > 0 and fout != NULL) 
+		if(echolevel > 1 and fout != NULL) 
 		{
 			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
 			(*fout) << "\tEliminados : " << countBefore - size() << "\n";	
@@ -724,8 +724,8 @@ bool SudokuEnviroment::run()
 			ae::Single* single2 = getRandomSingle();
 			if(single2 == NULL) continue;
 			if(single1 == single2) continue;
-			single1->juncting(idCount,newschils,single2,loglevel);
-			if(loglevel > 1 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
+			single1->juncting(idCount,newschils,single2,echolevel);
+			if(echolevel > 1 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 
 		}
 		while(newschils.size() + size() <= maxPopulation);
@@ -740,17 +740,17 @@ bool SudokuEnviroment::run()
 		}
 		fnChilds.flush();
 		fnChilds.close();
-		if(loglevel > 0 and fout != NULL) 
+		if(echolevel > 1 and fout != NULL) 
 		{
 			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
 		}
 	}
 	 
-	if(loglevel > 0 and fout != NULL) (*fout) << "Comprimiendo...";	
+	if(echolevel > 1 and fout != NULL) (*fout) << "Comprimiendo...";	
 	sleep(1);
 	//compress(logDir,logDir+".tar");
 	shell.rm(logDir);
-	if(loglevel > 0 and fout != NULL) (*fout) << " hecho\n";
+	if(echolevel > 1 and fout != NULL) (*fout) << " hecho\n";
 	history.close();
 	
 	return false;
