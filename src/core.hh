@@ -164,10 +164,11 @@ public:
 	Enviroment();
 	Enviroment(const std::string& log);
 	~Enviroment();
+
+	//getters
 	Population getMaxPopulation()const;
 	Population getInitPopulation()const;
-	Population getMaxProgenitor()const;
-	
+	Population getMaxProgenitor()const;	
 	double getSigma() const;
 	//double getSigmaReduction() const;
 	double getMedia() const;
@@ -177,6 +178,8 @@ public:
 	//void remove(ae::Single*);
 	unsigned long getSession()const;
 	std::ostream* getFout();
+	const std::string getLogSubDirectory()const;
+
 	ID next();
 	ID getCountID();
 	void compress(const std::string& in, const std::string& out);
@@ -190,6 +193,7 @@ public:
 	
 protected:
 	std::string logDirectory;
+	std::string logSubDirectory;
 	Iteration maxIteration;
 	Population maxPopulation;
 	Population initPopulation;
@@ -198,6 +202,7 @@ protected:
 	Population maxProgenitor;
 	
 	unsigned short echolevel;
+	unsigned short logLevel;
 	double sigma;
 	double media;
 	

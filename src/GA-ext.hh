@@ -75,6 +75,7 @@ public:
 	ae::Single* getRandomSingleTop()const;
 	ae::Single* getRandomSingle()const;
 	void saveSolutions(const std::string& dir)const;
+	void saveSolutions(std::ofstream& f)const;
 	
 	virtual void selection();
 	virtual bool run();

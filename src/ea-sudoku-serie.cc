@@ -37,17 +37,29 @@ int main(int argc, const char* argv[])
 	}
 	
 	ae::ga::SudokuEnviroment *sudoku;
-	std::string dir = "logs/try-4";
+	std::string dir = "logs/fewSolutions";
+	std::string dirSolutions = dir + "/solutions.cvs";
 	coreutils::Shell shell;
 	shell.mkdir(dir,true);
+	std::ofstream fSolutions(dirSolutions);
 	for(int i = 1; i <= 5; i++)
 	{
+		std::cout << "Test " << i << "\n";
 		sudoku = new ae::ga::SudokuEnviroment(dir,argv[1]);
 		sudoku->enableEcho (&std::cout,1);
-		std::cout << "Test " << i << "\n";
-		sudoku->run();
+		sudoku->enableLog (1);
+		if(sudoku->run())
+		{
+			if(fSolutions.is_open())
+			{
+				fSolutions << sudoku->getLogSubDirectory ();
+				fSolutions << "\n";
+				fSolutions.flush();
+			}
+		}
 		delete sudoku;
 	}
+	fSolutions.close();
 	
 	return EXIT_SUCCESS;
 }

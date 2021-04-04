@@ -292,6 +292,7 @@ Enviroment::Enviroment()
 	idCount = 1;
 	actualIteration = 1;
 	echolevel = 0;
+	logLevel = 0;
 	//sigmaReduction = 1.0;
 	//minSolutions = 1;
 	pMutationEvent = 0.02;
@@ -362,7 +363,10 @@ unsigned short Enviroment::getEchoLevel()const
 {
 	return echolevel;
 }
-
+const std::string Enviroment::getLogSubDirectory()const
+{
+	return logSubDirectory;
+}
 
 
 ID Enviroment::next()
@@ -411,9 +415,13 @@ void Enviroment::enableEcho(std::ostream* f, unsigned short level)
     }
     close(fd);
     archive_entry_free(entry);
-    filename++;
+    filename++  ;
   }
   archive_write_close(a); // Note 4
   archive_write_free(a); // Note 5
 }*/
+void Enviroment::enableLog(unsigned short level)
+{
+	logLevel = level;
+}
 }

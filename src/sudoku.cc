@@ -527,9 +527,9 @@ void SudokuEnviroment::init(const std::string& initB)
 	media = 0.0;
 	
 	//actualIteration = 0;
-	maxIteration = 1000;
+	maxIteration = 2000;
 	newIteration = true;
-	minSolutions = 1;
+	minSolutions = 3;
 	pMutationEvent = 1.0;
 	pMutableGene = 1.0/81.0;
 	gamma = 1.0/(81.0 * 4.0);
@@ -588,13 +588,20 @@ double SudokuEnviroment::getGamma() const
 bool SudokuEnviroment::run()
 {
 	unsigned long session = getSession();
-	std::string logDir = logDirectory +"/" + std::to_string(session);
+	logSubDirectory = logDirectory +"/" + std::to_string(session);
 	coreutils::Shell shell;
-	shell.mkdir(logDir);
+	if(logLevel > 0)
+	{
+		shell.mkdir(logSubDirectory);
+	}
 	//bool retVal = false;
 
-	std::string strhistory = logDir + "/Sudoku-history.csv";
-	std::ofstream history (strhistory);
+	std::string strhistory = logSubDirectory + "/Sudoku-history.csv";
+	std::ofstream history;
+	if(logLevel > 0)
+	{
+		history.open(strhistory);
+	}
 	for(actualIteration = 1; actualIteration <= maxIteration; actualIteration++)
 	{
 		if(echolevel > 0 and fout != NULL) 
@@ -603,12 +610,13 @@ bool SudokuEnviroment::run()
 		}
 		media = 0.0;
 		sigma = 0.0;
+		//std::cout <<  "Step 1\n";
 		if(echolevel > 1 and fout != NULL) 
 		{
 			(*fout) << "\tTamano de la poblacion : " << size() << "\n";			
 			//std::cout << "\tgamman : " << gamma << "\n";
 		}
-		
+		//std::cout <<  "Step 2\n";
 		Population countSols = 0;
 		std::string cmdSol;
 		for(ae::Single* s : *this)
@@ -638,24 +646,26 @@ bool SudokuEnviroment::run()
 		s.print(std::cout);
 		std::cout << "Fortaleza : " << s.getFitness () << "\n\n";
 		*/
-		
-		std::string strfn = logDir +  "/Sudoku-" + std::to_string(actualIteration) + ".csv";
-		std::ofstream fn(strfn);
-		if(not fn.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
-		for(ae::Single* s : *this)
+		//std::cout <<  "Step 3\n";
+		if(logLevel > 2)
 		{
-			s->save(fn);
+			std::string strfn = logSubDirectory +  "/Sudoku-" + std::to_string(actualIteration) + ".csv";
+			std::ofstream fn(strfn);
+			if(not fn.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
+			for(ae::Single* s : *this)
+			{
+				s->save(fn);
+			}
+			fn.flush();
+			fn.close();
 		}
-		fn.flush();
-		fn.close();
-		
 		if(echolevel > 1 and fout != NULL) 
 		{
 			(*fout) << "\tmedia : " << media << "\n";
 			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
 			(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 		}
-		
+		//std::cout <<  "Step 4\n";
 		for(ae::Single* s : *this)
 		{
 			if(1.0 - s->getFitness () < Enviroment::epsilon)
@@ -665,50 +675,54 @@ bool SudokuEnviroment::run()
 				{
 					if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
 					((SudokuSingle*)s)->print((*fout));
-					saveSolutions(logDir);
+					saveSolutions(logSubDirectory);
 					//compress(logDir,logDir+".tar");
 					return true;
 				}
 			}
 		}
-		
-		if(history.is_open()) 
+		//std::cout <<  "Step 5\n";
+		if(logLevel > 0)
 		{
-			history  << actualIteration;
-			history  << ",";
-			history  << size();
-			history  << ",";
-			history  << media;
-			history  << ",";
-			history  << sigma;	
-			history  << ",";
-			history  << pMutationEvent;
-			history  << ",";
-			history  << pMutableGene;
-			history  << ",";
-			history  << getFaltantes();
-			history  << "\n";
-			history .flush();
+			if(history.is_open()) 
+			{
+				history  << actualIteration;
+				history  << ",";
+				history  << size();
+				history  << ",";
+				history  << media;
+				history  << ",";
+				history  << sigma;	
+				history  << ",";
+				history  << pMutationEvent;
+				history  << ",";
+				history  << pMutableGene;
+				history  << ",";
+				history  << getFaltantes();
+				history  << "\n";
+				history .flush();
+			}
+			else
+			{
+				throw "No se logro abrier el archivo";
+			}
 		}
-		else
-		{
-			throw "No se logro abrier el archivo";
-		}
-		
+		//std::cout <<  "Step 6\n";
 		ae::ID countBefore = size();
 		
 		selection();
-		
-		std::string strSelection = logDir +  "/Sudoku-" + std::to_string(actualIteration) + "-selection.csv";
-		std::ofstream fnSelection(strSelection);
-		if(not fnSelection.is_open()) throw "No se logro abrier el archivo";
-		for(ae::Single* s : *this)
+		if(logLevel > 2)
 		{
-			s->save(fnSelection);
+			std::string strSelection = logSubDirectory +  "/Sudoku-" + std::to_string(actualIteration) + "-selection.csv";
+			std::ofstream fnSelection(strSelection);
+			if(not fnSelection.is_open()) throw "No se logro abrier el archivo";
+			for(ae::Single* s : *this)
+			{
+				s->save(fnSelection);
+			}
+			fnSelection.flush();
+			fnSelection.close();
 		}
-		fnSelection.flush();
-		fnSelection.close();
-		
 		if(echolevel > 1 and fout != NULL) 
 		{
 			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
@@ -729,17 +743,19 @@ bool SudokuEnviroment::run()
 
 		}
 		while(newschils.size() + size() <= maxPopulation);
-		
-		std::string strChilds = logDir + "/Sudoku-" + std::to_string(actualIteration) + "-childs.csv";
-		std::ofstream fnChilds(strChilds);
-		if(not fnChilds.is_open()) throw "No se logro abrier el archivo";				
-		for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
+		if(logLevel > 2)
 		{
-			push_front(s);
-			s->save(fnChilds);
+			std::string strChilds = logSubDirectory + "/Sudoku-" + std::to_string(actualIteration) + "-childs.csv";
+			std::ofstream fnChilds(strChilds);
+			if(not fnChilds.is_open()) throw "No se logro abrier el archivo";				
+			for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
+			{
+				push_front(s);
+				s->save(fnChilds);
+			}
+			fnChilds.flush();
+			fnChilds.close();
 		}
-		fnChilds.flush();
-		fnChilds.close();
 		if(echolevel > 1 and fout != NULL) 
 		{
 			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
@@ -747,9 +763,9 @@ bool SudokuEnviroment::run()
 	}
 	 
 	if(echolevel > 1 and fout != NULL) (*fout) << "Comprimiendo...";	
-	sleep(1);
+	//sleep(1);
 	//compress(logDir,logDir+".tar");
-	shell.rm(logDir);
+	//shell.rm(logSubDirectory);
 	if(echolevel > 1 and fout != NULL) (*fout) << " hecho\n";
 	history.close();
 	
