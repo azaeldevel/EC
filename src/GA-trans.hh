@@ -21,18 +21,34 @@ namespace nodes
 		virtual ~Node();
 
 		//getters
-		unsigned int getExplored() const;
+		ID getID() const;
 		//setter
 
 		//funtions
-		void setNext(Node* n);
-		void setPrevius(Node* n);
+
 
 	private:
 		ID id; 
+	};
+
+	class Edge
+	{
+	public:
+		Edge(unsigned int time,unsigned int distence,Node* prev, Node* next);
+
+		//getters
+		unsigned int getExplored() const;
+
+		//funtions
+		//void setNext(Node* n);
+		//void setPrevius(Node* n);
+
+	private:
 		unsigned int explored;
 		Node* next;
 		Node* prev;
+		unsigned int time;//in minutes
+		unsigned int distance;//in meters
 	};
 
 	class Street : public Node
@@ -68,11 +84,14 @@ namespace nodes
 		//funtions
 		void connect(Node* from, Node* to);
 		Node* newNode();
-		Street* newStreet();
+		Street* newStreet(ID id);
 		Target* newTarget();
+		Edge* newEdge(unsigned int time,unsigned int distence,Node* prev, Node* next);
 	private: 
 		std::string name;
-		std::list<Node*> toDelete;
+		std::list<Node*> toDeleteNodes;
+		std::list<Edge*> toDeleteEdges;
+		
 	};
 
 	class Colony : public Region
@@ -125,6 +144,29 @@ public:
 	TransSingle(ID id,Enviroment&);
 };
 
+
+class TransEnviroment : public Enviroment
+{
+public:
+	//
+	
+	//
+	TransEnviroment();	
+	TransEnviroment(const std::string& log);
+	virtual ~TransEnviroment();
+	void init();
+	double getGamma() const;
+	ae::Single* getRandomSingleTop()const;
+	ae::Single* getRandomSingle()const;
+	void saveSolutions(const std::string& dir)const;
+	void saveSolutions(std::ofstream& f)const;
+	void creteRegion();
+	virtual void selection();
+	virtual bool run();
+private:
+	nodes::Region* region;
+	static ID countID;
+};
 
 }
 
