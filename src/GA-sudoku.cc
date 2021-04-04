@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 
-#include "GA-ext.hh"
+#include "GA-sudoku.hh"
 
 
 namespace ae::ga

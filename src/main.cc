@@ -24,7 +24,7 @@
 
 #include <math.h>
 
-#include "GA-ext.hh"
+#include "GA-sudoku.hh"
 
 
 int main(int argc, const char* argv[])

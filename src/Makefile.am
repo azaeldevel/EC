@@ -12,7 +12,7 @@ AM_CFLAGS =\
 bin_PROGRAMS = ea-sudoku ea-sudoku-serie develop
 lib_LTLIBRARIES = libGP.la
 
-libGP_la_SOURCES = core.cc GA.cc sudoku.cc GA-trans.cc GA-trans-region.cc
+libGP_la_SOURCES = core.cc GA.cc GA-sudoku.cc GA-trans.cc GA-trans-region.cc
 
 
 ea_sudoku_SOURCES = ea-sudoku.cc
