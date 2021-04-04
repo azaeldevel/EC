@@ -118,32 +118,7 @@ TransEnviroment::~TransEnviroment()
 {
 	if(region) delete region;
 }
-void TransEnviroment::creteRegion()
-{
-	region = new nodes::Region(++countID,"Tesing");
-	nodes::Target* target1;
-	nodes::Node* node1;
-	nodes::Node* node2;
-	nodes::Edge* edge;
 
-	node1 = region->newStreet(++countID);//O
-	node2 = region->newStreet(++countID);//66
-	region->newEdge(600,node1,node2);
-
-	node1 = node2;//66
-	node2 = region->newStreet(++countID);//2
-	region->newEdge(200,node1,node2);
-
-	node1 = node2;//2
-	node2 = region->newStreet(++countID);//3
-	region->newEdge(500,node1,node2);
-	
-	node1 = node2;//3
-	node2 = region->newStreet(++countID);//8
-	region->newEdge(600,node1,node2);
-	
-	
-}
 
 ID TransEnviroment::countID = 0;
 void TransEnviroment::init()

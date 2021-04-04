@@ -3,9 +3,11 @@
 #define AE_GA_TRANS_HH
 
 #include <octetos/core/MD5sum.hh>
+#include <list>
+
 
 #include "GA.hh"
-#include <list>
+
 
 namespace ae::ga
 {
