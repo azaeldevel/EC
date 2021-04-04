@@ -19,16 +19,31 @@ namespace nodes
 	{
 
 	}
+	void Node::add(Edge* e)
+	{
+		edges.push_back(e);
+	}
 
 
+	
+
+	Edge::Edge(unsigned int d,Node* p, Node* n)
+	{
+		distance = d;
+		prev = p;
+		next = n;
+		prev->add(this);
+		next->add(this);
+	}
 	Edge::Edge(unsigned int t,unsigned int d,Node* p, Node* n)
 	{
 		time = t;
 		distance = d;
 		prev = p;
 		next = n;
+		prev->add(this);
+		next->add(this);
 	}
-
 
 	
 
@@ -85,6 +100,12 @@ namespace nodes
 		toDeleteEdges.push_back(e);
 		return e;
 	}
+	Edge* Region::newEdge(unsigned int d,Node* p, Node* n)
+	{
+		Edge* e = new Edge(d,p,n);
+		toDeleteEdges.push_back(e);
+		return e;
+	}
 }
 
 
@@ -100,14 +121,26 @@ TransEnviroment::~TransEnviroment()
 void TransEnviroment::creteRegion()
 {
 	region = new nodes::Region(++countID,"Tesing");
+	nodes::Target* target1;
 	nodes::Node* node1;
 	nodes::Node* node2;
 	nodes::Edge* edge;
-		
-	node1 = region->newStreet(++countID);
-	node2 = region->newStreet(++countID);
-	edge = region->newEdge(5,1000,node1,node2);
 
+	node1 = region->newStreet(++countID);//O
+	node2 = region->newStreet(++countID);//66
+	region->newEdge(600,node1,node2);
+
+	node1 = node2;//66
+	node2 = region->newStreet(++countID);//2
+	region->newEdge(200,node1,node2);
+
+	node1 = node2;//2
+	node2 = region->newStreet(++countID);//3
+	region->newEdge(500,node1,node2);
+	
+	node1 = node2;//3
+	node2 = region->newStreet(++countID);//8
+	region->newEdge(600,node1,node2);
 	
 	
 }

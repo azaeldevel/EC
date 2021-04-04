@@ -12,29 +12,37 @@ namespace ae::ga
 
 namespace nodes
 {
+	class Edge;
 	typedef unsigned long ID;
 	
 	class Node
 	{
+	friend class Edge;
 	public:
 		Node(ID id);
 		virtual ~Node();
 
 		//getters
 		ID getID() const;
+		
 		//setter
 
 		//funtions
-
+		/**
+		*\brief Agrega un arista al nodo.
+		*/
+		void add(Edge* edge);
 
 	private:
 		ID id; 
+		std::list<Edge*> edges;
 	};
 
 	class Edge
 	{
 	public:
-		Edge(unsigned int time,unsigned int distence,Node* prev, Node* next);
+		Edge(unsigned int distence,Node* prev, Node* next);
+		Edge(unsigned int time,unsigned int distence, Node* prev, Node* next);
 
 		//getters
 		unsigned int getExplored() const;
@@ -87,6 +95,7 @@ namespace nodes
 		Street* newStreet(ID id);
 		Target* newTarget();
 		Edge* newEdge(unsigned int time,unsigned int distence,Node* prev, Node* next);
+		Edge* newEdge(unsigned int distence,Node* prev, Node* next);
 	private: 
 		std::string name;
 		std::list<Node*> toDeleteNodes;
