@@ -24,12 +24,12 @@
 
 #include <math.h>
 
-#include "GA-sudoku.hh"
+#include "GA-trans.hh"
 
 
 int main(int argc, const char* argv[])
 {
-	ae::ga::SudokuEnviroment sudoku;
+	ae::ga::TransEnviroment trans;
 
 	//sudoku.compress("log-20210321012756","log-20210321012756.tar");
 	

@@ -16,7 +16,8 @@ namespace nodes
 {
 	class Edge;
 	typedef unsigned long ID;
-	
+	typedef unsigned long Index;
+
 	class Node
 	{
 	friend class Edge;
@@ -34,7 +35,9 @@ namespace nodes
 		*\brief Agrega un arista al nodo.
 		*/
 		void add(Edge* edge);
+		Edge* operator[] (Index index);
 
+		
 	private:
 		ID id; 
 		std::list<Edge*> edges;
@@ -52,6 +55,10 @@ namespace nodes
 		//funtions
 		//void setNext(Node* n);
 		//void setPrevius(Node* n);
+		Node* transNext();
+		Node* transPrev();
+		unsigned short getNextCount();
+		unsigned short getPrevCount();
 
 	private:
 		unsigned int explored;
@@ -59,6 +66,8 @@ namespace nodes
 		Node* prev;
 		unsigned int time;//in minutes
 		unsigned int distance;//in meters
+		unsigned short nextCount;
+		unsigned short prevCount;
 	};
 
 	class Street : public Node
@@ -98,10 +107,13 @@ namespace nodes
 		Target* newTarget();
 		Edge* newEdge(unsigned int time,unsigned int distence,Node* prev, Node* next);
 		Edge* newEdge(unsigned int distence,Node* prev, Node* next);
+		Node* getOrigin();
+		
 	private: 
 		std::string name;
 		std::list<Node*> toDeleteNodes;
 		std::list<Edge*> toDeleteEdges;
+		Node* origin;
 		
 	};
 
@@ -177,6 +189,7 @@ public:
 private:
 	nodes::Region* region;
 	static ID countID;
+	std::list<std::list<nodes::Edge*>*> lstPaths;
 };
 
 }
