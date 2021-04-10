@@ -222,7 +222,7 @@ void TransEnviroment::init()
 		nodes::Edge* e = *it;
 		nodes::Node* n = e->getPrev();
 		std::cout << "Node : " << n->getID() << "\n";
-		
+
 		generate(ls,1);
 	}
 	
