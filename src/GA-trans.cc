@@ -35,7 +35,27 @@ namespace nodes
 		std::list<Edge*>::iterator it = edges.begin();
 		std::advance(it, index);
 		return *it;
+	}	
+	Edge* Node::nextLessTrans()
+	{
+		Edge* less = operator[](0);
+		for(Edge* e : edges)
+		{
+			if(e->getNextCount() == 0) return e;
+			if(e->getNextCount() < less->getNextCount()) less = e;
+		}
+
+		return less;
 	}
+
+
+
+
+
+
+
+
+	
 
 
 	
@@ -61,6 +81,17 @@ namespace nodes
 		nextCount = 0 ;
 		prevCount = 0 ;
 	}
+
+	//getter
+	Node* Edge::getNext()
+	{
+		return next;
+	}
+	Node* Edge::getPrev()
+	{
+		return prev;
+	}
+	
 	Node* Edge::transNext()
 	{
 		nextCount++;
@@ -158,6 +189,20 @@ TransEnviroment::~TransEnviroment()
 
 
 ID TransEnviroment::countID = 0;
+void TransEnviroment::crecer(std::list<nodes::Edge*>* l)
+{
+	for(nodes::Edge* e : *l)
+	{
+		
+	}
+}
+void TransEnviroment::crecer(std::list<nodes::Edge*>* l,nodes::Edge* e)
+{
+	nodes::Node* n = e->getPrev();
+	nodes::Edge* newE = n->nextLessTrans();
+	nodes::Node* newN = newE->transNext();
+	
+}
 void TransEnviroment::init()
 {
 	//crea la ciudad de pruebas
@@ -168,12 +213,13 @@ void TransEnviroment::init()
 	pthO->push_back((*region->getOrigin())[0]);
 	lstPaths.push_back(pthO);
 	for(std::list<nodes::Edge*>* ls : lstPaths)
-	{
-		
+	{		
 		std::list<nodes::Edge*>::iterator it = ls->begin();
 		nodes::Edge* e = *it;
-		nodes::Node* n = e->transPrev();
+		nodes::Node* n = e->getPrev();
 		std::cout << "Node : " << n->getID() << "\n";
+		
+		crecer(ls);
 	}
 	
 }

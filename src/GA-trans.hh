@@ -36,7 +36,7 @@ namespace nodes
 		*/
 		void add(Edge* edge);
 		Edge* operator[] (Index index);
-
+		Edge* nextLessTrans();
 		
 	private:
 		ID id; 
@@ -57,6 +57,8 @@ namespace nodes
 		//void setPrevius(Node* n);
 		Node* transNext();
 		Node* transPrev();
+		Node* getNext();
+		Node* getPrev();
 		unsigned short getNextCount();
 		unsigned short getPrevCount();
 
@@ -187,6 +189,10 @@ public:
 	virtual void selection();
 	virtual bool run();
 private:
+	void crecer(std::list<nodes::Edge*>*);
+	void crecer(std::list<nodes::Edge*>*,nodes::Edge*);
+	
+	//	
 	nodes::Region* region;
 	static ID countID;
 	std::list<std::list<nodes::Edge*>*> lstPaths;
