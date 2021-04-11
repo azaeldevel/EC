@@ -11,7 +11,7 @@ namespace nodes
 
 
 
-	Node::Node(ID i) : id(i)
+	Node::Node(ID i,NodeType t) : id(i),type(t)
 	{
 
 	}
@@ -116,7 +116,7 @@ namespace nodes
 
 
 
-	Street::Street(ID id) : Node(id)
+	Street::Street(ID id,NodeType t) : Node(id,t)
 	{
 
 	}
@@ -134,7 +134,7 @@ namespace nodes
 
 
 
-	Region::Region(ID id, const std::string& name) : Node(id),origin(NULL)
+	Region::Region(ID id, const std::string& name) : Node(id,nodes::NodeType::Group),origin(NULL)
 	{
 		
 	}
@@ -151,9 +151,9 @@ namespace nodes
 	}
 
 	
-	Street* Region::newStreet(ID id)
+	Street* Region::newStreet(ID id,NodeType t)
 	{
-		Street* n = new Street(id);
+		Street* n = new Street(id,t);
 		toDeleteNodes.push_back(n);
 		if(!origin) origin = n;
 		return n;
@@ -193,18 +193,20 @@ void TransEnviroment::generate(std::list<nodes::Edge*>* l,unsigned short stop)
 {
 	for(nodes::Edge* e : *l)
 	{
+		nodes::Node* n = e->getNext();
+		nodes::Edge* newE = n->nextLessTrans();
+		
+		if(newE->getNextCount() > stop) return;
+		
+		nodes::Node* newN = newE->transNext();
+		std::list<nodes::Edge*>* newL = new std::list<nodes::Edge*>(*l);//lo copi antes de modificarlo
+		l->push_back(newN);
 		
 	}
 }
 void TransEnviroment::generate(std::list<nodes::Edge*>* l, nodes::Edge* e,unsigned short stop)
 {
-	nodes::Node* n = e->getPrev();
-	nodes::Edge* newE = n->nextLessTrans();
 	
-	if(newE->getNextCount() > stop) return;
-	
-	nodes::Node* newN = newE->transNext();
-	std::list<nodes::Edge*>* newL = new std::list<nodes::Edge*>(*l);
 	
 }
 void TransEnviroment::init()

@@ -18,11 +18,18 @@ namespace nodes
 	typedef unsigned long ID;
 	typedef unsigned long Index;
 
+	enum NodeType
+	{
+		Normal,
+		Origin,
+		Out,
+		Group
+	};
 	class Node
 	{
 	friend class Edge;
 	public:
-		Node(ID id);
+		Node(ID id,NodeType type);
 		virtual ~Node();
 
 		//getters
@@ -41,6 +48,7 @@ namespace nodes
 	private:
 		ID id; 
 		std::list<Edge*> edges;
+		NodeType type;
 	};
 
 	class Edge
@@ -75,7 +83,7 @@ namespace nodes
 	class Street : public Node
 	{
 	public:
-		Street(ID id);
+		Street(ID id,NodeType type);
 		virtual ~Street();
 	private: 
 
@@ -105,7 +113,7 @@ namespace nodes
 		//funtions
 		void connect(Node* from, Node* to);
 		Node* newNode();
-		Street* newStreet(ID id);
+		Street* newStreet(ID id,NodeType type);
 		Target* newTarget();
 		Edge* newEdge(unsigned int time,unsigned int distence,Node* prev, Node* next);
 		Edge* newEdge(unsigned int distence,Node* prev, Node* next);
