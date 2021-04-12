@@ -5,17 +5,20 @@ namespace ae::ga
 
 void TransEnviroment::creteRegion()
 {
+	//std::cout << "TransEnviroment::creteRegion Step 1\n";
 	region = new nodes::Region(++countID,"Tesing");
 	nodes::Target* target1;
 	nodes::Node* nodeA;
 	nodes::Node* nodeB;
 	nodes::Edge* edge;
 
+	//std::cout << "TransEnviroment::creteRegion Step 2\n";
 	nodeA = region->newStreet(++countID,nodes::NodeType::Origin);//O
 	nodeB = region->newStreet(++countID,nodes::NodeType::Normal);//66
 	region->newEdge(600,nodeA,nodeB);
 	nodes::Node* node_66 = nodeB;
 
+	//std::cout << "TransEnviroment::creteRegion Step 3\n";
 	nodeA = nodeB;//66
 	nodeB = region->newStreet(++countID,nodes::NodeType::Normal);//2
 	region->newEdge(200,nodeA,nodeB);
@@ -78,6 +81,7 @@ void TransEnviroment::creteRegion()
 	nodeA = nodeB;//85
 	nodeB = region->newStreet(++countID,nodes::NodeType::Normal);//86
 	region->newEdge(300,nodeA,nodeB);
+	//std::cout << "TransEnviroment::creteRegion Step n\n";
 }
 
 }

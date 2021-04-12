@@ -25,6 +25,7 @@ namespace nodes
 		Out,
 		Group
 	};
+	
 	class Node
 	{
 	friend class Edge;
@@ -54,8 +55,8 @@ namespace nodes
 	class Edge
 	{
 	public:
-		Edge(unsigned int distence,Node* prev, Node* next);
-		Edge(unsigned int time,unsigned int distence, Node* prev, Node* next);
+		Edge(unsigned int distence,Node* actual, Node* next);
+		Edge(unsigned int time,unsigned int distence, Node* actual, Node* next);
 
 		//getters
 		unsigned int getExplored() const;
@@ -64,20 +65,20 @@ namespace nodes
 		//void setNext(Node* n);
 		//void setPrevius(Node* n);
 		Node* transNext();
-		Node* transPrev();
+		//Node* transPrev();
 		Node* getNext();
-		Node* getPrev();
+		Node* getNode();
 		unsigned short getNextCount();
-		unsigned short getPrevCount();
-
+		//unsigned short getPrevCount();
+		
 	private:
 		unsigned int explored;
 		Node* next;
-		Node* prev;
+		Node* node;
 		unsigned int time;//in minutes
 		unsigned int distance;//in meters
 		unsigned short nextCount;
-		unsigned short prevCount;
+		//unsigned short prevCount;
 	};
 
 	class Street : public Node
