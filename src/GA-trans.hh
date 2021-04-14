@@ -12,6 +12,7 @@
 namespace ae::ga
 {
 
+
 namespace nodes
 {
 	class Edge;
@@ -150,6 +151,26 @@ namespace nodes
 		std::list<Colony*> toDelete;
 	};
 }
+typedef std::list<nodes::Edge*> Path;
+/*class Path : public std::list<nodes::Edge*>
+{
+public:
+	Path()
+	{
+
+	};
+	Path(const std::list<nodes::Edge*>& l)
+	{
+		for(nodes::Edge* e : *this)
+		{
+			push_back(e);
+		}
+	};
+	operator std::list<nodes::Edge*>*()
+	{
+		return this;
+	};
+};*/
 
 class TransChromosome : public Chromosome
 {
@@ -198,13 +219,12 @@ public:
 	virtual void selection();
 	virtual bool run();
 private:
-	void generate(std::list<nodes::Edge*>*,unsigned short stop);
-	void generate(std::list<nodes::Edge*>*,nodes::Edge*,unsigned short stop);
+	void generate(Path*,unsigned short stop);
 	
 	//	
 	nodes::Region* region;
 	static ID countID;
-	std::list<std::list<nodes::Edge*>*> lstPaths;
+	std::list<Path*> lstPaths;
 };
 
 }
