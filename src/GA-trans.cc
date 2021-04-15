@@ -210,9 +210,9 @@ void TransEnviroment::generate(Path* l,unsigned short stop)
 	
 nextAdd:
 	//std::cout << "TransEnviroment::generate Step 2 n =" << n << "\n";
-	newEtemp = n->nextLessTrans();//siguiente arista menos utilizado
-	if(newEtemp == newE) return;
-	newE = newEtemp;
+	newE = n->nextLessTrans();//siguiente arista menos utilizado
+	//if(newEtemp == newE) return;
+	//newE = newEtemp;
 	//std::cout << "TransEnviroment::generate Step 2.1.1 newE =" << newE << ", ID = " << newE->getNode()->getID() << "\n";
 	if(newE)
 	{	
@@ -255,8 +255,7 @@ void TransEnviroment::init()
 	lstPaths.push_back(pthO);
 	//std::cout << "TransEnviroment::init Step 2.3\n";
 	e0->transNext();
-	
-	
+		
 	//
 	for(unsigned int i = 0; i < 30; i++)
 	{
