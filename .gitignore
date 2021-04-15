@@ -19,3 +19,5 @@ missing
 src/Makefile.in
 tests/Makefile.in
 logs/
+github-pull
+github-push

@@ -14,7 +14,7 @@ void TransEnviroment::creteRegion()
 
 	//std::cout << "TransEnviroment::creteRegion Step 2\n";
 	nodeA = region->newStreet(++countID,nodes::NodeType::Origin);//O
-	nodeB = region->newStreet(++countID,nodes::NodeType::Normal);//66
+	nodeB = region->newStreet(++countID,nodes::NodeType::Normal);//66, ID = 3
 	region->newEdge(600,nodeA,nodeB);
 	nodes::Node* node_66 = nodeB;
 
@@ -56,7 +56,7 @@ void TransEnviroment::creteRegion()
 	region->newEdge(300,nodeA,nodeB);
 		
 	nodeA = nodeB;//69
-	nodeB = region->newStreet(++countID,nodes::NodeType::Normal);//73
+	nodeB = region->newStreet(++countID,nodes::NodeType::Normal);//73,ID = 13
 	region->newEdge(200,nodeA,nodeB);
 	nodes::Node* node_73 = nodeB;
 		

@@ -195,7 +195,7 @@ TransEnviroment::~TransEnviroment()
 ID TransEnviroment::countID = 0;
 void TransEnviroment::generate(Path* l,unsigned short stop)
 {
-	std::cout << "TransEnviroment::generate Step 0\n";	
+	//std::cout << "TransEnviroment::generate Step 0\n";	
 	nodes::Node* n = l->back()->getNext();
 	//std::cout << "TransEnviroment::generate Step 0.1\n";
 	//Path::iterator itE = l->end();
@@ -206,39 +206,39 @@ void TransEnviroment::generate(Path* l,unsigned short stop)
 	//std::cout << "TransEnviroment::generate Step 0.4\n";
 	nodes::Edge *newE = NULL, *newEtemp = NULL;
 	Path* newL;
-	std::cout << "TransEnviroment::generate Step 1\n";
+	//std::cout << "TransEnviroment::generate Step 1\n";
 	
 nextAdd:
-	std::cout << "TransEnviroment::generate Step 2 n =" << n << "\n";
-	newE = n->nextLessTrans();//siguiente arista menos utilizado
-	//if(newEtemp == newE) goto nextAdd;
-	//newE = newEtemp;
-	std::cout << "TransEnviroment::generate Step 2.1 newE =" << newE << "\n";
+	//std::cout << "TransEnviroment::generate Step 2 n =" << n << "\n";
+	newEtemp = n->nextLessTrans();//siguiente arista menos utilizado
+	if(newEtemp == newE) return;
+	newE = newEtemp;
+	//std::cout << "TransEnviroment::generate Step 2.1.1 newE =" << newE << ", ID = " << newE->getNode()->getID() << "\n";
 	if(newE)
 	{	
-		std::cout << "TransEnviroment::generate Step 2.1 \n";
+		//std::cout << "TransEnviroment::generate Step 2.1.2 \n";
 		if(newE->getNextCount() < stop)
 		{
-			//std::cout << "TransEnviroment::generate Step 2.1.1\n";
+			//std::cout << "TransEnviroment::generate Step 2.1.3\n";
 			newL = new Path(*l);
 			newL->push_back(newE);
 			lstPaths.push_back(newL);//se crea neeva ruta
 			newE->transNext();
-			//std::cout << "TransEnviroment::generate Step 2.1.2 : " << newE << "," << newE->getNode() << "\n";
+			//std::cout << "TransEnviroment::generate Step 2.1.4 : " << newE << "," << newE->getNode() << "\n";
 			goto nextAdd;
 		}
 		else
 		{
-			std::cout << "TransEnviroment::generate Step 2.2\n";
+			//std::cout << "TransEnviroment::generate Step 2.2\n";
 			return;
 		}
 	}
 	else
 	{
-		std::cout << "TransEnviroment::generate Step 2.3\n";
+		//std::cout << "TransEnviroment::generate Step 2.3\n";
 		return;
 	}
-	std::cout << "TransEnviroment::generate Step 2.4\n";
+	//std::cout << "TransEnviroment::generate Step 2.4\n";
 }
 void TransEnviroment::init()
 {
@@ -258,21 +258,21 @@ void TransEnviroment::init()
 	
 	
 	//
-	for(unsigned int i = 0; i < 10; i++)
+	for(unsigned int i = 0; i < 30; i++)
 	{
 		for(Path* ls : lstPaths)
 		{
 			generate(ls,1);
 		}
 	}
-	std::cout << "TransEnviroment::init Step 3\n";
+	//std::cout << "TransEnviroment::init Step 3\n";
 	for(Path* ls : lstPaths)
 	{
-		Path::iterator itB = ls->begin();
+		/*Path::iterator itB = ls->begin();
 		nodes::Edge* eB = *itB;
 		nodes::Node* nB = eB->getNode();
 		std::cout << "Node : " << nB->getID();
-		if(ls->size() > 1)
+		if(ls->size() > 0)
 		{
 			//Path::const_iterator itE = ls->back();
 			nodes::Edge* eE = ls->back();
@@ -280,6 +280,14 @@ void TransEnviroment::init()
 			//std::cout << " count  " << ls->size() << "\n";
 			nodes::Node* nE = eE->getNode();
 			std::cout << " --> " << nE->getID();
+		}*/
+		std::cout << "| --> ";
+		if(ls->size() > 0)
+		{
+			for(nodes::Edge* e : *ls)
+			{
+				std::cout << e->getNode()->getID()  << " --> " ;
+			}
 		}
 		std::cout << "\n";
 	}
