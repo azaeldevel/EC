@@ -18,6 +18,7 @@ namespace nodes
 	class Edge;
 	typedef unsigned long ID;
 	typedef unsigned long Index;
+	typedef unsigned long Explored;
 
 	enum NodeType
 	{
@@ -40,7 +41,10 @@ namespace nodes
 
 		//getters
 		ID getID() const;
-		
+		NodeType getType()const;
+		Edge* getFront(Index index);
+		std::list<Edge*>& getListFront();
+
 		//setter
 		void setType(NodeType type);
 
@@ -52,6 +56,7 @@ namespace nodes
 		void addBack(Edge* edge);
 		Edge* operator[] (Index index);
 		Edge* nextLessTrans();
+		Edge* nextLessTrans(Explored max);
 		
 	private:
 		ID id; 
@@ -64,10 +69,10 @@ namespace nodes
 	{
 	public:
 		Edge(unsigned int distence,Node* actual, Node* next);
-		Edge(unsigned int time,unsigned int distence, Node* actual, Node* next);
+		//Edge(unsigned int time,unsigned int distence, Node* actual, Node* next);
 
 		//getters
-		unsigned int getExplored() const;
+		Explored getExplored() const;
 
 		//funtions
 		//void setNext(Node* n);
@@ -80,7 +85,7 @@ namespace nodes
 		//unsigned short getPrevCount();
 		
 	private:
-		unsigned int explored;
+		Explored explored;
 		Node* next;
 		Node* node;
 		unsigned int time;//in minutes
@@ -223,11 +228,11 @@ public:
 	virtual void selection();
 	virtual bool run();
 private:
-	void generate(Path*,unsigned short stop);
-	
+	void generate(nodes::Node* orig, unsigned short stop);
+	void generate(Path* path,nodes::Edge* e, unsigned short stop);
 	//	
 	nodes::Region* region;
-	static ID countID;
+	ID countID;
 	std::list<Path*> lstPaths;
 };
 
