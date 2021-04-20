@@ -10,7 +10,10 @@ namespace nodes
 {
 
 
+	Node::Node(ID i) : id(i),type(NodeType::UNKNOW)
+	{
 
+	}
 	Node::Node(ID i,NodeType t) : id(i),type(t)
 	{
 
@@ -25,29 +28,36 @@ namespace nodes
 	{
 		return id;
 	}
-		
-	void Node::add(Edge* e)
+
+	//setters
+	void Node::setType(NodeType t)
 	{
-		edges.push_back(e);
+		type = t;
+	}
+		
+	void Node::addFront(Edge* e)
+	{
+		edgesFront.push_back(e);
 	}
 	Edge* Node::operator[](Index index)
 	{
-		std::list<Edge*>::iterator it = edges.begin();
+		std::list<Edge*>::iterator it = edgesFront.begin();
 		std::advance(it, index);
 		return *it;
 	}	
 	Edge* Node::nextLessTrans()
 	{
-		if(edges.size() == 0) return NULL;
+		if(edgesFront.size() == 0) return NULL;
 		Edge* less = operator[](0);
 		if(less->getNextCount() == 0) return less;
 		
-		for(Edge* e : edges)
+		for(Edge* e : edgesFront)
 		{
 			if(e->getNextCount() == 0) return e;
 			if(e->getNextCount() < less->getNextCount()) return less = e;
 		}
 
+		//std::cout << "TransEnviroment::nextLessTrans " << e->getID() << "\n";
 		return less;
 	}
 
@@ -68,7 +78,7 @@ namespace nodes
 		distance = d;
 		node = a;
 		next = n;
-		node->add(this);
+		node->addFront(this);
 		//next->add(this);
 		nextCount = 0 ;
 		//prevCount = 0 ;
@@ -79,7 +89,7 @@ namespace nodes
 		distance = d;
 		node = a;
 		next = n;
-		node->add(this);
+		node->addFront(this);
 		//next->add(this);
 		nextCount = 0 ;
 		//prevCount = 0 ;
@@ -117,16 +127,9 @@ namespace nodes
 
 
 
+	
 
-
-	Street::Street(ID id,NodeType t) : Node(id,t)
-	{
-
-	}
-	Street::~Street()
-	{
-
-	}
+	
 
 
 
@@ -134,10 +137,7 @@ namespace nodes
 
 
 
-
-
-
-	Region::Region(ID id, const std::string& name) : Node(id,nodes::NodeType::Group),origin(NULL)
+	Region::Region(ID id, const std::string& name) : Node(id,NodeType::REGION),origin(NULL)
 	{
 		
 	}
@@ -153,10 +153,33 @@ namespace nodes
 		}
 	}
 
-	
-	Street* Region::newStreet(ID id,NodeType t)
+	/*Street* Region::newStreet(ID id)
+	{
+		Street* n = new Street(id);
+		toDeleteNodes.push_back(n);
+		if(origin == NULL) origin = n;//si no hay nodo origne registrado
+		
+		return n;
+	}*/
+	/*Street* Region::newStreet(ID id,NodeType t)
 	{
 		Street* n = new Street(id,t);
+		toDeleteNodes.push_back(n);
+		if(origin == NULL) origin = n;//si no hay nodo origne registrado
+		
+		return n;
+	}*/
+	Node* Region::newNode(ID id)
+	{
+		Node* n = new Node(id);
+		toDeleteNodes.push_back(n);
+		if(origin == NULL) origin = n;//si no hay nodo origne registrado
+		
+		return n;
+	}
+	Node* Region::newNode(ID id,NodeType t)
+	{
+		Node* n = new Node(id,t);
 		toDeleteNodes.push_back(n);
 		if(origin == NULL) origin = n;//si no hay nodo origne registrado
 		
@@ -173,6 +196,13 @@ namespace nodes
 		Edge* e = new Edge(d,a,n);
 		toDeleteEdges.push_back(e);
 		return e;
+	}
+	void Region::newEdgeBi(unsigned int d,Node* a, Node* n)
+	{
+		Edge* e1 = new Edge(d,a,n);
+		toDeleteEdges.push_back(e1);
+		Edge* e2 = new Edge(d,n,a);
+		toDeleteEdges.push_back(e2);
 	}
 	Node* Region::getOrigin()
 	{
@@ -216,10 +246,11 @@ nextAdd:
 	//std::cout << "TransEnviroment::generate Step 2.1.1 newE =" << newE << ", ID = " << newE->getNode()->getID() << "\n";
 	if(newE)
 	{	
-		//std::cout << "TransEnviroment::generate Step 2.1.2 \n";
+		//std::cout << "TransEnviroment::generate Step 2.1.1.2 newE =" << newE << ", ID = " << newE->getNode()->getID() << "\n";
 		if(newE->getNextCount() < stop)
 		{
-			//std::cout << "TransEnviroment::generate Step 2.1.3\n";
+			//if(newE == l->back()) return;
+			std::cout << "TransEnviroment::generate Step 2.1.1.3 newE =" << newE << ", ID = " << newE->getNode()->getID() << "\n";
 			newL = new Path(*l);
 			newL->push_back(newE);
 			lstPaths.push_back(newL);//se crea neeva ruta
@@ -267,7 +298,8 @@ void TransEnviroment::init()
 	//std::cout << "TransEnviroment::init Step 3\n";
 	for(Path* ls : lstPaths)
 	{
-		/*Path::iterator itB = ls->begin();
+		/*
+		Path::iterator itB = ls->begin();
 		nodes::Edge* eB = *itB;
 		nodes::Node* nB = eB->getNode();
 		std::cout << "Node : " << nB->getID();
@@ -279,7 +311,8 @@ void TransEnviroment::init()
 			//std::cout << " count  " << ls->size() << "\n";
 			nodes::Node* nE = eE->getNode();
 			std::cout << " --> " << nE->getID();
-		}*/
+		}
+		*/
 		std::cout << "| --> ";
 		if(ls->size() > 0)
 		{

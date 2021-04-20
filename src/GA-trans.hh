@@ -21,16 +21,20 @@ namespace nodes
 
 	enum NodeType
 	{
-		Normal,
-		Origin,
-		Out,
-		Group
+		UNKNOW,
+		NORNAL,
+		ORIGIN,
+		END,
+		REGION,
+		TARGET,
+		UNION,
 	};
 	
 	class Node
 	{
 	friend class Edge;
 	public:
+		Node(ID id);
 		Node(ID id,NodeType type);
 		virtual ~Node();
 
@@ -38,18 +42,21 @@ namespace nodes
 		ID getID() const;
 		
 		//setter
+		void setType(NodeType type);
 
 		//funtions
 		/**
 		*\brief Agrega un arista al nodo.
 		*/
-		void add(Edge* edge);
+		void addFront(Edge* edge);
+		void addBack(Edge* edge);
 		Edge* operator[] (Index index);
 		Edge* nextLessTrans();
 		
 	private:
 		ID id; 
-		std::list<Edge*> edges;
+		std::list<Edge*> edgesFront;
+		std::list<Edge*> edgesBack;
 		NodeType type;
 	};
 
@@ -67,7 +74,7 @@ namespace nodes
 		//void setPrevius(Node* n);
 		Node* transNext();
 		//Node* transPrev();
-		Node* getNext();
+		virtual Node* getNext();
 		Node* getNode();
 		unsigned short getNextCount();
 		//unsigned short getPrevCount();
@@ -82,19 +89,12 @@ namespace nodes
 		//unsigned short prevCount;
 	};
 
-	class Street : public Node
-	{
-	public:
-		Street(ID id,NodeType type);
-		virtual ~Street();
-	private: 
-
-	};
-
+	
 
 	class Target : public Node
 	{
 	public:
+		Target(ID id);
 		Target(ID id,const std::string& name);
 		virtual ~Target();
 
@@ -115,10 +115,14 @@ namespace nodes
 		//funtions
 		void connect(Node* from, Node* to);
 		Node* newNode();
-		Street* newStreet(ID id,NodeType type);
+		Node* newNode(ID id);
+		Node* newNode(ID id,NodeType type);
+		//Street* newStreet(ID id);
+		//Street* newStreet(ID id,NodeType type);
 		Target* newTarget();
 		Edge* newEdge(unsigned int time,unsigned int distence,Node* prev, Node* next);
 		Edge* newEdge(unsigned int distence,Node* prev, Node* next);
+		void newEdgeBi(unsigned int distence,Node* prev, Node* next);
 		Node* getOrigin();
 		
 	private: 
