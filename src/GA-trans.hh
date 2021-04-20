@@ -230,6 +230,8 @@ public:
 private:
 	void generate(nodes::Node* orig, unsigned short stop);
 	void generate(Path* path,nodes::Edge* e, unsigned short stop);
+
+	void print(nodes::Node*);
 	//	
 	nodes::Region* region;
 	ID countID;

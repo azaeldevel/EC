@@ -265,21 +265,40 @@ void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short st
 	nodes::Node* n = eprev->getNext();
 	nodes::Edge* eN = n->nextLessTrans(stop);
 	std::cout << "n = " << n->getID() << "\n";
-	std::cout << "TransEnviroment::generate2 Step 2\n";
-	while(eN)
+	std::cout << "TransEnviroment::generate2 Step 2 eN = " << eN << "\n";
+	do
 	{
 		std::cout << "TransEnviroment::generate2 Step 3\n";
-		Path* newPath = new Path(*path);
-		eN->transNext();
-		newPath->push_back(eN);
-		lstPaths.push_back(newPath);
-		std::cout << "TransEnviroment::generate2 Step 4\n";
-		if(n->getType() != nodes::END or n->getType() != nodes::TARGET or n->getType() != nodes::ORIGIN) generate(newPath,eN,stop);
-		std::cout << "TransEnviroment::generate2 Step 5\n";
+		Path* newPath = NULL;
+		if(eN)
+		{
+			newPath = new Path(*path);
+			eN->transNext();
+			newPath->push_back(eN);
+			lstPaths.push_back(newPath);
+			std::cout << "TransEnviroment::generate2 Step 4\n";
+		}
+		switch(n->getType())
+		{
+		case nodes::TARGET:
+			std::cout << "type = Target\n";
+			break;
+		case nodes::END:
+			std::cout << "type = End\n";
+			break;
+		case nodes::ORIGIN:
+			std::cout << "type = Origin\n";
+			break;
+		default:
+			std::cout << "type = desconocido\n";
+		}
+		if(n->getType() != nodes::END and n->getType() != nodes::TARGET and n->getType() != nodes::ORIGIN and eN) generate(newPath,eN,stop);
+		std::cout << "TransEnviroment::generate2 Step 5 n = " << n->getID() << "\n";
 		//next iteration
 		eN = n->nextLessTrans(stop);
 		std::cout << "TransEnviroment::generate2 Step 6\n";
 	}
+	while(eN);
 }
 void TransEnviroment::init()
 {
@@ -296,22 +315,9 @@ void TransEnviroment::init()
 		{
 			for(nodes::Edge* e : *ls)
 			{				
-				switch(e->getNode()->getType())
-				{
-				case nodes::NodeType::TARGET:
-						std::cout << "Target(" << e->getNode()->getID() << ")" ;
-					break;
-				case nodes::NodeType::END:
-						std::cout << "END("<< e->getNode()->getID() << ")" ;
-					break;
-				case nodes::NodeType::ORIGIN:
-						std::cout << "ORIGIN("<< e->getNode()->getID() << ") --> " ;
-					break;
-				default:
-						std::cout << "(" << e->getNode()->getID() << ") --> " ;
-					break;
-				}
+				print(e->getNode());
 			}
+			print(ls->back()->getNext());
 		}
 		std::cout << "\n";
 	}
@@ -327,5 +333,22 @@ bool TransEnviroment::run()
 	return true;
 }
 
-
+void TransEnviroment::print(nodes::Node* n)
+{
+	switch(n->getType())
+	{
+		case nodes::NodeType::TARGET:
+			std::cout << "Target(" << n->getID() << ")" ;
+			break;
+		case nodes::NodeType::END:
+			std::cout << "END("<< n->getID() << ")" ;
+			break;
+		case nodes::NodeType::ORIGIN:
+			std::cout << "ORIGIN("<< n->getID() << ") --> " ;
+			break;
+		default:
+			std::cout << "(" << n->getID() << ") --> " ;
+			break;
+	}
+}
 }
