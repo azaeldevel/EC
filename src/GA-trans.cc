@@ -80,14 +80,14 @@ namespace nodes
 	}
 	Edge* Node::nextLessTrans(Explored max)
 	{
-		std::cout << "TransEnviroment::nextLessTrans Step 1 node " << getID() << "\n";
+		//std::cout << "TransEnviroment::nextLessTrans Step 1 node " << getID() << "\n";
 		if(edgesFront.empty()) return NULL;
-		std::cout << "TransEnviroment::nextLessTrans Step 2\n";
+		//std::cout << "TransEnviroment::nextLessTrans Step 2\n";
 		for(Edge* e : edgesFront)
 		{
 			if(e->getNextCount() <  max) return e;
 		}
-		std::cout << "TransEnviroment::nextLessTrans Step 3\n";
+		//std::cout << "TransEnviroment::nextLessTrans Step 3\n";
 		return NULL;
 	}
 
@@ -239,20 +239,20 @@ TransEnviroment::~TransEnviroment()
 
 void TransEnviroment::generate(nodes::Node* n,unsigned short stop)
 {
-	std::cout << "TransEnviroment::generate Step 1\n";
+	//std::cout << "TransEnviroment::generate Step 1\n";
 	nodes::Edge* eN = n->nextLessTrans(stop);
 	
 	while(eN)
 	{
-		std::cout << "TransEnviroment::generate Step 2\n";
+		//std::cout << "TransEnviroment::generate Step 2\n";
 		Path* newPath = new Path();
-		std::cout << "TransEnviroment::generate Step 3\n";
+		//std::cout << "TransEnviroment::generate Step 3\n";
 		eN->transNext();
-		std::cout << "TransEnviroment::generate Step 4\n";
+		//std::cout << "TransEnviroment::generate Step 4\n";
 		newPath->push_back(eN);
-		std::cout << "TransEnviroment::generate Step 5\n";
+		//std::cout << "TransEnviroment::generate Step 5\n";
 		lstPaths.push_back(newPath);
-		std::cout << "TransEnviroment::generate Step 6\n";		
+		//std::cout << "TransEnviroment::generate Step 6\n";		
 		generate(newPath,eN,stop);
 
 		//net iteration
@@ -261,14 +261,14 @@ void TransEnviroment::generate(nodes::Node* n,unsigned short stop)
 }
 void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop)
 {
-	std::cout << "TransEnviroment::generate2 Step 1\n";
+	//std::cout << "TransEnviroment::generate2 Step 1\n";
 	nodes::Node* n = eprev->getNext();
 	nodes::Edge* eN = n->nextLessTrans(stop);
-	std::cout << "n = " << n->getID() << "\n";
-	std::cout << "TransEnviroment::generate2 Step 2 eN = " << eN << "\n";
+	//std::cout << "n = " << n->getID() << "\n";
+	//std::cout << "TransEnviroment::generate2 Step 2 eN = " << eN << "\n";
 	do
 	{
-		std::cout << "TransEnviroment::generate2 Step 3\n";
+		//std::cout << "TransEnviroment::generate2 Step 3\n";
 		Path* newPath = NULL;
 		if(eN)
 		{
@@ -276,27 +276,13 @@ void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short st
 			eN->transNext();
 			newPath->push_back(eN);
 			lstPaths.push_back(newPath);
-			std::cout << "TransEnviroment::generate2 Step 4\n";
+			//std::cout << "TransEnviroment::generate2 Step 4\n";
 		}
-		switch(n->getType())
-		{
-		case nodes::TARGET:
-			std::cout << "type = Target\n";
-			break;
-		case nodes::END:
-			std::cout << "type = End\n";
-			break;
-		case nodes::ORIGIN:
-			std::cout << "type = Origin\n";
-			break;
-		default:
-			std::cout << "type = desconocido\n";
-		}
-		if(n->getType() != nodes::END and n->getType() != nodes::TARGET and n->getType() != nodes::ORIGIN and eN) generate(newPath,eN,stop);
-		std::cout << "TransEnviroment::generate2 Step 5 n = " << n->getID() << "\n";
+		
+		if(n->getType() != nodes::END and n->getType() != nodes::ORIGIN and eN) generate(newPath,eN,stop);
+		
 		//next iteration
 		eN = n->nextLessTrans(stop);
-		std::cout << "TransEnviroment::generate2 Step 6\n";
 	}
 	while(eN);
 }
@@ -317,7 +303,7 @@ void TransEnviroment::init()
 			{				
 				print(e->getNode());
 			}
-			print(ls->back()->getNext());
+			//print(ls->back()->getNext());
 		}
 		std::cout << "\n";
 	}
@@ -341,10 +327,10 @@ void TransEnviroment::print(nodes::Node* n)
 			std::cout << "Target(" << n->getID() << ")" ;
 			break;
 		case nodes::NodeType::END:
-			std::cout << "END("<< n->getID() << ")" ;
+			std::cout << "End("<< n->getID() << ")" ;
 			break;
 		case nodes::NodeType::ORIGIN:
-			std::cout << "ORIGIN("<< n->getID() << ") --> " ;
+			std::cout << "O("<< n->getID() << ") --> " ;
 			break;
 		default:
 			std::cout << "(" << n->getID() << ") --> " ;

@@ -17,6 +17,7 @@ void TransEnviroment::creteRegion()
 	nodeB = region->newNode(++countID);//66, ID = 3
 	region->newEdgeBi(600,nodeA,nodeB);
 	nodes::Node* node_66 = nodeB;
+	nodes::Node* node_O = nodeA;
 
 	//std::cout << "TransEnviroment::creteRegion Step 3\n";
 	nodeA = nodeB;//66
@@ -96,6 +97,69 @@ void TransEnviroment::creteRegion()
 	nodeB = region->newNode(++countID);//14
 	region->newEdgeBi(300,nodeA,nodeB);
 	nodeB->setType(nodes::NodeType::TARGET);
+	
+	nodeA = nodeB;//14
+	nodeB = region->newNode(++countID);//58
+	region->newEdgeBi(400,nodeA,nodeB);
+	
+	nodeA = nodeB;//58
+	nodeB = region->newNode(++countID);//13
+	region->newEdgeBi(100,nodeA,nodeB);
+	
+	nodeA = nodeB;//13
+	nodeB = region->newNode(++countID);//19
+	region->newEdgeBi(200,nodeA,nodeB);
+	
+	nodeA = nodeB;//19
+	nodeB = region->newNode(++countID);//20
+	region->newEdgeBi(100,nodeA,nodeB);
+	
+	nodeA = nodeB;//20
+	nodeB = region->newNode(++countID);//21
+	region->newEdgeBi(100,nodeA,nodeB);
+	
+	nodeA = nodeB;//21
+	nodeB = region->newNode(++countID);//63
+	region->newEdgeBi(200,nodeA,nodeB);
+	
+	nodeA = nodeB;//63
+	nodeB = region->newNode(++countID);//24
+	region->newEdgeBi(500,nodeA,nodeB);
+	
+	nodeA = nodeB;//24
+	nodeB = region->newNode(++countID);//23
+	region->newEdgeBi(200,nodeA,nodeB);
+	
+	nodeA = nodeB;//23
+	nodeB = region->newNode(++countID);//25
+	region->newEdgeBi(200,nodeA,nodeB);
+	
+	nodeA = nodeB;//25
+	nodeB = region->newNode(++countID);//27
+	region->newEdgeBi(500,nodeA,nodeB);
+	
+	nodeA = nodeB;//27
+	nodeB = region->newNode(++countID);//31
+	region->newEdgeBi(500,nodeA,nodeB);
+	
+	nodeA = nodeB;//31
+	nodeB = region->newNode(++countID);//30
+	region->newEdgeBi(700,nodeA,nodeB);
+	
+	nodeA = nodeB;//30
+	nodeB = region->newNode(++countID);//32
+	region->newEdgeBi(300,nodeA,nodeB);
+			
+	nodeA = nodeB;//32
+	nodeB = region->newNode(++countID);//33
+	region->newEdgeBi(300,nodeA,nodeB);
+	
+	nodeA = nodeB;//33
+	nodeB = region->newNode(++countID);//43
+	region->newEdgeBi(800,nodeA,nodeB);
+	
+	region->newEdgeBi(500,nodeB,node_O);//43 -> O
+	
 }
 
 }
