@@ -39,6 +39,7 @@ void TransEnviroment::creteRegion()
 	nodeA = nodeB;//9
 	nodeB = region->newNode(++countID);//10
 	region->newEdgeBi(300,nodeA,nodeB);
+	nodes::Node* node_10 = nodeB;
 	
 	nodeA = nodeB;//10
 	nodeB = region->newNode(++countID);//11
@@ -159,6 +160,20 @@ void TransEnviroment::creteRegion()
 	region->newEdgeBi(800,nodeA,nodeB);
 	
 	region->newEdgeBi(500,nodeB,node_O);//43 -> O
+
+	nodeA = node_10; //10
+	nodeB = region->newNode(++countID); //36
+	region->newEdgeBi(200,nodeA,nodeB);
+	
+	nodeA = nodeB; //36
+	nodeB = region->newNode(++countID); //12
+	region->newEdgeBi(100,nodeA,nodeB);
+	
+	nodeA = nodeB; //12
+	nodeB = region->newNode(++countID); //58
+	region->newEdgeBi(200,nodeA,nodeB);
+
+	
 	
 }
 

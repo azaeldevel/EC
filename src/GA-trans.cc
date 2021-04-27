@@ -302,8 +302,12 @@ void TransEnviroment::init()
 			for(nodes::Edge* e : *ls)
 			{				
 				print(e->getNode());
+				std::cout << " --> ";
 			}
-			//print(ls->back()->getNext());
+			if(ls->back()->getNext()) 
+			{
+				print(ls->back()->getNext());
+			}
 		}
 		std::cout << "\n";
 	}
@@ -330,10 +334,10 @@ void TransEnviroment::print(nodes::Node* n)
 			std::cout << "End("<< n->getID() << ")" ;
 			break;
 		case nodes::NodeType::ORIGIN:
-			std::cout << "O("<< n->getID() << ") --> " ;
+			std::cout << "O("<< n->getID() << ")" ;
 			break;
 		default:
-			std::cout << "(" << n->getID() << ") --> " ;
+			std::cout << "(" << n->getID() << ")" ;
 			break;
 	}
 }
