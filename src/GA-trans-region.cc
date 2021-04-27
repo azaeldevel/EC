@@ -140,6 +140,7 @@ void TransEnviroment::creteRegion()
 	nodeA = nodeB;//25
 	nodeB = region->newNode(++countID);//27
 	region->newEdgeBi(500,nodeA,nodeB);
+	nodes::Node* node_27 = nodeB;
 	
 	nodeA = nodeB;//27
 	nodeB = region->newNode(++countID);//31
@@ -148,14 +149,17 @@ void TransEnviroment::creteRegion()
 	nodeA = nodeB;//31
 	nodeB = region->newNode(++countID);//30
 	region->newEdgeBi(700,nodeA,nodeB);
+	nodes::Node* node_30 = nodeB;
 	
 	nodeA = nodeB;//30
 	nodeB = region->newNode(++countID);//32
 	region->newEdgeBi(300,nodeA,nodeB);
+	nodes::Node* node_32 = nodeB;
 			
 	nodeA = nodeB;//32
 	nodeB = region->newNode(++countID);//33
 	region->newEdgeBi(300,nodeA,nodeB);
+	nodes::Node* node_33 = nodeB;
 	
 	nodeA = nodeB;//33
 	nodeB = region->newNode(++countID);//43
@@ -179,11 +183,13 @@ void TransEnviroment::creteRegion()
 	nodeA = node_2; //2
 	nodeB = region->newNode(++countID); //7
 	region->newEdgeBi(600,nodeA,nodeB);
-		
+	nodes::Node* node_7 = nodeB;
+	
 	nodeA = nodeB; //7
 	nodeB = region->newNode(++countID); //65
 	region->newEdgeBi(200,nodeA,nodeB);
-		
+	nodes::Node* node_65 = nodeB;
+	
 	nodeA = nodeB; //65
 	nodeB = region->newNode(++countID); //17
 	region->newEdgeBi(400,nodeA,nodeB);
@@ -225,6 +231,7 @@ void TransEnviroment::creteRegion()
 	nodeA = nodeB; //61
 	nodeB = region->newNode(++countID); //56
 	region->newEdgeBi(500,nodeA,nodeB);
+	nodeB->setType(nodes::NodeType::TARGET);
 		
 	nodeA = nodeB; //56
 	nodeB = region->newNode(++countID); //91
@@ -243,6 +250,37 @@ void TransEnviroment::creteRegion()
 	region->newEdgeBi(200,nodeA,nodeB);
 		
 	region->newEdgeBi(200,nodeB,node_2);
+		
+	nodeA = node_7; //7
+	nodeB = region->newNode(++countID); //37
+	region->newEdgeBi(300,nodeA,nodeB);
+		
+	nodeA = node_65; //65
+	nodeB = region->newNode(++countID); //35
+	region->newEdgeBi(300,nodeA,nodeB);
+	nodeB->setType(nodes::NodeType::TARGET);
+		
+	nodeA = node_33; ///33
+	nodeB = region->newNode(++countID); //34
+	region->newEdgeBi(300,nodeA,nodeB);
+	nodeB->setType(nodes::NodeType::TARGET);
+		
+	nodeA = node_32; //32
+	nodeB = region->newNode(++countID); //38
+	region->newEdgeBi(300,nodeA,nodeB);
+	nodeB->setType(nodes::NodeType::TARGET);
+		
+	nodeA = node_30;//30
+	nodeB = region->newNode(++countID);//29
+	region->newEdgeBi(500,nodeA,nodeB);
+		
+	nodeA = nodeB; //29
+	nodeB = region->newNode(++countID); //28
+	region->newEdgeBi(300,nodeA,nodeB);
+	
+	region->newEdgeBi(300,nodeB,node_27);
+	
+	
 }
 
 }
