@@ -190,7 +190,7 @@ public:
 class TransChromosome : public Chromosome
 {
 public:
-	TransChromosome();
+	TransChromosome(const Path& path);
 	TransChromosome(const TransChromosome& obj);
 	virtual ~TransChromosome();
 
@@ -202,16 +202,25 @@ public:
 	virtual void randFill();
 	
 private:
-	//std::list<Node*> path;
+	Path path;
 };
 
 
 class TransSingle : public Single
 {
 public:
-	TransSingle(const Single&);
-	TransSingle(ID id,Enviroment&,const Junction& junction);
-	TransSingle(ID id,Enviroment&);
+	TransSingle(const TransSingle&);
+	TransSingle(ID id,Enviroment&, const Junction& junction, const Path&);
+	TransSingle(ID id,Enviroment&, const Path&);
+	
+	virtual void eval();
+	virtual void randFill();
+	virtual void juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
+	virtual void save(std::ofstream& fn);
+	
+private:
+	unsigned short puntos;
+	TransChromosome chromosome;
 };
 
 
@@ -240,8 +249,8 @@ private:
 	void print(nodes::Node*);
 	//	
 	nodes::Region* region;
-	ID countID;
 	std::list<Path*> lstPaths;
+	nodes::ID countID;
 };
 
 }

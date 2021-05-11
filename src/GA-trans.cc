@@ -255,6 +255,89 @@ namespace nodes
 
 
 
+
+
+TransChromosome::TransChromosome(const Path& p) : Chromosome("TransChromosome"),path(p)
+{
+
+}
+TransChromosome::TransChromosome(const TransChromosome& obj) : Chromosome("TransChromosome"),path(obj.path)
+{
+	path = obj.path;
+}
+TransChromosome::~TransChromosome()
+{
+}
+
+const TransChromosome& TransChromosome::operator = (const TransChromosome& obj)
+{
+	path = obj.path;
+
+	return *this;
+}
+
+void TransChromosome::combine(const ae::Chromosome& P1,const ae::Chromosome& P2)
+{
+
+}
+void TransChromosome::copy(const ae::Chromosome& P1)
+{
+
+}
+void TransChromosome::mutate(float p)
+{
+
+}
+void TransChromosome::randFill()
+{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TransSingle::TransSingle(const TransSingle& s) : Single(s),puntos(s.puntos),chromosome(s.chromosome)
+{
+}
+TransSingle::TransSingle(ID id,Enviroment& e,const Junction& j, const Path& p) : Single(id,e,j),chromosome(p),puntos(0)
+{
+}
+TransSingle::TransSingle(ID id,Enviroment& e, const Path& p) : Single(id,e),chromosome(p),puntos(0)
+{
+}
+
+void TransSingle::eval()
+{
+}
+void TransSingle::randFill()
+{
+}
+void TransSingle::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
+{
+}
+void TransSingle::save(std::ofstream& fn)
+{
+}
+
+
+
+
+
+
+
+
 TransEnviroment::TransEnviroment()
 {
 	init();
@@ -316,25 +399,25 @@ void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short st
 }
 void TransEnviroment::init()
 {
+	countID = 0;//contador de nodos
 	std::vector<nodes::Node*> targets;
-	countID = 0;
 	creteRegion(targets);
 
-	
+	//
 	for(nodes::Node* n : targets)
 	{
 		generate(n,1,true);
 		generate(n,1,false);
 	}
-	std::cout << "Size 1 : " << lstPaths.size() << "\n";
-	//std::cout << "TransEnviroment::init Step 3\n";
 	
 	//filtrar las rutas
 	filterPaths();
 	
-	//std::cout << "Size 2 : " << lstPaths.size() << "\n";
 	//generado cromosomas
-	
+	for(Path* path : lstPaths)
+	{
+ 		TransSingle* s = new TransSingle(next(),*this,*path);
+	}
 }
 void TransEnviroment::selection()
 {
@@ -382,6 +465,7 @@ void TransEnviroment::filterPaths()
 	}
 	for(Path* path : forDelete)
 	{
+		delete path;
 		lstPaths.remove(path);
 	}
 }
