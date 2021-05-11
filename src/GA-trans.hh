@@ -4,6 +4,7 @@
 
 #include <octetos/core/MD5sum.hh>
 #include <list>
+#include <vector>
 
 
 #include "GA.hh"
@@ -23,12 +24,12 @@ namespace nodes
 	enum NodeType
 	{
 		UNKNOW,
-		NORNAL,
-		ORIGIN,
-		END,
-		REGION,
-		TARGET,
-		UNION,
+		//NORNAL,
+		ORIGIN, /*Nodo de origen*/
+		END,/*Hacia afuera del grafo*/
+		REGION, /*Subnodo*/
+		TARGET, /*Nodo objetivo*/
+		//UNION,
 	};
 	
 	class Node
@@ -43,11 +44,16 @@ namespace nodes
 		ID getID() const;
 		NodeType getType()const;
 		Edge* getFront(Index index);
-		std::list<Edge*>& getListFront();
+		//std::list<Edge*>& getListFront();
+		Index getFrontCount()const;
+		Edge* getBack(Index index);
+		Index getBackCount()const;
 
 		//setter
 		void setType(NodeType type);
 
+		//
+		bool isTrunk()const;
 		//funtions
 		/**
 		*\brief Agrega un arista al nodo.
@@ -55,8 +61,8 @@ namespace nodes
 		void addFront(Edge* edge);
 		void addBack(Edge* edge);
 		Edge* operator[] (Index index);
-		Edge* nextLessTrans();
-		Edge* nextLessTrans(Explored max);
+		Edge* nextLessTrans(bool direction);
+		Edge* nextLessTrans(Explored max,bool direction);
 		
 	private:
 		ID id; 
@@ -224,13 +230,13 @@ public:
 	ae::Single* getRandomSingle()const;
 	void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
-	void creteRegion();
+	void creteRegion(std::vector<nodes::Node*>& targets);
 	virtual void selection();
 	virtual bool run();
 private:
-	void generate(nodes::Node* orig, unsigned short stop);
-	void generate(Path* path,nodes::Edge* e, unsigned short stop);
-
+	void generate(nodes::Node* orig, unsigned short stop,bool direction);
+	void generate(Path* path,nodes::Edge* e, unsigned short stop,bool direction);
+	void filterPaths();
 	void print(nodes::Node*);
 	//	
 	nodes::Region* region;

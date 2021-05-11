@@ -38,17 +38,39 @@ namespace nodes
 		std::advance(it, index);
 		return *it;
 	}
-	std::list<Edge*>& Node::getListFront()
+	/*std::list<Edge*>& Node::getListFront()
 	{
 		return edgesFront;
+	}*/
+	Index Node::getFrontCount()const
+	{
+		return edgesFront.size();
 	}
-		
+	Edge* Node::getBack(Index index)
+	{
+		std::list<Edge*>::iterator it = edgesBack.begin();
+		std::advance(it, index);
+		return *it;
+	}
+	Index Node::getBackCount()const
+	{
+		return edgesBack.size();
+	}
+	
 	//setters
 	void Node::setType(NodeType t)
 	{
 		type = t;
 	}
-		
+
+
+	//
+	bool Node::isTrunk()const
+	{
+		return edgesFront.size() > 1 or edgesBack.size() > 1 ? true : false;
+	}
+
+	//
 	void Node::addFront(Edge* e)
 	{
 		edgesFront.push_back(e);
@@ -63,13 +85,16 @@ namespace nodes
 		std::advance(it, index);
 		return *it;
 	}	
-	Edge* Node::nextLessTrans()
+	Edge* Node::nextLessTrans(bool direction)
 	{
-		if(edgesFront.size() == 0) return NULL;
-		Edge* less = operator[](0);
+		std::list<Edge*>* edgeList;
+		edgeList = direction? &edgesFront : &edgesBack;
+		
+		if(edgeList->size() == 0) return NULL;
+		Edge* less = *edgeList->begin();
 		if(less->getNextCount() == 0) return less;
 		
-		for(Edge* e : edgesFront)
+		for(Edge* e : *edgeList)
 		{
 			if(e->getNextCount() == 0) return e;
 			if(e->getNextCount() < less->getNextCount()) return less = e;
@@ -78,12 +103,15 @@ namespace nodes
 		//std::cout << "TransEnviroment::nextLessTrans " << e->getID() << "\n";
 		return less;
 	}
-	Edge* Node::nextLessTrans(Explored max)
-	{
+	Edge* Node::nextLessTrans(Explored max,bool direction)
+	{		
+		std::list<Edge*>* edgeList;
+		edgeList = direction? &edgesFront : &edgesBack;
+		
 		//std::cout << "TransEnviroment::nextLessTrans Step 1 node " << getID() << "\n";
-		if(edgesFront.empty()) return NULL;
+		if(edgeList->empty()) return NULL;
 		//std::cout << "TransEnviroment::nextLessTrans Step 2\n";
-		for(Edge* e : edgesFront)
+		for(Edge* e : *edgeList)
 		{
 			if(e->getNextCount() <  max) return e;
 		}
@@ -237,7 +265,7 @@ TransEnviroment::~TransEnviroment()
 }
 
 
-void TransEnviroment::generate(nodes::Node* n,unsigned short stop)
+void TransEnviroment::generate(nodes::Node* n,unsigned short stop,bool direction)
 {
 	//std::cout << "TransEnviroment::generate Step 1\n";
 	nodes::Edge* eN = n->nextLessTrans(stop);
@@ -253,13 +281,13 @@ void TransEnviroment::generate(nodes::Node* n,unsigned short stop)
 		//std::cout << "TransEnviroment::generate Step 5\n";
 		lstPaths.push_back(newPath);
 		//std::cout << "TransEnviroment::generate Step 6\n";		
-		generate(newPath,eN,stop);
+		generate(newPath,eN,stop,direction);
 
 		//net iteration
-		eN = n->nextLessTrans(stop);
+		eN = n->nextLessTrans(stop,direction);
 	}
 }
-void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop)
+void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,bool direction)
 {
 	//std::cout << "TransEnviroment::generate2 Step 1\n";
 	nodes::Node* n = eprev->getNext();
@@ -279,38 +307,33 @@ void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short st
 			//std::cout << "TransEnviroment::generate2 Step 4\n";
 		}
 		
-		if(n->getType() != nodes::END and n->getType() != nodes::ORIGIN and eN) generate(newPath,eN,stop);
+		if(n->getType() == nodes::UNKNOW and eN and newPath) generate(newPath,eN,stop,direction);
 		
 		//next iteration
-		eN = n->nextLessTrans(stop);
+		eN = n->nextLessTrans(stop,direction);
 	}
 	while(eN);
 }
 void TransEnviroment::init()
 {
+	std::vector<nodes::Node*> targets;
 	countID = 0;
-	creteRegion();
+	creteRegion(targets);
 
-
-	generate(region->getOrigin(),1);
 	
-	//std::cout << "TransEnviroment::init Step 3\n";
-	for(Path* ls : lstPaths)
+	for(nodes::Node* n : targets)
 	{
-		if(ls->size() > 0)
-		{
-			for(nodes::Edge* e : *ls)
-			{				
-				print(e->getNode());
-				std::cout << " --> ";
-			}
-			if(ls->back()->getNext()) 
-			{
-				print(ls->back()->getNext());
-			}
-		}
-		std::cout << "\n";
+		generate(n,1,true);
+		generate(n,1,false);
 	}
+	std::cout << "Size 1 : " << lstPaths.size() << "\n";
+	//std::cout << "TransEnviroment::init Step 3\n";
+	
+	//filtrar las rutas
+	filterPaths();
+	
+	//std::cout << "Size 2 : " << lstPaths.size() << "\n";
+	//generado cromosomas
 	
 }
 void TransEnviroment::selection()
@@ -341,5 +364,25 @@ void TransEnviroment::print(nodes::Node* n)
 			break;
 	}
 }
+void TransEnviroment::filterPaths()
+{
+	std::list<Path*> forDelete;
+	for(Path* path : lstPaths)
+	{
+		nodes::Node* node = path->back()->getNode();
+		
+		//aceptar objetivos
+		if(node->getType () != nodes::UNKNOW) continue;
+		
+		//aceptar esquinas,glorietas,
+		if(node->isTrunk()) continue;
 
+		//
+		forDelete.push_back(path);
+	}
+	for(Path* path : forDelete)
+	{
+		lstPaths.remove(path);
+	}
+}
 }

@@ -21,9 +21,16 @@
 
 int main()
 {
-	ae::ga::SudokuEnviroment sudoku;
+	//ae::ga::SudokuEnviroment sudoku;
 
-	sudoku.compress("log-20210321012756","log-20210321012756.tar");
+	//sudoku.compress("log-20210321012756","log-20210321012756.tar");
+
+	for(int i = 0; i < 1000; i++)
+	{
+
+	}
+
+	
 
 	
 	return 0;
