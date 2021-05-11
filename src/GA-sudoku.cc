@@ -312,11 +312,14 @@ void SudokuSingle::randFill()
 		}
 	}
 }
-void SudokuSingle::juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
+void SudokuSingle::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
 {
 	//std::cout << "\t" << idCount << " puede tener " << getJunction().get_number() << " hijos\n";
-	for(ae::geneUS i = 0; i < getJunction().get_number(); i++,idCount++)
+	ID idCount;
+	for(ae::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
+		idCount = getEnviroment().next();
+		
 		SudokuChromosome newtabla[3][3];
 		ae::Junction newj;
 		switch(getJunction().get_algorit())
@@ -738,7 +741,7 @@ bool SudokuEnviroment::run()
 			ae::Single* single2 = getRandomSingle();
 			if(single2 == NULL) continue;
 			if(single1 == single2) continue;
-			single1->juncting(idCount,newschils,single2,echolevel);
+			single1->juncting(newschils,single2,echolevel);
 			if(echolevel > 1 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 
 		}

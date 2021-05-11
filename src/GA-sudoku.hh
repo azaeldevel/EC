@@ -42,7 +42,7 @@ public:
 		
 	virtual void eval();
 	virtual void randFill();
-	virtual void juncting(ID& idCount,std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
+	virtual void juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
 	virtual void save(std::ofstream& fn);
 	const octetos::core::MD5sum& getMD5() const;
 	
