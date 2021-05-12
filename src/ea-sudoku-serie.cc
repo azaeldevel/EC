@@ -37,7 +37,7 @@ int main(int argc, const char* argv[])
 	}
 	
 	ae::ga::SudokuEnviroment *sudoku;
-	std::string dir = "logs/fewSolutions";
+	std::string dir = "logs/" + std::to_string(ae::ga::SudokuEnviroment::getDayID());
 	std::string dirSolutions = dir + "/solutions.cvs";
 	coreutils::Shell shell;
 	shell.mkdir(dir,true);
@@ -47,9 +47,12 @@ int main(int argc, const char* argv[])
 	do
 	{
 		std::cout << "Test " << i << "\n";
-		sudoku = new ae::ga::SudokuEnviroment(dir,argv[1]);
+		sudoku = new ae::ga::SudokuEnviroment(dir,argv[1],1000);
 		sudoku->enableEcho (&std::cout,2);
 		sudoku->enableLogFile (true);
+		sudoku->addTerminator(ae::Terminations::MAXITERATION);
+		sudoku->addTerminator(ae::Terminations::MINSOLUTIONS);
+		sudoku->addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
 		done = sudoku->run();
 		if(done)
 		{

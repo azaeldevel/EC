@@ -517,7 +517,7 @@ ae::Single* SudokuEnviroment::getRandomSingle() const
 SudokuEnviroment::SudokuEnviroment()
 {
 }
-SudokuEnviroment::SudokuEnviroment(const std::string& log,const std::string& initB) : ae::Enviroment(log)
+SudokuEnviroment::SudokuEnviroment(const std::string& log,const std::string& initB,Iteration maxite) : ae::Enviroment(log,maxite)
 {
 	init(initB);
 }
@@ -542,8 +542,8 @@ void SudokuEnviroment::init(const std::string& initB)
 	actualIteration = 1;
 	maxIteration = 1000;
 	newIteration = true;
-	minSolutions = 3;
-	pMutationEvent = 1.0;
+	minSolutions = 1;
+	pMutationEvent = 0.02;
 	pMutableGene = 1.0/81.0;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;

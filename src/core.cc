@@ -287,8 +287,7 @@ void Single::init()
 
 
 
-
-Enviroment::Enviroment()
+void Enviroment::init()
 {
 	idCount = 1;
 	actualIteration = 1;
@@ -296,15 +295,27 @@ Enviroment::Enviroment()
 	echolevel = 0;
 	logFile = false;
 	//sigmaReduction = 1.0;
-	//minSolutions = 1;
+	minSolutions = 0;
 	pMutationEvent = 0.02;
 	pMutableGene = 0.4;
 	fout = NULL;
+	enableMaxIterations=enableMinSolutions=enableNotNewLeaderAtPercen=false;
+	enableNotIncrementFitnessLeaderAtPercen = false;
+	percen_at_iteration = 20.0;//%
+}
+Enviroment::Enviroment()
+{
+	init();	
 }
 Enviroment::~Enviroment()
 {}
 Enviroment::Enviroment(const std::string& log) : logDirectory(log)
 {
+	init();
+}
+Enviroment::Enviroment(const std::string& log,Iteration m) : logDirectory(log),maxIteration(m)
+{
+	init();
 }
 
 Population Enviroment::getMaxPopulation()const
@@ -348,6 +359,28 @@ unsigned long Enviroment::getSession()const
 	v += (now->tm_mon + 1 ) * 100000000;
 	v += now->tm_mday * 1000000;
 	v += now->tm_hour * 10000;
+	v += now->tm_min * 100;
+	v += now->tm_sec;
+	
+    return v;
+}
+unsigned long Enviroment::getDayID()
+{
+	std::time_t t = std::time(0);   // get time now
+    std::tm* now = std::localtime(&t);
+
+	unsigned long v = (now->tm_year + 1900) * 10000;
+	v += (now->tm_mon + 1 ) * 100;
+	v += now->tm_mday;
+	
+    return v;
+}
+unsigned long Enviroment::getTimeID()
+{
+	std::time_t t = std::time(0);   // get time now
+    std::tm* now = std::localtime(&t);
+
+	unsigned long v = now->tm_hour * 10000;
 	v += now->tm_min * 100;
 	v += now->tm_sec;
 	
@@ -427,11 +460,31 @@ void Enviroment::enableLogFile(bool log)
 	logFile = log;
 }
 bool Enviroment::run()
-{
+{	
+	for(Terminations t : terminations)
+	{
+		switch(t)
+		{
+		case MAXITERATION:
+				enableMaxIterations = true;
+			break;
+		case MINSOLUTIONS:
+				enableMinSolutions = true;
+			break;
+		case FORLEADER_NEW:
+				enableNotNewLeaderAtPercen = true;
+			break;
+		case FORLEADER_INCREMENTFITNESS:
+				enableNotIncrementFitnessLeaderAtPercen = true;
+			break;
+		default:
+			throw octetos::core::Exception("Metodo de terminacion desconocido",__FILE__,__LINE__);
+		}
+	}
 	initial();
 	unsigned short counUndelete = 0;
 	session = getSession();
-	logSubDirectory = logDirectory +"/" + std::to_string(session);
+	logSubDirectory = logDirectory +"/" + std::to_string(getTimeID());
 	std::string strhistory = logSubDirectory + "/history.csv";
 	std::ofstream history;
 	coreutils::Shell shell;
@@ -440,8 +493,18 @@ bool Enviroment::run()
 		shell.mkdir(logSubDirectory);
 		history.open(strhistory);
 	}
-	while(actualIteration <= maxIteration)
+
+	Iteration not_new_leader = (maxIteration * percen_at_iteration)/100.0;
+	ID oldleaderID = 0;
+	double oldLeaderFitness = 0.0;
+	Iteration countOldLeader = 0;
+	Iteration countOldLeaderFitness = 0;
+	while(true)
 	{
+		if(enableMaxIterations) 
+		{
+			if(actualIteration > maxIteration) return false;
+		}
 		if(echolevel > 0 and fout != NULL) 
 		{
 			(*fout) << ">>> Iteracion : " << actualIteration << "/" << maxIteration << "\n";
@@ -483,26 +546,65 @@ bool Enviroment::run()
 			fn.flush();
 			fn.close();
 		}
+		ae::Single* leader = *begin();
 		if(echolevel > 1 and fout != NULL) 
-		{
+		{			
+			std::cout << "\tLider : " << leader->getFitness() << "\n";
 			(*fout) << "\tmedia : " << media << "\n";
 			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 		}
-
-		Population countSols = 0;
-		for(ae::Single* s : *this)
+		if(enableNotNewLeaderAtPercen)
 		{
-			if(1.0 - s->getFitness () < Enviroment::epsilon)
+			if(leader->getID() == oldleaderID)  
 			{
-				countSols++;
-				if(countSols >= minSolutions)
+				countOldLeader++;
+			}
+			else 
+			{
+				oldleaderID = leader->getID();
+				countOldLeader = 0;
+			}
+			if(not_new_leader < countOldLeader) 
+			{
+				std::cout << "\tFinalizado devido a atsco de de algoritmo, no nevo lider\n";
+				return false;
+			}
+		}
+		if(enableNotIncrementFitnessLeaderAtPercen)
+		{
+			if(leader->getFitness() == oldLeaderFitness)
+			{
+				countOldLeaderFitness++;
+			}
+			else
+			{
+				oldLeaderFitness = leader->getFitness();
+				countOldLeaderFitness = 0;
+			}
+			if(not_new_leader < countOldLeaderFitness) 
+			{
+				std::cout << "\tFinalizado devido a atasco de de algoritmo, no mejora en adpatabilidad del lider\n";
+				return false;
+			}
+		}
+		if(enableMinSolutions)
+		{
+			Population countSols = 0;
+			for(ae::Single* s : *this)
+			{
+				if(1.0 - s->getFitness () < Enviroment::epsilon)
 				{
-					if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
-					//s->print((*fout));
-					if(logFile) save();
-					//compress(logDir,logDir+".tar");
-					return true;
+					countSols++;
+					if(countSols >= minSolutions)
+					{
+						if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
+						//s->print((*fout));
+						if(logFile) save();
+						//compress(logDir,logDir+".tar");
+						std::cout << "\tFinalizado devido a solucion minima encontrada\n";
+						return true;
+					}
 				}
 			}
 		}
@@ -583,5 +685,47 @@ bool Enviroment::run()
 	}
 
 	return false;
+}
+void Enviroment::addTerminator(Terminations t)
+{
+	terminations.push_back(t);
+}
+void Enviroment::series()
+{
+	std::string dir = "logs/" + std::to_string(getDayID());
+	std::string dirSolutions = dir + "/solutions.cvs";
+	coreutils::Shell shell;
+	shell.mkdir(dir,true);
+	std::ofstream fSolutions(dirSolutions);
+	int i = 1;
+	bool done;
+	do
+	{
+		std::cout << "Serie : " << i << "\n";
+		//sudoku = new ae::ga::SudokuEnviroment(dir,argv[1]);
+		enableEcho (&std::cout,2);
+		enableLogFile (true);
+		if(maxIteration > 1) addTerminator(ae::Terminations::MAXITERATION);
+		if(minSolutions > 0) addTerminator(ae::Terminations::MINSOLUTIONS);
+		if(maxIteration > 1) addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
+		if(terminations.size())
+		{
+			throw octetos::core::Exception("No hay criterio de terminacion",__FILE__,__LINE__);
+		}
+		done = run();
+		if(done)
+		{
+			if(fSolutions.is_open())
+			{
+				save();
+				fSolutions << getLogSubDirectory ();
+				fSolutions << "\n";
+				fSolutions.flush();
+			}
+		}
+		i++;
+	}
+	while(not done);
+	fSolutions.close();
 }
 }

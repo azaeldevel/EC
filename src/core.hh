@@ -2,9 +2,6 @@
 #ifndef AE_HH
 #define AE_HH
 
-
-#include <list>
-
 // Check windows
 #if _WIN32 || _WIN64
 #if _WIN64
@@ -23,8 +20,9 @@
 #endif
 #endif
 
+#include <list>
 #include <string>
-
+#include <vector>
 
 namespace ae
 {
@@ -154,6 +152,13 @@ enum MethodeSelection
 	INCREMENTING_MEDIA,
 	LEADER_STRONG,
 };
+enum Terminations
+{
+	MAXITERATION,
+	MINSOLUTIONS,
+	FORLEADER_NEW,
+	FORLEADER_INCREMENTFITNESS,
+};
 
 class Enviroment : public std::list<ae::Single*>
 {
@@ -161,8 +166,10 @@ public:
 	//
 
 	//
+	void init();
 	Enviroment();
 	Enviroment(const std::string& log);
+	Enviroment(const std::string& log,Iteration maxIteration);
 	~Enviroment();
 
 	//getters
@@ -177,6 +184,8 @@ public:
 	double getProbabilityMutationEvent()const;
 	//void remove(ae::Single*);
 	unsigned long getSession()const;
+	static unsigned long getDayID();
+	static unsigned long getTimeID();
 	std::ostream* getFout();
 	const std::string getLogSubDirectory()const;
 
@@ -187,6 +196,7 @@ public:
 	void enableLogFile(bool log);
 	unsigned short getEchoLevel()const;
 	void write_archive(const char *outname, const char **filename);
+	void addTerminator(Terminations);
 	
 	virtual bool run();
 	virtual void selection() = 0;
@@ -194,6 +204,7 @@ public:
 	virtual void evaluation()=0;
 	virtual void juncting()=0;
 	virtual void save()=0;
+	virtual void series();
 	
 protected:
 	std::string logDirectory;
@@ -237,6 +248,19 @@ protected:
 	*\brief Para almacenar temporamente los nuevos individuos creados
 	*/
 	std::list<ae::Single*> newschils;
+
+	/**
+	*\brief Se usa cuando se activa el terminador NOT_NEW_LEADER_AT_PERCEN_ITERATION, para determinar el porcentaje de evaluacion
+	*/
+	bool enableMaxIterations,enableMinSolutions,enableNotNewLeaderAtPercen,enableNotIncrementFitnessLeaderAtPercen;
+
+	/**
+	*\brief Inidicatores de terminacion.
+	*/
+	float percen_at_iteration;
+private:
+	std::vector<Terminations> terminations;
+	
 };
 
 }
