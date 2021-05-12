@@ -245,6 +245,8 @@ public:
 	virtual void selection();
 	//virtual bool run();
 	virtual void evaluation();
+	virtual void juncting();
+	virtual void save();
 private:
 	void generate(nodes::Node* orig, unsigned short stop,bool direction);
 	void generate(Path* path,nodes::Edge* e, unsigned short stop,bool direction);

@@ -494,5 +494,12 @@ void TransEnviroment::evaluation()
 		single->eval();
 	}
 }
+void TransEnviroment::juncting()
+{
 
+}
+void TransEnviroment::save()
+{
+
+}
 }
