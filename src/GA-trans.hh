@@ -217,7 +217,8 @@ public:
 	virtual void randFill();
 	virtual void juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
 	virtual void save(std::ofstream& fn);
-	
+	virtual void print(std::ostream&) const;
+
 private:
 	unsigned short puntos;
 	TransChromosome chromosome;

@@ -132,6 +132,7 @@ public:
 	virtual void randFill() = 0;
 	virtual void juncting(std::list<Single*>& chils,Single* single,unsigned short loglevel) = 0;
 	virtual void save(std::ofstream& fn) = 0;
+	virtual void print(std::ostream&) const = 0;
 
 protected:
 	/**

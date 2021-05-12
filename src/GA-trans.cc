@@ -332,7 +332,10 @@ void TransSingle::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsi
 void TransSingle::save(std::ofstream& fn)
 {
 }
+void TransSingle::print(std::ostream&) const
+{
 
+}
 
 
 

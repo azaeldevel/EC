@@ -692,21 +692,22 @@ void Enviroment::addTerminator(Terminations t)
 }
 void Enviroment::series(const std::string& logDir,Iteration maxIte)
 {
+	logFile = not logDir.empty();
+	
 	logDirectory = logDir + "/" + std::to_string(getDayID());
 	std::string logStrSolutions = logDirectory + "/solutions.cvs";
 	coreutils::Shell shell;
 	shell.mkdir(logDirectory,true);
 	std::ofstream fnSolutions(logStrSolutions);
 	
+	enableEcho (&std::cout,2);
+	if(maxIteration > 1) addTerminator(ae::Terminations::MAXITERATION);
+	if(minSolutions > 0) addTerminator(ae::Terminations::MINSOLUTIONS);
+	if(maxIteration > 1) addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
+	
 	for(Iteration it = 1; it <= maxIte ; it++)
 	{
 		std::cout << "Serie : " << it << "\n";
-		//sudoku = new ae::ga::SudokuEnviroment(dir,argv[1]);
-		enableEcho (&std::cout,2);
-		enableLogFile (true);
-		if(maxIteration > 1) addTerminator(ae::Terminations::MAXITERATION);
-		if(minSolutions > 0) addTerminator(ae::Terminations::MINSOLUTIONS);
-		if(maxIteration > 1) addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
 		
 		if(terminations.size() == 0)
 		{
@@ -714,12 +715,17 @@ void Enviroment::series(const std::string& logDir,Iteration maxIte)
 		}
 		if(run())
 		{
-			if(fnSolutions.is_open())
+			if(logFile and fnSolutions.is_open())
 			{
 				save();
 				fnSolutions << getLogSubDirectory ();
 				fnSolutions << "\n";
 				fnSolutions.flush();
+			}
+			else
+			{
+				Single* s = *begin();
+				s->print(std::cout);
 			}
 			break;
 		}

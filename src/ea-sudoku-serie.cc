@@ -37,7 +37,7 @@ int main(int argc, const char* argv[])
 	}
 	
 	ae::ga::SudokuEnviroment sudoku(argv[1],1000);
-	sudoku.series("logs",100);
+	sudoku.series("",100);
 	
 	return EXIT_SUCCESS;
 }
