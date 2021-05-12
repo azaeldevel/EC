@@ -184,14 +184,16 @@ public:
 	ID getCountID();
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);
-	void enableLog(unsigned short level);
+	void enableLogFile(bool log);
 	unsigned short getEchoLevel()const;
 	void write_archive(const char *outname, const char **filename);
 	
 	virtual bool run();
 	virtual void selection() = 0;
-	virtual void initial(){};
-	virtual void evaluation(){};
+	virtual void initial()=0;
+	virtual void evaluation()=0;
+	virtual void juncting()=0;
+	virtual void save()=0;
 	
 protected:
 	std::string logDirectory;
@@ -204,7 +206,7 @@ protected:
 	Population maxProgenitor;
 	
 	unsigned short echolevel;
-	unsigned short logLevel;
+	bool logFile;
 	double sigma;
 	double media;
 	
@@ -230,6 +232,11 @@ protected:
 	std::ostream* fout;
 
 	unsigned long session;
+
+	/**
+	*\brief Para almacenar temporamente los nuevos individuos creados
+	*/
+	std::list<ae::Single*> newschils;
 };
 
 }

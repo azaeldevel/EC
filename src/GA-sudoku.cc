@@ -476,6 +476,16 @@ void SudokuSingle::printInit(std::ostream& out) const
 }
 
 
+
+
+
+
+
+
+
+
+
+
 ae::Single* SudokuEnviroment::getRandomSingleTop() const
 {
 	float maxp = std::distance(begin(),end());
@@ -520,7 +530,7 @@ SudokuEnviroment::~SudokuEnviroment()
 }
 void SudokuEnviroment::init(const std::string& initB)
 {
-	maxPopulation = 1458;//81*a
+	maxPopulation = 810;//81*a
 	initPopulation = maxPopulation;
 	maxProgenitor = 162;//9*a
 	idCount = 1;
@@ -529,24 +539,15 @@ void SudokuEnviroment::init(const std::string& initB)
 	sigma = 0.0;
 	media = 0.0;
 	
-	//actualIteration = 0;
-	maxIteration = 2000;
+	actualIteration = 1;
+	maxIteration = 1000;
 	newIteration = true;
 	minSolutions = 3;
 	pMutationEvent = 1.0;
 	pMutableGene = 1.0/81.0;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
-	
-	initBoard(initB);
-	
-	//poblacion inicial
-	for(Population i = 0; i < initPopulation; i++,idCount++)
-	{
-		SudokuSingle* s = new SudokuSingle(idCount,*this,sudokuInit);
-		s->randFill();
-		push_back(s);		
-	}
+	fnBoard = initB;
 }
 void SudokuEnviroment::initBoard(const std::string& initTable)
 {
@@ -588,8 +589,10 @@ double SudokuEnviroment::getGamma() const
 {
 	return gamma;
 }
-bool SudokuEnviroment::run()
+/*bool SudokuEnviroment::run()
 {
+	initial();
+	
 	unsigned long session = getSession();
 	logSubDirectory = logDirectory +"/" + std::to_string(session);
 	coreutils::Shell shell;
@@ -622,11 +625,7 @@ bool SudokuEnviroment::run()
 		//std::cout <<  "Step 2\n";
 		Population countSols = 0;
 		std::string cmdSol;
-		for(ae::Single* s : *this)
-		{
-			s->eval();	
-			s->deltaAge ();
-		}
+		evaluation();
 		
 		sort(cmpStrength);
 		for(ae::Single* s : *this)
@@ -642,13 +641,6 @@ bool SudokuEnviroment::run()
 		}
 		sigma /= size();
 		
-		/*
-		SudokuSingle& s = ((SudokuSingle&)**begin());
-		s.printInit(std::cout);
-		std::cout << "\n";	
-		s.print(std::cout);
-		std::cout << "Fortaleza : " << s.getFitness () << "\n\n";
-		*/
 		//std::cout <<  "Step 3\n";
 		if(logLevel > 2)
 		{
@@ -678,7 +670,7 @@ bool SudokuEnviroment::run()
 				{
 					if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
 					((SudokuSingle*)s)->print((*fout));
-					saveSolutions(logSubDirectory);
+					save();
 					//compress(logDir,logDir+".tar");
 					return true;
 				}
@@ -733,19 +725,8 @@ bool SudokuEnviroment::run()
 		}
 				
 		
-		std::list<ae::Single*> newschils;
-		do
-		{
-			ae::Single* single1 = getRandomSingle();
-			if(single1 == NULL) continue;
-			ae::Single* single2 = getRandomSingle();
-			if(single2 == NULL) continue;
-			if(single1 == single2) continue;
-			single1->juncting(newschils,single2,echolevel);
-			if(echolevel > 1 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
-
-		}
-		while(newschils.size() + size() <= maxPopulation);
+		
+		juncting();
 		if(logLevel > 2)
 		{
 			std::string strChilds = logSubDirectory + "/Sudoku-" + std::to_string(actualIteration) + "-childs.csv";
@@ -773,7 +754,7 @@ bool SudokuEnviroment::run()
 	history.close();
 	
 	return false;
-}
+}*/
 
 
 void SudokuEnviroment::selection()
@@ -813,9 +794,9 @@ void SudokuEnviroment::selection()
 		i = erase(i);
 	}
 }
-void SudokuEnviroment::saveSolutions(const std::string& dir)const
+void SudokuEnviroment::save()
 {
-	std::string strfn = dir +  "/Sudoku-" + std::to_string(actualIteration) + "-solutions.csv";
+	std::string strfn = logSubDirectory +  "/Solutions-" + std::to_string(actualIteration) + ".csv";
 	std::ofstream fn(strfn);
 	for(ae::Single* s : *this)
 	{
@@ -828,5 +809,39 @@ void SudokuEnviroment::saveSolutions(const std::string& dir)const
 	fn.close();
 }
 
+void SudokuEnviroment::initial()
+{
+	initBoard(fnBoard);
+	
+	//poblacion inicial
+	for(Population i = 0; i < initPopulation; i++,idCount++)
+	{
+		SudokuSingle* s = new SudokuSingle(idCount,*this,sudokuInit);
+		s->randFill();
+		push_back(s);		
+	}
+}
+void SudokuEnviroment::evaluation()
+{
+	for(ae::Single* s : *this)
+	{
+		s->eval();	
+		s->deltaAge ();
+	}
+}
+void SudokuEnviroment::juncting()
+{
+	do
+	{
+		ae::Single* single1 = getRandomSingle();
+		if(single1 == NULL) continue;
+		ae::Single* single2 = getRandomSingle();
+		if(single2 == NULL) continue;
+		if(single1 == single2) continue;
+		single1->juncting(newschils,single2,echolevel);
+		if(echolevel > 2 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
+	}
+	while(newschils.size() + size() <= maxPopulation);
+}
 
 }

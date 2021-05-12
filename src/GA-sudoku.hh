@@ -74,11 +74,16 @@ public:
 	double getGamma() const;
 	ae::Single* getRandomSingleTop()const;
 	ae::Single* getRandomSingle()const;
-	void saveSolutions(const std::string& dir)const;
+	//void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
 	
 	virtual void selection();
-	virtual bool run();
+	//virtual bool run();
+	virtual void initial();
+	virtual void evaluation();
+	virtual void juncting();
+	virtual void save();
+
 private:
 
 	/**
@@ -86,6 +91,7 @@ private:
 	*/
 	double gamma;
 	SudokuChromosome sudokuInit[3][3];
+	std::string fnBoard;
 	
 };
 

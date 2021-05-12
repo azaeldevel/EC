@@ -294,7 +294,7 @@ Enviroment::Enviroment()
 	actualIteration = 1;
 	maxIteration = 1;
 	echolevel = 0;
-	logLevel = 0;
+	logFile = false;
 	//sigmaReduction = 1.0;
 	//minSolutions = 1;
 	pMutationEvent = 0.02;
@@ -422,37 +422,166 @@ void Enviroment::enableEcho(std::ostream* f, unsigned short level)
   archive_write_close(a); // Note 4
   archive_write_free(a); // Note 5
 }*/
-void Enviroment::enableLog(unsigned short level)
+void Enviroment::enableLogFile(bool log)
 {
-	logLevel = level;
+	logFile = log;
 }
 bool Enviroment::run()
 {
 	initial();
-	
+	unsigned short counUndelete = 0;
 	session = getSession();
 	logSubDirectory = logDirectory +"/" + std::to_string(session);
-	coreutils::Shell shell;
-	if(logLevel > 0)
-	{
-		shell.mkdir(logSubDirectory);
-	}
-	//bool retVal = false;
-
 	std::string strhistory = logSubDirectory + "/history.csv";
 	std::ofstream history;
-	if(logLevel > 0)
-	{
+	coreutils::Shell shell;
+	if(logFile)
+	{		
+		shell.mkdir(logSubDirectory);
 		history.open(strhistory);
 	}
-
 	while(actualIteration <= maxIteration)
 	{
+		if(echolevel > 0 and fout != NULL) 
+		{
+			(*fout) << ">>> Iteracion : " << actualIteration << "/" << maxIteration << "\n";
+		}
+		media = 0.0;
+		sigma = 0.0;
+		//std::cout <<  "Step 1\n";
+		if(echolevel > 1 and fout != NULL) 
+		{
+			(*fout) << "\tTamano de la poblacion : " << size() << "\n";			
+			//std::cout << "\tgamman : " << gamma << "\n";
+		}
+		
 		evaluation();
+		sort(cmpStrength);
+
+		for(ae::Single* s : *this)
+		{
+			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
+			media += s->getFitness();			
+		}
+		media /= size();
+		for(ae::Single* s : *this)
+		{
+			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
+			sigma += pow(s->getFitness() - media,2);
+		}
+		sigma /= size();
+
+		if(logFile)
+		{
+			std::string strfn = logSubDirectory +  "/Iteracion-" + std::to_string(actualIteration) + ".csv";
+			std::ofstream fn(strfn);
+			if(not fn.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			for(ae::Single* s : *this)
+			{
+				s->save(fn);
+			}
+			fn.flush();
+			fn.close();
+		}
+		if(echolevel > 1 and fout != NULL) 
+		{
+			(*fout) << "\tmedia : " << media << "\n";
+			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
+			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
+		}
+
+		Population countSols = 0;
+		for(ae::Single* s : *this)
+		{
+			if(1.0 - s->getFitness () < Enviroment::epsilon)
+			{
+				countSols++;
+				if(countSols >= minSolutions)
+				{
+					if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
+					//s->print((*fout));
+					if(logFile) save();
+					//compress(logDir,logDir+".tar");
+					return true;
+				}
+			}
+		}
+		//std::cout <<  "Step 5\n";
+
+		if(logFile)
+		{
+			if(history.is_open()) 
+			{
+				history  << actualIteration;
+				history  << ",";
+					history  << size();
+					history  << ",";
+					history  << media;
+					history  << ",";
+					history  << sigma;	
+					history  << ",";
+					history  << pMutationEvent;
+					history  << ",";
+					history  << pMutableGene;
+					//history  << ",";
+					//history  << getFaltantes();
+					history  << "\n";
+					history .flush();
+			}
+			else
+			{
+				throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			}
+		}
+		//std::cout <<  "Step 6\n";
+		ae::ID countBefore = size();
+		
+		selection();
+		if(logFile)
+		{
+			std::string strSelection = logSubDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
+			std::ofstream fnSelection(strSelection);
+			if(not fnSelection.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			for(ae::Single* s : *this)
+			{
+				s->save(fnSelection);
+			}
+			fnSelection.flush();
+			fnSelection.close();
+		}
+		unsigned short removes = countBefore - size();
+		//deletes == 0 ? counUndelete++ : counUndelete = 0;
+		if(echolevel > 1 and fout != NULL) 
+		{
+			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
+			(*fout) << "\tEliminados : " << removes << "\n";	
+		}
+		//if(counUndelete > 100) return false;
+		
+		juncting();
+		if(logFile)
+		{
+			std::string strChilds = logSubDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
+			std::ofstream fnChilds(strChilds);
+			if(not fnChilds.is_open()) throw "No se logro abrier el archivo";				
+			for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
+			{
+				push_front(s);
+				s->save(fnChilds);			
+			}
+			fnChilds.flush();
+			fnChilds.close();
+		}
+		if(echolevel > 1 and fout != NULL) 
+		{
+			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
+		}
+		newschils.clear();
+
 		
 		actualIteration++;
 	}
 
-	return true;
+	return false;
 }
 }

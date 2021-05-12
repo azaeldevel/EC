@@ -42,23 +42,29 @@ int main(int argc, const char* argv[])
 	coreutils::Shell shell;
 	shell.mkdir(dir,true);
 	std::ofstream fSolutions(dirSolutions);
-	for(int i = 1; i <= 5; i++)
+	int i = 1;
+	bool done;
+	do
 	{
 		std::cout << "Test " << i << "\n";
 		sudoku = new ae::ga::SudokuEnviroment(dir,argv[1]);
-		sudoku->enableEcho (&std::cout,1);
-		sudoku->enableLog (1);
-		if(sudoku->run())
+		sudoku->enableEcho (&std::cout,2);
+		sudoku->enableLogFile (true);
+		done = sudoku->run();
+		if(done)
 		{
 			if(fSolutions.is_open())
 			{
+				sudoku->save();
 				fSolutions << sudoku->getLogSubDirectory ();
 				fSolutions << "\n";
 				fSolutions.flush();
 			}
 		}
 		delete sudoku;
+		i++;
 	}
+	while(not done);
 	fSolutions.close();
 	
 	return EXIT_SUCCESS;
