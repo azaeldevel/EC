@@ -309,13 +309,13 @@ Enviroment::Enviroment()
 }
 Enviroment::~Enviroment()
 {}
-Enviroment::Enviroment(const std::string& log) : logDirectory(log)
+/*Enviroment::Enviroment(const std::string& log,Iteration m) : logDirectory(log),maxIteration(m)
 {
 	init();
-}
-Enviroment::Enviroment(const std::string& log,Iteration m) : logDirectory(log),maxIteration(m)
+}*/
+Enviroment::Enviroment(Iteration m) : maxIteration(m)
 {
-	init();
+	init();	
 }
 
 Population Enviroment::getMaxPopulation()const
@@ -690,42 +690,40 @@ void Enviroment::addTerminator(Terminations t)
 {
 	terminations.push_back(t);
 }
-void Enviroment::series()
+void Enviroment::series(const std::string& logDir,Iteration maxIte)
 {
-	std::string dir = "logs/" + std::to_string(getDayID());
-	std::string dirSolutions = dir + "/solutions.cvs";
+	logDirectory = logDir + "/" + std::to_string(getDayID());
+	std::string logStrSolutions = logDirectory + "/solutions.cvs";
 	coreutils::Shell shell;
-	shell.mkdir(dir,true);
-	std::ofstream fSolutions(dirSolutions);
-	int i = 1;
-	bool done;
-	do
+	shell.mkdir(logDirectory,true);
+	std::ofstream fnSolutions(logStrSolutions);
+	
+	for(Iteration it = 1; it <= maxIte ; it++)
 	{
-		std::cout << "Serie : " << i << "\n";
+		std::cout << "Serie : " << it << "\n";
 		//sudoku = new ae::ga::SudokuEnviroment(dir,argv[1]);
 		enableEcho (&std::cout,2);
 		enableLogFile (true);
 		if(maxIteration > 1) addTerminator(ae::Terminations::MAXITERATION);
 		if(minSolutions > 0) addTerminator(ae::Terminations::MINSOLUTIONS);
 		if(maxIteration > 1) addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
-		if(terminations.size())
+		
+		if(terminations.size() == 0)
 		{
 			throw octetos::core::Exception("No hay criterio de terminacion",__FILE__,__LINE__);
 		}
-		done = run();
-		if(done)
+		if(run())
 		{
-			if(fSolutions.is_open())
+			if(fnSolutions.is_open())
 			{
 				save();
-				fSolutions << getLogSubDirectory ();
-				fSolutions << "\n";
-				fSolutions.flush();
+				fnSolutions << getLogSubDirectory ();
+				fnSolutions << "\n";
+				fnSolutions.flush();
 			}
+			break;
 		}
-		i++;
 	}
-	while(not done);
-	fSolutions.close();
+	fnSolutions.close();
 }
 }

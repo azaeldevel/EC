@@ -36,39 +36,8 @@ int main(int argc, const char* argv[])
 		return EXIT_SUCCESS;
 	}
 	
-	ae::ga::SudokuEnviroment *sudoku;
-	std::string dir = "logs/" + std::to_string(ae::ga::SudokuEnviroment::getDayID());
-	std::string dirSolutions = dir + "/solutions.cvs";
-	coreutils::Shell shell;
-	shell.mkdir(dir,true);
-	std::ofstream fSolutions(dirSolutions);
-	int i = 1;
-	bool done;
-	do
-	{
-		std::cout << "Test " << i << "\n";
-		sudoku = new ae::ga::SudokuEnviroment(dir,argv[1],1000);
-		sudoku->enableEcho (&std::cout,2);
-		sudoku->enableLogFile (true);
-		sudoku->addTerminator(ae::Terminations::MAXITERATION);
-		sudoku->addTerminator(ae::Terminations::MINSOLUTIONS);
-		sudoku->addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
-		done = sudoku->run();
-		if(done)
-		{
-			if(fSolutions.is_open())
-			{
-				sudoku->save();
-				fSolutions << sudoku->getLogSubDirectory ();
-				fSolutions << "\n";
-				fSolutions.flush();
-			}
-		}
-		delete sudoku;
-		i++;
-	}
-	while(not done);
-	fSolutions.close();
+	ae::ga::SudokuEnviroment sudoku(argv[1],1000);
+	sudoku.series("logs",100);
 	
 	return EXIT_SUCCESS;
 }

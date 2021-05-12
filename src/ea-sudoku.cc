@@ -35,10 +35,11 @@ int main(int argc, const char* argv[])
 		std::cerr << "Indique el archivo de inicialización\n";
 		return EXIT_SUCCESS;
 	}
-	ae::ga::SudokuEnviroment sudoku("logs/",argv[1],1000);
-	sudoku.enableEcho (&std::cout,1);
 	
-	sudoku.run();
+	ae::ga::SudokuEnviroment sudoku(argv[1],1000);
+	sudoku.enableEcho (&std::cout,1);	
+	sudoku.series("logs",100);
+	
 	return EXIT_SUCCESS;
 }
 

@@ -66,7 +66,7 @@ public:
 	
 	//
 	SudokuEnviroment();	
-	SudokuEnviroment(const std::string& log,const std::string& initTable,Iteration maxIteration);
+	SudokuEnviroment(const std::string& initTable,Iteration maxIteration);
 	virtual ~SudokuEnviroment();
 	void init(const std::string& initB);
 	void initBoard(const std::string& initTable);

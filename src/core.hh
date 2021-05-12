@@ -168,8 +168,8 @@ public:
 	//
 	void init();
 	Enviroment();
-	Enviroment(const std::string& log);
-	Enviroment(const std::string& log,Iteration maxIteration);
+	//Enviroment(const std::string& log,Iteration maxIteration);
+	Enviroment(Iteration maxIteration);
 	~Enviroment();
 
 	//getters
@@ -204,7 +204,7 @@ public:
 	virtual void evaluation()=0;
 	virtual void juncting()=0;
 	virtual void save()=0;
-	virtual void series();
+	virtual void series(const std::string& logDir,Iteration maxIte);
 	
 protected:
 	std::string logDirectory;

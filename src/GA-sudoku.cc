@@ -517,7 +517,7 @@ ae::Single* SudokuEnviroment::getRandomSingle() const
 SudokuEnviroment::SudokuEnviroment()
 {
 }
-SudokuEnviroment::SudokuEnviroment(const std::string& log,const std::string& initB,Iteration maxite) : ae::Enviroment(log,maxite)
+SudokuEnviroment::SudokuEnviroment(const std::string& initB,Iteration maxite) : ae::Enviroment(maxite)
 {
 	init(initB);
 }
