@@ -188,8 +188,10 @@ public:
 	unsigned short getEchoLevel()const;
 	void write_archive(const char *outname, const char **filename);
 	
-	virtual bool run() = 0;
+	virtual bool run();
 	virtual void selection() = 0;
+	virtual void initial(){};
+	virtual void evaluation(){};
 	
 protected:
 	std::string logDirectory;
@@ -226,6 +228,8 @@ protected:
 	double pMutationEvent;
 
 	std::ostream* fout;
+
+	unsigned long session;
 };
 
 }

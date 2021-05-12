@@ -9,7 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
-
+#include <octetos/coreutils/shell.hh>
+#include <fstream>
 
 #include "core.hh"
 
@@ -291,6 +292,7 @@ Enviroment::Enviroment()
 {
 	idCount = 1;
 	actualIteration = 1;
+	maxIteration = 1;
 	echolevel = 0;
 	logLevel = 0;
 	//sigmaReduction = 1.0;
@@ -423,5 +425,34 @@ void Enviroment::enableEcho(std::ostream* f, unsigned short level)
 void Enviroment::enableLog(unsigned short level)
 {
 	logLevel = level;
+}
+bool Enviroment::run()
+{
+	initial();
+	
+	session = getSession();
+	logSubDirectory = logDirectory +"/" + std::to_string(session);
+	coreutils::Shell shell;
+	if(logLevel > 0)
+	{
+		shell.mkdir(logSubDirectory);
+	}
+	//bool retVal = false;
+
+	std::string strhistory = logSubDirectory + "/history.csv";
+	std::ofstream history;
+	if(logLevel > 0)
+	{
+		history.open(strhistory);
+	}
+
+	while(actualIteration <= maxIteration)
+	{
+		evaluation();
+		
+		actualIteration++;
+	}
+
+	return true;
 }
 }

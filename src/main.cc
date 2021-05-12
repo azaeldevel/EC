@@ -31,9 +31,7 @@ int main(int argc, const char* argv[])
 {
 	ae::ga::TransEnviroment trans;
 
-	//sudoku.compress("log-20210321012756","log-20210321012756.tar");
-	
-	return EXIT_SUCCESS;
+	return trans.run() ? EXIT_SUCCESS: EXIT_FAILURE;
 }
 
 

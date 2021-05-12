@@ -233,15 +233,18 @@ public:
 	TransEnviroment();	
 	TransEnviroment(const std::string& log);
 	virtual ~TransEnviroment();
-	void init();
+
 	double getGamma() const;
 	ae::Single* getRandomSingleTop()const;
 	ae::Single* getRandomSingle()const;
 	void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
 	void creteRegion(std::vector<nodes::Node*>& targets);
+
+	virtual void initial();
 	virtual void selection();
-	virtual bool run();
+	//virtual bool run();
+	virtual void evaluation();
 private:
 	void generate(nodes::Node* orig, unsigned short stop,bool direction);
 	void generate(Path* path,nodes::Edge* e, unsigned short stop,bool direction);

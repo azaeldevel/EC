@@ -320,12 +320,14 @@ TransSingle::TransSingle(ID id,Enviroment& e, const Path& p) : Single(id,e),chro
 
 void TransSingle::eval()
 {
+	
 }
 void TransSingle::randFill()
 {
 }
 void TransSingle::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
 {
+	
 }
 void TransSingle::save(std::ofstream& fn)
 {
@@ -340,7 +342,7 @@ void TransSingle::save(std::ofstream& fn)
 
 TransEnviroment::TransEnviroment()
 {
-	init();
+	countID = 0;//contador de nodos
 }
 TransEnviroment::~TransEnviroment()
 {
@@ -397,9 +399,9 @@ void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short st
 	}
 	while(eN);
 }
-void TransEnviroment::init()
-{
-	countID = 0;//contador de nodos
+void TransEnviroment::initial()
+{	
+	std::cout << "Poblacion inicial..\n";
 	std::vector<nodes::Node*> targets;
 	creteRegion(targets);
 
@@ -413,21 +415,33 @@ void TransEnviroment::init()
 	//filtrar las rutas
 	filterPaths();
 	
-	//generado cromosomas
+	//generado individuos
 	for(Path* path : lstPaths)
 	{
  		TransSingle* s = new TransSingle(next(),*this,*path);
+		push_back(s);
 	}
+	
+	//liberando memoria de paths
+	for(Path* path : lstPaths)
+	{
+		delete path;
+	}
+	lstPaths.clear();	
 }
 void TransEnviroment::selection()
 {
 
 }
-bool TransEnviroment::run()
+/*bool TransEnviroment::run()
 {
+	initial();
 
+	
+
+	
 	return true;
-}
+}*/
 
 void TransEnviroment::print(nodes::Node* n)
 {
@@ -469,4 +483,16 @@ void TransEnviroment::filterPaths()
 		lstPaths.remove(path);
 	}
 }
+void TransEnviroment::evaluation()
+{	
+	std::cout << "Evaluacion..\n";
+	TransSingle* single;
+	for(ae::Single* s : *this)
+	{
+		single = (TransSingle*) s;
+		std::cout << "ID : " << single->getID() << "\n";
+		single->eval();
+	}
+}
+
 }
