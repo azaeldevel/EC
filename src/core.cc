@@ -483,13 +483,13 @@ bool Enviroment::run()
 	}
 	initial();
 	unsigned short counUndelete = 0;
-	session = getSession();
-	logSubDirectory = logDirectory +"/" + std::to_string(getTimeID());
-	std::string strhistory = logSubDirectory + "/history.csv";
 	std::ofstream history;
-	coreutils::Shell shell;
 	if(logFile)
 	{		
+		session = getSession();
+		logSubDirectory = logDirectory +"/" + std::to_string(getTimeID());
+		std::string strhistory = logSubDirectory + "/history.csv";
+		coreutils::Shell shell;
 		shell.mkdir(logSubDirectory);
 		history.open(strhistory);
 	}
@@ -616,19 +616,19 @@ bool Enviroment::run()
 			{
 				history  << actualIteration;
 				history  << ",";
-					history  << size();
-					history  << ",";
-					history  << media;
-					history  << ",";
-					history  << sigma;	
-					history  << ",";
-					history  << pMutationEvent;
-					history  << ",";
-					history  << pMutableGene;
-					//history  << ",";
-					//history  << getFaltantes();
-					history  << "\n";
-					history .flush();
+				history  << size();
+				history  << ",";
+				history  << media;
+				history  << ",";
+				history  << sigma;	
+				history  << ",";
+				history  << pMutationEvent;
+				history  << ",";
+				history  << pMutableGene;
+				//history  << ",";
+				//history  << getFaltantes();
+				history  << "\n";
+				history .flush();
 			}
 			else
 			{
@@ -660,15 +660,18 @@ bool Enviroment::run()
 		}
 		//if(counUndelete > 100) return false;
 		
-		juncting();
+		juncting();				
+		for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
+		{
+			push_front(s);		
+		}
 		if(logFile)
 		{
 			std::string strChilds = logSubDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fnChilds(strChilds);
-			if(not fnChilds.is_open()) throw "No se logro abrier el archivo";				
+			if(not fnChilds.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 			{
-				push_front(s);
 				s->save(fnChilds);			
 			}
 			fnChilds.flush();
@@ -692,13 +695,17 @@ void Enviroment::addTerminator(Terminations t)
 }
 void Enviroment::series(const std::string& logDir,Iteration maxIte)
 {
-	logFile = not logDir.empty();
+	logFile = not logDir.empty();//enableLogFile ();
 	
-	logDirectory = logDir + "/" + std::to_string(getDayID());
-	std::string logStrSolutions = logDirectory + "/solutions.cvs";
-	coreutils::Shell shell;
-	shell.mkdir(logDirectory,true);
-	std::ofstream fnSolutions(logStrSolutions);
+	std::ofstream fnSolutions;
+	if(logFile) 
+	{
+		logDirectory = logDir + "/" + std::to_string(getDayID());
+		std::string logStrSolutions = logDirectory + "/solutions.cvs";
+		coreutils::Shell shell;
+		shell.mkdir(logDirectory,true);
+		fnSolutions.open(logStrSolutions);
+	}
 	
 	enableEcho (&std::cout,2);
 	if(maxIteration > 1) addTerminator(ae::Terminations::MAXITERATION);
