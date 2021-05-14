@@ -30,14 +30,24 @@
 
 int main(int argc, const char* argv[])
 {
-	if(argc < 1) 
+	if(argc < 4) 
 	{
-		std::cerr << "Indique el archivo de inicialización\n";
+		std::cerr << "Indique lo cuatro parametros necesarion\n";
+		std::cerr << "sudoku InitialBoard dirlog|- iterations series\n";
 		return EXIT_SUCCESS;
 	}
 	
-	ae::ga::SudokuEnviroment sudoku(argv[1],1000);
-	sudoku.series("",15);
+	std::string initBoard = argv[1];
+	
+	std::string dirLog = argv[2];
+	if(dirLog.compare("-") == 0) dirLog = "";//desactivacion de logs
+	
+	unsigned int itBySerie = std::stoi(argv[3]);
+	
+	unsigned int Serie = std::stoi(argv[4]);
+	
+	ae::ga::SudokuEnviroment sudoku(initBoard,itBySerie);
+	sudoku.series(dirLog,Serie);
 	
 	return EXIT_SUCCESS;
 }

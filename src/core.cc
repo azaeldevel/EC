@@ -461,6 +461,7 @@ void Enviroment::enableLogFile(bool log)
 }
 bool Enviroment::run()
 {	
+	actualIteration = 1;
 	for(Terminations t : terminations)
 	{
 		switch(t)
@@ -729,13 +730,15 @@ void Enviroment::series(const std::string& logDir,Iteration maxIte)
 				fnSolutions << "\n";
 				fnSolutions.flush();
 			}
-			else
-			{
-				Single* s = *begin();
-				s->print(std::cout);
-			}
+			Single* s = *begin();
+			s->print(std::cout);
 			break;
 		}
+		for(Single* s : *this)
+		{
+			delete s;
+		}
+		clear();
 	}
 	fnSolutions.close();
 }

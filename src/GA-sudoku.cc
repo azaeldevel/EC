@@ -517,9 +517,10 @@ ae::Single* SudokuEnviroment::getRandomSingle() const
 SudokuEnviroment::SudokuEnviroment()
 {
 }
-SudokuEnviroment::SudokuEnviroment(const std::string& initB,Iteration maxite) : ae::Enviroment(maxite)
+SudokuEnviroment::SudokuEnviroment(const std::string& initB,Iteration maxite)
 {
 	init(initB);
+	maxIteration = maxite;
 }
 SudokuEnviroment::~SudokuEnviroment()
 {
@@ -540,7 +541,7 @@ void SudokuEnviroment::init(const std::string& initB)
 	media = 0.0;
 	
 	actualIteration = 1;
-	maxIteration = 1000;
+	//maxIteration = 1000;
 	newIteration = true;
 	minSolutions = 1;
 	pMutationEvent = 0.02;
