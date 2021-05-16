@@ -191,7 +191,7 @@ public:
 	std::ostream* getFout();
 	const std::string getLogSubDirectory()const;
 
-	ID next();
+	ID nextID();
 	ID getCountID();
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);

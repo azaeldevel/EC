@@ -14,13 +14,13 @@
 #include "GA-sudoku.hh"
 
 
-namespace ae::ga
+namespace ae::sudoku
 {
 
 
 
 
-SudokuChromosome::SudokuChromosome(const SudokuChromosome& obj) : Chromosome("SudokuChromosome")
+Chromosome::Chromosome(const Chromosome& obj) : ae::Chromosome("sudoku::Chromosome")
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -30,7 +30,7 @@ SudokuChromosome::SudokuChromosome(const SudokuChromosome& obj) : Chromosome("Su
 		}
 	}
 }
-SudokuChromosome::SudokuChromosome() : Chromosome("SudokuChromosome")
+Chromosome::Chromosome() : ae::Chromosome("sudoku::Chromosome")
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -41,9 +41,9 @@ SudokuChromosome::SudokuChromosome() : Chromosome("SudokuChromosome")
 	}
 }
 
-const SudokuChromosome& SudokuChromosome::operator = (const SudokuChromosome& obj)
+const Chromosome& Chromosome::operator = (const Chromosome& obj)
 {
-	Chromosome::operator =(obj);
+	ae::Chromosome::operator =(obj);
 	
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -56,18 +56,18 @@ const SudokuChromosome& SudokuChromosome::operator = (const SudokuChromosome& ob
 
 	return *this;
 }
-geneUS SudokuChromosome::getNumber(unsigned short i,unsigned short j)const
+geneUS Chromosome::getNumber(unsigned short i,unsigned short j)const
 {
 	return numbers[i][j];	
 }
-void SudokuChromosome::setNumber(unsigned short i,unsigned short j,geneUS g)
+void Chromosome::setNumber(unsigned short i,unsigned short j,geneUS g)
 {
 	numbers[i][j] = g;
 }
 
 
 
-void SudokuChromosome::combine(const ae::Chromosome& P1,const ae::Chromosome& P2)
+void Chromosome::combine(const ae::Chromosome& P1,const ae::Chromosome& P2)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -76,26 +76,26 @@ void SudokuChromosome::combine(const ae::Chromosome& P1,const ae::Chromosome& P2
 			double numrd = randNumber(0.0,1.0);
 			if(numrd < 0.5)
 			{
-				numbers[i][j] = ((const SudokuChromosome&)P1).numbers[i][j];
+				numbers[i][j] = ((const Chromosome&)P1).numbers[i][j];
 			}
 			else
 			{
-				numbers[i][j] = ((const SudokuChromosome&)P2).numbers[i][j];
+				numbers[i][j] = ((const Chromosome&)P2).numbers[i][j];
 			}			
 		}
 	}
 }
-void SudokuChromosome::copy(const ae::Chromosome& P)
+void Chromosome::copy(const ae::Chromosome& P)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			numbers[i][j] = ((const SudokuChromosome&)P).numbers[i][j];
+			numbers[i][j] = ((const Chromosome&)P).numbers[i][j];
 		}
 	}
 }
-void SudokuChromosome::mutate(float p)
+void Chromosome::mutate(float p)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -106,7 +106,7 @@ void SudokuChromosome::mutate(float p)
 		}
 	}
 }
-void SudokuChromosome::randFill()
+void Chromosome::randFill()
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -116,7 +116,7 @@ void SudokuChromosome::randFill()
 		}
 	}
 }
-SudokuChromosome::~SudokuChromosome()
+Chromosome::~Chromosome()
 {
 
 }
@@ -127,40 +127,40 @@ SudokuChromosome::~SudokuChromosome()
 
 
 
-SudokuSingle::SudokuSingle(const SudokuSingle& obj) : Single(obj)
+Single::Single(const Single& obj) : ae::Single(obj)
 {
 
 }
-SudokuSingle::SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome t[3][3]) : Single(id,e)
-{
-	for(unsigned short i = 0; i < 3; i++)
-	{
-		for(unsigned short j = 0; j < 3; j++)
-		{
-			tabla[i][j] = t[i][j];
-		}
-	}
-	intiVals = t;
-	genMD5();
-}
-SudokuSingle::~SudokuSingle()
-{
-
-}
-SudokuSingle::SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome t[3][3],const SudokuChromosome initv[3][3],const Junction& junction) : Single(id,e,junction)
+Single::Single(unsigned int id,Enviroment& e,const Chromosome init[][3]) : ae::Single(id,e)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			tabla[i][j] = t[i][j];
+			tabla[i][j] = init[i][j];
 		}
 	}
-	intiVals = initv;
+	intiVals = init;
+	genMD5();
+}
+Single::~Single()
+{
+
+}
+Single::Single(unsigned int id,Enviroment& e,const Chromosome newData[][3],const Chromosome init[][3],const Junction& junction) : ae::Single(id,e,junction)
+{
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		for(unsigned short j = 0; j < 3; j++)
+		{
+			tabla[i][j] = newData[i][j];
+		}
+	}
+	intiVals = init;
 	genMD5();
 }
 
-void SudokuSingle::genMD5()
+void Single::genMD5()
 {
 	std::string strmd5;
 	for(unsigned short i = 0; i < 3; i++)
@@ -178,7 +178,7 @@ void SudokuSingle::genMD5()
 	}
 	md5.set(strmd5);
 }
-void SudokuSingle::eval()
+void Single::eval()
 {
 	double fails = 0.0;
 		
@@ -292,17 +292,17 @@ void SudokuSingle::eval()
 		}
 	}
 	
-	fitness = 1.0 - (fails * (((const SudokuEnviroment&)getEnviroment()).getGamma()));
+	fitness = 1.0 - (fails * (((const sudoku::Enviroment&)getEnviroment()).getGamma()));
 }
 	
 	
 
-const SudokuChromosome& SudokuSingle::getTalba(unsigned short i,unsigned short j)const
+const Chromosome& Single::getTalba(unsigned short i,unsigned short j)const
 {
 	return tabla[i][j];
 }
 
-void SudokuSingle::randFill()
+void Single::randFill()
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -312,15 +312,15 @@ void SudokuSingle::randFill()
 		}
 	}
 }
-void SudokuSingle::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
+void Single::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
 {
 	//std::cout << "\t" << idCount << " puede tener " << getJunction().get_number() << " hijos\n";
 	ID idCount;
 	for(ae::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
-		idCount = getEnviroment().next();
+		idCount = getEnviroment().nextID();
 		
-		SudokuChromosome newtabla[3][3];
+		Chromosome newtabla[3][3];
 		ae::Junction newj;
 		switch(getJunction().get_algorit())
 		{
@@ -330,8 +330,8 @@ void SudokuSingle::juncting(std::list<ae::Single*>& chils,ae::Single* single,uns
 				for(unsigned short j = 0; j < 3; j++)
 				{
 					double rnnum = randNumber();
-					if(rnnum < 0.5) newtabla[i][j].combine(tabla[i][j],((SudokuSingle*)single)->tabla[i][j]);
-					else newtabla[i][j].combine(((SudokuSingle*)single)->tabla[i][j],tabla[i][j]);
+					if(rnnum < 0.5) newtabla[i][j].combine(tabla[i][j],((Single*)single)->tabla[i][j]);
+					else newtabla[i][j].combine(((Single*)single)->tabla[i][j],tabla[i][j]);
 				}
 			}
 			newj.combine(getJunction(),single->getJunction());
@@ -349,7 +349,7 @@ void SudokuSingle::juncting(std::list<ae::Single*>& chils,ae::Single* single,uns
 						}
 						else
 						{
-							newtabla[i][j].copy(((SudokuSingle*)single)->tabla[i][j]);
+							newtabla[i][j].copy(((Single*)single)->tabla[i][j]);
 						}					
 					}
 				}
@@ -398,12 +398,12 @@ void SudokuSingle::juncting(std::list<ae::Single*>& chils,ae::Single* single,uns
 			}
 		}
 	
-		SudokuSingle* s = new SudokuSingle(idCount,getEnviroment(),newtabla,intiVals,newj);
+		Single* s = new Single(idCount,(Enviroment&)getEnviroment(),newtabla,intiVals,newj);
 		if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n"; 
 		chils.push_back(s);
 	}
 }
-void SudokuSingle::save(std::ofstream& fn)
+void Single::save(std::ofstream& fn)
 {	
 	fn << getID();
 	fn << ",";
@@ -430,17 +430,17 @@ void SudokuSingle::save(std::ofstream& fn)
 	}
 	fn << "\n";
 }
-const octetos::core::MD5sum& SudokuSingle::getMD5()const
+const octetos::core::MD5sum& Single::getMD5()const
 {
 	return md5;
 }
-unsigned int SudokuSingle::getErros()const
+unsigned int Single::getErros()const
 {
-	return (1.0 - fitness) * (1.0 / (((SudokuEnviroment&)getEnviroment()).getGamma()));
+	return (1.0 - fitness) * (1.0 / (((sudoku::Enviroment&)getEnviroment()).getGamma()));
 }
 
 
-void SudokuSingle::print(std::ostream& out) const
+void Single::print(std::ostream& out) const
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -457,7 +457,7 @@ void SudokuSingle::print(std::ostream& out) const
 		}
 	}
 }
-void SudokuSingle::printInit(std::ostream& out) const
+void Single::printInit(std::ostream& out) const
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -486,7 +486,7 @@ void SudokuSingle::printInit(std::ostream& out) const
 
 
 
-ae::Single* SudokuEnviroment::getRandomSingleTop() const
+ae::Single* Enviroment::getRandomSingleTop() const
 {
 	float maxp = std::distance(begin(),end());
 	const_iterator it = begin();
@@ -503,7 +503,7 @@ ae::Single* SudokuEnviroment::getRandomSingleTop() const
 	
 	return NULL;
 }
-ae::Single* SudokuEnviroment::getRandomSingle() const
+ae::Single* Enviroment::getRandomSingle() const
 {
 	float maxp = std::distance(begin(),end());
 	const_iterator it = begin();
@@ -514,26 +514,26 @@ ae::Single* SudokuEnviroment::getRandomSingle() const
 	
 	return NULL;
 }
-SudokuEnviroment::SudokuEnviroment()
+Enviroment::Enviroment()
 {
 }
-SudokuEnviroment::SudokuEnviroment(const std::string& initB)
+Enviroment::Enviroment(const std::string& initB)
 {
 	init(initB);
 }
-SudokuEnviroment::SudokuEnviroment(const std::string& initB,Iteration maxite)
+Enviroment::Enviroment(const std::string& initB,Iteration maxite)
 {
 	init(initB);
 	maxIteration = maxite;
 }
-SudokuEnviroment::~SudokuEnviroment()
+Enviroment::~Enviroment()
 {
 	for(ae::Single* s : *this)
 	{
 		delete s;
 	}
 }
-void SudokuEnviroment::init(const std::string& initB)
+void Enviroment::init(const std::string& initB)
 {
 	maxPopulation = 810;//81*a
 	initPopulation = maxPopulation;
@@ -553,10 +553,10 @@ void SudokuEnviroment::init(const std::string& initB)
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
 	fnBoard = initB;
-	iterJam = 600;
+	iterJam = 1500;
 	addTerminator(ae::Terminations::JAM);
 }
-void SudokuEnviroment::initBoard(const std::string& initTable)
+void Enviroment::initBoard(const std::string& initTable)
 {
 	std::ifstream file(initTable);
 	if(not file.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
@@ -588,11 +588,11 @@ void SudokuEnviroment::initBoard(const std::string& initTable)
 		}
 	}
 }
-unsigned short SudokuEnviroment::getFaltantes() const
+unsigned short Enviroment::getFaltantes() const
 {
 	return (1.0 - media) * (1.0/gamma);
 }
-double SudokuEnviroment::getGamma() const
+double Enviroment::getGamma() const
 {
 	return gamma;
 }
@@ -764,7 +764,7 @@ double SudokuEnviroment::getGamma() const
 }*/
 
 
-void SudokuEnviroment::selection()
+void Enviroment::selection()
 {
 	//eliminar duplicados
 	for(iterator i = begin(); i != end(); i++)
@@ -777,7 +777,7 @@ void SudokuEnviroment::selection()
 		while(i != j and j != end() and size() >= maxProgenitor)
 		{
 			//std::cout << "Step 3.1\n";
-			if(((SudokuSingle*)*i)->getMD5().compare(((SudokuSingle*)*j)->getMD5()) == 0 )
+			if(((Single*)*i)->getMD5().compare(((Single*)*j)->getMD5()) == 0 )
 			{
 				//std::cout << "Step 3.2\n";
 				delete *j;
@@ -801,7 +801,7 @@ void SudokuEnviroment::selection()
 		i = erase(i);
 	}
 }
-void SudokuEnviroment::save()
+void Enviroment::save()
 {
 	std::string strfn = logSubDirectory +  "/Solutions-" + std::to_string(actualIteration) + ".csv";
 	std::ofstream fn(strfn);
@@ -816,19 +816,19 @@ void SudokuEnviroment::save()
 	fn.close();
 }
 
-void SudokuEnviroment::initial()
+void Enviroment::initial()
 {
 	initBoard(fnBoard);
-	
 	//poblacion inicial
 	for(Population i = 0; i < initPopulation; i++,idCount++)
 	{
-		SudokuSingle* s = new SudokuSingle(idCount,*this,sudokuInit);
+		Single* s = new Single(nextID(),*this,sudokuInit);
 		s->randFill();
 		push_back(s);		
 	}
+	
 }
-void SudokuEnviroment::evaluation()
+void Enviroment::evaluation()
 {
 	for(ae::Single* s : *this)
 	{
@@ -836,7 +836,7 @@ void SudokuEnviroment::evaluation()
 		s->deltaAge ();
 	}
 }
-void SudokuEnviroment::juncting()
+void Enviroment::juncting()
 {
 	do
 	{

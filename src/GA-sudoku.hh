@@ -8,19 +8,21 @@
 #include "GA.hh"
 
 
-namespace ae::ga
+namespace ae::sudoku
 {
+class Enviroment;
 
-class SudokuChromosome : public Chromosome
+
+class Chromosome : public ae::Chromosome
 {
 public:
-	SudokuChromosome();
-	SudokuChromosome(const SudokuChromosome& obj);
-	virtual ~SudokuChromosome();
+	Chromosome();
+	Chromosome(const Chromosome& obj);
+	virtual ~Chromosome();
 	geneUS getNumber(unsigned short i,unsigned short j) const;
 	void setNumber(unsigned short i,unsigned short j,geneUS);
 
-	const SudokuChromosome& operator = (const SudokuChromosome&);	
+	const Chromosome& operator = (const Chromosome&);	
 	
 	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
 	virtual void copy(const ae::Chromosome& P1);
@@ -31,14 +33,15 @@ private:
 	geneUS numbers[3][3];
 };
 
-class SudokuSingle : public Single
+class Single : public ae::Single
 {
 public:
-	SudokuSingle(const SudokuSingle&);
-	SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome t[3][3]);
-	SudokuSingle(unsigned int id,Enviroment& e,const SudokuChromosome t[3][3],const SudokuChromosome vi[3][3], const Junction& junction);
-	virtual ~SudokuSingle();
-	const SudokuChromosome& getTalba(unsigned short i,unsigned short j)const;
+	Single(const Single&);
+	Single(unsigned int id,Enviroment& e,const Chromosome init[][3]);
+	Single(unsigned int id,Enviroment& e,const Chromosome newData[][3],const Chromosome init[][3], const Junction& junction);
+	virtual ~Single();
+
+	const Chromosome& getTalba(unsigned short i,unsigned short j)const;
 		
 	virtual void eval();
 	virtual void randFill();
@@ -51,26 +54,27 @@ public:
 	unsigned int getErros()const;
 	
 private:
-	SudokuChromosome tabla[3][3];
-	const SudokuChromosome (*intiVals)[3];
+	Chromosome tabla[3][3];
+	const Chromosome (*intiVals)[3];
 	octetos::core::MD5sum md5;
 
 	//
 	void genMD5();
 };
 
-class SudokuEnviroment : public Enviroment
+class Enviroment : public ae::Enviroment
 {
 public:
 	//
 	
 	//
-	SudokuEnviroment();	
-	SudokuEnviroment(const std::string& initTable);
-	SudokuEnviroment(const std::string& initTable,Iteration maxIteration);
-	virtual ~SudokuEnviroment();
+	Enviroment();	
+	Enviroment(const std::string& initTable);
+	Enviroment(const std::string& initTable,Iteration maxIteration);
+	virtual ~Enviroment();
 	void init(const std::string& initB);
 	void initBoard(const std::string& initTable);
+
 	unsigned short getFaltantes() const;
 	double getGamma() const;
 	ae::Single* getRandomSingleTop()const;
@@ -91,7 +95,7 @@ private:
 	*\brief valor estadistico de cada variable.
 	*/
 	double gamma;
-	SudokuChromosome sudokuInit[3][3];
+	Chromosome sudokuInit[3][3];
 	std::string fnBoard;
 	
 };

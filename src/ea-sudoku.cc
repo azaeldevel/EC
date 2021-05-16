@@ -36,7 +36,7 @@ int main(int argc, const char* argv[])
 		return EXIT_SUCCESS;
 	}
 	
-	ae::ga::SudokuEnviroment sudoku(argv[1],1000);
+	ae::sudoku::Enviroment sudoku(argv[1],1000);
 	sudoku.enableEcho (&std::cout,1);	
 	sudoku.series("logs",100);
 	

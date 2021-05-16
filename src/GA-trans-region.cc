@@ -1,9 +1,9 @@
 #include "GA-trans.hh"
 
-namespace ae::ga
+namespace ae::trans
 {
 
-void TransEnviroment::creteRegion(std::vector<nodes::Node*>& targets)
+void Enviroment::creteRegion(std::vector<nodes::Node*>& targets)
 {
 	//std::cout << "TransEnviroment::creteRegion Step 1\n";
 	region = new nodes::Region(++countID,"Tesing");

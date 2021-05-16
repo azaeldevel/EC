@@ -10,9 +10,9 @@
 #include "GA.hh"
 
 
-namespace ae::ga
+namespace ae::trans
 {
-
+class Enviroment;
 
 namespace nodes
 {
@@ -187,14 +187,14 @@ public:
 	};
 };*/
 
-class TransChromosome : public Chromosome
+class Chromosome : public ae::Chromosome
 {
 public:
-	TransChromosome(const Path& path);
-	TransChromosome(const TransChromosome& obj);
-	virtual ~TransChromosome();
+	Chromosome(const Path& path);
+	Chromosome(const Chromosome& obj);
+	virtual ~Chromosome();
 
-	const TransChromosome& operator = (const TransChromosome&);	
+	const Chromosome& operator = (const Chromosome&);	
 	
 	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
 	virtual void copy(const ae::Chromosome& P1);
@@ -206,12 +206,12 @@ private:
 };
 
 
-class TransSingle : public Single
+class Single : public ae::Single
 {
 public:
-	TransSingle(const TransSingle&);
-	TransSingle(ID id,Enviroment&, const Junction& junction, const Path&);
-	TransSingle(ID id,Enviroment&, const Path&);
+	Single(const Single&);
+	Single(ID id,Enviroment&, const Junction& junction, const Path&);
+	Single(ID id,Enviroment&, const Path&);
 	
 	virtual void eval();
 	virtual void randFill();
@@ -221,19 +221,19 @@ public:
 
 private:
 	unsigned short puntos;
-	TransChromosome chromosome;
+	Chromosome chromosome;
 };
 
 
-class TransEnviroment : public Enviroment
+class Enviroment : public ae::Enviroment
 {
 public:
 	//
 	
 	//
-	TransEnviroment();	
-	TransEnviroment(const std::string& log);
-	virtual ~TransEnviroment();
+	Enviroment();	
+	Enviroment(const std::string& log);
+	virtual ~Enviroment();
 
 	double getGamma() const;
 	ae::Single* getRandomSingleTop()const;

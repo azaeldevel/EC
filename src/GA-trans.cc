@@ -2,7 +2,7 @@
 
 #include "GA-trans.hh"
 
-namespace ae::ga
+namespace ae::trans
 {
 
 
@@ -257,38 +257,38 @@ namespace nodes
 
 
 
-TransChromosome::TransChromosome(const Path& p) : Chromosome("TransChromosome"),path(p)
+Chromosome::Chromosome(const Path& p) : ae::Chromosome("trans::Chromosome"),path(p)
 {
 
 }
-TransChromosome::TransChromosome(const TransChromosome& obj) : Chromosome("TransChromosome"),path(obj.path)
+Chromosome::Chromosome(const Chromosome& obj) : ae::Chromosome("TransChromosome"),path(obj.path)
 {
 	path = obj.path;
 }
-TransChromosome::~TransChromosome()
+Chromosome::~Chromosome()
 {
 }
 
-const TransChromosome& TransChromosome::operator = (const TransChromosome& obj)
+const Chromosome& Chromosome::operator = (const Chromosome& obj)
 {
 	path = obj.path;
 
 	return *this;
 }
 
-void TransChromosome::combine(const ae::Chromosome& P1,const ae::Chromosome& P2)
+void Chromosome::combine(const ae::Chromosome& P1,const ae::Chromosome& P2)
 {
 
 }
-void TransChromosome::copy(const ae::Chromosome& P1)
+void Chromosome::copy(const ae::Chromosome& P1)
 {
 
 }
-void TransChromosome::mutate(float p)
+void Chromosome::mutate(float p)
 {
 
 }
-void TransChromosome::randFill()
+void Chromosome::randFill()
 {
 
 }
@@ -308,31 +308,31 @@ void TransChromosome::randFill()
 
 
 
-TransSingle::TransSingle(const TransSingle& s) : Single(s),puntos(s.puntos),chromosome(s.chromosome)
+Single::Single(const Single& s) : ae::Single(s),puntos(s.puntos),chromosome(s.chromosome)
 {
 }
-TransSingle::TransSingle(ID id,Enviroment& e,const Junction& j, const Path& p) : Single(id,e,j),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e,const Junction& j, const Path& p) : ae::Single(id,e,j),chromosome(p),puntos(0)
 {
 }
-TransSingle::TransSingle(ID id,Enviroment& e, const Path& p) : Single(id,e),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e, const Path& p) : ae::Single(id,e),chromosome(p),puntos(0)
 {
 }
 
-void TransSingle::eval()
-{
-	
-}
-void TransSingle::randFill()
-{
-}
-void TransSingle::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
+void Single::eval()
 {
 	
 }
-void TransSingle::save(std::ofstream& fn)
+void Single::randFill()
 {
 }
-void TransSingle::print(std::ostream&) const
+void Single::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
+{
+	
+}
+void Single::save(std::ofstream& fn)
+{
+}
+void Single::print(std::ostream&) const
 {
 
 }
@@ -343,17 +343,17 @@ void TransSingle::print(std::ostream&) const
 
 
 
-TransEnviroment::TransEnviroment()
+Enviroment::Enviroment()
 {
 	countID = 0;//contador de nodos
 }
-TransEnviroment::~TransEnviroment()
+Enviroment::~Enviroment()
 {
 	if(region) delete region;
 }
 
 
-void TransEnviroment::generate(nodes::Node* n,unsigned short stop,bool direction)
+void Enviroment::generate(nodes::Node* n,unsigned short stop,bool direction)
 {
 	//std::cout << "TransEnviroment::generate Step 1\n";
 	nodes::Edge* eN = n->nextLessTrans(stop);
@@ -375,7 +375,7 @@ void TransEnviroment::generate(nodes::Node* n,unsigned short stop,bool direction
 		eN = n->nextLessTrans(stop,direction);
 	}
 }
-void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,bool direction)
+void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,bool direction)
 {
 	//std::cout << "TransEnviroment::generate2 Step 1\n";
 	nodes::Node* n = eprev->getNext();
@@ -402,7 +402,7 @@ void TransEnviroment::generate(Path* path, nodes::Edge* eprev, unsigned short st
 	}
 	while(eN);
 }
-void TransEnviroment::initial()
+void Enviroment::initial()
 {	
 	std::cout << "Poblacion inicial..\n";
 	std::vector<nodes::Node*> targets;
@@ -421,7 +421,7 @@ void TransEnviroment::initial()
 	//generado individuos
 	for(Path* path : lstPaths)
 	{
- 		TransSingle* s = new TransSingle(next(),*this,*path);
+ 		Single* s = new Single(nextID(),*this,*path);
 		push_back(s);
 	}
 	
@@ -432,7 +432,7 @@ void TransEnviroment::initial()
 	}
 	lstPaths.clear();	
 }
-void TransEnviroment::selection()
+void Enviroment::selection()
 {
 
 }
@@ -446,7 +446,7 @@ void TransEnviroment::selection()
 	return true;
 }*/
 
-void TransEnviroment::print(nodes::Node* n)
+void Enviroment::print(nodes::Node* n)
 {
 	switch(n->getType())
 	{
@@ -464,7 +464,7 @@ void TransEnviroment::print(nodes::Node* n)
 			break;
 	}
 }
-void TransEnviroment::filterPaths()
+void Enviroment::filterPaths()
 {
 	std::list<Path*> forDelete;
 	for(Path* path : lstPaths)
@@ -486,22 +486,22 @@ void TransEnviroment::filterPaths()
 		lstPaths.remove(path);
 	}
 }
-void TransEnviroment::evaluation()
+void Enviroment::evaluation()
 {	
 	std::cout << "Evaluacion..\n";
-	TransSingle* single;
+	Single* single;
 	for(ae::Single* s : *this)
 	{
-		single = (TransSingle*) s;
+		single = (Single*) s;
 		std::cout << "ID : " << single->getID() << "\n";
 		single->eval();
 	}
 }
-void TransEnviroment::juncting()
+void Enviroment::juncting()
 {
 
 }
-void TransEnviroment::save()
+void Enviroment::save()
 {
 
 }

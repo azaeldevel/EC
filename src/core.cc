@@ -290,7 +290,7 @@ void Single::init()
 void Enviroment::init()
 {
 	idCount = 1;
-	actualIteration = 1;
+	actualIteration = 0;
 	maxIteration = 0;
 	echolevel = 0;
 	logFile = false;
@@ -406,7 +406,7 @@ const std::string Enviroment::getLogSubDirectory()const
 }
 
 
-ID Enviroment::next()
+ID Enviroment::nextID()
 {
 	return ++idCount;
 }/*
@@ -488,7 +488,9 @@ bool Enviroment::run()
 			throw octetos::core::Exception("Metodo de terminacion desconocido",__FILE__,__LINE__);
 		}
 	}
+	std::cout << "Step 1\n";
 	initial();
+	std::cout << "Step 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
 	if(logFile)

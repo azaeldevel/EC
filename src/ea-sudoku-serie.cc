@@ -46,9 +46,9 @@ int main(int argc, const char* argv[])
 	
 	unsigned int Serie = std::stoi(argv[4]);
 	
-	ae::ga::SudokuEnviroment* sudoku;
-	if(itBySerie > 0) sudoku = new ae::ga::SudokuEnviroment(initBoard,itBySerie);
-	else sudoku = new ae::ga::SudokuEnviroment(initBoard);
+	ae::sudoku::Enviroment* sudoku;
+	if(itBySerie > 0) sudoku = new ae::sudoku::Enviroment(initBoard,itBySerie);
+	else sudoku = new ae::sudoku::Enviroment(initBoard);
 	
 	sudoku->series(dirLog,Serie);
 	
