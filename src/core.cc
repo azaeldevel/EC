@@ -291,7 +291,7 @@ void Enviroment::init()
 {
 	idCount = 1;
 	actualIteration = 1;
-	maxIteration = 1;
+	maxIteration = 0;
 	echolevel = 0;
 	logFile = false;
 	//sigmaReduction = 1.0;
@@ -301,7 +301,9 @@ void Enviroment::init()
 	fout = NULL;
 	enableMaxIterations=enableMinSolutions=enableNotNewLeaderAtPercen=false;
 	enableNotIncrementFitnessLeaderAtPercen = false;
-	percen_at_iteration = 20.0;//%
+	percen_at_iteration = 0.4;//%
+	iterJam = 0;
+	enableJam = false;	
 }
 Enviroment::Enviroment()
 {
@@ -461,6 +463,7 @@ void Enviroment::enableLogFile(bool log)
 }
 bool Enviroment::run()
 {	
+	if(maxProgenitor < minSolutions) throw octetos::core::Exception("La cantidad de progenoore deveria ser major que la cantidad de soluciones buscadas",__FILE__,__LINE__);
 	actualIteration = 1;
 	for(Terminations t : terminations)
 	{
@@ -477,6 +480,9 @@ bool Enviroment::run()
 			break;
 		case FORLEADER_INCREMENTFITNESS:
 				enableNotIncrementFitnessLeaderAtPercen = true;
+			break;
+		case JAM:
+				enableJam = true;
 			break;
 		default:
 			throw octetos::core::Exception("Metodo de terminacion desconocido",__FILE__,__LINE__);
@@ -495,7 +501,16 @@ bool Enviroment::run()
 		history.open(strhistory);
 	}
 
-	Iteration not_new_leader = (maxIteration * percen_at_iteration)/100.0;
+	if(enableJam)
+	{
+		if(iterJam == 0) throw octetos::core::Exception("Se deve asignar el valor de atasco",__FILE__,__LINE__);
+		enableNotIncrementFitnessLeaderAtPercen = true;
+	}
+	else if(enableNotIncrementFitnessLeaderAtPercen)
+	{
+		Iteration newjam = maxIteration * percen_at_iteration;
+		if(newjam > iterJam) iterJam = newjam;		
+	}
 	ID oldleaderID = 0;
 	double oldLeaderFitness = 0.0;
 	Iteration countOldLeader = 0;
@@ -508,7 +523,8 @@ bool Enviroment::run()
 		}
 		if(echolevel > 0 and fout != NULL) 
 		{
-			(*fout) << ">>> Iteracion : " << actualIteration << "/" << maxIteration << "\n";
+			if(maxIteration > 0) (*fout) << ">>> Iteracion : " << actualIteration << "/" << maxIteration << "\n";
+			else (*fout) << ">>> Iteracion : " << actualIteration << "\n";
 		}
 		media = 0.0;
 		sigma = 0.0;
@@ -566,24 +582,25 @@ bool Enviroment::run()
 				oldleaderID = leader->getID();
 				countOldLeader = 0;
 			}
-			if(not_new_leader < countOldLeader) 
+			if(iterJam < countOldLeader) 
 			{
 				std::cout << "\tFinalizado devido a atsco de de algoritmo, no nevo lider\n";
 				return false;
 			}
 		}
-		if(enableNotIncrementFitnessLeaderAtPercen)
+		if(enableNotIncrementFitnessLeaderAtPercen or enableJam)
 		{
-			if(leader->getFitness() == oldLeaderFitness)
+		    ae::Single* s = getProxSolution();
+			if(s->getFitness() == oldLeaderFitness)
 			{
 				countOldLeaderFitness++;
 			}
 			else
 			{
-				oldLeaderFitness = leader->getFitness();
+				oldLeaderFitness = s->getFitness();
 				countOldLeaderFitness = 0;
 			}
-			if(not_new_leader < countOldLeaderFitness) 
+			if(iterJam < countOldLeaderFitness) 
 			{
 				std::cout << "\tFinalizado devido a atasco de de algoritmo, no mejora en adpatabilidad del lider\n";
 				return false;
@@ -592,8 +609,11 @@ bool Enviroment::run()
 		if(enableMinSolutions)
 		{
 			Population countSols = 0;
-			for(ae::Single* s : *this)
+			Iteration counItr = 0;
+			ae::Single* s;
+			for(iterator it = begin(); it != end() and counItr <= minSolutions; it++,counItr++)
 			{
+				s = *it;
 				if(1.0 - s->getFitness () < Enviroment::epsilon)
 				{
 					countSols++;
@@ -694,6 +714,7 @@ void Enviroment::addTerminator(Terminations t)
 {
 	terminations.push_back(t);
 }
+
 void Enviroment::series(const std::string& logDir,Iteration maxIte)
 {
 	logFile = not logDir.empty();//enableLogFile ();
@@ -711,7 +732,7 @@ void Enviroment::series(const std::string& logDir,Iteration maxIte)
 	enableEcho (&std::cout,2);
 	if(maxIteration > 1) addTerminator(ae::Terminations::MAXITERATION);
 	if(minSolutions > 0) addTerminator(ae::Terminations::MINSOLUTIONS);
-	if(maxIteration > 1) addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
+	//if(maxIteration > 1) addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
 	
 	for(Iteration it = 1; it <= maxIte ; it++)
 	{
@@ -741,5 +762,17 @@ void Enviroment::series(const std::string& logDir,Iteration maxIte)
 		clear();
 	}
 	fnSolutions.close();
+}
+
+ae::Single* Enviroment::getProxSolution()
+{
+	ae::Single* s;
+	for(iterator it = begin(); it != end(); it++)
+	{
+		s = *it;
+		if(1.0 - s->getFitness() > epsilon) return s;
+	}
+	
+	return *begin();
 }
 }

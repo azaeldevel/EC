@@ -159,6 +159,7 @@ enum Terminations
 	MINSOLUTIONS,
 	FORLEADER_NEW,
 	FORLEADER_INCREMENTFITNESS,
+	JAM
 };
 
 class Enviroment : public std::list<ae::Single*>
@@ -205,7 +206,7 @@ public:
 	virtual void evaluation()=0;
 	virtual void juncting()=0;
 	virtual void save()=0;
-	virtual void series(const std::string& logDir,Iteration maxIte);
+	virtual void series(const std::string& logDir,Iteration maxIteBySerie);
 	
 protected:
 	std::string logDirectory;
@@ -256,10 +257,26 @@ protected:
 	bool enableMaxIterations,enableMinSolutions,enableNotNewLeaderAtPercen,enableNotIncrementFitnessLeaderAtPercen;
 
 	/**
-	*\brief Inidicatores de terminacion.
+	*\brief Inidicatores de terminacion, es un numero entre 0 y 1.
 	*/
 	float percen_at_iteration;
+
+	/**
+	*\brief Contador de atasco
+	*/
+	Iteration iterJam;
+
+	/**
+	*\brief Determina si el terminador JAM es activado
+	*/
+	bool enableJam;
+
 private:
+	/**
+	*\brief Siguiente individiuo que aun no es una solucion
+	*/
+	ae::Single* getProxSolution();
+	
 	std::vector<Terminations> terminations;
 	
 };
