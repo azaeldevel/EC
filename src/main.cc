@@ -29,7 +29,7 @@
 
 int main(int argc, const char* argv[])
 {
-	ae::trans::Enviroment trans;
+	ec::trans::Enviroment trans;
 
 	return trans.run() ? EXIT_SUCCESS: EXIT_FAILURE;
 }

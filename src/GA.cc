@@ -4,17 +4,17 @@
 #include "GA.hh"
 
 
-namespace ae::ga
+namespace ec::ga
 {
 
-Single::Single(const Single& obj) : ae::Single(obj)
+Single::Single(const Single& obj) : ec::Single(obj)
 {
 	
 }
-Single::Single(ID id,Enviroment& e) : ae::Single(id,e)
+Single::Single(ID id,Enviroment& e) : ec::Single(id,e)
 {
 }
-Single::Single(ID id,Enviroment& e,const Junction& junction) : ae::Single(id,e,junction)
+Single::Single(ID id,Enviroment& e,const Junction& junction) : ec::Single(id,e,junction)
 {
 }
 

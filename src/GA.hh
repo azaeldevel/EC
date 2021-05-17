@@ -9,10 +9,10 @@
 #include "core.hh"
 
 
-namespace ae::ga
+namespace ec::ga
 {
 
-class Single : public ae::Single
+class Single : public ec::Single
 {
 public:
 	Single(const Single&);

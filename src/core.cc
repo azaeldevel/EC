@@ -15,7 +15,7 @@
 #include "core.hh"
 
 
-namespace ae
+namespace ec
 {
 
 
@@ -227,12 +227,12 @@ Single::Single(const Single&)
 {
 	throw octetos::core::Exception("Operacion invalida.",__FILE__,__LINE__);
 }
-Single::Single(ae::ID id,Enviroment& e) : env(&e)
+Single::Single(ec::ID id,Enviroment& e) : env(&e)
 {
 	this->id = id;
 	init();
 }
-Single::Single(ae::ID id,Enviroment& e,const Junction& j) : junction(j),env(&e)
+Single::Single(ec::ID id,Enviroment& e,const Junction& j) : junction(j),env(&e)
 {
 	this->id = id;
 	init();
@@ -492,16 +492,14 @@ bool Enviroment::run()
 			throw octetos::core::Exception("Metodo de terminacion desconocido",__FILE__,__LINE__);
 		}
 	}
-	//std::cout << "Step 1\n";
 	initial();
-	//std::cout << "Step 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
 	if(logFile)
 	{		
 		session = getSession();
 		logSubDirectory = logDirectory +"/" + std::to_string(getTimeID());
-		std::string strhistory = logSubDirectory + "/history.csv";
+		std::string strhistory = logSubDirectory + "/historial.csv";
 		coreutils::Shell shell;
 		shell.mkdir(logSubDirectory);
 		history.open(strhistory);
@@ -544,13 +542,13 @@ bool Enviroment::run()
 		evaluation();
 		sort(cmpStrength);
 
-		for(ae::Single* s : *this)
+		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
 			media += s->getFitness();			
 		}
 		media /= size();
-		for(ae::Single* s : *this)
+		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
 			sigma += pow(s->getFitness() - media,2);
@@ -559,17 +557,17 @@ bool Enviroment::run()
 
 		if(logFile)
 		{
-			std::string strfn = logSubDirectory +  "/Iteracion-" + std::to_string(actualIteration) + ".csv";
+			std::string strfn = logSubDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fn(strfn);
 			if(not fn.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
-			for(ae::Single* s : *this)
+			for(ec::Single* s : *this)
 			{
 				s->save(fn);
 			}
 			fn.flush();
 			fn.close();
 		}
-		ae::Single* leader = *begin();
+		ec::Single* leader = *begin();
 		if(echolevel > 1 and fout != NULL) 
 		{			
 			std::cout << "\tLider : " << leader->getFitness() << "\n";
@@ -596,7 +594,7 @@ bool Enviroment::run()
 		}
 		if(enableNotIncrementFitnessLeaderAtPercen or enableJam)
 		{
-		    ae::Single* s = getProxSolution();
+		    ec::Single* s = getProxSolution();
 			if(s->getFitness() == oldLeaderFitness)
 			{
 				countOldLeaderFitness++;
@@ -611,14 +609,21 @@ bool Enviroment::run()
 				std::cout << "\tFinalizado devido a atasco de de algoritmo, no mejora en adpatabilidad del lider\n";
 				return false;
 			}
-			if(iterJam /10.0 < countOldLeaderFitness) inJam = true;
+			if(sliceJam < countOldLeaderFitness) inJam = true;
 			else inJam = false;
+		}
+		if(inJam)
+		{
+			if(echolevel > 1 and fout != NULL) 
+			{			
+				std::cout << "\tAtasco : " << countOldLeaderFitness << "\n";
+			}
 		}
 		if(enableMinSolutions)
 		{
 			Population countSols = 0;
 			Iteration counItr = 0;
-			ae::Single* s;
+			ec::Single* s;
 			for(iterator it = begin(); it != end() and counItr <= minSolutions; it++,counItr++)
 			{
 				s = *it;
@@ -665,7 +670,7 @@ bool Enviroment::run()
 			}
 		}
 		//std::cout <<  "Step 6\n";
-		ae::ID countBefore = size();
+		ec::ID countBefore = size();
 		
 		selection();
 		if(logFile)
@@ -673,7 +678,7 @@ bool Enviroment::run()
 			std::string strSelection = logSubDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fnSelection(strSelection);
 			if(not fnSelection.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
-			for(ae::Single* s : *this)
+			for(ec::Single* s : *this)
 			{
 				s->save(fnSelection);
 			}
@@ -690,7 +695,7 @@ bool Enviroment::run()
 		//if(counUndelete > 100) return false;
 		
 		juncting();				
-		for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
+		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 			push_front(s);		
 		}
@@ -699,7 +704,7 @@ bool Enviroment::run()
 			std::string strChilds = logSubDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fnChilds(strChilds);
 			if(not fnChilds.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
-			for(ae::Single* s : newschils)//agregar los nuevos hijos a la poblacion
+			for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 			{
 				s->save(fnChilds);			
 			}
@@ -738,8 +743,8 @@ void Enviroment::series(const std::string& logDir,Iteration maxIte)
 	}
 	
 	enableEcho (&std::cout,2);
-	if(maxIteration > 1) addTerminator(ae::Terminations::MAXITERATION);
-	if(minSolutions > 0) addTerminator(ae::Terminations::MINSOLUTIONS);
+	if(maxIteration > 1) addTerminator(ec::Terminations::MAXITERATION);
+	if(minSolutions > 0) addTerminator(ec::Terminations::MINSOLUTIONS);
 	//if(maxIteration > 1) addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
 	
 	for(Iteration it = 1; it <= maxIte ; it++)
@@ -772,9 +777,9 @@ void Enviroment::series(const std::string& logDir,Iteration maxIte)
 	fnSolutions.close();
 }
 
-ae::Single* Enviroment::getProxSolution()
+ec::Single* Enviroment::getProxSolution()
 {
-	ae::Single* s;
+	ec::Single* s;
 	for(iterator it = begin(); it != end(); it++)
 	{
 		s = *it;

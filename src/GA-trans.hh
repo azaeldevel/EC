@@ -10,7 +10,7 @@
 #include "GA.hh"
 
 
-namespace ae::trans
+namespace ec::trans
 {
 class Enviroment;
 
@@ -187,7 +187,7 @@ public:
 	};
 };*/
 
-class Chromosome : public ae::Chromosome
+class Chromosome : public ec::Chromosome
 {
 public:
 	Chromosome(const Path& path);
@@ -196,8 +196,8 @@ public:
 
 	const Chromosome& operator = (const Chromosome&);	
 	
-	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
-	virtual void copy(const ae::Chromosome& P1);
+	virtual void combine(const ec::Chromosome& P1,const ec::Chromosome& P2);
+	virtual void copy(const ec::Chromosome& P1);
 	virtual void mutate(float p);
 	virtual void randFill(bool favor = false);
 	
@@ -206,7 +206,7 @@ private:
 };
 
 
-class Single : public ae::Single
+class Single : public ec::Single
 {
 public:
 	Single(const Single&);
@@ -215,7 +215,7 @@ public:
 	
 	virtual void eval();
 	virtual void randFill(bool favor = false);
-	virtual void juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
+	virtual void juncting(std::list<ec::Single*>& chils,ec::Single* single,unsigned short loglevel);
 	virtual void save(std::ofstream& fn);
 	virtual void print(std::ostream&) const;
 
@@ -225,7 +225,7 @@ private:
 };
 
 
-class Enviroment : public ae::Enviroment
+class Enviroment : public ec::Enviroment
 {
 public:
 	//
@@ -236,8 +236,8 @@ public:
 	virtual ~Enviroment();
 
 	double getGamma() const;
-	ae::Single* getRandomSingleTop()const;
-	ae::Single* getRandomSingle()const;
+	ec::Single* getRandomSingleTop()const;
+	ec::Single* getRandomSingle()const;
 	void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
 	void creteRegion(std::vector<nodes::Node*>& targets);

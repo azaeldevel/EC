@@ -30,31 +30,34 @@
 
 int main(int argc, const char* argv[])
 {
-	if(argc < 4) 
+	if(argc < 3) 
 	{
 		std::cerr << "Indique lo cuatro parametros necesarion\n";
 		std::cerr << "sudoku InitialBoard dirlog|- iterations series\n";
 		return EXIT_SUCCESS;
 	}
+		
+	std::string initBoard = argv[1];	
+	std::string logDir = argv[2];
+	std::string logDirectory;
+	if(logDir.compare("-") == 0) logDir = "";//desactivacion de logs	
+	unsigned int itBySerie = std::stoi(argv[3]);	
+	bool logFile = not logDir.empty();//enableLogFile ();
 	
-	std::string initBoard = argv[1];
+	std::ofstream fnSolutions;
+	if(logFile) 
+	{
+		logDirectory = logDir + "/" + std::to_string(ec::sudoku::Enviroment::getDayID());
+		std::string logStrSolutions = logDirectory + "/solutions.cvs";
+		coreutils::Shell shell;
+		shell.mkdir(logDirectory,true);
+		fnSolutions.open(logStrSolutions);
+	}
 	
-	std::string dirLog = argv[2];
-	if(dirLog.compare("-") == 0) dirLog = "";//desactivacion de logs
+	ec::sudoku::Enviroment* sudoku = new ec::sudoku::Enviroment(initBoard,itBySerie,logDirectory);		
+	sudoku->enableEcho(&std::cout,2);
 	
-	unsigned int itBySerie = std::stoi(argv[3]);
-	
-	unsigned int Serie = std::stoi(argv[4]);
-	
-	ae::sudoku::Enviroment* sudoku;
-	if(itBySerie > 0) sudoku = new ae::sudoku::Enviroment(initBoard,itBySerie);
-	else sudoku = new ae::sudoku::Enviroment(initBoard);
-	
-	sudoku->series(dirLog,Serie);
-	
-	delete sudoku;
-	
-	return EXIT_SUCCESS;
+	return sudoku->run()? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 

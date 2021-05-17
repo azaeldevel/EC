@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-namespace ae
+namespace ec
 {
 class Enviroment;
 
@@ -162,7 +162,7 @@ enum Terminations
 	JAM
 };
 
-class Enviroment : public std::list<ae::Single*>
+class Enviroment : public std::list<ec::Single*>
 {
 public:
 	//
@@ -226,6 +226,7 @@ protected:
 	double media;
 	
 	Iteration actualIteration;
+	
 	/*
 	*\brief si el programa encuentra al menos las soluciones indcadas podra terminar
 	*
@@ -251,7 +252,7 @@ protected:
 	/**
 	*\brief Para almacenar temporamente los nuevos individuos creados
 	*/
-	std::list<ae::Single*> newschils;
+	std::list<ec::Single*> newschils;
 
 	/**
 	*\brief Se usa cuando se activa el terminador NOT_NEW_LEADER_AT_PERCEN_ITERATION, para determinar el porcentaje de evaluacion
@@ -273,16 +274,20 @@ protected:
 	*/
 	bool enableJam;
 
+	/**
+	*\brief Determina si el terminador JAM es activado
+	*/
+	Iteration sliceJam;
+
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion
 	*/
-	ae::Single* getProxSolution();
+	ec::Single* getProxSolution();
 	
 	std::vector<Terminations> terminations;
 
-	bool inJam;
-	
+	bool inJam;	
 };
 
 }

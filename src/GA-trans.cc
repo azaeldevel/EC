@@ -2,7 +2,7 @@
 
 #include "GA-trans.hh"
 
-namespace ae::trans
+namespace ec::trans
 {
 
 
@@ -257,11 +257,11 @@ namespace nodes
 
 
 
-Chromosome::Chromosome(const Path& p) : ae::Chromosome("trans::Chromosome"),path(p)
+Chromosome::Chromosome(const Path& p) : ec::Chromosome("trans::Chromosome"),path(p)
 {
 
 }
-Chromosome::Chromosome(const Chromosome& obj) : ae::Chromosome("TransChromosome"),path(obj.path)
+Chromosome::Chromosome(const Chromosome& obj) : ec::Chromosome("TransChromosome"),path(obj.path)
 {
 	path = obj.path;
 }
@@ -276,11 +276,11 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 	return *this;
 }
 
-void Chromosome::combine(const ae::Chromosome& P1,const ae::Chromosome& P2)
+void Chromosome::combine(const ec::Chromosome& P1,const ec::Chromosome& P2)
 {
 
 }
-void Chromosome::copy(const ae::Chromosome& P1)
+void Chromosome::copy(const ec::Chromosome& P1)
 {
 
 }
@@ -308,13 +308,13 @@ void Chromosome::randFill(bool favor)
 
 
 
-Single::Single(const Single& s) : ae::Single(s),puntos(s.puntos),chromosome(s.chromosome)
+Single::Single(const Single& s) : ec::Single(s),puntos(s.puntos),chromosome(s.chromosome)
 {
 }
-Single::Single(ID id,Enviroment& e,const Junction& j, const Path& p) : ae::Single(id,e,j),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e,const Junction& j, const Path& p) : ec::Single(id,e,j),chromosome(p),puntos(0)
 {
 }
-Single::Single(ID id,Enviroment& e, const Path& p) : ae::Single(id,e),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e, const Path& p) : ec::Single(id,e),chromosome(p),puntos(0)
 {
 }
 
@@ -325,7 +325,7 @@ void Single::eval()
 void Single::randFill(bool favor)
 {
 }
-void Single::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
+void Single::juncting(std::list<ec::Single*>& chils,ec::Single* single,unsigned short loglevel)
 {
 	
 }
@@ -490,7 +490,7 @@ void Enviroment::evaluation()
 {	
 	//std::cout << "Evaluacion..\n";
 	Single* single;
-	for(ae::Single* s : *this)
+	for(ec::Single* s : *this)
 	{
 		single = (Single*) s;
 		std::cout << "ID : " << single->getID() << "\n";

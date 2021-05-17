@@ -8,12 +8,12 @@
 #include "GA.hh"
 
 
-namespace ae::sudoku
+namespace ec::sudoku
 {
 class Enviroment;
 
 
-class Chromosome : public ae::Chromosome
+class Chromosome : public ec::Chromosome
 {
 public:
 	Chromosome();
@@ -24,8 +24,8 @@ public:
 
 	const Chromosome& operator = (const Chromosome&);	
 	
-	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
-	virtual void copy(const ae::Chromosome& P1);
+	virtual void combine(const ec::Chromosome& P1,const ec::Chromosome& P2);
+	virtual void copy(const ec::Chromosome& P1);
 	virtual void mutate(float p);
 	virtual void randFill(bool favor = false);
 
@@ -44,19 +44,19 @@ private:
 	geneUS numbers[3][3];
 };
 
-class Single : public ae::Single
+class Single : public ec::Single
 {
 public:
 	Single(const Single&);
-	Single(unsigned int id,Enviroment& e,Chromosome** init);
-	Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome** init, const Junction& junction);
+	Single(unsigned int id,Enviroment& e,Chromosome init[][3]);
+	Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome init[][3], const Junction& junction);
 	virtual ~Single();
 
 	const Chromosome& getTalba(unsigned short i,unsigned short j)const;
 		
 	virtual void eval();
 	virtual void randFill(bool favor = false);
-	virtual void juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
+	virtual void juncting(std::list<ec::Single*>& chils,ec::Single* single,unsigned short loglevel);
 	virtual void save(std::ofstream& fn);
 	const octetos::core::MD5sum& getMD5() const;
 	
@@ -66,14 +66,14 @@ public:
 	
 private:
 	Chromosome** tabla;
-	Chromosome** intiVals;
+	Chromosome (*intiVals)[3];
 	octetos::core::MD5sum md5;
 
 	//
 	void genMD5();
 };
 
-class Enviroment : public ae::Enviroment
+class Enviroment : public ec::Enviroment
 {
 public:
 	//
@@ -82,14 +82,15 @@ public:
 	Enviroment();	
 	Enviroment(const std::string& initTable);
 	Enviroment(const std::string& initTable,Iteration maxIteration);
+	Enviroment(const std::string& initTable,Iteration maxIteration,const std::string& logDir);
 	virtual ~Enviroment();
 	void init(const std::string& initB);
 	void initBoard(const std::string& initTable);
 
 	unsigned short getFaltantes() const;
 	double getGamma() const;
-	ae::Single* getRandomSingleTop()const;
-	ae::Single* getRandomSingle()const;
+	ec::Single* getRandomSingleTop()const;
+	ec::Single* getRandomSingle()const;
 	//void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
 	
@@ -106,7 +107,7 @@ private:
 	*\brief valor estadistico de cada variable.
 	*/
 	double gamma;
-	Chromosome** sudokuInit;
+	Chromosome sudokuInit[3][3];
 	std::string fnBoard;
 	
 };
