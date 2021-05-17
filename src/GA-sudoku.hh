@@ -27,7 +27,18 @@ public:
 	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
 	virtual void copy(const ae::Chromosome& P1);
 	virtual void mutate(float p);
-	virtual void randFill();
+	virtual void randFill(bool favor = false);
+
+	/*
+	*\brief Busca un numero que no halla sido asignado.
+	*/
+	geneUS freeNumber()const;
+	
+	/*
+	*\brief Detec colision
+	*/
+	void resetCollision();
+
 	
 private:
 	geneUS numbers[3][3];
@@ -37,14 +48,14 @@ class Single : public ae::Single
 {
 public:
 	Single(const Single&);
-	Single(unsigned int id,Enviroment& e,const Chromosome init[][3]);
-	Single(unsigned int id,Enviroment& e,const Chromosome newData[][3],const Chromosome init[][3], const Junction& junction);
+	Single(unsigned int id,Enviroment& e,Chromosome** init);
+	Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome** init, const Junction& junction);
 	virtual ~Single();
 
 	const Chromosome& getTalba(unsigned short i,unsigned short j)const;
 		
 	virtual void eval();
-	virtual void randFill();
+	virtual void randFill(bool favor = false);
 	virtual void juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
 	virtual void save(std::ofstream& fn);
 	const octetos::core::MD5sum& getMD5() const;
@@ -54,8 +65,8 @@ public:
 	unsigned int getErros()const;
 	
 private:
-	Chromosome tabla[3][3];
-	const Chromosome (*intiVals)[3];
+	Chromosome** tabla;
+	Chromosome** intiVals;
 	octetos::core::MD5sum md5;
 
 	//
@@ -95,7 +106,7 @@ private:
 	*\brief valor estadistico de cada variable.
 	*/
 	double gamma;
-	Chromosome sudokuInit[3][3];
+	Chromosome** sudokuInit;
 	std::string fnBoard;
 	
 };

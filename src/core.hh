@@ -67,7 +67,7 @@ public:
 	static geneUS mixtureDigits(const geneUS& P1,const geneUS& P2);
 	static geneUS mutate(const geneUS& P1);
 	static geneUS mutateDigits(const geneUS& P1);	
-	virtual void randFill() = 0;
+	virtual void randFill(bool favor = false) = 0;
 	
 protected:
 	unsigned int mutated;
@@ -98,7 +98,7 @@ public:
 	virtual void combine(const Chromosome& P1,const Chromosome& P2);
 	virtual void copy(const Chromosome& P);
 	virtual void mutate(float p);
-	virtual void randFill();
+	virtual void randFill(bool favor = false);
 private:
 	geneUS number;
 	geneUS algorit;	
@@ -129,7 +129,7 @@ public:
 	
 
 	virtual void eval() = 0;
-	virtual void randFill() = 0;
+	virtual void randFill(bool favor = false) = 0;
 	virtual void juncting(std::list<Single*>& chils,Single* single,unsigned short loglevel) = 0;
 	virtual void save(std::ofstream& fn) = 0;
 	virtual void print(std::ostream&) const = 0;
@@ -190,9 +190,11 @@ public:
 	static unsigned long getTimeID();
 	std::ostream* getFout();
 	const std::string getLogSubDirectory()const;
-
 	ID nextID();
 	ID getCountID();
+	bool getJam()const;
+
+	
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);
 	void enableLogFile(bool log);
@@ -278,6 +280,8 @@ private:
 	ae::Single* getProxSolution();
 	
 	std::vector<Terminations> terminations;
+
+	bool inJam;
 	
 };
 

@@ -199,7 +199,7 @@ public:
 	virtual void combine(const ae::Chromosome& P1,const ae::Chromosome& P2);
 	virtual void copy(const ae::Chromosome& P1);
 	virtual void mutate(float p);
-	virtual void randFill();
+	virtual void randFill(bool favor = false);
 	
 private:
 	Path path;
@@ -214,7 +214,7 @@ public:
 	Single(ID id,Enviroment&, const Path&);
 	
 	virtual void eval();
-	virtual void randFill();
+	virtual void randFill(bool favor = false);
 	virtual void juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel);
 	virtual void save(std::ofstream& fn);
 	virtual void print(std::ostream&) const;

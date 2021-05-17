@@ -288,7 +288,7 @@ void Chromosome::mutate(float p)
 {
 
 }
-void Chromosome::randFill()
+void Chromosome::randFill(bool favor)
 {
 
 }
@@ -322,7 +322,7 @@ void Single::eval()
 {
 	
 }
-void Single::randFill()
+void Single::randFill(bool favor)
 {
 }
 void Single::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned short loglevel)
@@ -404,7 +404,7 @@ void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,bo
 }
 void Enviroment::initial()
 {	
-	std::cout << "Poblacion inicial..\n";
+	//std::cout << "Poblacion inicial..\n";
 	std::vector<nodes::Node*> targets;
 	creteRegion(targets);
 
@@ -488,7 +488,7 @@ void Enviroment::filterPaths()
 }
 void Enviroment::evaluation()
 {	
-	std::cout << "Evaluacion..\n";
+	//std::cout << "Evaluacion..\n";
 	Single* single;
 	for(ae::Single* s : *this)
 	{

@@ -204,7 +204,7 @@ geneUS Junction::randChild()
 {
 	return randNumber(1.0, 5.0);
 }
-void Junction::randFill()
+void Junction::randFill(bool favor)
 {
 	number = randChild();
 	algorit = randAlgt();
@@ -404,7 +404,10 @@ const std::string Enviroment::getLogSubDirectory()const
 {
 	return logSubDirectory;
 }
-
+bool Enviroment::getJam()const
+{
+	return inJam;
+}
 
 ID Enviroment::nextID()
 {
@@ -463,6 +466,7 @@ void Enviroment::enableLogFile(bool log)
 }
 bool Enviroment::run()
 {	
+	inJam = false;
 	if(maxProgenitor < minSolutions) throw octetos::core::Exception("La cantidad de progenoore deveria ser major que la cantidad de soluciones buscadas",__FILE__,__LINE__);
 	actualIteration = 1;
 	for(Terminations t : terminations)
@@ -488,9 +492,9 @@ bool Enviroment::run()
 			throw octetos::core::Exception("Metodo de terminacion desconocido",__FILE__,__LINE__);
 		}
 	}
-	std::cout << "Step 1\n";
+	//std::cout << "Step 1\n";
 	initial();
-	std::cout << "Step 2\n";
+	//std::cout << "Step 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
 	if(logFile)
@@ -607,6 +611,8 @@ bool Enviroment::run()
 				std::cout << "\tFinalizado devido a atasco de de algoritmo, no mejora en adpatabilidad del lider\n";
 				return false;
 			}
+			if(iterJam /10.0 < countOldLeaderFitness) inJam = true;
+			else inJam = false;
 		}
 		if(enableMinSolutions)
 		{

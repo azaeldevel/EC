@@ -106,13 +106,26 @@ void Chromosome::mutate(float p)
 		}
 	}
 }
-void Chromosome::randFill()
+void Chromosome::randFill(bool favor)
 {
-	for(unsigned short i = 0; i < 3; i++)
+	if(favor)
 	{
-		for(unsigned short j = 0; j < 3; j++)
+		for(unsigned short i = 0; i < 3; i++)
 		{
-			if(numbers[i][j] == 0) numbers[i][j] = randNumber(1.0,9.1);
+			for(unsigned short j = 0; j < 3; j++)
+			{
+				if(numbers[i][j] == 0) numbers[i][j] = freeNumber();
+			}
+		}
+	}
+	else
+	{
+		for(unsigned short i = 0; i < 3; i++)
+		{
+			for(unsigned short j = 0; j < 3; j++)
+			{
+				if(numbers[i][j] == 0) numbers[i][j] = randNumber(1.0,9.1);
+			}
 		}
 	}
 }
@@ -120,8 +133,44 @@ Chromosome::~Chromosome()
 {
 
 }
-
-
+geneUS Chromosome::freeNumber()const
+{
+	bool used[] = {false,false,false,false,false,false,false,false,false};
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		for(unsigned short j = 0; j < 3; j++)
+		{
+			if(numbers[i][j] > 0) used[numbers[i][j]] = true;
+		}
+	}
+	for(unsigned short i = 1; i <= 9; i++)
+	{
+		if(not used[i]) return i;
+	}
+	
+	return 0;
+}
+void Chromosome::resetCollision()
+{
+	geneUS colli1 = 0,colli2 = 0;
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		for(unsigned short j = 0; j < 3; j++)
+		{
+			for(unsigned short k = 0; k < 3; k++)
+			{
+				for(unsigned short l = 0; l < 3; l++)
+				{
+					if(numbers[i][j] == numbers[k][l]) 
+					{
+						numbers[i][j] = 0;
+						numbers[k][l] = 0;
+					}
+				}
+			}
+		}
+	}
+}
 
 
 
@@ -131,8 +180,15 @@ Single::Single(const Single& obj) : ae::Single(obj)
 {
 
 }
-Single::Single(unsigned int id,Enviroment& e,const Chromosome init[][3]) : ae::Single(id,e)
+Single::Single(unsigned int id,Enviroment& e,Chromosome** init) : ae::Single(id,e)
 {
+	//std::cout << "Step 1.2.1\n";
+	//std::cout << "init = " << init << "\n";
+	tabla = new Chromosome*[3];
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		tabla[i] = new Chromosome[3];
+	}
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -140,15 +196,27 @@ Single::Single(unsigned int id,Enviroment& e,const Chromosome init[][3]) : ae::S
 			tabla[i][j] = init[i][j];
 		}
 	}
+	//std::cout << "Step 1.2.2\n";
 	intiVals = init;
+	//std::cout << "Step 1.2.3\n";
 	genMD5();
+	//std::cout << "Step 1.2.4\n";
 }
 Single::~Single()
 {
-
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		delete [] tabla[i];
+	}
+	delete[] tabla;
 }
-Single::Single(unsigned int id,Enviroment& e,const Chromosome newData[][3],const Chromosome init[][3],const Junction& junction) : ae::Single(id,e,junction)
+Single::Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome** init,const Junction& junction) : ae::Single(id,e,junction)
 {
+	tabla = new Chromosome*[3];
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		tabla[i] = new Chromosome[3];
+	}
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -302,13 +370,27 @@ const Chromosome& Single::getTalba(unsigned short i,unsigned short j)const
 	return tabla[i][j];
 }
 
-void Single::randFill()
+void Single::randFill(bool favor)
 {
-	for(unsigned short i = 0; i < 3; i++)
+	if(favor)
 	{
-		for(unsigned short j = 0; j < 3; j++)
+		for(unsigned short i = 0; i < 3; i++)
 		{
-			tabla[i][j].randFill();
+			for(unsigned short j = 0; j < 3; j++)
+			{
+				tabla[i][j].resetCollision();
+				tabla[i][j].randFill(favor);			
+			}
+		}
+	}
+	else
+	{
+		for(unsigned short i = 0; i < 3; i++)
+		{
+			for(unsigned short j = 0; j < 3; j++)
+			{
+				tabla[i][j].randFill();
+			}
 		}
 	}
 }
@@ -320,7 +402,11 @@ void Single::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned 
 	{
 		idCount = getEnviroment().nextID();
 		
-		Chromosome newtabla[3][3];
+		Chromosome** newtabla = new Chromosome*[3];
+		for(unsigned short i = 0; i < 3; i++)
+		{
+			newtabla[i] = new Chromosome[3];
+		}
 		ae::Junction newj;
 		switch(getJunction().get_algorit())
 		{
@@ -398,6 +484,24 @@ void Single::juncting(std::list<ae::Single*>& chils,ae::Single* single,unsigned 
 			}
 		}
 	
+		//tratar de desatascar
+		if(getEnviroment().getJam())
+		{
+			for(unsigned short i = 0; i < 3; i++)
+			{
+				for(unsigned short j = 0; j < 3; j++)
+				{
+					newtabla[i][j].resetCollision();
+				}
+			}
+			for(unsigned short i = 0; i < 3; i++)
+			{
+				for(unsigned short j = 0; j < 3; j++)
+				{
+					newtabla[i][j].randFill(true);
+				}
+			}
+		}
 		Single* s = new Single(idCount,(Enviroment&)getEnviroment(),newtabla,intiVals,newj);
 		if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n"; 
 		chils.push_back(s);
@@ -532,6 +636,11 @@ Enviroment::~Enviroment()
 	{
 		delete s;
 	}
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		delete [] sudokuInit[i];
+	}
+	delete[] sudokuInit;
 }
 void Enviroment::init(const std::string& initB)
 {
@@ -558,6 +667,7 @@ void Enviroment::init(const std::string& initB)
 }
 void Enviroment::initBoard(const std::string& initTable)
 {
+	//std::cout << "Step 1.1.1\n";
 	std::ifstream file(initTable);
 	if(not file.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
 	std::string strline; 
@@ -572,7 +682,14 @@ void Enviroment::initBoard(const std::string& initTable)
 		    tok=strtok(NULL," ");
 		}
 	}
+	//std::cout << "Step 1.1.2\n";
 	unsigned short index = 0;
+	sudokuInit = new Chromosome*[3];
+	for(unsigned short i = 0; i < 3; i++)
+	{
+		sudokuInit[i] = new Chromosome[3];
+	}
+	//std::cout << "sudokuInit = " << sudokuInit << "\n";
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -587,6 +704,7 @@ void Enviroment::initBoard(const std::string& initTable)
 			}
 		}
 	}
+	//std::cout << "Step 1.1.3\n";
 }
 unsigned short Enviroment::getFaltantes() const
 {
@@ -818,15 +936,18 @@ void Enviroment::save()
 
 void Enviroment::initial()
 {
+	//std::cout << "Step 1.1\n";
 	initBoard(fnBoard);
+	//std::cout << "Step 1.2\n";
 	//poblacion inicial
+	//std::cout << "sudokuInit = " << sudokuInit << "\n";
 	for(Population i = 0; i < initPopulation; i++,idCount++)
 	{
 		Single* s = new Single(nextID(),*this,sudokuInit);
 		s->randFill();
 		push_back(s);		
 	}
-	
+	//std::cout << "Step 1.3\n";
 }
 void Enviroment::evaluation()
 {
