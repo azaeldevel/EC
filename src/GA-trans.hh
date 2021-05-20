@@ -122,6 +122,9 @@ namespace nodes
 
 		//getters
 		const std::string& getName()const;
+		Node* getOrigin();
+		unsigned int getCountNodes()const;
+		unsigned int getCountEdges()const;
 
 		//funtions
 		void connect(Node* from, Node* to);
@@ -134,14 +137,13 @@ namespace nodes
 		Edge* newEdge(unsigned int time,unsigned int distence,Node* prev, Node* next);
 		Edge* newEdge(unsigned int distence,Node* prev, Node* next);
 		void newEdgeBi(unsigned int distence,Node* prev, Node* next);
-		Node* getOrigin();
 		
 	private: 
 		std::string name;
 		std::list<Node*> toDeleteNodes;
 		std::list<Edge*> toDeleteEdges;
 		Node* origin;
-		
+		unsigned int countNodes,countEdges;
 	};
 
 	class Colony : public Region
@@ -166,33 +168,25 @@ namespace nodes
 		std::list<Colony*> toDelete;
 	};
 }
-typedef std::list<nodes::Edge*> Path;
-/*class Path : public std::list<nodes::Edge*>
+
+
+//typedef std::list<nodes::Edge*> Path;
+class Path : public std::list<nodes::Edge*>
 {
 public:
-	Path()
-	{
-
-	};
-	Path(const std::list<nodes::Edge*>& l)
-	{
-		for(nodes::Edge* e : *this)
-		{
-			push_back(e);
-		}
-	};
-	operator std::list<nodes::Edge*>*()
-	{
-		return this;
-	};
-};*/
+	Path();
+	Path(const Path*);
+	unsigned short getCountTargets()const;
+};
 
 class Chromosome : public ec::Chromosome
 {
 public:
-	Chromosome(const Path& path);
+	Chromosome(Path* path);
 	Chromosome(const Chromosome& obj);
 	virtual ~Chromosome();
+
+	const Path& getPath()const;
 
 	const Chromosome& operator = (const Chromosome&);	
 	
@@ -202,7 +196,7 @@ public:
 	virtual void randFill(bool favor = false);
 	
 private:
-	Path path;
+	Path* path;
 };
 
 
@@ -210,14 +204,15 @@ class Single : public ec::Single
 {
 public:
 	Single(const Single&);
-	Single(ID id,Enviroment&, const Junction& junction, const Path&);
-	Single(ID id,Enviroment&, const Path&);
+	Single(ID id,Enviroment&, const Junction& junction, Path*);
+	Single(ID id,Enviroment&, Path*);
 	
 	virtual void eval();
 	virtual void randFill(bool favor = false);
 	virtual void juncting(std::list<ec::Single*>& chils,ec::Single* single,unsigned short loglevel);
 	virtual void save(std::ofstream& fn);
 	virtual void print(std::ostream&) const;
+	void print(nodes::Node&) const;
 
 private:
 	unsigned short puntos;
@@ -235,17 +230,20 @@ public:
 	Enviroment(const std::string& log);
 	virtual ~Enviroment();
 
-	double getGamma() const;
+	double getGammaLength() const;
+	double getGammaTarget() const;
 	ec::Single* getRandomSingleTop()const;
 	ec::Single* getRandomSingle()const;
+
+	
 	void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
-	void creteRegion(std::vector<nodes::Node*>& targets);
+	void creteRegion(std::list<nodes::Node*>& targets);
 
 	virtual void initial();
 	virtual void selection();
-	//virtual bool run();
-	virtual void evaluation();
+	virtual bool run();
+	virtual void eval();
 	virtual void juncting();
 	virtual void save();
 private:
@@ -257,6 +255,8 @@ private:
 	nodes::Region* region;
 	std::list<Path*> lstPaths;
 	nodes::ID countID;
+	double gammaLength,gammaTarget;
+	std::list<nodes::Node*> targets;
 };
 
 }

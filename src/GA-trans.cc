@@ -1,4 +1,7 @@
 
+#include <octetos/core/Error.hh>
+
+
 
 #include "GA-trans.hh"
 
@@ -170,10 +173,12 @@ namespace nodes
 	{
 		return prevCount;
 	}*/
-
-
-
-
+	
+	
+	
+	
+	
+	
 	
 
 	
@@ -186,18 +191,28 @@ namespace nodes
 
 	Region::Region(ID id, const std::string& name) : Node(id,NodeType::REGION),origin(NULL)
 	{
-		
+		countNodes = 0;
+		countEdges = 0;
 	}
 	Region::~Region()
 	{
 		for(Node* n : toDeleteNodes)
 		{
 			delete n;
-		}		
+		}
 		for(Edge* e : toDeleteEdges)
 		{
 			delete e;
 		}
+	}
+	
+	unsigned int Region::getCountNodes()const
+	{
+		return countNodes;
+	}
+	unsigned int Region::getCountEdges()const
+	{
+		return countEdges;
 	}
 
 	/*Street* Region::newStreet(ID id)
@@ -221,6 +236,7 @@ namespace nodes
 		Node* n = new Node(id);
 		toDeleteNodes.push_back(n);
 		if(origin == NULL) origin = n;//si no hay nodo origne registrado
+		countNodes++;
 		
 		return n;
 	}
@@ -229,6 +245,7 @@ namespace nodes
 		Node* n = new Node(id,t);
 		toDeleteNodes.push_back(n);
 		if(origin == NULL) origin = n;//si no hay nodo origne registrado
+		countNodes++;
 		
 		return n;
 	}
@@ -236,6 +253,8 @@ namespace nodes
 	{
 		Edge* e = new Edge(d,a,n);
 		toDeleteEdges.push_back(e);
+		countEdges++;
+		
 		return e;
 	}
 	void Region::newEdgeBi(unsigned int d,Node* a, Node* n)
@@ -246,6 +265,7 @@ namespace nodes
 		n->addBack(e2);
 		toDeleteEdges.push_back(e1);
 		toDeleteEdges.push_back(e2);
+		countEdges++;
 	}
 	Node* Region::getOrigin()
 	{
@@ -257,7 +277,7 @@ namespace nodes
 
 
 
-Chromosome::Chromosome(const Path& p) : ec::Chromosome("trans::Chromosome"),path(p)
+Chromosome::Chromosome(Path* p) : ec::Chromosome("trans::Chromosome"),path(p)
 {
 
 }
@@ -292,6 +312,44 @@ void Chromosome::randFill(bool favor)
 {
 
 }
+const Path& Chromosome::getPath() const
+{
+	return *path;
+}
+
+
+
+
+
+
+
+
+
+
+
+	Path::Path()
+	{	
+	}
+	Path::Path(const Path* p) : std::list<nodes::Edge*>(*p)
+	{
+	
+	}
+unsigned short Path::getCountTargets()const
+{
+	unsigned short count  = 0;
+	for(nodes::Edge* e : *this)
+	{
+		if(e->getNode()->getType() != nodes::NodeType::UNKNOW) count++;
+	}
+		
+	return count;
+}
+	
+	
+	
+	
+	
+
 
 
 
@@ -311,15 +369,20 @@ void Chromosome::randFill(bool favor)
 Single::Single(const Single& s) : ec::Single(s),puntos(s.puntos),chromosome(s.chromosome)
 {
 }
-Single::Single(ID id,Enviroment& e,const Junction& j, const Path& p) : ec::Single(id,e,j),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e,const Junction& j, Path* p) : ec::Single(id,e,j),chromosome(p),puntos(0)
 {
 }
-Single::Single(ID id,Enviroment& e, const Path& p) : ec::Single(id,e),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e, Path* p) : ec::Single(id,e),chromosome(p),puntos(0)
 {
 }
 
 void Single::eval()
 {
+	double flength = ((Enviroment*)env)->getGammaLength() * double(chromosome.getPath().size());
+	//std::cout << "l : " << double(chromosome.getPath().size()) << "\n";
+	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(chromosome.getPath().getCountTargets());
+	fitness = flength + fTarget;
+	//if(flength > 1.0) print(std::cout);
 	
 }
 void Single::randFill(bool favor)
@@ -332,11 +395,27 @@ void Single::juncting(std::list<ec::Single*>& chils,ec::Single* single,unsigned 
 void Single::save(std::ofstream& fn)
 {
 }
-void Single::print(std::ostream&) const
+void Single::print(std::ostream& p) const
+{
+	Path::const_iterator actual, post;
+	
+	actual = chromosome.getPath().begin();
+	post = chromosome.getPath().begin();
+	do
+	{
+		std::advance(post,1);
+		(*actual)->getNext();
+		//(*post)->getNode();
+		p << (*actual)->getNode()->getID() << "->";
+		std::advance(actual,1);
+	}
+	while(post != chromosome.getPath().end());
+	//p << (*post)->getNode()->getID() << "\n";	
+}
+void Single::print(nodes::Node&) const
 {
 
 }
-
 
 
 
@@ -352,11 +431,19 @@ Enviroment::~Enviroment()
 	if(region) delete region;
 }
 
+double Enviroment::getGammaLength() const
+{
+	return gammaLength;
+}
+double Enviroment::getGammaTarget() const
+{
+	return gammaTarget;
+}
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,bool direction)
 {
 	//std::cout << "TransEnviroment::generate Step 1\n";
-	nodes::Edge* eN = n->nextLessTrans(stop);
+	nodes::Edge* eN = n->nextLessTrans(stop,direction);
 	
 	while(eN)
 	{
@@ -379,7 +466,7 @@ void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,bo
 {
 	//std::cout << "TransEnviroment::generate2 Step 1\n";
 	nodes::Node* n = eprev->getNext();
-	nodes::Edge* eN = n->nextLessTrans(stop);
+	nodes::Edge* eN = n->nextLessTrans(stop,direction);
 	//std::cout << "n = " << n->getID() << "\n";
 	//std::cout << "TransEnviroment::generate2 Step 2 eN = " << eN << "\n";
 	do
@@ -405,8 +492,14 @@ void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,bo
 void Enviroment::initial()
 {	
 	//std::cout << "Poblacion inicial..\n";
-	std::vector<nodes::Node*> targets;
 	creteRegion(targets);
+	gammaLength = 0.5 / double(region->getCountEdges());
+	//std::cout << "Count : " << region->getCountEdges() << "\n";
+	//std::cout << "gammaLength : " << gammaLength << "\n";
+	gammaTarget = 0.5 / double(targets.size());
+	//std::cout << "Count : " << targets.size() << "\n";
+	//std::cout << "gammaTarget : " << gammaTarget << "\n";
+	//ec::Enviroment::epsilon = gammaLength;
 
 	//
 	for(nodes::Node* n : targets)
@@ -421,30 +514,29 @@ void Enviroment::initial()
 	//generado individuos
 	for(Path* path : lstPaths)
 	{
- 		Single* s = new Single(nextID(),*this,*path);
+ 		Single* s = new Single(nextID(),*this,path);
 		push_back(s);
 	}
 	
 	//liberando memoria de paths
-	for(Path* path : lstPaths)
-	{
-		delete path;
-	}
-	lstPaths.clear();	
+	lstPaths.clear();
+	
+		
 }
 void Enviroment::selection()
 {
 
 }
-/*bool TransEnviroment::run()
+
+bool Enviroment::run()
 {
 	initial();
-
+	std::cout << "Initial : " << size() << "\n";
 	
-
+	eval();
 	
 	return true;
-}*/
+}
 
 void Enviroment::print(nodes::Node* n)
 {
@@ -469,14 +561,27 @@ void Enviroment::filterPaths()
 	std::list<Path*> forDelete;
 	for(Path* path : lstPaths)
 	{
-		nodes::Node* node = path->back()->getNode();
-		
-		//aceptar objetivos
-		if(node->getType () != nodes::UNKNOW) continue;
-		
+		nodes::Node* nodeF = path->front()->getNode();
+		nodes::Node* nodeB = path->back()->getNode();
+				
 		//aceptar esquinas,glorietas,
-		if(node->isTrunk()) continue;
+		//if(nodeB->isTrunk()) continue;
+		
+		//aceptar los que ban del origne a los extremos
+		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::END) continue;
+		
+		//aceptar los que ban del origne a los target
+		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::TARGET) continue;
+		
+		//aceptar los que ban del target a los target
+		if(nodeF->getType() == nodes::TARGET and nodeB->getType() == nodes::TARGET) continue;
+		
+		//aceptar los que ban del extremo al origen
+		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::ORIGIN) continue;
 
+		//aceptar los teinet un target en un extremo
+		if(nodeF->getType() == nodes::TARGET or nodeB->getType() == nodes::TARGET) continue;
+		
 		//
 		forDelete.push_back(path);
 	}
@@ -486,15 +591,15 @@ void Enviroment::filterPaths()
 		lstPaths.remove(path);
 	}
 }
-void Enviroment::evaluation()
-{	
+void Enviroment::eval()
+{
 	//std::cout << "Evaluacion..\n";
 	Single* single;
 	for(ec::Single* s : *this)
 	{
 		single = (Single*) s;
-		std::cout << "ID : " << single->getID() << "\n";
 		single->eval();
+		//std::cout << "ID : " << single->getID() << " => " << single->getFitness() << "\n";
 	}
 }
 void Enviroment::juncting()

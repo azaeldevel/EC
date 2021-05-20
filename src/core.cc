@@ -539,7 +539,7 @@ bool Enviroment::run()
 			//std::cout << "\tgamman : " << gamma << "\n";
 		}
 		
-		evaluation();
+		eval();
 		sort(cmpStrength);
 
 		for(ec::Single* s : *this)

@@ -139,12 +139,13 @@ protected:
 	*\brief numero entre 0 y 1 que determina la cercania al valor esperado(tiende a 1)
 	*/
 	double fitness;
+
+	Enviroment* env;
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
 	unsigned short age;
 	Junction junction;
-	Enviroment* env;
 };
 
 bool cmpStrength(const Single* f,const Single* s);
@@ -205,7 +206,7 @@ public:
 	virtual bool run();
 	virtual void selection() = 0;
 	virtual void initial()=0;
-	virtual void evaluation()=0;
+	virtual void eval()=0;
 	virtual void juncting()=0;
 	virtual void save()=0;
 	virtual void series(const std::string& logDir,Iteration maxIteBySerie);

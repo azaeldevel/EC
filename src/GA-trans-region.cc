@@ -3,7 +3,7 @@
 namespace ec::trans
 {
 
-void Enviroment::creteRegion(std::vector<nodes::Node*>& targets)
+void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 {
 	//std::cout << "TransEnviroment::creteRegion Step 1\n";
 	region = new nodes::Region(++countID,"Tesing");
@@ -275,7 +275,8 @@ void Enviroment::creteRegion(std::vector<nodes::Node*>& targets)
 	nodeB = region->newNode(++countID); //35
 	region->newEdgeBi(300,nodeA,nodeB);
 	nodeB->setType(nodes::NodeType::TARGET);
-		
+	targets.push_back(nodeB);
+	
 	nodeA = node_33; ///33
 	nodeB = region->newNode(++countID); //34
 	region->newEdgeBi(300,nodeA,nodeB);
