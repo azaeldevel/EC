@@ -97,7 +97,7 @@ public:
 	virtual void selection();
 	//virtual bool run();
 	virtual void initial();
-	virtual void evaluation();
+	virtual void eval();
 	virtual void juncting();
 	virtual void save();
 

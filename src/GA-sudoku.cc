@@ -773,12 +773,12 @@ void Enviroment::initial()
 	}
 	//std::cout << "Step 1.3\n";
 }
-void Enviroment::evaluation()
+void Enviroment::eval()
 {
 	for(ec::Single* s : *this)
 	{
 		s->eval();	
-		s->deltaAge ();
+		s->deltaAge();
 	}
 }
 void Enviroment::juncting()
