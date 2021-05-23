@@ -177,9 +177,15 @@ public:
 	Path();
 	Path(const Path*);
 	Path(const Path*,const Path*);
+
 	unsigned short getCountTargets()const;
+	unsigned short getLength()const;
+
 	//const nodes::Node* checkJunct(const Path*)const;
 	Population juncting(const Path*,std::list<Path*>& lp)const;
+	virtual void print(std::ostream&) const;
+	static void print(const nodes::Node* n,std::ostream&);
+
 
 private:
 	bool cutBefore(nodes::Node*);
@@ -193,7 +199,8 @@ public:
 	Chromosome(const Chromosome& obj);
 	virtual ~Chromosome();
 
-	const Path& getPath()const;
+	unsigned short getLengthPath()const;
+	unsigned short getCountTagetsPath()const;
 
 	const Chromosome& operator = (const Chromosome&);	
 	
@@ -202,7 +209,7 @@ public:
 	virtual void mutate(float p);
 	virtual void randFill(bool favor = false);
 	Population juncting(const Chromosome*,std::list<Path*>& p)const;
-		
+	virtual void print(std::ostream&) const;
 private:
 	Path* path;
 };
@@ -214,7 +221,10 @@ public:
 	Single(const Single&);
 	Single(ID id,Enviroment&, const Junction& junction, Path*);
 	Single(ID id,Enviroment&, Path*);
-	
+
+	unsigned short getLengthPath()const;
+	unsigned short getCountTagetsPath()const;
+
 	virtual void eval();
 	virtual void randFill(bool favor = false);
 	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*)const;

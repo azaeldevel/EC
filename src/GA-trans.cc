@@ -312,18 +312,28 @@ void Chromosome::randFill(bool favor)
 {
 
 }
-const Path& Chromosome::getPath() const
+/*const Path& Chromosome::getPath() const
 {
 	return *path;
-}
+}*/
 
 Population Chromosome::juncting(const Chromosome* c,std::list<Path*>& p)const
 {
-	std::cout << "Step 1.1\n";
+	//std::cout << "Step 1.1\n";
 	return path->juncting(c->path,p);
 }
-
-
+void Chromosome::print(std::ostream& p) const
+{
+	path->print(p);
+}
+unsigned short Chromosome::getLengthPath()const
+{
+	return path->getLength();
+}
+unsigned short Chromosome::getCountTagetsPath()const
+{
+	return path->getCountTargets();
+}
 
 
 
@@ -337,20 +347,20 @@ Path::Path()
 }
 Path::Path(const Path* pb,const Path* pe)
 {
-	std::cout << "Step 1.1.1.1.1.3.1\n";
+	//std::cout << "Step 1.1.1.1.1.3.1\n";
 	if(pb->size() == 0) throw octetos::core::Exception("La Path de incio esta vacia.",__FILE__,__LINE__);
 	if(pe->size() == 0) throw octetos::core::Exception("La Path de fin esta vacia.",__FILE__,__LINE__);
 	if(pb->back()->getNode() != pe->back()->getNode())
 	{
 		throw octetos::core::Exception("El node final no coincide con el nodo inicial.",__FILE__,__LINE__);
 	}
-	std::cout << "Step 1.1.1.1.1.3.2\n";
+	//std::cout << "Step 1.1.1.1.1.3.2\n";
 	//
 	for(nodes::Edge* e : *pb)
 	{
 		push_back(e);
 	}
-	std::cout << "Step 1.1.1.1.1.3.3\n";
+	//std::cout << "Step 1.1.1.1.1.3.3\n";
 	for(nodes::Edge* e : *pe)
 	{
 		push_back(e);
@@ -372,29 +382,29 @@ unsigned short Path::getCountTargets()const
 }
 Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 {
-	std::cout << "Step 1.1.1\n";
+	//std::cout << "Step 1.1.1\n";
 	for(nodes::Edge* e1 : *this)
 	{
-		std::cout << "Step 1.1.1.1\n";
+		//std::cout << "Step 1.1.1.1\n";
 		for(nodes::Edge* e2 : *p)
 		{
-			std::cout << "Step 1.1.1.1.1\n";
+			//std::cout << "Step 1.1.1.1.1\n";
 			if(e1->getNode() == e2->getNode() and e1->getNext() != e2->getNext())
 			{
-				std::cout << "Step 1.1.1.1.1.1\n";
+				//std::cout << "Step 1.1.1.1.1.1\n";
 				Path pB(*this);
 				Path pE(*p);
-				std::cout << "Step 1.1.1.1.1.2\n";		
+				//std::cout << "Step 1.1.1.1.1.2\n";		
 				pB.cutAfther(e1->getNode());
 				pE.cutBefore(e2->getNode());	
-				std::cout << "Step 1.1.1.1.1.3\n";
+				//std::cout << "Step 1.1.1.1.1.3\n";
 				Path*  newp = new Path(&pB,&pE);
-				std::cout << "Step 1.1.1.1.1.4\n";
+				//std::cout << "Step 1.1.1.1.1.4\n";
 				lstp.push_back(newp);
 			}
 		}
 	}
-	std::cout << "Step 1.1.2\n";
+	//std::cout << "Step 1.1.2\n";
 	return lstp.size();
 }
 bool Path::cutBefore(nodes::Node* n)
@@ -446,9 +456,38 @@ bool Path::cutAfther(nodes::Node* n)
 	}
 	return true;
 }
-	
-	
-	
+void Path::print(std::ostream& p) const
+{
+	const_iterator last = end();
+	last--;
+	for(const_iterator it = begin();it != end();it++)
+	{
+		print((*it)->getNode(),p);
+		if(last != it) p << "->";
+	}
+}
+unsigned short Path::getLength()const
+{
+	return size();
+}
+void Path::print(const nodes::Node* n,std::ostream& out)
+{
+	switch(n->getType())
+	{
+		case nodes::NodeType::TARGET:
+			out << "Target(" << n->getID() << ")" ;
+			break;
+		case nodes::NodeType::END:
+			out << "End("<< n->getID() << ")" ;
+			break;
+		case nodes::NodeType::ORIGIN:
+			out << "O("<< n->getID() << ")" ;
+			break;
+		default:
+			out << "(" << n->getID() << ")" ;
+			break;
+	}
+}
 	
 
 
@@ -479,9 +518,9 @@ Single::Single(ID id,Enviroment& e, Path* p) : ec::Single(id,e),chromosome(p),pu
 
 void Single::eval()
 {
-	double flength = ((Enviroment*)env)->getGammaLength() * double(chromosome.getPath().size());
+	double flength = ((Enviroment*)env)->getGammaLength() * double(chromosome.getLengthPath());
 	//std::cout << "l : " << double(chromosome.getPath().size()) << "\n";
-	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(chromosome.getPath().getCountTargets());
+	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(chromosome.getCountTagetsPath());
 	fitness = flength + fTarget;
 	//if(flength > 1.0) print(std::cout);
 	
@@ -493,11 +532,17 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 {
 	Population counNew = 0;
 	
-	std::cout << "\t(" << getID() << ") with (" << single->getID() << ")\n";
 	std::list<Path*> lstp;
+	ec::Single* newchild;
 	if(juncting((const Single*)single,lstp))
 	{
+		std::cout << "\t(" << getID() << ") with (" << single->getID() << ")\n";
 		std::cout << "\t\t" << lstp.size() << " hijos\n";
+		for(Path* p : lstp)
+		{
+			newchild = new Single(env->nextID(),(Enviroment&)*env,p);
+			chils.push_back(newchild);
+		}
 	}
 	
 	return counNew;
@@ -505,7 +550,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 void Single::save(std::ofstream& fn)
 {
 }
-void Single::print(std::ostream& p) const
+/*void Single::print(std::ostream& p) const
 {
 	Path::const_iterator actual, post;
 	
@@ -521,6 +566,10 @@ void Single::print(std::ostream& p) const
 	}
 	while(post != chromosome.getPath().end());
 	//p << (*post)->getNode()->getID() << "\n";	
+}*/
+void Single::print(std::ostream& p) const
+{
+	chromosome.print(p);
 }
 void Single::print(nodes::Node&) const
 {
@@ -528,9 +577,25 @@ void Single::print(nodes::Node&) const
 }
 Population Single::juncting(const Single* s,std::list<Path*>& p)const
 {
-	std::cout << "Step 1\n";
+	//std::cout << "Step 1\n";
 	return chromosome.juncting(&s->chromosome,p);
 }
+unsigned short Single::getLengthPath()const
+{
+	return chromosome.getLengthPath();
+}
+unsigned short Single::getCountTagetsPath()const
+{
+	return chromosome.getCountTagetsPath();
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -647,7 +712,7 @@ bool Enviroment::run()
 	initial();
 	std::cout << "Initial : " << size() << "\n";
 	
-	for(unsigned short i = 0; i < 10; i++)
+	//for(unsigned short i = 0; i < 10; i++)
 	{
 		eval();
 		sort(cmpStrength);
@@ -655,33 +720,22 @@ bool Enviroment::run()
 		for(ec::Single* s : *this)
 		{
 			single = (Single*) s;
-			std::cout << "ID : " << single->getID() << " => " << single->getFitness() << "\n";
+			//std::cout << "ID : " << single->getID() << " => " << single->getFitness() << "\n";
 		}
 		juncting();
+		for(ec::Single* s : newschils)
+		{
+			push_back(s);
+		}
+		newschils.clear();
+		eval();
 		std::cout << "Poblacion : " << size() << "\n";
 	}
 	
 	return true;
 }
 
-void Enviroment::print(nodes::Node* n)
-{
-	switch(n->getType())
-	{
-		case nodes::NodeType::TARGET:
-			std::cout << "Target(" << n->getID() << ")" ;
-			break;
-		case nodes::NodeType::END:
-			std::cout << "End("<< n->getID() << ")" ;
-			break;
-		case nodes::NodeType::ORIGIN:
-			std::cout << "O("<< n->getID() << ")" ;
-			break;
-		default:
-			std::cout << "(" << n->getID() << ")" ;
-			break;
-	}
-}
+
 void Enviroment::filterPaths()
 {
 	std::list<Path*> forDelete;
@@ -731,15 +785,12 @@ void Enviroment::eval()
 
 void Enviroment::juncting()
 {
-	iterator itPenultimo = end();
-	itPenultimo--;
-	for(iterator itI = begin(); itI != itPenultimo;itI++)
+	for(ec::Single* s1 : *this)
 	{
-		iterator itJ = itI;
-		std::advance(itJ,1);
-		for(; itJ != end();itJ++)
+		for(ec::Single* s2 : *this)
 		{
-			(*itI)->juncting(newschils,*itJ,echolevel,NULL);
+			if(s1 == s2) continue;
+			s1->juncting(newschils,s2,echolevel,NULL);
 		}
 	}
 }
