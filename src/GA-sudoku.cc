@@ -383,11 +383,12 @@ void Single::randFill(bool favor)
 		}
 	}
 }
-void Single::juncting(std::list<ec::Single*>& chils,ec::Single* single,unsigned short loglevel)
+Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*) const
 {
 	//std::cout << "\t" << idCount << " puede tener " << getJunction().get_number() << " hijos\n";
 	ID idCount;
-	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
+	Population countNew = 0;
+	for(ec::geneUS i = 0; i < getJunction().get_number(); i++,countNew++)
 	{
 		idCount = getEnviroment().nextID();
 		
@@ -495,6 +496,7 @@ void Single::juncting(std::list<ec::Single*>& chils,ec::Single* single,unsigned 
 		if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n"; 
 		chils.push_back(s);
 	}
+	return countNew;
 }
 void Single::save(std::ofstream& fn)
 {	
@@ -790,7 +792,7 @@ void Enviroment::juncting()
 		ec::Single* single2 = getRandomSingle();
 		if(single2 == NULL) continue;
 		if(single1 == single2) continue;
-		single1->juncting(newschils,single2,echolevel);
+		single1->juncting(newschils,single2,echolevel,NULL);
 		if(echolevel > 2 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 	}
 	while(newschils.size() + size() <= maxPopulation);

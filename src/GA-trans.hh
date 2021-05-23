@@ -176,7 +176,14 @@ class Path : public std::list<nodes::Edge*>
 public:
 	Path();
 	Path(const Path*);
+	Path(const Path*,const Path*);
 	unsigned short getCountTargets()const;
+	//const nodes::Node* checkJunct(const Path*)const;
+	Population juncting(const Path*,std::list<Path*>& lp)const;
+
+private:
+	bool cutBefore(nodes::Node*);
+	bool cutAfther(nodes::Node*);
 };
 
 class Chromosome : public ec::Chromosome
@@ -194,7 +201,8 @@ public:
 	virtual void copy(const ec::Chromosome& P1);
 	virtual void mutate(float p);
 	virtual void randFill(bool favor = false);
-	
+	Population juncting(const Chromosome*,std::list<Path*>& p)const;
+		
 private:
 	Path* path;
 };
@@ -209,11 +217,12 @@ public:
 	
 	virtual void eval();
 	virtual void randFill(bool favor = false);
-	virtual void juncting(std::list<ec::Single*>& chils,ec::Single* single,unsigned short loglevel);
+	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*)const;
 	virtual void save(std::ofstream& fn);
 	virtual void print(std::ostream&) const;
-	void print(nodes::Node&) const;
-
+	void print(nodes::Node&) const;	
+	Population juncting(const Single*,std::list<Path*>& p)const;
+	
 private:
 	unsigned short puntos;
 	Chromosome chromosome;
@@ -232,8 +241,6 @@ public:
 
 	double getGammaLength() const;
 	double getGammaTarget() const;
-	ec::Single* getRandomSingleTop()const;
-	ec::Single* getRandomSingle()const;
 
 	
 	void saveSolutions(const std::string& dir)const;
@@ -251,6 +258,7 @@ private:
 	void generate(Path* path,nodes::Edge* e, unsigned short stop,bool direction);
 	void filterPaths();
 	void print(nodes::Node*);
+	
 	//	
 	nodes::Region* region;
 	std::list<Path*> lstPaths;

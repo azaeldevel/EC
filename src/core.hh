@@ -130,7 +130,7 @@ public:
 
 	virtual void eval() = 0;
 	virtual void randFill(bool favor = false) = 0;
-	virtual void juncting(std::list<Single*>& chils,Single* single,unsigned short loglevel) = 0;
+	virtual Population juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel,void*) const = 0;
 	virtual void save(std::ofstream& fn) = 0;
 	virtual void print(std::ostream&) const = 0;
 
