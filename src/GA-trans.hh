@@ -187,7 +187,7 @@ public:
 	Population juncting(const Path*,std::list<Path*>& lp)const;
 	virtual void print(std::ostream&) const;
 	static void print(const nodes::Node* n,std::ostream&);
-
+	unsigned short CountTarget()const;
 
 private:
 	bool cutBefore(nodes::Node*);
@@ -203,6 +203,7 @@ public:
 
 	unsigned short getLengthPath()const;
 	unsigned short getCountTagetsPath()const;
+	const Path* getPath()const;
 
 	const Chromosome& operator = (const Chromosome&);	
 	
@@ -226,6 +227,7 @@ public:
 
 	unsigned short getLengthPath()const;
 	unsigned short getCountTagetsPath()const;
+	const Chromosome* getChromosome()const;
 
 	virtual void eval();
 	virtual void randFill(bool favor = false);
@@ -268,7 +270,6 @@ public:
 private:
 	void generate(nodes::Node* orig, unsigned short stop,bool direction);
 	void generate(Path* path,nodes::Edge* e, unsigned short stop,bool direction);
-	void filterPaths();
 	void print(nodes::Node*);
 	
 	//	

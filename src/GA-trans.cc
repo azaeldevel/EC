@@ -344,7 +344,10 @@ unsigned short Chromosome::getCountTagetsPath()const
 {
 	return path->getCountTargets();
 }
-
+const Path* Chromosome::getPath()const
+{
+	return path;
+}
 
 
 
@@ -406,7 +409,9 @@ Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 				Path pE(*p);
 				//std::cout << "Step 1.1.1.1.1.2\n";		
 				pB.cutAfther(e1->getNode());
-				pE.cutBefore(e2->getNode());	
+				if(pB.size() > 0) continue;
+				pE.cutBefore(e2->getNode());
+				if(pE.size() > 0) continue;	
 				//std::cout << "Step 1.1.1.1.1.3\n";
 				Path*  newp = new Path(&pB,&pE);
 				//std::cout << "Step 1.1.1.1.1.4\n";
@@ -498,7 +503,16 @@ void Path::print(const nodes::Node* n,std::ostream& out)
 			break;
 	}
 }
+unsigned short Path::CountTarget()const
+{
+	unsigned short count = 0;
+	for(nodes::Edge* e : *this)
+	{
+		if(e->getNode()->getType() != nodes::NodeType::UNKNOW) count++;
+	}
 	
+	return count;
+}	
 
 
 
@@ -546,8 +560,8 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 	ec::Single* newchild;
 	if(juncting((const Single*)single,lstp))
 	{
-		std::cout << "\t(" << getID() << ") with (" << single->getID() << ")\n";
-		std::cout << "\t\t" << lstp.size() << " hijos\n";
+		//std::cout << "\t(" << getID() << ") with (" << single->getID() << ")\n";
+		//std::cout << "\t\t" << lstp.size() << " hijos\n";
 		for(Path* p : lstp)
 		{
 			newchild = new Single(env->nextID(),(Enviroment&)*env,p);
@@ -598,7 +612,10 @@ unsigned short Single::getCountTagetsPath()const
 {
 	return chromosome.getCountTagetsPath();
 }
-
+const Chromosome* Single::getChromosome()const
+{
+	return &chromosome;
+}
 
 
 
@@ -689,10 +706,9 @@ void Enviroment::initial()
 		region->resetTrans();
 		generate(n,1,false);
 	}
-	
-	
+		
 	//filtrar las rutas
-	filterPaths();
+	//filterPaths();
 	
 	//generado individuos
 	for(Path* path : lstPaths)
@@ -700,23 +716,19 @@ void Enviroment::initial()
  		Single* s = new Single(nextID(),*this,path);
 		push_back(s);
 	}
-	
 	//liberando memoria de paths
 	lstPaths.clear();
 	
-		
+	selection();
 }
-void Enviroment::selection()
-{
 
-}
 
 bool Enviroment::run()
 {
 	//std::cout << "Initial : " << size() << "\n";
 	initial();
-	
-	//for(unsigned short i = 0; i < 10; i++)
+	//std::cout << "Initial : " << size() << "\n";
+	for(unsigned short i = 0; i < 10; i++)
 	{
 		std::cout << "Initial : " << size() << "\n";
 		eval();
@@ -729,52 +741,62 @@ bool Enviroment::run()
 			//single->print(std::cout);
 			//std::cout << "\n";
 		}
-		/*juncting();
+		juncting();
 		for(ec::Single* s : newschils)
 		{
 			push_back(s);
 		}
 		newschils.clear();
-		eval();*/
 	}
 	
 	return true;
 }
 
 
-void Enviroment::filterPaths()
+void Enviroment::selection()
 {
-	std::list<Path*> forDelete;
-	for(Path* path : lstPaths)
+	std::list<Single*> forDelete;
+	Single* single;
+	//std::cout << "Step 1\n";
+	for(ec::Single* s : *this)
 	{
-		nodes::Node* nodeF = path->front()->getNode();
-		nodes::Node* nodeB = path->back()->getNode();
+		single = (Single*)s;
+		nodes::Node* nodeF = single->getChromosome()->getPath()->front()->getNode();
+		nodes::Node* nodeB = single->getChromosome()->getPath()->back()->getNode();
 				
 		//aceptar esquinas,glorietas,
 		//if(nodeB->isTrunk()) continue;
 		
 		//aceptar los que ban del origne a los extremos
-		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::END and path->size() > 1) continue;
+		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::END and single->getChromosome()->getPath()->size() > 1) continue;
 		
 		//aceptar los que ban del origne a los target
-		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::TARGET and path->size() > 1) continue;
+		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::TARGET and single->getChromosome()->getPath()->size() > 1) continue;
 		
 		//aceptar los que ban del target a los target
-		if(nodeF->getType() == nodes::TARGET and nodeB->getType() == nodes::TARGET and path->size() > 1) continue;
+		if(nodeF->getType() == nodes::TARGET and nodeB->getType() == nodes::TARGET and single->getChromosome()->getPath()->size() > 1) continue;
 		
 		//aceptar los que ban del extremo al origen
-		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::ORIGIN and path->size() > 1) continue;
+		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::ORIGIN and single->getChromosome()->getPath()->size() > 1) continue;
 
 		//aceptar los teinet un target en un extremo
-		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::TARGET and path->size() > 1) continue;
+		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::TARGET and single->getChromosome()->getPath()->size() > 1) continue;
+		
+		if(single->getChromosome()->getPath()->CountTarget() > 0 and nodeF->getType() != nodes::ORIGIN and nodeB->getType() != nodes::ORIGIN) continue;
 		
 		//
-		forDelete.push_back(path);
+		forDelete.push_back(single);
 	}
-	for(Path* path : forDelete)
+	//std::cout << "Step 2\n";
+	for(ec::Single* s : forDelete)
 	{
-		delete path;
-		lstPaths.remove(path);
+		//std::cout << "Step 2.1\n";
+		single = (Single*)s;
+		//std::cout << "Step 2.2\n";
+		delete single;
+		//std::cout << "Step 2.3\n";
+		remove(single);
+		//std::cout << "Step 2.4\n";
 	}
 }
 void Enviroment::eval()
