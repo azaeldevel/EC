@@ -89,6 +89,7 @@ namespace nodes
 		Node* getNode();
 		unsigned short getNextCount();
 		//unsigned short getPrevCount();
+		void resetNextCount();
 		
 	private:
 		Explored explored;
@@ -137,6 +138,7 @@ namespace nodes
 		Edge* newEdge(unsigned int time,unsigned int distence,Node* prev, Node* next);
 		Edge* newEdge(unsigned int distence,Node* prev, Node* next);
 		void newEdgeBi(unsigned int distence,Node* prev, Node* next);
+		void resetTrans();
 		
 	private: 
 		std::string name;

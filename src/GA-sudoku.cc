@@ -492,7 +492,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 				}
 			}
 		}*/
-		Single* s = new Single(idCount,(Enviroment&)getEnviroment(),newtabla,intiVals,newj);
+		Single* s = new Single(idCount,(Enviroment&)*env,newtabla,intiVals,newj);
 		if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n"; 
 		chils.push_back(s);
 	}

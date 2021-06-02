@@ -174,7 +174,10 @@ namespace nodes
 		return prevCount;
 	}*/
 	
-	
+	void Edge::resetNextCount()
+	{
+		nextCount = 0;
+	}
 	
 	
 	
@@ -270,6 +273,13 @@ namespace nodes
 	Node* Region::getOrigin()
 	{
 		return origin;
+	}
+	void Region::resetTrans()
+	{
+		for(Edge* e : toDeleteEdges)
+		{
+			e->resetNextCount();
+		}
 	}
 }
 
@@ -621,36 +631,28 @@ double Enviroment::getGammaTarget() const
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,bool direction)
 {
-	//std::cout << "TransEnviroment::generate Step 1\n";
-	nodes::Edge* eN = n->nextLessTrans(stop,direction);
+	nodes::Edge* eN = n->nextLessTrans(stop,direction);	
 	
 	while(eN)
 	{
-		//std::cout << "TransEnviroment::generate Step 2\n";
 		Path* newPath = new Path();
-		//std::cout << "TransEnviroment::generate Step 3\n";
 		eN->transNext();
-		//std::cout << "TransEnviroment::generate Step 4\n";
 		newPath->push_back(eN);
-		//std::cout << "TransEnviroment::generate Step 5\n";
-		lstPaths.push_back(newPath);
-		//std::cout << "TransEnviroment::generate Step 6\n";		
+		lstPaths.push_back(newPath);	
 		generate(newPath,eN,stop,direction);
 
-		//net iteration
+		//next iteration
 		eN = n->nextLessTrans(stop,direction);
 	}
 }
 void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,bool direction)
 {
-	//std::cout << "TransEnviroment::generate2 Step 1\n";
+	//if(path->size() > region->getCountEdges()/targets.size() ) return;
+	
 	nodes::Node* n = eprev->getNext();
 	nodes::Edge* eN = n->nextLessTrans(stop,direction);
-	//std::cout << "n = " << n->getID() << "\n";
-	//std::cout << "TransEnviroment::generate2 Step 2 eN = " << eN << "\n";
 	do
 	{
-		//std::cout << "TransEnviroment::generate2 Step 3\n";
 		Path* newPath = NULL;
 		if(eN)
 		{
@@ -658,7 +660,6 @@ void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,bo
 			eN->transNext();
 			newPath->push_back(eN);
 			lstPaths.push_back(newPath);
-			//std::cout << "TransEnviroment::generate2 Step 4\n";
 		}
 		
 		if(n->getType() == nodes::UNKNOW and eN and newPath) generate(newPath,eN,stop,direction);
@@ -683,9 +684,12 @@ void Enviroment::initial()
 	//
 	for(nodes::Node* n : targets)
 	{
+		region->resetTrans();
 		generate(n,1,true);
+		region->resetTrans();
 		generate(n,1,false);
 	}
+	
 	
 	//filtrar las rutas
 	filterPaths();
@@ -709,27 +713,29 @@ void Enviroment::selection()
 
 bool Enviroment::run()
 {
+	//std::cout << "Initial : " << size() << "\n";
 	initial();
-	std::cout << "Initial : " << size() << "\n";
 	
 	//for(unsigned short i = 0; i < 10; i++)
 	{
+		std::cout << "Initial : " << size() << "\n";
 		eval();
 		sort(cmpStrength);
 		Single* single;
 		for(ec::Single* s : *this)
 		{
 			single = (Single*) s;
-			//std::cout << "ID : " << single->getID() << " => " << single->getFitness() << "\n";
+			std::cout << "ID : " << single->getID() << " => " << single->getFitness() << "\n";
+			//single->print(std::cout);
+			//std::cout << "\n";
 		}
-		juncting();
+		/*juncting();
 		for(ec::Single* s : newschils)
 		{
 			push_back(s);
 		}
 		newschils.clear();
-		eval();
-		std::cout << "Poblacion : " << size() << "\n";
+		eval();*/
 	}
 	
 	return true;
@@ -748,19 +754,19 @@ void Enviroment::filterPaths()
 		//if(nodeB->isTrunk()) continue;
 		
 		//aceptar los que ban del origne a los extremos
-		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::END) continue;
+		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::END and path->size() > 1) continue;
 		
 		//aceptar los que ban del origne a los target
-		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::TARGET) continue;
+		if(nodeF->getType() == nodes::ORIGIN and nodeB->getType() == nodes::TARGET and path->size() > 1) continue;
 		
 		//aceptar los que ban del target a los target
-		if(nodeF->getType() == nodes::TARGET and nodeB->getType() == nodes::TARGET) continue;
+		if(nodeF->getType() == nodes::TARGET and nodeB->getType() == nodes::TARGET and path->size() > 1) continue;
 		
 		//aceptar los que ban del extremo al origen
-		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::ORIGIN) continue;
+		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::ORIGIN and path->size() > 1) continue;
 
 		//aceptar los teinet un target en un extremo
-		if(nodeF->getType() == nodes::TARGET or nodeB->getType() == nodes::TARGET) continue;
+		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::TARGET and path->size() > 1) continue;
 		
 		//
 		forDelete.push_back(path);
@@ -779,7 +785,7 @@ void Enviroment::eval()
 	{
 		single = (Single*) s;
 		single->eval();
-		std::cout << "ID : " << single->getID() << " = " << single->getFitness() << "\n";
+		//std::cout << "ID : " << single->getID() << " = " << single->getFitness() << "\n";
 	}
 }
 
