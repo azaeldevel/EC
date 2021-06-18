@@ -88,10 +88,11 @@ namespace nodes
 		std::advance(it, index);
 		return *it;
 	}	
-	Edge* Node::nextLessTrans(bool direction)
+	Edge* Node::nextLessTrans(Direction direction)
 	{
 		std::list<Edge*>* edgeList;
-		edgeList = direction? &edgesFront : &edgesBack;
+		if (direction == Direction::FRONT) edgeList = &edgesFront;
+		if (direction == Direction::BACK) edgeList = &edgesBack;
 		
 		if(edgeList->size() == 0) return NULL;
 		Edge* less = *edgeList->begin();
@@ -106,10 +107,12 @@ namespace nodes
 		//std::cout << "TransEnviroment::nextLessTrans " << e->getID() << "\n";
 		return less;
 	}
-	Edge* Node::nextLessTrans(Explored max,bool direction)
+	Edge* Node::nextLessTrans(Explored max,Direction direction)
 	{		
 		std::list<Edge*>* edgeList;
-		edgeList = direction? &edgesFront : &edgesBack;
+		
+		if (direction == Direction::FRONT) edgeList = &edgesFront;
+		if (direction == Direction::BACK) edgeList = &edgesBack;
 		
 		//std::cout << "TransEnviroment::nextLessTrans Step 1 node " << getID() << "\n";
 		if(edgeList->empty()) return NULL;
@@ -348,14 +351,17 @@ const Path* Chromosome::getPath()const
 {
 	return path;
 }
+bool Chromosome::growUp()
+{
+	return path->growUp();
+}
 
 
 
 
 
 
-
-Path::Path()
+Path::Path(nodes::Direction d) : direction(d)
 {	
 }
 Path::Path(const Path* pb,const Path* pe)
@@ -363,14 +369,35 @@ Path::Path(const Path* pb,const Path* pe)
 	//std::cout << "Step 1.1.1.1.1.3.1\n";
 	if(pb->size() == 0) throw octetos::core::Exception("La Path de incio esta vacia.",__FILE__,__LINE__);
 	if(pe->size() == 0) throw octetos::core::Exception("La Path de fin esta vacia.",__FILE__,__LINE__);
-	if(pb->back()->getNode() != pe->back()->getNode())
+	if(pb->back()->getNode() != pe->front()->getNode())
 	{
-		throw octetos::core::Exception("El node final no coincide con el nodo inicial.",__FILE__,__LINE__);
+		std::string msg = "El node final no coincide con el nodo inicial.\n\t";
+		for(nodes::Edge* eb : *pb)
+		{
+			msg += std::to_string(eb->getNode()->getID());
+			msg += "->";
+		}
+		msg += "\n\t";
+		for(nodes::Edge* ee : *pe)
+		{
+			msg += std::to_string(ee->getNode()->getID());
+			msg += "->";
+		}
+		throw octetos::core::Exception(msg,__FILE__,__LINE__);
 	}
+	/*if(pb->back() != pe->front())
+	{
+		std::string msg = "Union (";
+		msg += std::to_string(pb->back()->getNode()->getID()) + ") ->> (" + std::to_string(pe->front()->getNode()->getID()) + ")\n";
+		throw octetos::core::Exception(msg,__FILE__,__LINE__);
+	}*/
 	//std::cout << "Step 1.1.1.1.1.3.2\n";
 	//
+	Path::const_iterator last = pb->begin();
+	std::advance(last,pb->size()-1);
 	for(nodes::Edge* e : *pb)
 	{
+		if(e == *last) break;
 		push_back(e);
 	}
 	//std::cout << "Step 1.1.1.1.1.3.3\n";
@@ -401,6 +428,9 @@ Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 		//std::cout << "Step 1.1.1.1\n";
 		for(nodes::Edge* e2 : *p)
 		{
+			if(p->front()->getNode() == front()->getNode()) continue;
+			if(p->back()->getNode() == back()->getNode()) continue;
+			
 			//std::cout << "Step 1.1.1.1.1\n";
 			if(e1->getNode() == e2->getNode() and e1->getNext() != e2->getNext())
 			{
@@ -409,11 +439,32 @@ Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 				Path pE(*p);
 				//std::cout << "Step 1.1.1.1.1.2\n";		
 				pB.cutAfther(e1->getNode());
-				if(pB.size() > 0) continue;
+				if(pB.size() < 3) continue;
 				pE.cutBefore(e2->getNode());
-				if(pE.size() > 0) continue;	
+				if(pE.size() < 3) continue;	
+				//if(pB.back()->getNode() == pE.front()->getNext()) continue;
 				//std::cout << "Step 1.1.1.1.1.3\n";
+				std::string msg = "paths : \n\t";
+				msg += "On(" + std::to_string(e1->getNode()->getID()) + ")\n\t";
+				for(nodes::Edge* eb : *this)
+				{
+					msg += std::to_string(eb->getNode()->getID());
+					msg += "->";
+				}
+				msg += "\n\t";
+				for(nodes::Edge* ee : *p)
+				{
+					msg += std::to_string(ee->getNode()->getID());
+					msg += "->";
+				}
+				msg += "\n\t";
 				Path*  newp = new Path(&pB,&pE);
+				for(nodes::Edge* res : *newp)
+				{
+					msg += std::to_string(res->getNode()->getID());
+					msg += "->";
+				}
+				//std::cout << msg << "\n";
 				//std::cout << "Step 1.1.1.1.1.4\n";
 				lstp.push_back(newp);
 			}
@@ -425,15 +476,11 @@ Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 bool Path::cutBefore(nodes::Node* n)
 {
 	std::list<nodes::Edge*> toDelete;
-	bool fl = true;
 	for(nodes::Edge* e : *this)
 	{
-		if(fl)
+		if(e->getNode() == n)
 		{
-			if(e->getNode() == n)
-			{
-				fl = false;
-			}
+			break;
 		}
 		else
 		{
@@ -450,19 +497,19 @@ bool Path::cutBefore(nodes::Node* n)
 bool Path::cutAfther(nodes::Node* n)
 {
 	std::list<nodes::Edge*> toDelete;
-	bool fl = false;
+	bool cut = false;
 	for(nodes::Edge* e : *this)
 	{
-		if(not fl)
+		if(e->getNode() != n)
 		{
-			if(e->getNode() == n)
+			if(cut)
 			{
-				fl = true;
-			}
+				toDelete.push_back(e);
+			}			
 		}
 		else
 		{
-			toDelete.push_back(e);
+			cut = true;
 		}
 	}
 	for(nodes::Edge* e : toDelete)
@@ -513,10 +560,35 @@ unsigned short Path::CountTarget()const
 	
 	return count;
 }	
+bool Path::growUp()
+{
+	nodes::Edge* e = randNext();
+	if(e) 
+	{
+		push_back(e);
+		return true;
+	}	
 
-
-
-
+	return false;
+}
+nodes::Edge* Path::randNext()
+{
+	nodes::Node* n = back()->getNode();
+	float rand = randNumber();
+	std::list<nodes::Edge*>* randEdge;
+	if(direction == nodes::Direction::FRONT) 
+	{
+		rand = randNumber(0.0,float(n->getFrontCount() - 1.0));
+		return n->getFront(rand);
+	}
+	else if(direction == nodes::Direction::BACK)
+	{
+		rand = randNumber(0.0,float(n->getFrontCount() - 1.0));
+	 	return n->getBack(rand);
+	}
+	
+	return NULL;	
+}
 
 
 
@@ -567,6 +639,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 			newchild = new Single(env->nextID(),(Enviroment&)*env,p);
 			chils.push_back(newchild);
 		}
+		counNew++;
 	}
 	
 	return counNew;
@@ -616,7 +689,10 @@ const Chromosome* Single::getChromosome()const
 {
 	return &chromosome;
 }
-
+bool Single::growUp()
+{
+	return chromosome.growUp();
+}
 
 
 
@@ -646,13 +722,13 @@ double Enviroment::getGammaTarget() const
 	return gammaTarget;
 }
 
-void Enviroment::generate(nodes::Node* n,unsigned short stop,bool direction)
+void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
 {
 	nodes::Edge* eN = n->nextLessTrans(stop,direction);	
 	
 	while(eN)
 	{
-		Path* newPath = new Path();
+		Path* newPath = new Path(direction);
 		eN->transNext();
 		newPath->push_back(eN);
 		lstPaths.push_back(newPath);	
@@ -662,7 +738,7 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,bool direction)
 		eN = n->nextLessTrans(stop,direction);
 	}
 }
-void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,bool direction)
+void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,nodes::Direction direction)
 {
 	//if(path->size() > region->getCountEdges()/targets.size() ) return;
 	
@@ -702,9 +778,9 @@ void Enviroment::initial()
 	for(nodes::Node* n : targets)
 	{
 		region->resetTrans();
-		generate(n,1,true);
+		generate(n,1,nodes::Direction::FRONT);
 		region->resetTrans();
-		generate(n,1,false);
+		generate(n,1,nodes::Direction::BACK);
 	}
 		
 	//filtrar las rutas
@@ -719,7 +795,7 @@ void Enviroment::initial()
 	//liberando memoria de paths
 	lstPaths.clear();
 	
-	selection();
+	//selection();
 }
 
 
@@ -741,6 +817,9 @@ bool Enviroment::run()
 			//single->print(std::cout);
 			//std::cout << "\n";
 		}
+		
+		selection();
+		
 		juncting();
 		for(ec::Single* s : newschils)
 		{
@@ -813,13 +892,18 @@ void Enviroment::eval()
 
 void Enviroment::juncting()
 {
+	Single *single1,*single2;
 	for(ec::Single* s1 : *this)
 	{
+		single1 = (Single*) s1;
 		for(ec::Single* s2 : *this)
 		{
+			single2 = (Single*) s2;
 			if(s1 == s2) continue;
 			s1->juncting(newschils,s2,echolevel,NULL);
+			//single2->growUp();
 		}
+		//single1->growUp();
 	}
 }
 void Enviroment::save()

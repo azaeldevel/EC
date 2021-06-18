@@ -31,6 +31,11 @@ namespace nodes
 		TARGET, /*Nodo objetivo*/
 		//UNION,
 	};
+	enum Direction
+	{
+		FRONT,
+		BACK
+	};
 	
 	class Node
 	{
@@ -61,8 +66,8 @@ namespace nodes
 		void addFront(Edge* edge);
 		void addBack(Edge* edge);
 		Edge* operator[] (Index index);
-		Edge* nextLessTrans(bool direction);
-		Edge* nextLessTrans(Explored max,bool direction);
+		Edge* nextLessTrans(Direction direction);
+		Edge* nextLessTrans(Explored max,Direction direction);
 		
 	private:
 		ID id; 
@@ -176,7 +181,7 @@ namespace nodes
 class Path : public std::list<nodes::Edge*>
 {
 public:
-	Path();
+	Path(nodes::Direction dir);
 	Path(const Path*);
 	Path(const Path*,const Path*);
 
@@ -188,10 +193,13 @@ public:
 	virtual void print(std::ostream&) const;
 	static void print(const nodes::Node* n,std::ostream&);
 	unsigned short CountTarget()const;
+	bool growUp();
+	nodes::Edge* randNext();
 
 private:
 	bool cutBefore(nodes::Node*);
 	bool cutAfther(nodes::Node*);
+	nodes::Direction direction;
 };
 
 class Chromosome : public ec::Chromosome
@@ -213,6 +221,8 @@ public:
 	virtual void randFill(bool favor = false);
 	Population juncting(const Chromosome*,std::list<Path*>& p)const;
 	virtual void print(std::ostream&) const;
+	bool growUp();
+
 private:
 	Path* path;
 };
@@ -236,6 +246,7 @@ public:
 	virtual void print(std::ostream&) const;
 	void print(nodes::Node&) const;	
 	Population juncting(const Single*,std::list<Path*>& p)const;
+	bool growUp();
 	
 private:
 	unsigned short puntos;
@@ -268,8 +279,8 @@ public:
 	virtual void juncting();
 	virtual void save();
 private:
-	void generate(nodes::Node* orig, unsigned short stop,bool direction);
-	void generate(Path* path,nodes::Edge* e, unsigned short stop,bool direction);
+	void generate(nodes::Node* orig, unsigned short stop,nodes::Direction direction);
+	void generate(Path* path,nodes::Edge* e, unsigned short stop,nodes::Direction direction);
 	void print(nodes::Node*);
 	
 	//	
