@@ -1,6 +1,6 @@
 
 #include <octetos/core/Error.hh>
-
+#include <fstream>
 
 
 #include "GA-trans.hh"
@@ -614,7 +614,7 @@ Single::Single(ID id,Enviroment& e, Path* p) : ec::Single(id,e),chromosome(p),pu
 
 void Single::eval()
 {
-	double flength = ((Enviroment*)env)->getGammaLength() * double(chromosome.getLengthPath());
+	double flength = 0.5 - (((Enviroment*)env)->getGammaLength() * double(chromosome.getLengthPath()));
 	//std::cout << "l : " << double(chromosome.getPath().size()) << "\n";
 	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(chromosome.getCountTagetsPath());
 	fitness = flength + fTarget;
@@ -646,6 +646,14 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 }
 void Single::save(std::ofstream& fn)
 {
+	fn << getID();
+	fn << ",";
+	fn << getFitness();	
+	//fn << ",";
+	//fn << getMD5();
+	fn << ",";
+	fn << getAge();
+	fn << "\n";
 }
 /*void Single::print(std::ostream& p) const
 {
@@ -707,6 +715,16 @@ bool Single::growUp()
 Enviroment::Enviroment()
 {
 	countID = 0;//contador de nodos
+	maxPopulation = 250;
+	enableMaxIterations = true;
+}
+Enviroment::Enviroment(const std::string& log)
+{
+	countID = 0;//contador de nodos
+	maxPopulation = 250;
+	enableMaxIterations = true;
+	logDirectory = log;
+	maxIteration = 10;
 }
 Enviroment::~Enviroment()
 {
@@ -720,6 +738,10 @@ double Enviroment::getGammaLength() const
 double Enviroment::getGammaTarget() const
 {
 	return gammaTarget;
+}
+const nodes::Region* Enviroment::getRegion()const
+{
+	return region;
 }
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
@@ -798,7 +820,7 @@ void Enviroment::initial()
 	//selection();
 }
 
-
+/*
 bool Enviroment::run()
 {
 	//std::cout << "Initial : " << size() << "\n";
@@ -813,7 +835,7 @@ bool Enviroment::run()
 		for(ec::Single* s : *this)
 		{
 			single = (Single*) s;
-			std::cout << "ID : " << single->getID() << " => " << single->getFitness() << "\n";
+			//std::cout << "ID : " << single->getID() << " => " << single->getFitness() << "\n";
 			//single->print(std::cout);
 			//std::cout << "\n";
 		}
@@ -829,17 +851,28 @@ bool Enviroment::run()
 	}
 	
 	return true;
-}
+}*/
 
 
 void Enviroment::selection()
 {
+	if(maxPopulation > size()) return;//si no hay mas de la poblocion maxima continuar
+	
 	std::list<Single*> forDelete;
 	Single* single;
+	Population countPass = 0;
 	//std::cout << "Step 1\n";
 	for(ec::Single* s : *this)
 	{
+		//std::cout << ".";
+		countPass++;		
 		single = (Single*)s;
+		if(countPass > maxPopulation)
+		{//eliminar a partir de que se alcance la maxima poblacion
+			forDelete.push_back(single);
+			continue;
+		}
+		
 		nodes::Node* nodeF = single->getChromosome()->getPath()->front()->getNode();
 		nodes::Node* nodeB = single->getChromosome()->getPath()->back()->getNode();
 				
@@ -862,6 +895,8 @@ void Enviroment::selection()
 		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::TARGET and single->getChromosome()->getPath()->size() > 1) continue;
 		
 		if(single->getChromosome()->getPath()->CountTarget() > 0 and nodeF->getType() != nodes::ORIGIN and nodeB->getType() != nodes::ORIGIN) continue;
+		
+		if(single->getFitness() > media) continue;
 		
 		//
 		forDelete.push_back(single);
@@ -906,11 +941,21 @@ void Enviroment::juncting()
 		//single1->growUp();
 	}
 }
+
 void Enviroment::save()
 {
-
+	std::string strfn = logSubDirectory +  "/solutions-" + std::to_string(actualIteration) + ".csv";
+	std::ofstream fn(strfn);
+	for(ec::Single* s : *this)
+	{
+		if(1.0 - s->getFitness () < Enviroment::epsilon)
+		{
+			s->save(fn);
+		}
+	}
+	fn.flush();
+	fn.close();
 }
-
 
 
 

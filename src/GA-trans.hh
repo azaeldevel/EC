@@ -266,7 +266,7 @@ public:
 
 	double getGammaLength() const;
 	double getGammaTarget() const;
-
+	const nodes::Region* getRegion()const;
 	
 	void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
@@ -274,7 +274,7 @@ public:
 
 	virtual void initial();
 	virtual void selection();
-	virtual bool run();
+	//virtual bool run();
 	virtual void eval();
 	virtual void juncting();
 	virtual void save();

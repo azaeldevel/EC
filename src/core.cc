@@ -495,6 +495,7 @@ bool Enviroment::run()
 	initial();
 	unsigned short counUndelete = 0;
 	std::ofstream history;
+	logFile = not logDirectory.empty();
 	if(logFile)
 	{		
 		session = getSession();
@@ -521,6 +522,7 @@ bool Enviroment::run()
 	Iteration countOldLeaderFitness = 0;
 	while(true)
 	{
+		//std::cout << "\tStep C1\n";
 		if(enableMaxIterations) 
 		{
 			if(actualIteration > maxIteration) return false;
@@ -530,22 +532,47 @@ bool Enviroment::run()
 			if(maxIteration > 0) (*fout) << ">>> Iteracion : " << actualIteration << "/" << maxIteration << "\n";
 			else (*fout) << ">>> Iteracion : " << actualIteration << "\n";
 		}
+		//std::cout << "\tStep C2\n";
+		
 		media = 0.0;
 		sigma = 0.0;
-		//std::cout <<  "Step 1\n";
+		
+		//std::cout << "\tStep C3\n";
+		eval();
+		//std::cout << "\tStep C4\n";
+		sort(cmpStrength);
+		//std::cout << "\tStep C5\n";
+		
+		ec::ID countBefore = size();
+		selection();
+		//std::cout << "\tStep C6\n";
+		if(logFile)
+		{
+			std::string strSelection = logSubDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
+			std::ofstream fnSelection(strSelection);
+			if(not fnSelection.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			for(ec::Single* s : *this)
+			{
+				s->save(fnSelection);
+			}
+			fnSelection.flush();
+			fnSelection.close();
+		}
+		//std::cout << "\tStep C7\n";
+		unsigned short removes = countBefore - size();
+		//deletes == 0 ? counUndelete++ : counUndelete = 0;
 		if(echolevel > 1 and fout != NULL) 
 		{
-			(*fout) << "\tTamano de la poblacion : " << size() << "\n";			
-			//std::cout << "\tgamman : " << gamma << "\n";
+			(*fout) << "\tTamano de la poblacion : " << size() << "\n";
+			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
+			(*fout) << "\tEliminados : " << removes << "\n";	
 		}
 		
-		eval();
-		sort(cmpStrength);
-
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
-			media += s->getFitness();			
+			media += s->getFitness();
+			s->deltaAge();			
 		}
 		media /= size();
 		for(ec::Single* s : *this)
@@ -670,30 +697,7 @@ bool Enviroment::run()
 			}
 		}
 		//std::cout <<  "Step 6\n";
-		ec::ID countBefore = size();
-		
-		selection();
-		if(logFile)
-		{
-			std::string strSelection = logSubDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
-			std::ofstream fnSelection(strSelection);
-			if(not fnSelection.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
-			for(ec::Single* s : *this)
-			{
-				s->save(fnSelection);
-			}
-			fnSelection.flush();
-			fnSelection.close();
-		}
-		unsigned short removes = countBefore - size();
-		//deletes == 0 ? counUndelete++ : counUndelete = 0;
-		if(echolevel > 1 and fout != NULL) 
-		{
-			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
-			(*fout) << "\tEliminados : " << removes << "\n";	
-		}
-		//if(counUndelete > 100) return false;
-		
+				
 		juncting();				
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
@@ -715,8 +719,7 @@ bool Enviroment::run()
 		{
 			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
 		}
-		newschils.clear();
-
+		newschils.clear();		
 		
 		actualIteration++;
 	}

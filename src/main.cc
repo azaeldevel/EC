@@ -22,16 +22,40 @@
 
 
 
-#include <math.h>
+
+#include <fstream>
+#include <octetos/coreutils/shell.hh>
 
 #include "GA-trans.hh"
 
 
 int main(int argc, const char* argv[])
 {
-	ec::trans::Enviroment trans;
-
-	return trans.run() ? EXIT_SUCCESS: EXIT_FAILURE;
+	if(argc < 2) 
+	{
+		std::cerr << "Indique el parametro necesarion\n";
+		std::cerr << "trans  dirlog\n";
+		return EXIT_SUCCESS;
+	}
+			
+	std::string logDir = argv[1];
+	std::string logDirectory;	
+	bool logFile = not logDir.empty();//
+	
+	std::ofstream fnSolutions;
+	if(logFile) 
+	{
+		logDirectory = logDir + "/" + std::to_string(ec::trans::Enviroment::getDayID());
+		std::string logStrSolutions = logDirectory + "/solutions.cvs";
+		coreutils::Shell shell;
+		shell.mkdir(logDirectory,true);
+		fnSolutions.open(logStrSolutions);
+	}
+	
+	ec::trans::Enviroment* trans = new ec::trans::Enviroment(logDirectory);
+	trans->enableEcho(&std::cout,2);
+	
+	return trans->run()? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 
