@@ -9,7 +9,7 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-bin_PROGRAMS = ae-sudoku ae-sudoku-serie develop
+bin_PROGRAMS = ae-sudoku develop
 lib_LTLIBRARIES = libGP.la
 
 libGP_la_SOURCES = core.cc GA.cc GA-sudoku.cc GA-trans.cc GA-trans-region.cc

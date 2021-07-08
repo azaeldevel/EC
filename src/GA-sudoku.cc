@@ -627,8 +627,8 @@ Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::stri
 	maxIteration = maxite;
 	logDirectory = logDir;
 	logFile = not logDirectory.empty();	
-	addTerminator(Terminations::MAXITERATION);
-	addTerminator(Terminations::MINSOLUTIONS);
+	//addTerminator(Terminations::MAXITERATION);
+	//addTerminator(Terminations::MINSOLUTIONS);
 }
 Enviroment::~Enviroment()
 {

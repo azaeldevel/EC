@@ -299,11 +299,8 @@ void Enviroment::init()
 	pMutationEvent = 0.02;
 	pMutableGene = 0.4;
 	fout = NULL;
-	stopMaxIterations=enableMinSolutions=enableNotNewLeaderAtPercen=false;
-	enableNotIncrementFitnessLeaderAtPercen = false;
+	stopMaxIterations=enableMinSolutions=false;
 	percen_at_iteration = 0.4;//%
-	iterJam = 0;
-	enableJam = false;	
 }
 Enviroment::Enviroment()
 {
@@ -404,10 +401,7 @@ const std::string Enviroment::getLogSubDirectory()const
 {
 	return logSubDirectory;
 }
-bool Enviroment::getJam()const
-{
-	return inJam;
-}
+
 
 ID Enviroment::nextID()
 {
@@ -466,10 +460,10 @@ void Enviroment::enableLogFile(bool log)
 }
 bool Enviroment::run()
 {	
-	inJam = false;
+	//inJam = false;
 	if(maxProgenitor < minSolutions) throw octetos::core::Exception("La cantidad de progenoore deveria ser major que la cantidad de soluciones buscadas",__FILE__,__LINE__);
 	actualIteration = 1;
-	for(Terminations t : terminations)
+	/*for(Terminations t : terminations)
 	{
 		switch(t)
 		{
@@ -491,7 +485,7 @@ bool Enviroment::run()
 		default:
 			throw octetos::core::Exception("Metodo de terminacion desconocido",__FILE__,__LINE__);
 		}
-	}
+	}*/
 	initial();
 	unsigned short counUndelete = 0;
 	std::ofstream history;
@@ -506,7 +500,7 @@ bool Enviroment::run()
 		history.open(strhistory);
 	}
 
-	if(enableJam)
+	/*if(enableJam)
 	{
 		if(iterJam == 0) throw octetos::core::Exception("Se deve asignar el valor de atasco",__FILE__,__LINE__);
 		enableNotIncrementFitnessLeaderAtPercen = true;
@@ -515,7 +509,7 @@ bool Enviroment::run()
 	{
 		Iteration newjam = maxIteration * percen_at_iteration;
 		if(newjam > iterJam) iterJam = newjam;		
-	}
+	}*/
 	ID oldleaderID = 0;
 	double oldLeaderFitness = 0.0;
 	Iteration countOldLeader = 0;
@@ -616,7 +610,7 @@ bool Enviroment::run()
 				return false;
 			}
 		}
-		if(enableNotNewLeaderAtPercen)
+		/*if(enableNotNewLeaderAtPercen)
 		{
 			if(leader->getID() == oldleaderID)  
 			{
@@ -659,7 +653,7 @@ bool Enviroment::run()
 			{			
 				std::cout << "\tAtasco : " << countOldLeaderFitness << "\n";
 			}
-		}
+		}*/
 		if(enableMinSolutions)
 		{
 			Population countSols = 0;
@@ -737,59 +731,9 @@ bool Enviroment::run()
 
 	return false;
 }
-void Enviroment::addTerminator(Terminations t)
-{
-	terminations.push_back(t);
-}
 
-void Enviroment::series(const std::string& logDir,Iteration maxIte)
-{
-	logFile = not logDir.empty();//enableLogFile ();
-	
-	std::ofstream fnSolutions;
-	if(logFile) 
-	{
-		logDirectory = logDir + "/" + std::to_string(getDayID());
-		std::string logStrSolutions = logDirectory + "/solutions.cvs";
-		coreutils::Shell shell;
-		shell.mkdir(logDirectory,true);
-		fnSolutions.open(logStrSolutions);
-	}
-	
-	enableEcho (&std::cout,2);
-	if(maxIteration > 1) addTerminator(ec::Terminations::MAXITERATION);
-	if(minSolutions > 0) addTerminator(ec::Terminations::MINSOLUTIONS);
-	//if(maxIteration > 1) addTerminator(ae::Terminations::FORLEADER_INCREMENTFITNESS);
-	
-	for(Iteration it = 1; it <= maxIte ; it++)
-	{
-		std::cout << "Serie : " << it << "\n";
-		
-		if(terminations.size() == 0)
-		{
-			throw octetos::core::Exception("No hay criterio de terminacion",__FILE__,__LINE__);
-		}
-		if(run())
-		{
-			if(logFile and fnSolutions.is_open())
-			{
-				save();
-				fnSolutions << getLogSubDirectory ();
-				fnSolutions << "\n";
-				fnSolutions.flush();
-			}
-			Single* s = *begin();
-			s->print(std::cout);
-			break;
-		}
-		for(Single* s : *this)
-		{
-			delete s;
-		}
-		clear();
-	}
-	fnSolutions.close();
-}
+
+
 
 ec::Single* Enviroment::getProxSolution()
 {

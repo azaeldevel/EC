@@ -201,7 +201,7 @@ public:
 	void enableLogFile(bool log);
 	unsigned short getEchoLevel()const;
 	void write_archive(const char *outname, const char **filename);
-	void addTerminator(Terminations);
+	//void addTerminator(Terminations);
 	
 	virtual bool run();
 	virtual void selection() = 0;
@@ -209,7 +209,7 @@ public:
 	virtual void eval()=0;
 	virtual void juncting()=0;
 	virtual void save()=0;
-	virtual void series(const std::string& logDir,Iteration maxIteBySerie);
+	//virtual void series(const std::string& logDir,Iteration maxIteBySerie);
 	
 protected:
 	std::string logDirectory;
@@ -258,8 +258,10 @@ protected:
 	/**
 	*\brief Se usa cuando se activa el terminador NOT_NEW_LEADER_AT_PERCEN_ITERATION, para determinar el porcentaje de evaluacion
 	*/
-	bool stopMaxIterations,stopNotDiference;
-	bool enableMinSolutions,enableNotNewLeaderAtPercen,enableNotIncrementFitnessLeaderAtPercen;
+	bool stopMaxIterations,stopNotDiference,enableMinSolutions;
+	//bool enableNotNewLeaderAtPercen,enableNotIncrementFitnessLeaderAtPercen;
+
+	double notDiferenceCota;
 
 	/**
 	*\brief Inidicatores de terminacion, es un numero entre 0 y 1.
@@ -269,19 +271,18 @@ protected:
 	/**
 	*\brief Contador de atasco
 	*/
-	Iteration iterJam;
+	//Iteration iterJam;
 
 	/**
 	*\brief Determina si el terminador JAM es activado
 	*/
-	bool enableJam;
+	//bool enableJam;
 
 	/**
 	*\brief Determina si el terminador JAM es activado
 	*/
-	Iteration sliceJam;
+	//Iteration sliceJam;
 
-	double notDiferenceCota;
 
 private:
 	/**
@@ -289,9 +290,9 @@ private:
 	*/
 	ec::Single* getProxSolution();
 	
-	std::vector<Terminations> terminations;
+	//std::vector<Terminations> terminations;
 
-	bool inJam;	
+	//bool inJam;	
 };
 
 }
