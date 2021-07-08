@@ -42,14 +42,11 @@ int main(int argc, const char* argv[])
 	std::string logDirectory;	
 	bool logFile = not logDir.empty();//
 	
-	//std::ofstream fnSolutions;
 	if(logFile) 
 	{
 		logDirectory = logDir + "/" + std::to_string(ec::trans::Enviroment::getDayID());
-		//std::string logStrSolutions = logDirectory + "/solutions.cvs";
 		coreutils::Shell shell;
 		shell.mkdir(logDirectory,true);
-		//fnSolutions.open(logStrSolutions);
 	}
 	
 	ec::trans::Enviroment* trans = new ec::trans::Enviroment(logDirectory);

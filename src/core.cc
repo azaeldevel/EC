@@ -463,29 +463,7 @@ bool Enviroment::run()
 	//inJam = false;
 	if(maxProgenitor < minSolutions) throw octetos::core::Exception("La cantidad de progenoore deveria ser major que la cantidad de soluciones buscadas",__FILE__,__LINE__);
 	actualIteration = 1;
-	/*for(Terminations t : terminations)
-	{
-		switch(t)
-		{
-		case MAXITERATION:
-				stopMaxIterations = true;
-			break;
-		case MINSOLUTIONS:
-				enableMinSolutions = true;
-			break;
-		case FORLEADER_NEW:
-				enableNotNewLeaderAtPercen = true;
-			break;
-		case FORLEADER_INCREMENTFITNESS:
-				enableNotIncrementFitnessLeaderAtPercen = true;
-			break;
-		case JAM:
-				enableJam = true;
-			break;
-		default:
-			throw octetos::core::Exception("Metodo de terminacion desconocido",__FILE__,__LINE__);
-		}
-	}*/
+
 	initial();
 	unsigned short counUndelete = 0;
 	std::ofstream history;
@@ -500,16 +478,6 @@ bool Enviroment::run()
 		history.open(strhistory);
 	}
 
-	/*if(enableJam)
-	{
-		if(iterJam == 0) throw octetos::core::Exception("Se deve asignar el valor de atasco",__FILE__,__LINE__);
-		enableNotIncrementFitnessLeaderAtPercen = true;
-	}
-	else if(enableNotIncrementFitnessLeaderAtPercen)
-	{
-		Iteration newjam = maxIteration * percen_at_iteration;
-		if(newjam > iterJam) iterJam = newjam;		
-	}*/
 	ID oldleaderID = 0;
 	double oldLeaderFitness = 0.0;
 	Iteration countOldLeader = 0;
@@ -610,50 +578,6 @@ bool Enviroment::run()
 				return false;
 			}
 		}
-		/*if(enableNotNewLeaderAtPercen)
-		{
-			if(leader->getID() == oldleaderID)  
-			{
-				countOldLeader++;
-			}
-			else 
-			{
-				oldleaderID = leader->getID();
-				countOldLeader = 0;
-			}
-			if(iterJam < countOldLeader) 
-			{
-				std::cout << "\tFinalizado devido a atsco de de algoritmo, no nevo lider\n";
-				return false;
-			}
-		}
-		if(enableNotIncrementFitnessLeaderAtPercen or enableJam)
-		{
-		    ec::Single* s = getProxSolution();
-			if(s->getFitness() == oldLeaderFitness)
-			{
-				countOldLeaderFitness++;
-			}
-			else
-			{
-				oldLeaderFitness = s->getFitness();
-				countOldLeaderFitness = 0;
-			}
-			if(iterJam < countOldLeaderFitness) 
-			{
-				std::cout << "\tFinalizado devido a atasco de de algoritmo, no mejora en adpatabilidad del lider\n";
-				return false;
-			}
-			if(sliceJam < countOldLeaderFitness) inJam = true;
-			else inJam = false;
-		}
-		if(inJam)
-		{
-			if(echolevel > 1 and fout != NULL) 
-			{			
-				std::cout << "\tAtasco : " << countOldLeaderFitness << "\n";
-			}
-		}*/
 		if(enableMinSolutions)
 		{
 			Population countSols = 0;
