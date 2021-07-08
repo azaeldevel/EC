@@ -262,6 +262,7 @@ public:
 	//
 	Enviroment();	
 	Enviroment(const std::string& log);
+	void init();
 	virtual ~Enviroment();
 
 	double getGammaLength() const;

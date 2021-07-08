@@ -716,21 +716,19 @@ bool Single::growUp()
 
 Enviroment::Enviroment()
 {
-	countID = 0;//contador de nodos
-	maxPopulation = 250;
-	stopMaxIterations = true;
-	stopNotDiference = true;
-	notDiferenceCota = 1.0e-20;
+	init();
 }
 Enviroment::Enviroment(const std::string& log)
 {
+	init();
+	logDirectory = log;
+}
+void Enviroment::init()
+{
 	countID = 0;//contador de nodos
 	maxPopulation = 250;
-	stopMaxIterations = true;
-	stopNotDiference = true;
-	logDirectory = log;
-	maxIteration = 10;
-	notDiferenceCota = 1.0e-20;
+	stopperMaxIterations(10);
+	stopperNotDiference(1.0e-20);
 }
 Enviroment::~Enviroment()
 {

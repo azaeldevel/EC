@@ -619,12 +619,12 @@ Enviroment::Enviroment(const std::string& initB)
 Enviroment::Enviroment(const std::string& initB,Iteration maxite)
 {
 	init(initB);
-	maxIteration = maxite;
+	stopperMaxIterations(maxite);
 }
 Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::string& logDir)
 {
 	init(initB);
-	maxIteration = maxite;
+	stopperMaxIterations(maxite);
 	logDirectory = logDir;
 	logFile = not logDirectory.empty();	
 	//addTerminator(Terminations::MAXITERATION);

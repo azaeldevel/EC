@@ -732,6 +732,16 @@ bool Enviroment::run()
 	return false;
 }
 
+void Enviroment::stopperMaxIterations(Iteration max)
+{
+	maxIteration = max;
+	stopMaxIterations = true;
+}
+void Enviroment::stopperNotDiference(double cota)
+{
+	notDiferenceCota = cota;
+	stopNotDiference = true;
+}
 
 
 

@@ -202,6 +202,8 @@ public:
 	unsigned short getEchoLevel()const;
 	void write_archive(const char *outname, const char **filename);
 	//void addTerminator(Terminations);
+	void stopperMaxIterations(Iteration max);
+	void stopperNotDiference(double cota);
 	
 	virtual bool run();
 	virtual void selection() = 0;
@@ -214,9 +216,8 @@ public:
 protected:
 	std::string logDirectory;
 	std::string logSubDirectory;
-	Iteration maxIteration;
-	Population maxPopulation;
 	Population initPopulation;
+	Population maxPopulation;
 
 	ID idCount = 1;
 	Population maxProgenitor;
@@ -255,13 +256,6 @@ protected:
 	*/
 	std::list<ec::Single*> newschils;
 
-	/**
-	*\brief Se usa cuando se activa el terminador NOT_NEW_LEADER_AT_PERCEN_ITERATION, para determinar el porcentaje de evaluacion
-	*/
-	bool stopMaxIterations,stopNotDiference,enableMinSolutions;
-	//bool enableNotNewLeaderAtPercen,enableNotIncrementFitnessLeaderAtPercen;
-
-	double notDiferenceCota;
 
 	/**
 	*\brief Inidicatores de terminacion, es un numero entre 0 y 1.
@@ -293,6 +287,16 @@ private:
 	//std::vector<Terminations> terminations;
 
 	//bool inJam;	
+
+	/**
+	*\brief Se usa cuando se activa el terminador NOT_NEW_LEADER_AT_PERCEN_ITERATION, para determinar el porcentaje de evaluacion
+	*/
+	bool stopMaxIterations,stopNotDiference,enableMinSolutions;
+	//bool enableNotNewLeaderAtPercen,enableNotIncrementFitnessLeaderAtPercen;
+	
+	double notDiferenceCota;
+
+	Iteration maxIteration;
 };
 
 }
