@@ -299,7 +299,7 @@ void Enviroment::init()
 	pMutationEvent = 0.02;
 	pMutableGene = 0.4;
 	fout = NULL;
-	enableMaxIterations=enableMinSolutions=enableNotNewLeaderAtPercen=false;
+	stopMaxIterations=enableMinSolutions=enableNotNewLeaderAtPercen=false;
 	enableNotIncrementFitnessLeaderAtPercen = false;
 	percen_at_iteration = 0.4;//%
 	iterJam = 0;
@@ -474,7 +474,7 @@ bool Enviroment::run()
 		switch(t)
 		{
 		case MAXITERATION:
-				enableMaxIterations = true;
+				stopMaxIterations = true;
 			break;
 		case MINSOLUTIONS:
 				enableMinSolutions = true;
@@ -523,9 +523,13 @@ bool Enviroment::run()
 	while(true)
 	{
 		//std::cout << "\tStep C1\n";
-		if(enableMaxIterations) 
+		if(stopMaxIterations) 
 		{
-			if(actualIteration > maxIteration) return false;
+			if(actualIteration > maxIteration) 
+			{
+				history.close();
+				return false;
+			}
 		}
 		if(echolevel > 0 and fout != NULL) 
 		{
@@ -602,6 +606,16 @@ bool Enviroment::run()
 			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 		}
+		
+		if(stopNotDiference)
+		{
+			if(sigma < notDiferenceCota)
+			{
+				std::cout << "\tFinalizando por no diferencia\n";
+				history.close();
+				return false;
+			}
+		}
 		if(enableNotNewLeaderAtPercen)
 		{
 			if(leader->getID() == oldleaderID)  
@@ -664,6 +678,7 @@ bool Enviroment::run()
 						if(logFile) save();
 						//compress(logDir,logDir+".tar");
 						std::cout << "\tFinalizado devido a solucion minima encontrada\n";
+						history.close();
 						return true;
 					}
 				}
@@ -690,10 +705,6 @@ bool Enviroment::run()
 				//history  << getFaltantes();
 				history  << "\n";
 				history .flush();
-			}
-			else
-			{
-				throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			}
 		}
 		//std::cout <<  "Step 6\n";

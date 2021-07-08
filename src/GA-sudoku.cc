@@ -499,7 +499,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 	return countNew;
 }
 void Single::save(std::ofstream& fn)
-{	
+{
 	fn << getID();
 	fn << ",";
 	fn << getFitness();	
@@ -751,10 +751,7 @@ void Enviroment::save()
 	std::ofstream fn(strfn);
 	for(ec::Single* s : *this)
 	{
-		if(1.0 - s->getFitness () < Enviroment::epsilon)
-		{
-			s->save(fn);
-		}
+		s->save(fn);
 	}
 	fn.flush();
 	fn.close();

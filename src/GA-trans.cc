@@ -653,6 +653,8 @@ void Single::save(std::ofstream& fn)
 	//fn << getMD5();
 	fn << ",";
 	fn << getAge();
+	fn << ",";
+	chromosome.getPath()->print(fn);
 	fn << "\n";
 }
 /*void Single::print(std::ostream& p) const
@@ -716,15 +718,19 @@ Enviroment::Enviroment()
 {
 	countID = 0;//contador de nodos
 	maxPopulation = 250;
-	enableMaxIterations = true;
+	stopMaxIterations = true;
+	stopNotDiference = true;
+	notDiferenceCota = 1.0e-20;
 }
 Enviroment::Enviroment(const std::string& log)
 {
 	countID = 0;//contador de nodos
 	maxPopulation = 250;
-	enableMaxIterations = true;
+	stopMaxIterations = true;
+	stopNotDiference = true;
 	logDirectory = log;
 	maxIteration = 10;
+	notDiferenceCota = 1.0e-20;
 }
 Enviroment::~Enviroment()
 {
@@ -804,6 +810,11 @@ void Enviroment::initial()
 		region->resetTrans();
 		generate(n,1,nodes::Direction::BACK);
 	}
+	std::cout << "Targets : \n";
+	for(nodes::Node* n : targets)
+	{
+		std::cout << "\t" << n->getID() << "\n";
+	}
 		
 	//filtrar las rutas
 	//filterPaths();
@@ -820,8 +831,7 @@ void Enviroment::initial()
 	//selection();
 }
 
-/*
-bool Enviroment::run()
+/*bool Enviroment::run()
 {
 	//std::cout << "Initial : " << size() << "\n";
 	initial();
@@ -948,10 +958,7 @@ void Enviroment::save()
 	std::ofstream fn(strfn);
 	for(ec::Single* s : *this)
 	{
-		if(1.0 - s->getFitness () < Enviroment::epsilon)
-		{
-			s->save(fn);
-		}
+		s->save(fn);
 	}
 	fn.flush();
 	fn.close();

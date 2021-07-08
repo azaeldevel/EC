@@ -258,7 +258,8 @@ protected:
 	/**
 	*\brief Se usa cuando se activa el terminador NOT_NEW_LEADER_AT_PERCEN_ITERATION, para determinar el porcentaje de evaluacion
 	*/
-	bool enableMaxIterations,enableMinSolutions,enableNotNewLeaderAtPercen,enableNotIncrementFitnessLeaderAtPercen;
+	bool stopMaxIterations,stopNotDiference;
+	bool enableMinSolutions,enableNotNewLeaderAtPercen,enableNotIncrementFitnessLeaderAtPercen;
 
 	/**
 	*\brief Inidicatores de terminacion, es un numero entre 0 y 1.
@@ -279,6 +280,8 @@ protected:
 	*\brief Determina si el terminador JAM es activado
 	*/
 	Iteration sliceJam;
+
+	double notDiferenceCota;
 
 private:
 	/**
