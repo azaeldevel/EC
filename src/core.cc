@@ -307,7 +307,9 @@ Enviroment::Enviroment()
 	init();	
 }
 Enviroment::~Enviroment()
-{}
+{
+
+}
 /*Enviroment::Enviroment(const std::string& log,Iteration m) : logDirectory(log),maxIteration(m)
 {
 	init();
@@ -464,9 +466,12 @@ bool Enviroment::run()
 	if(maxProgenitor < minSolutions) throw octetos::core::Exception("La cantidad de progenoore deveria ser major que la cantidad de soluciones buscadas",__FILE__,__LINE__);
 	actualIteration = 1;
 
+	//std::cout << "\tStep 1\n";
 	initial();
+	//std::cout << "\tStep 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
+	//std::cout << "\tStep 3\n";
 	logFile = not logDirectory.empty();
 	if(logFile)
 	{		
@@ -477,11 +482,13 @@ bool Enviroment::run()
 		shell.mkdir(logSubDirectory);
 		history.open(strhistory);
 	}
+	//std::cout << "\tStep 4\n";
 
 	ID oldleaderID = 0;
 	double oldLeaderFitness = 0.0;
 	Iteration countOldLeader = 0;
 	Iteration countOldLeaderFitness = 0;
+	//std::cout << "\tStep 5\n";
 	while(true)
 	{
 		//std::cout << "\tStep C1\n";
@@ -533,6 +540,7 @@ bool Enviroment::run()
 			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
 			(*fout) << "\tEliminados : " << removes << "\n";	
 		}
+		//std::cout << "\tStep C8\n";
 		
 		for(ec::Single* s : *this)
 		{
