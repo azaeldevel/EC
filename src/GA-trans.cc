@@ -369,7 +369,7 @@ Path::Path(const Path* pb,const Path* pe)
 	//std::cout << "Step 1.1.1.1.1.3.1\n";
 	if(pb->size() == 0) throw octetos::core::Exception("La Path de incio esta vacia.",__FILE__,__LINE__);
 	if(pe->size() == 0) throw octetos::core::Exception("La Path de fin esta vacia.",__FILE__,__LINE__);
-	if(pb->back()->getNode() != pe->front()->getNode())
+	/*if(pb->back()->getNext() != pe->front()->getNode())
 	{
 		std::string msg = "El node final no coincide con el nodo inicial.\n\t";
 		for(nodes::Edge* eb : *pb)
@@ -384,7 +384,7 @@ Path::Path(const Path* pb,const Path* pe)
 			msg += "->";
 		}
 		throw octetos::core::Exception(msg,__FILE__,__LINE__);
-	}
+	}*/
 	/*if(pb->back() != pe->front())
 	{
 		std::string msg = "Union (";
@@ -393,11 +393,11 @@ Path::Path(const Path* pb,const Path* pe)
 	}*/
 	//std::cout << "Step 1.1.1.1.1.3.2\n";
 	//
-	Path::const_iterator last = pb->begin();
-	std::advance(last,pb->size()-1);
+	//Path::const_iterator last = pb->begin();
+	//std::advance(last,pb->size()-1);
 	for(nodes::Edge* e : *pb)
 	{
-		if(e == *last) break;
+		//if(e == *last) break;
 		push_back(e);
 	}
 	//std::cout << "Step 1.1.1.1.1.3.3\n";
@@ -433,10 +433,14 @@ Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 			
 			//std::cout << "Step 1.1.1.1.1\n";
 			if(e1->getNode() == e2->getNode() and e1->getNext() != e2->getNext())
-			{
+			{//
 				//std::cout << "Step 1.1.1.1.1.1\n";
 				Path pB(*this);
 				Path pE(*p);
+				//pB.print(std::cout);
+				//std::cout << "\n";
+				//pE.print(std::cout);
+				//std::cout << "\n";
 				//std::cout << "Step 1.1.1.1.1.2\n";		
 				pB.cutAfther(e1->getNode());
 				if(pB.size() < 3) continue;
@@ -444,27 +448,28 @@ Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 				if(pE.size() < 3) continue;	
 				//if(pB.back()->getNode() == pE.front()->getNext()) continue;
 				//std::cout << "Step 1.1.1.1.1.3\n";
-				std::string msg = "paths : \n\t";
+				/*std::string msg = "paths : \n\t";
 				msg += "On(" + std::to_string(e1->getNode()->getID()) + ")\n\t";
-				for(nodes::Edge* eb : *this)
+				for(nodes::Edge* eb : pB)
 				{
 					msg += std::to_string(eb->getNode()->getID());
 					msg += "->";
 				}
 				msg += "\n\t";
-				for(nodes::Edge* ee : *p)
+				for(nodes::Edge* ee : pE)
 				{
 					msg += std::to_string(ee->getNode()->getID());
 					msg += "->";
 				}
 				msg += "\n\t";
+				std::cout << msg << "\n";*/
 				Path*  newp = new Path(&pB,&pE);
-				for(nodes::Edge* res : *newp)
+				/*for(nodes::Edge* res : *newp)
 				{
 					msg += std::to_string(res->getNode()->getID());
 					msg += "->";
 				}
-				//std::cout << msg << "\n";
+				std::cout << msg << "\n";*/
 				//std::cout << "Step 1.1.1.1.1.4\n";
 				lstp.push_back(newp);
 			}
@@ -480,6 +485,7 @@ bool Path::cutBefore(nodes::Node* n)
 	{
 		if(e->getNode() == n)
 		{
+			toDelete.push_back(e);
 			break;
 		}
 		else
@@ -500,16 +506,13 @@ bool Path::cutAfther(nodes::Node* n)
 	bool cut = false;
 	for(nodes::Edge* e : *this)
 	{
-		if(e->getNode() != n)
+		if(e->getNode() == n)
 		{
-			if(cut)
-			{
-				toDelete.push_back(e);
-			}			
+			cut = true;
 		}
 		else
 		{
-			cut = true;
+			if(cut) toDelete.push_back(e);
 		}
 	}
 	for(nodes::Edge* e : toDelete)
@@ -727,7 +730,7 @@ void Enviroment::init()
 {
 	countID = 0;//contador de nodos
 	maxPopulation = 250;
-	stopperMaxIterations(10);
+	stopperMaxIterations(1000);
 	stopperNotDiference(1.0e-20);
 }
 Enviroment::~Enviroment()
