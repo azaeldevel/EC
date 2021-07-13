@@ -51,13 +51,7 @@ class Chromosome
 public:
 	Chromosome(const std::string name);
 	virtual ~Chromosome();
-	virtual void combine(const Chromosome& P1,const Chromosome& P2) = 0;
-	virtual void copy(const Chromosome& P1) = 0;
-	/**
-	*\brief p numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
-	*/
-	virtual void mutate(float p) = 0;
-
+	
 	const Chromosome& operator = (const Chromosome&);
 
 	//
@@ -66,8 +60,7 @@ public:
 	static geneUS mixture(const geneUS& P1,const geneUS& P2);
 	static geneUS mixtureDigits(const geneUS& P1,const geneUS& P2);
 	static geneUS mutate(const geneUS& P1);
-	static geneUS mutateDigits(const geneUS& P1);	
-	virtual void randFill(bool favor = false) = 0;
+	static geneUS mutateDigits(const geneUS& P1);
 	
 protected:
 	unsigned int mutated;
@@ -149,6 +142,7 @@ private:
 };
 
 bool cmpStrength(const Single* f,const Single* s);
+bool cmpStrength1(const Single* f,const Single* s);
 enum MethodeSelection
 {
 	INCREMENTING_MEDIA,
@@ -204,6 +198,8 @@ public:
 	//void addTerminator(Terminations);
 	void stopperMaxIterations(Iteration max);
 	void stopperNotDiference(double cota);
+	Single* getRandomSingleTop() const;
+	Single* getRandomSingle() const;
 	
 	virtual bool run();
 	virtual void selection() = 0;
@@ -277,7 +273,7 @@ protected:
 	*/
 	//Iteration sliceJam;
 
-
+	bool (*comparer)(const Single* f,const Single* s);
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion

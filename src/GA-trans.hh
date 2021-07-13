@@ -192,7 +192,7 @@ public:
 	Population juncting(const Path*,std::list<Path*>& lp)const;
 	virtual void print(std::ostream&) const;
 	static void print(const nodes::Node* n,std::ostream&);
-	unsigned short CountTarget()const;
+	unsigned short countTarget()const;
 	bool growUp();
 	nodes::Edge* randNext();
 
@@ -215,25 +215,22 @@ public:
 
 	const Chromosome& operator = (const Chromosome&);	
 	
-	virtual void combine(const ec::Chromosome& P1,const ec::Chromosome& P2);
-	virtual void copy(const ec::Chromosome& P1);
-	virtual void mutate(float p);
-	virtual void randFill(bool favor = false);
 	Population juncting(const Chromosome*,std::list<Path*>& p)const;
 	virtual void print(std::ostream&) const;
 	bool growUp();
 
 private:
 	Path* path;
+	bool reduce;
 };
 
 
 class Single : public ec::Single
 {
 public:
-	Single(const Single&);
-	Single(ID id,Enviroment&, const Junction& junction, Path*);
-	Single(ID id,Enviroment&, Path*);
+	Single(const Single&, const std::list<nodes::Node*>& targets);
+	Single(ID id,Enviroment&, const Junction& junction, Path*, const std::list<nodes::Node*>& targets);
+	Single(ID id,Enviroment&, Path*, const std::list<nodes::Node*>& targets);
 
 	unsigned short getLengthPath()const;
 	unsigned short getCountTagetsPath()const;
@@ -241,16 +238,18 @@ public:
 
 	virtual void eval();
 	virtual void randFill(bool favor = false);
-	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*)const;
+	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*) const;
 	virtual void save(std::ofstream& fn);
 	virtual void print(std::ostream&) const;
 	void print(nodes::Node&) const;	
 	Population juncting(const Single*,std::list<Path*>& p)const;
 	bool growUp();
 	
+	bool checkRepitTarget(const Path* p)const;
 private:
 	unsigned short puntos;
 	Chromosome chromosome;
+	const std::list<nodes::Node*>& lstTargets;
 };
 
 
@@ -268,10 +267,13 @@ public:
 	double getGammaLength() const;
 	double getGammaTarget() const;
 	const nodes::Region* getRegion()const;
+	std::list<nodes::Node*> getTargets()const;
 	
 	void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
 	void creteRegion(std::list<nodes::Node*>& targets);
+	double getFreactionQ()const;
+	double getFreactionD()const;
 
 	virtual void initial();
 	virtual void selection();
@@ -290,6 +292,8 @@ private:
 	nodes::ID countID;
 	double gammaLength,gammaTarget;
 	std::list<nodes::Node*> targets;
+	double fractionQuality;
+	double fractionDen;
 };
 
 }

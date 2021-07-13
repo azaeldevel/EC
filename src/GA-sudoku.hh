@@ -89,8 +89,6 @@ public:
 
 	unsigned short getFaltantes() const;
 	double getGamma() const;
-	ec::Single* getRandomSingleTop()const;
-	ec::Single* getRandomSingle()const;
 	//void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
 	

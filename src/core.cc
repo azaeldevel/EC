@@ -23,6 +23,10 @@ bool cmpStrength(const Single* f,const Single* s)
 {
 	return f->getFitness() > s->getFitness();
 }
+bool cmpStrength1(const Single* f,const Single* s)
+{
+	return std::abs(f->getFitness() - 1.0) > std::abs(s->getFitness() - 1.0);
+}
 double randNumber()
 {
 	std::random_device rd;
@@ -89,57 +93,7 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 
 	return *this;
 }
-/*geneF Chromosome::mixture(const geneF& P1,const geneF& P2)
-{
-	if(sizeof(geneF) != sizeof(caret4B_half)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
-	
-	geneF child;
-	caret4B_half* crChild = reinterpret_cast<caret4B_half*>(&child);
-	const caret4B_half* crP1 = reinterpret_cast<const caret4B_half*>(&P1);
-	const caret4B_half* crP2 = reinterpret_cast<const caret4B_half*>(&P2);
-	crChild->b = crP1->a;
-	crChild->a = crP2->b;
-	return child;
-}
 
-geneUS Chromosome::mixtureDigits(const geneUS& P1,const geneUS& P2)
-{
-	if(sizeof(geneUS) != sizeof(caret2B_half_Digits2)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
-	
-	geneUS child;
-	caret2B_half_Digits2* crChild = reinterpret_cast<caret2B_half_Digits2*>(&child);
-	const caret2B_half_Digits2* crP1 = reinterpret_cast<const caret2B_half_Digits2*>(&P1);
-	const caret2B_half_Digits2* crP2 = reinterpret_cast<const caret2B_half_Digits2*>(&P2);
-	crChild->b = crP1->a;
-	crChild->a = crP2->b;
-	return child;
-}*/
-/*geneUS Chromosome::mutateDigits(const geneUS& P1)
-{
-	if(sizeof(geneUS) != sizeof(caret2B_half_Digits3)) throw octetos::core::Exception("Genes no compatibles para combinar",__FILE__,__LINE__);
-
-	geneUS child = 0;
-	caret2B_half_Digits3* crChild = reinterpret_cast<caret2B_half_Digits3*>(&child);
-	const caret2B_half_Digits3* crP1 = reinterpret_cast<const caret2B_half_Digits3*>(&P1);
-	float numrnd1 = randNumber(0.0,1.0);
-	if(numrnd1 < 0.30)
-	{
-		crChild->a = !crP1->a;
-	}
-	else if(numrnd1 < 0.60)
-	{
-		crChild->b = !crP1->b;
-	}
-	else if(numrnd1 < 0.90)
-	{
-		crChild->c = !crP1->c;
-	}
-	else
-	{
-		crChild->d = !crP1->d;
-	}
-	return child;
-}*/
 
 
 
@@ -301,6 +255,7 @@ void Enviroment::init()
 	fout = NULL;
 	stopMaxIterations=enableMinSolutions=false;
 	percen_at_iteration = 0.4;//%
+	comparer = NULL;
 }
 Enviroment::Enviroment()
 {
@@ -310,10 +265,7 @@ Enviroment::~Enviroment()
 {
 
 }
-/*Enviroment::Enviroment(const std::string& log,Iteration m) : logDirectory(log),maxIteration(m)
-{
-	init();
-}*/
+
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
 {
 	init();	
@@ -408,73 +360,33 @@ const std::string Enviroment::getLogSubDirectory()const
 ID Enviroment::nextID()
 {
 	return ++idCount;
-}/*
-void Enviroment::compress(const std::string& in, const std::string& out)
-{
-	TAR *pTar;
-  	tar_open(&pTar, (char*)out.c_str(), NULL, O_WRONLY | O_CREAT, 0644, TAR_IGNORE_MAGIC);
-   	tar_append_tree(pTar, (char*)in.c_str(), (char*)in.c_str());
- 	tar_append_eof(pTar);
-   	tar_close(pTar);	
-}*/
+}
 void Enviroment::enableEcho(std::ostream* f, unsigned short level)
 {
 	fout = f;
 	echolevel = level;
 }
-/*void Enviroment::write_archive(const char *outname, const char **filename)
-{
-  struct archive *a;
-  struct archive_entry *entry;
-  struct stat st;
-  char buff[8192];
-  int len;
-  int fd;
 
-  a = archive_write_new();
-  archive_write_add_filter_gzip(a);
-  archive_write_set_format_pax_restricted(a); // Note 1
-  archive_write_open_filename(a, outname);
-  while (*filename) {
-    stat(*filename, &st);
-    entry = archive_entry_new(); // Note 2
-    archive_entry_set_pathname(entry, *filename);
-    archive_entry_set_size(entry, st.st_size); // Note 3
-    archive_entry_set_filetype(entry, AE_IFREG);
-    archive_entry_set_perm(entry, 0644);
-    archive_write_header(a, entry);
-    fd = open(*filename, O_RDONLY);
-    len = read(fd, buff, sizeof(buff));
-    while ( len > 0 ) {
-        archive_write_data(a, buff, len);
-        len = read(fd, buff, sizeof(buff));
-    }
-    close(fd);
-    archive_entry_free(entry);
-    filename++  ;
-  }
-  archive_write_close(a); // Note 4
-  archive_write_free(a); // Note 5
-}*/
 void Enviroment::enableLogFile(bool log)
 {
 	logFile = log;
 }
 bool Enviroment::run()
 {	
-	//inJam = false;
+	std::cout << "\tStep 0\n";
+	
 	if(maxProgenitor < minSolutions) throw octetos::core::Exception("La cantidad de progenoore deveria ser major que la cantidad de soluciones buscadas",__FILE__,__LINE__);
 	actualIteration = 1;
-
-	//std::cout << "\tStep 1\n";
+	
+	std::cout << "\tStep 1\n";
 	initial();
-	//std::cout << "\tStep 2\n";
+	std::cout << "\tStep 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
-	//std::cout << "\tStep 3\n";
+	std::cout << "\tStep 3\n";
 	logFile = not logDirectory.empty();
 	if(logFile)
-	{		
+	{
 		session = getSession();
 		logSubDirectory = logDirectory +"/" + std::to_string(getTimeID());
 		std::string strhistory = logSubDirectory + "/historial.csv";
@@ -482,16 +394,16 @@ bool Enviroment::run()
 		shell.mkdir(logSubDirectory);
 		history.open(strhistory);
 	}
-	//std::cout << "\tStep 4\n";
+	std::cout << "\tStep 4\n";
 
 	ID oldleaderID = 0;
 	double oldLeaderFitness = 0.0;
 	Iteration countOldLeader = 0;
 	Iteration countOldLeaderFitness = 0;
-	//std::cout << "\tStep 5\n";
+	std::cout << "\tStep 5\n";
 	while(true)
 	{
-		//std::cout << "\tStep C1\n";
+		std::cout << "\tStep C1\n";
 		if(stopMaxIterations) 
 		{
 			if(actualIteration > maxIteration) 
@@ -513,7 +425,7 @@ bool Enviroment::run()
 		//std::cout << "\tStep C3\n";
 		eval();
 		//std::cout << "\tStep C4\n";
-		sort(cmpStrength);
+		sort(comparer);
 		//std::cout << "\tStep C5\n";
 		
 		ec::ID countBefore = size();
@@ -635,7 +547,7 @@ bool Enviroment::run()
 		}
 		//std::cout <<  "Step 6\n";
 				
-		juncting();				
+		juncting();			
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 			push_front(s);		
@@ -688,4 +600,34 @@ ec::Single* Enviroment::getProxSolution()
 	
 	return *begin();
 }
+
+Single* Enviroment::getRandomSingleTop() const
+{
+	float maxp = std::distance(begin(),end());
+	const_iterator it = begin();
+	
+	double rndnum = randNumber(0.0,1.0);
+	if(rndnum < 0.30)
+	{
+		return *begin();
+	}
+	else if(rndnum < 0.60)
+	{
+		return *begin()++;
+	}
+	
+	return NULL;
+}
+Single* Enviroment::getRandomSingle() const
+{
+	float maxp = std::distance(begin(),end());
+	const_iterator it = begin();
+	
+	double rndnum = randNumber(0.0,maxp);
+	std::advance(it,rndnum);
+	if(it != end()) return *it;
+	
+	return NULL;
+}
+
 }

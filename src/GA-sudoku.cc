@@ -581,34 +581,7 @@ void Single::printInit(std::ostream& out) const
 
 
 
-ec::Single* Enviroment::getRandomSingleTop() const
-{
-	float maxp = std::distance(begin(),end());
-	const_iterator it = begin();
-	
-	double rndnum = randNumber(0.0,1.0);
-	if(rndnum < 0.30)
-	{
-		return *begin();
-	}
-	else if(rndnum < 0.60)
-	{
-		return *begin()++;
-	}
-	
-	return NULL;
-}
-ec::Single* Enviroment::getRandomSingle() const
-{
-	float maxp = std::distance(begin(),end());
-	const_iterator it = begin();
-	
-	double rndnum = randNumber(0.0,maxp);
-	std::advance(it,rndnum);
-	if(it != end()) return *it;
-	
-	return NULL;
-}
+
 Enviroment::Enviroment()
 {
 }
@@ -660,6 +633,7 @@ void Enviroment::init(const std::string& initB)
 	//iterJam = 1500;
 	//addTerminator(ae::Terminations::JAM);
 	//sliceJam = iterJam /10;
+	comparer = &cmpStrength;
 }
 void Enviroment::initBoard(const std::string& initTable)
 {

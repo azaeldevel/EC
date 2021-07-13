@@ -309,26 +309,8 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 	return *this;
 }
 
-void Chromosome::combine(const ec::Chromosome& P1,const ec::Chromosome& P2)
-{
 
-}
-void Chromosome::copy(const ec::Chromosome& P1)
-{
 
-}
-void Chromosome::mutate(float p)
-{
-
-}
-void Chromosome::randFill(bool favor)
-{
-
-}
-/*const Path& Chromosome::getPath() const
-{
-	return *path;
-}*/
 
 Population Chromosome::juncting(const Chromosome* c,std::list<Path*>& p)const
 {
@@ -366,41 +348,13 @@ Path::Path(nodes::Direction d) : direction(d)
 }
 Path::Path(const Path* pb,const Path* pe)
 {
-	//std::cout << "Step 1.1.1.1.1.3.1\n";
 	if(pb->size() == 0) throw octetos::core::Exception("La Path de incio esta vacia.",__FILE__,__LINE__);
 	if(pe->size() == 0) throw octetos::core::Exception("La Path de fin esta vacia.",__FILE__,__LINE__);
-	/*if(pb->back()->getNext() != pe->front()->getNode())
-	{
-		std::string msg = "El node final no coincide con el nodo inicial.\n\t";
-		for(nodes::Edge* eb : *pb)
-		{
-			msg += std::to_string(eb->getNode()->getID());
-			msg += "->";
-		}
-		msg += "\n\t";
-		for(nodes::Edge* ee : *pe)
-		{
-			msg += std::to_string(ee->getNode()->getID());
-			msg += "->";
-		}
-		throw octetos::core::Exception(msg,__FILE__,__LINE__);
-	}*/
-	/*if(pb->back() != pe->front())
-	{
-		std::string msg = "Union (";
-		msg += std::to_string(pb->back()->getNode()->getID()) + ") ->> (" + std::to_string(pe->front()->getNode()->getID()) + ")\n";
-		throw octetos::core::Exception(msg,__FILE__,__LINE__);
-	}*/
-	//std::cout << "Step 1.1.1.1.1.3.2\n";
-	//
-	//Path::const_iterator last = pb->begin();
-	//std::advance(last,pb->size()-1);
+
 	for(nodes::Edge* e : *pb)
 	{
-		//if(e == *last) break;
 		push_back(e);
 	}
-	//std::cout << "Step 1.1.1.1.1.3.3\n";
 	for(nodes::Edge* e : *pe)
 	{
 		push_back(e);
@@ -553,7 +507,7 @@ void Path::print(const nodes::Node* n,std::ostream& out)
 			break;
 	}
 }
-unsigned short Path::CountTarget()const
+unsigned short Path::countTarget()const
 {
 	unsigned short count = 0;
 	for(nodes::Edge* e : *this)
@@ -605,24 +559,34 @@ nodes::Edge* Path::randNext()
 
 
 
-Single::Single(const Single& s) : ec::Single(s),puntos(s.puntos),chromosome(s.chromosome)
+Single::Single(const Single& s,const std::list<nodes::Node*>& t) : ec::Single(s),puntos(s.puntos),chromosome(s.chromosome),lstTargets(t)
 {
 }
-Single::Single(ID id,Enviroment& e,const Junction& j, Path* p) : ec::Single(id,e,j),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e,const Junction& j, Path* p,const std::list<nodes::Node*>& t) : ec::Single(id,e,j),chromosome(p),puntos(0),lstTargets(t)
 {
 }
-Single::Single(ID id,Enviroment& e, Path* p) : ec::Single(id,e),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e, Path* p,const std::list<nodes::Node*>& t) : ec::Single(id,e),chromosome(p),puntos(0),lstTargets(t)
 {
 }
 
 void Single::eval()
 {
-	double flength = 0.5 - (((Enviroment*)env)->getGammaLength() * double(chromosome.getLengthPath()));
-	//std::cout << "l : " << double(chromosome.getPath().size()) << "\n";
+	double flength = ((Enviroment*)env)->getGammaLength() * double(chromosome.getLengthPath());
+	flength = std::abs((((Enviroment*)env)->getFreactionQ() - flength)/flength);	
+	flength = flength/((Enviroment*)env)->getFreactionD();
+	
 	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(chromosome.getCountTagetsPath());
 	fitness = flength + fTarget;
-	//if(flength > 1.0) print(std::cout);
+		
+	const Path* path = chromosome.getPath();
+	for(nodes::Edge* e : *path)
+	{
+		
+	}
+	double fOrder = 0.0;
 	
+	fitness = flength + fTarget + fOrder;
+	//if(flength > 1.0) print(std::cout);
 }
 void Single::randFill(bool favor)
 {
@@ -631,18 +595,36 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 {
 	Population counNew = 0;
 	
+	//std::cout << "Step 1\n";
 	std::list<Path*> lstp;
 	ec::Single* newchild;
 	if(juncting((const Single*)single,lstp))
+	const std::list<nodes::Node*>& lsTargets = ((Enviroment*)env)->getTargets();
+	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
 		//std::cout << "\t(" << getID() << ") with (" << single->getID() << ")\n";
 		//std::cout << "\t\t" << lstp.size() << " hijos\n";
 		for(Path* p : lstp)
 		{
-			newchild = new Single(env->nextID(),(Enviroment&)*env,p);
+			newchild = new Single(env->nextID(),(Enviroment&)*env,p,lstTargets);
 			chils.push_back(newchild);
 		}
 		counNew++;
+		//std::cout << "Step 1.1\n";
+		counNew += juncting((const Single*)single,lstp);
+		//std::cout << "Step 1.2 : " << counNew << "\n";
+	}
+	//std::cout << "size >>> " << lstp.size() << "\n";
+	//std::cout << "Step 2\n";
+	for(Path* p : lstp)
+	{
+		//std::cout << "Step 2.1\n";
+		newchild = new Single(env->nextID(),(Enviroment&)*env,p,lstTargets);
+		//std::cout << "Step 2.2\n";
+		chils.push_back(newchild);	
+		//std::cout << "Step 2.3\n";
+		counNew++;	
+		//std::cout << "Step 2.4\n";	
 	}
 	
 	return counNew;
@@ -732,6 +714,9 @@ void Enviroment::init()
 	maxPopulation = 250;
 	stopperMaxIterations(1000);
 	stopperNotDiference(1.0e-20);
+	comparer = &cmpStrength1;
+	fractionDen = 3.0;
+	fractionQuality = 1.0/fractionDen;
 }
 Enviroment::~Enviroment()
 {
@@ -795,14 +780,10 @@ void Enviroment::initial()
 {	
 	//std::cout << "Poblacion inicial..\n";
 	creteRegion(targets);
-	gammaLength = 0.5 / double(region->getCountEdges());
-	//std::cout << "Count : " << region->getCountEdges() << "\n";
-	//std::cout << "gammaLength : " << gammaLength << "\n";
-	gammaTarget = 0.5 / double(targets.size());
-	//std::cout << "Count : " << targets.size() << "\n";
-	//std::cout << "gammaTarget : " << gammaTarget << "\n";
-	//ec::Enviroment::epsilon = gammaLength;
 
+	gammaLength = fractionQuality / double(region->getCountEdges());
+	gammaTarget = fractionQuality / double(targets.size());
+	
 	//
 	for(nodes::Node* n : targets)
 	{
@@ -823,7 +804,7 @@ void Enviroment::initial()
 	//generado individuos
 	for(Path* path : lstPaths)
 	{
- 		Single* s = new Single(nextID(),*this,path);
+ 		Single* s = new Single(nextID(),*this,path,targets);
 		push_back(s);
 	}
 	//liberando memoria de paths
@@ -905,7 +886,7 @@ void Enviroment::selection()
 		//aceptar los teinet un target en un extremo
 		if(nodeF->getType() == nodes::END and nodeB->getType() == nodes::TARGET and single->getChromosome()->getPath()->size() > 1) continue;
 		
-		if(single->getChromosome()->getPath()->CountTarget() > 0 and nodeF->getType() != nodes::ORIGIN and nodeB->getType() != nodes::ORIGIN) continue;
+		if(single->getChromosome()->getPath()->countTarget() > 0 and nodeF->getType() != nodes::ORIGIN and nodeB->getType() != nodes::ORIGIN) continue;
 		
 		if(single->getFitness() > media) continue;
 		
@@ -940,6 +921,7 @@ void Enviroment::juncting()
 {
 	Single *single1,*single2;
 	for(ec::Single* s1 : *this)
+	do
 	{
 		single1 = (Single*) s1;
 		for(ec::Single* s2 : *this)
@@ -950,7 +932,16 @@ void Enviroment::juncting()
 			//single2->growUp();
 		}
 		//single1->growUp();
+		ec::Single* single1 = getRandomSingle();
+		if(single1 == NULL) continue;
+		ec::Single* single2 = getRandomSingle();
+		if(single2 == NULL) continue;
+		if(single1 == single2) continue;
+		single1->juncting(newschils,single2,echolevel,NULL);
+		//std::cout << "Size >> " << newschils.size() << "\n";
+		if(echolevel > 2 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 	}
+	while(newschils.size() + size() <= maxPopulation);
 }
 
 void Enviroment::save()
@@ -965,7 +956,37 @@ void Enviroment::save()
 	fn.close();
 }
 
+std::list<nodes::Node*> Enviroment::getTargets()const
+{
+	return targets;
+}
 
+double Enviroment::getFreactionQ()const
+{
+	return fractionQuality;
+}
 
+double Enviroment::getFreactionD()const
+{
+	return fractionDen;
+}
+
+typedef std::map<nodes::Node*,unsigned short> TargetCounter;
+bool Single::checkRepitTarget(const Path* p)const
+{
+	TargetCounter tgCounter;
+	std::map<nodes::Node*,unsigned short>::iterator it;
+	for(nodes::Edge* e : *p)
+	{
+		it = tgCounter.find(e->getNode());
+		if(it == tgCounter.end())
+		{
+			it->second++;
+		}
+		if(it->second > 1) return true;
+	}
+	
+	return false;
+}
 
 }
