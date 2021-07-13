@@ -89,14 +89,12 @@ public:
 
 	unsigned short getFaltantes() const;
 	double getGamma() const;
-	//void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
 	
 	virtual void selection();
 	virtual void initial();
-	virtual void eval();
 	virtual void save();
-
+	
 private:
 
 	/**

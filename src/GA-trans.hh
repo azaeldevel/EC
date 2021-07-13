@@ -246,6 +246,8 @@ public:
 	bool growUp();
 	
 	bool checkRepitTarget(const Path* p)const;
+	unsigned short checkOrder(const Path* p)const;
+	
 private:
 	unsigned short puntos;
 	Chromosome chromosome;
@@ -277,7 +279,6 @@ public:
 
 	virtual void initial();
 	virtual void selection();
-	virtual void eval();
 	virtual void save();
 private:
 	void generate(nodes::Node* orig, unsigned short stop,nodes::Direction direction);

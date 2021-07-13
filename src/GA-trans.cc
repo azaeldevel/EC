@@ -509,24 +509,16 @@ Single::Single(ID id,Enviroment& e, Path* p,const std::list<nodes::Node*>& t) : 
 
 void Single::eval()
 {
-	double flength = ((Enviroment*)env)->getGammaLength() * double(chromosome.getLengthPath());
-	flength = std::abs((((Enviroment*)env)->getFreactionQ() - flength)/flength);	
-	flength = flength/((Enviroment*)env)->getFreactionD();
-	
-	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(chromosome.getCountTagetsPath());
-	fitness = flength + fTarget;
-		
-	const Path* path = chromosome.getPath();
-	for(nodes::Edge* e : *path)
-	{
-		
-	}
-	double fOrder = 0.0;
-	
-	fitness = flength + fTarget + fOrder;
+	double flength = ((Enviroment*)env)->getGammaLength() * double(getLengthPath());
+	//flength = ((Enviroment&)getEnviroment()).getFreactionQ() - flength;
+	std::cout << "flength = " << flength << "\n";
+	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(checkOrder(chromosome.getPath()));
+	std::cout << "fTarget = " << fTarget << "\n";
+	fitness = flength + fTarget;	
 }
 void Single::randFill(bool favor)
 {
+	
 }
 Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node) const
 {
@@ -598,7 +590,23 @@ bool Single::growUp()
 	return chromosome.growUp();
 }
 
-
+unsigned short Single::checkOrder(const Path* p)const
+{
+	unsigned short count = 0;
+	std::list<nodes::Node*>::const_iterator it = lstTargets.begin();
+	for(nodes::Edge* e : *p)
+	{
+		if(e->getNode() == *it) 
+		{
+			count++;		
+			it++;
+			if(it == lstTargets.end()) break;
+		}
+		
+	}
+	
+	return count;
+}
 
 
 
@@ -624,7 +632,7 @@ void Enviroment::init()
 	stopperMaxIterations(1000);
 	stopperNotDiference(1.0e-20);
 	comparer = &cmpStrength1;
-	fractionDen = 3.0;
+	fractionDen = 2.0;
 	fractionQuality = 1.0/fractionDen;
 }
 Enviroment::~Enviroment()
@@ -687,16 +695,17 @@ void Enviroment::initial()
 {
 	creteRegion(targets);
 
-	gammaLength = fractionQuality / double(region->getCountEdges());
-	gammaTarget = fractionQuality / double(targets.size());
+	//
+	gammaLength = fractionQuality/double(region->getCountEdges());
+	gammaTarget = fractionQuality/double(targets.size());
 	
 	//
 	for(nodes::Node* n : targets)
 	{
 		region->resetTrans();
 		generate(n,1,nodes::Direction::FRONT);
-		region->resetTrans();
-		generate(n,1,nodes::Direction::BACK);
+		//region->resetTrans();
+		//generate(n,1,nodes::Direction::BACK);
 	}
 	std::cout << "Targets : \n";
 	for(nodes::Node* n : targets)
@@ -771,15 +780,7 @@ void Enviroment::selection()
 		remove(single);
 	}
 }
-void Enviroment::eval()
-{
-	Single* single;
-	for(ec::Single* s : *this)
-	{
-		single = (Single*) s;
-		single->eval();
-	}
-}
+
 
 
 void Enviroment::save()
@@ -809,22 +810,5 @@ double Enviroment::getFreactionD()const
 	return fractionDen;
 }
 
-typedef std::map<nodes::Node*,unsigned short> TargetCounter;
-bool Single::checkRepitTarget(const Path* p)const
-{
-	TargetCounter tgCounter;
-	std::map<nodes::Node*,unsigned short>::iterator it;
-	for(nodes::Edge* e : *p)
-	{
-		it = tgCounter.find(e->getNode());
-		if(it == tgCounter.end())
-		{
-			it->second++;
-		}
-		if(it->second > 1) return true;
-	}
-	
-	return false;
-}
 
 }

@@ -204,7 +204,7 @@ public:
 	virtual bool run();
 	virtual void selection() = 0;
 	virtual void initial()=0;
-	virtual void eval()=0;
+	virtual void eval();
 	virtual void juncting();
 	virtual void save()=0;
 	//virtual void series(const std::string& logDir,Iteration maxIteBySerie);

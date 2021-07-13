@@ -21,7 +21,7 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodes::Node* node_66 = nodeB;
 	nodes::Node* node_O = nodeA;
 	targets.push_back(node_O);
-
+	
 	//std::cout << "TransEnviroment::creteRegion Step 3\n";
 	nodeA = nodeB;//66
 	nodeB = region->newNode(++countID);//2, ID = 4

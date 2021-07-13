@@ -647,5 +647,13 @@ void Enviroment::juncting()
 	}
 	while(newschils.size() + size() <= maxPopulation);
 }
-
+void Enviroment::eval()
+{
+	Single* single;
+	for(ec::Single* s : *this)
+	{
+		single = (Single*) s;
+		single->eval();
+	}
+}
 }
