@@ -781,24 +781,6 @@ void Enviroment::eval()
 	}
 }
 
-void Enviroment::juncting()
-{
-	Single *single1,*single2;
-	for(ec::Single* s1 : *this)
-	do
-	{
-		single1 = (Single*) s1;
-		
-		ec::Single* single1 = getRandomSingle();
-		if(single1 == NULL) continue;
-		ec::Single* single2 = getRandomSingle();
-		if(single2 == NULL) continue;
-		if(single1 == single2) continue;
-		single1->juncting(newschils,single2,echolevel,NULL);
-		if(echolevel > 2 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
-	}
-	while(newschils.size() + size() <= maxPopulation);
-}
 
 void Enviroment::save()
 {

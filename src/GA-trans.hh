@@ -277,9 +277,7 @@ public:
 
 	virtual void initial();
 	virtual void selection();
-	//virtual bool run();
 	virtual void eval();
-	virtual void juncting();
 	virtual void save();
 private:
 	void generate(nodes::Node* orig, unsigned short stop,nodes::Direction direction);

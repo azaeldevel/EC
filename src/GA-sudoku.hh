@@ -93,10 +93,8 @@ public:
 	void saveSolutions(std::ofstream& f)const;
 	
 	virtual void selection();
-	//virtual bool run();
 	virtual void initial();
 	virtual void eval();
-	virtual void juncting();
 	virtual void save();
 
 private:
