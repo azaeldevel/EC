@@ -41,10 +41,7 @@ namespace nodes
 		std::advance(it, index);
 		return *it;
 	}
-	/*std::list<Edge*>& Node::getListFront()
-	{
-		return edgesFront;
-	}*/
+
 	Index Node::getFrontCount()const
 	{
 		return edgesFront.size();
@@ -142,10 +139,7 @@ namespace nodes
 		distance = d;
 		node = a;
 		next = n;
-		//node->addFront(this);
-		//next->add(this);
 		nextCount = 0 ;
-		//prevCount = 0 ;
 	}
 
 	//getter
@@ -163,19 +157,11 @@ namespace nodes
 		nextCount++;
 		return next;
 	}
-	/*Node* Edge::transPrev()
-	{
-		prevCount++;
-		return prev;
-	}*/
 	unsigned short Edge::getNextCount()
 	{
 		return nextCount;
 	}
-	/*unsigned short Edge::getPrevCount()
-	{
-		return prevCount;
-	}*/
+
 	
 	void Edge::resetNextCount()
 	{
@@ -221,22 +207,7 @@ namespace nodes
 		return countEdges;
 	}
 
-	/*Street* Region::newStreet(ID id)
-	{
-		Street* n = new Street(id);
-		toDeleteNodes.push_back(n);
-		if(origin == NULL) origin = n;//si no hay nodo origne registrado
-		
-		return n;
-	}*/
-	/*Street* Region::newStreet(ID id,NodeType t)
-	{
-		Street* n = new Street(id,t);
-		toDeleteNodes.push_back(n);
-		if(origin == NULL) origin = n;//si no hay nodo origne registrado
-		
-		return n;
-	}*/
+
 	Node* Region::newNode(ID id)
 	{
 		Node* n = new Node(id);
@@ -376,60 +347,27 @@ unsigned short Path::getCountTargets()const
 }
 Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 {
-	//std::cout << "Step 1.1.1\n";
 	for(nodes::Edge* e1 : *this)
 	{
-		//std::cout << "Step 1.1.1.1\n";
 		for(nodes::Edge* e2 : *p)
 		{
 			if(p->front()->getNode() == front()->getNode()) continue;
 			if(p->back()->getNode() == back()->getNode()) continue;
 			
-			//std::cout << "Step 1.1.1.1.1\n";
 			if(e1->getNode() == e2->getNode() and e1->getNext() != e2->getNext())
 			{//
-				//std::cout << "Step 1.1.1.1.1.1\n";
 				Path pB(*this);
-				Path pE(*p);
-				//pB.print(std::cout);
-				//std::cout << "\n";
-				//pE.print(std::cout);
-				//std::cout << "\n";
-				//std::cout << "Step 1.1.1.1.1.2\n";		
+				Path pE(*p);		
 				pB.cutAfther(e1->getNode());
 				if(pB.size() < 3) continue;
 				pE.cutBefore(e2->getNode());
-				if(pE.size() < 3) continue;	
-				//if(pB.back()->getNode() == pE.front()->getNext()) continue;
-				//std::cout << "Step 1.1.1.1.1.3\n";
-				/*std::string msg = "paths : \n\t";
-				msg += "On(" + std::to_string(e1->getNode()->getID()) + ")\n\t";
-				for(nodes::Edge* eb : pB)
-				{
-					msg += std::to_string(eb->getNode()->getID());
-					msg += "->";
-				}
-				msg += "\n\t";
-				for(nodes::Edge* ee : pE)
-				{
-					msg += std::to_string(ee->getNode()->getID());
-					msg += "->";
-				}
-				msg += "\n\t";
-				std::cout << msg << "\n";*/
+				if(pE.size() < 3) continue;
 				Path*  newp = new Path(&pB,&pE);
-				/*for(nodes::Edge* res : *newp)
-				{
-					msg += std::to_string(res->getNode()->getID());
-					msg += "->";
-				}
-				std::cout << msg << "\n";*/
-				//std::cout << "Step 1.1.1.1.1.4\n";
 				lstp.push_back(newp);
 			}
 		}
 	}
-	//std::cout << "Step 1.1.2\n";
+	
 	return lstp.size();
 }
 bool Path::cutBefore(nodes::Node* n)
@@ -586,7 +524,6 @@ void Single::eval()
 	double fOrder = 0.0;
 	
 	fitness = flength + fTarget + fOrder;
-	//if(flength > 1.0) print(std::cout);
 }
 void Single::randFill(bool favor)
 {
@@ -595,70 +532,42 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 {
 	Population counNew = 0;
 	
-	//std::cout << "Step 1\n";
 	std::list<Path*> lstp;
 	ec::Single* newchild;
 	if(juncting((const Single*)single,lstp))
 	const std::list<nodes::Node*>& lsTargets = ((Enviroment*)env)->getTargets();
 	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
-		//std::cout << "\t(" << getID() << ") with (" << single->getID() << ")\n";
-		//std::cout << "\t\t" << lstp.size() << " hijos\n";
 		for(Path* p : lstp)
 		{
+			if(lstp.size() + env->size() >= env->getMaxPopulation()) break;
 			newchild = new Single(env->nextID(),(Enviroment&)*env,p,lstTargets);
 			chils.push_back(newchild);
 		}
 		counNew++;
-		//std::cout << "Step 1.1\n";
 		counNew += juncting((const Single*)single,lstp);
-		//std::cout << "Step 1.2 : " << counNew << "\n";
 	}
-	//std::cout << "size >>> " << lstp.size() << "\n";
-	//std::cout << "Step 2\n";
 	for(Path* p : lstp)
 	{
-		//std::cout << "Step 2.1\n";
 		newchild = new Single(env->nextID(),(Enviroment&)*env,p,lstTargets);
-		//std::cout << "Step 2.2\n";
-		chils.push_back(newchild);	
-		//std::cout << "Step 2.3\n";
+		chils.push_back(newchild);
 		counNew++;	
-		//std::cout << "Step 2.4\n";	
 	}
-	
+		
 	return counNew;
 }
 void Single::save(std::ofstream& fn)
 {
 	fn << getID();
 	fn << ",";
-	fn << getFitness();	
-	//fn << ",";
-	//fn << getMD5();
+	fn << getFitness();
 	fn << ",";
 	fn << getAge();
 	fn << ",";
 	chromosome.getPath()->print(fn);
 	fn << "\n";
 }
-/*void Single::print(std::ostream& p) const
-{
-	Path::const_iterator actual, post;
-	
-	actual = chromosome.getPath().begin();
-	post = chromosome.getPath().begin();
-	do
-	{
-		std::advance(post,1);
-		(*actual)->getNext();
-		//(*post)->getNode();
-		p << (*actual)->getNode()->getID() << "->";
-		std::advance(actual,1);
-	}
-	while(post != chromosome.getPath().end());
-	//p << (*post)->getNode()->getID() << "\n";	
-}*/
+
 void Single::print(std::ostream& p) const
 {
 	chromosome.print(p);
@@ -754,8 +663,6 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 }
 void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,nodes::Direction direction)
 {
-	//if(path->size() > region->getCountEdges()/targets.size() ) return;
-	
 	nodes::Node* n = eprev->getNext();
 	nodes::Edge* eN = n->nextLessTrans(stop,direction);
 	do
@@ -777,8 +684,7 @@ void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,no
 	while(eN);
 }
 void Enviroment::initial()
-{	
-	//std::cout << "Poblacion inicial..\n";
+{
 	creteRegion(targets);
 
 	gammaLength = fractionQuality / double(region->getCountEdges());
@@ -798,9 +704,6 @@ void Enviroment::initial()
 		std::cout << "\t" << n->getID() << "\n";
 	}
 		
-	//filtrar las rutas
-	//filterPaths();
-	
 	//generado individuos
 	for(Path* path : lstPaths)
 	{
@@ -810,40 +713,7 @@ void Enviroment::initial()
 	//liberando memoria de paths
 	lstPaths.clear();
 	
-	//selection();
 }
-
-/*bool Enviroment::run()
-{
-	//std::cout << "Initial : " << size() << "\n";
-	initial();
-	//std::cout << "Initial : " << size() << "\n";
-	for(unsigned short i = 0; i < 10; i++)
-	{
-		std::cout << "Initial : " << size() << "\n";
-		eval();
-		sort(cmpStrength);
-		Single* single;
-		for(ec::Single* s : *this)
-		{
-			single = (Single*) s;
-			//std::cout << "ID : " << single->getID() << " => " << single->getFitness() << "\n";
-			//single->print(std::cout);
-			//std::cout << "\n";
-		}
-		
-		selection();
-		
-		juncting();
-		for(ec::Single* s : newschils)
-		{
-			push_back(s);
-		}
-		newschils.clear();
-	}
-	
-	return true;
-}*/
 
 
 void Enviroment::selection()
@@ -896,24 +766,18 @@ void Enviroment::selection()
 	//std::cout << "Step 2\n";
 	for(ec::Single* s : forDelete)
 	{
-		//std::cout << "Step 2.1\n";
 		single = (Single*)s;
-		//std::cout << "Step 2.2\n";
 		delete single;
-		//std::cout << "Step 2.3\n";
 		remove(single);
-		//std::cout << "Step 2.4\n";
 	}
 }
 void Enviroment::eval()
 {
-	//std::cout << "Evaluacion..\n";
 	Single* single;
 	for(ec::Single* s : *this)
 	{
 		single = (Single*) s;
 		single->eval();
-		//std::cout << "ID : " << single->getID() << " = " << single->getFitness() << "\n";
 	}
 }
 
@@ -924,21 +788,13 @@ void Enviroment::juncting()
 	do
 	{
 		single1 = (Single*) s1;
-		for(ec::Single* s2 : *this)
-		{
-			single2 = (Single*) s2;
-			if(s1 == s2) continue;
-			s1->juncting(newschils,s2,echolevel,NULL);
-			//single2->growUp();
-		}
-		//single1->growUp();
+		
 		ec::Single* single1 = getRandomSingle();
 		if(single1 == NULL) continue;
 		ec::Single* single2 = getRandomSingle();
 		if(single2 == NULL) continue;
 		if(single1 == single2) continue;
 		single1->juncting(newschils,single2,echolevel,NULL);
-		//std::cout << "Size >> " << newschils.size() << "\n";
 		if(echolevel > 2 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 	}
 	while(newschils.size() + size() <= maxPopulation);
