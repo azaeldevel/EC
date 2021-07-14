@@ -512,21 +512,20 @@ Single::Single(ID id,Enviroment& e, Path* p,const std::list<nodes::Node*>& t) : 
 
 void Single::eval()
 {
+	//double minfl = (Enviroment*)env)->getGammaLength() * ((Enviroment*)env)->getTargets().size());
+	double maxfl = ((Enviroment*)env)->getGammaLength() * double(((Enviroment*)env)->getRegion()->getCountEdges());
 	double flength = ((Enviroment*)env)->getGammaLength() * double(getLengthPath());
-	flength = std::abs(((Enviroment&)getEnviroment()).getFreactionQ() - flength);
+	flength = std::abs(maxfl - flength)/((((Enviroment&)getEnviroment()).getFreactionD()) * maxfl);
+	flength = ((Enviroment&)getEnviroment()).getFreactionQ() - flength;
 	
-	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(checkOrder(chromosome.getPath()));
+	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(getCountTagetsPath());
 	if(fTarget > ((Enviroment&)getEnviroment()).getFreactionQ())
 	{
 		fTarget = ((Enviroment&)getEnviroment()).getFreactionQ()/fTarget;
 	}
-	else
-	{
-		fTarget = std::abs(((Enviroment&)getEnviroment()).getFreactionQ() - fTarget);
-	}
-	std::cout << "(" << getID() << ") : ";
-	std::cout << "\tflength = " << flength << "\n";
-	std::cout << "\tfTarget = " << fTarget << "\n";
+	//std::cout << "(" << getID() << ") : ";
+	//std::cout << "\tflength = " << flength << "\n";
+	//std::cout << "\tfTarget = " << fTarget << "\n";
 	fitness = flength + fTarget;	
 }
 void Single::randFill(bool favor)
