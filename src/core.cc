@@ -489,7 +489,7 @@ bool Enviroment::run()
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 		}
 		
-		if(stopNotDiference)
+		if(stopNotDiference and actualIteration > 1)
 		{
 			if(sigma < notDiferenceCota)
 			{

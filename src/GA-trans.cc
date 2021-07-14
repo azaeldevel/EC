@@ -694,9 +694,9 @@ void Enviroment::generate(nodes::Edge* e,unsigned short stop,nodes::Direction di
 	}
 	while( i < stop and edge != NULL);
 	lstPaths.push_back(newPath);
-	std::cout << "Generating ..";
-	newPath->print(std::cout);
-	std::cout << "\n";
+	//std::cout << "Generating ..";
+	//newPath->print(std::cout);
+	//std::cout << "\n";
 }
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
@@ -740,10 +740,10 @@ void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,no
 void Enviroment::initial()
 {
 	creteRegion(targets);
-	for(nodes::Node* node : targets)
+	/*for(nodes::Node* node : targets)
 	{
 		std::cout << node->getID() << "\n";
-	}
+	}*/
 	//
 	gammaLength = fractionQuality/double(region->getCountEdges());
 	gammaTarget = fractionQuality/double(targets.size());
@@ -751,7 +751,7 @@ void Enviroment::initial()
 	//
 	for(nodes::Node* node : targets)
 	{
-		std::cout << node->getID() << "\n";
+		//std::cout << node->getID() << "\n";
 		for(nodes::Edge* edge : node->edgesFront)
 		{
 			region->resetTrans();
@@ -768,8 +768,8 @@ void Enviroment::initial()
 	for(Path* path : lstPaths)
 	{
  		Single* s = new Single(nextID(),*this,path,targets);
- 		s->print(std::cout);
- 		std::cout << "\n";
+ 		//s->print(std::cout);
+ 		//std::cout << "\n";
 		push_back(s);
 	}
 	//liberando memoria de paths
