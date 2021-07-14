@@ -532,7 +532,7 @@ void Single::randFill(bool favor)
 {
 	
 }
-Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node) const
+/*Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node) const
 {
 	Population counNew = 0;
 	
@@ -558,6 +558,25 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 		counNew++;	
 	}
 		
+	return counNew;
+}*/
+Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node) const
+{
+	Population counNew = 0;	
+	
+	//buscar un empate entre this y single
+	std::list<nodes::Edge*>::const_iterator it = chromosome.getPath()->begin();
+	for(nodes::Edge* e : *chromosome.getPath())
+	{
+		//it = std::find(((Single*)single)->chromosome.getPath()->begin(),((Single*)single)->chromosome.getPath()->end(),e);
+	}
+	//si existe tal empate realizar una usarlos como para union
+		
+	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
+	{
+		
+	}
+			
 	return counNew;
 }
 void Single::save(std::ofstream& fn)
@@ -788,7 +807,7 @@ void Enviroment::selection()
 	//std::cout << "Step 1\n";
 	for(ec::Single* s : *this)
 	{
-		//std::cout << ".";
+		//std::cout << "Step 1.1\n";
 		countPass++;		
 		single = (Single*)s;
 		if(countPass > maxPopulation)
