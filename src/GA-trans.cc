@@ -513,10 +513,20 @@ Single::Single(ID id,Enviroment& e, Path* p,const std::list<nodes::Node*>& t) : 
 void Single::eval()
 {
 	double flength = ((Enviroment*)env)->getGammaLength() * double(getLengthPath());
-	//flength = ((Enviroment&)getEnviroment()).getFreactionQ() - flength;
-	//std::cout << "flength = " << flength << "\n";
+	flength = std::abs(((Enviroment&)getEnviroment()).getFreactionQ() - flength);
+	
 	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(checkOrder(chromosome.getPath()));
-	//std::cout << "fTarget = " << fTarget << "\n";
+	if(fTarget > ((Enviroment&)getEnviroment()).getFreactionQ())
+	{
+		fTarget = ((Enviroment&)getEnviroment()).getFreactionQ()/fTarget;
+	}
+	else
+	{
+		fTarget = std::abs(((Enviroment&)getEnviroment()).getFreactionQ() - fTarget);
+	}
+	std::cout << "(" << getID() << ") : ";
+	std::cout << "\tflength = " << flength << "\n";
+	std::cout << "\tfTarget = " << fTarget << "\n";
 	fitness = flength + fTarget;	
 }
 void Single::randFill(bool favor)
@@ -678,13 +688,13 @@ void Enviroment::generate(nodes::Edge* e,unsigned short stop,nodes::Direction di
 		node = edge->getNext();
 		edge->transNext();
 		newPath->push_back(edge);
-		lstPaths.push_back(newPath);
 		
 		//next iteration
 		i++;
 		edge = node->nextLessTrans(stop,direction);		
 	}
 	while( i < stop and edge != NULL);
+	lstPaths.push_back(newPath);
 	std::cout << "Generating ..";
 	newPath->print(std::cout);
 	std::cout << "\n";
@@ -745,20 +755,22 @@ void Enviroment::initial()
 		std::cout << node->getID() << "\n";
 		for(nodes::Edge* edge : node->edgesFront)
 		{
+			region->resetTrans();
 			generate(edge,genLengthMin,nodes::Direction::FRONT);
 		}
 		for(nodes::Edge* edge : node->edgesBack)
 		{
+			region->resetTrans();
 			generate(edge,genLengthMin,nodes::Direction::BACK);
 		}
 	}
-		
+	region->resetTrans();
 	//generado individuos
 	for(Path* path : lstPaths)
 	{
  		Single* s = new Single(nextID(),*this,path,targets);
- 		//path->print(std::cout);
- 		//std::cout << "\n";
+ 		s->print(std::cout);
+ 		std::cout << "\n";
 		push_back(s);
 	}
 	//liberando memoria de paths
