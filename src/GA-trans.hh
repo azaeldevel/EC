@@ -199,7 +199,7 @@ public:
 	unsigned short countTarget()const;
 	bool growUp();
 	nodes::Edge* randNext();
-
+	
 private:
 	bool cutBefore(nodes::Node*);
 	bool cutAfther(nodes::Node*);
@@ -251,7 +251,8 @@ public:
 	
 	bool checkRepitTarget(const Path* p)const;
 	unsigned short checkOrder(const Path* p)const;
-	
+	std::list<nodes::Edge*>::const_iterator find(const nodes::Edge*)const;
+
 private:
 	unsigned short puntos;
 	Chromosome chromosome;

@@ -532,43 +532,16 @@ void Single::randFill(bool favor)
 {
 	
 }
-/*Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node) const
-{
-	Population counNew = 0;
-	
-	std::list<Path*> lstp;
-	ec::Single* newchild;
-	if(juncting((const Single*)single,lstp))
-	const std::list<nodes::Node*>& lsTargets = ((Enviroment*)env)->getTargets();
-	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
-	{
-		for(Path* p : lstp)
-		{
-			if(lstp.size() + env->size() >= env->getMaxPopulation()) break;
-			newchild = new Single(env->nextID(),(Enviroment&)*env,p,lstTargets);
-			chils.push_back(newchild);
-		}
-		counNew++;
-		counNew += juncting((const Single*)single,lstp);
-	}
-	for(Path* p : lstp)
-	{
-		newchild = new Single(env->nextID(),(Enviroment&)*env,p,lstTargets);
-		chils.push_back(newchild);
-		counNew++;	
-	}
-		
-	return counNew;
-}*/
+
 Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node) const
 {
 	Population counNew = 0;	
 	
 	//buscar un empate entre this y single
-	std::list<nodes::Edge*>::const_iterator it = chromosome.getPath()->begin();
+	std::list<nodes::Edge*>::const_iterator it;
 	for(nodes::Edge* e : *chromosome.getPath())
 	{
-		//it = std::find(((Single*)single)->chromosome.getPath()->begin(),((Single*)single)->chromosome.getPath()->end(),e);
+		it = ((Single*)single)->find(e);
 	}
 	//si existe tal empate realizar una usarlos como para union
 		
@@ -639,6 +612,12 @@ unsigned short Single::checkOrder(const Path* p)const
 	return count;
 }
 
+
+std::list<nodes::Edge*>::const_iterator Single::find(const nodes::Edge* e)const
+{
+	const Path* path = chromosome.getPath();
+	//return std::find(path->begin(),path->end(),e);
+}
 
 
 
@@ -759,10 +738,7 @@ void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,no
 void Enviroment::initial()
 {
 	creteRegion(targets);
-	/*for(nodes::Node* node : targets)
-	{
-		std::cout << node->getID() << "\n";
-	}*/
+	
 	//
 	gammaLength = fractionQuality/double(region->getCountEdges());
 	gammaTarget = fractionQuality/double(targets.size());
@@ -791,7 +767,7 @@ void Enviroment::initial()
  		//std::cout << "\n";
 		push_back(s);
 	}
-	//liberando memoria de paths
+	
 	lstPaths.clear();
 	
 }
