@@ -40,6 +40,8 @@ namespace nodes
 	class Node
 	{
 	friend class Edge;
+	friend class ec::trans::Enviroment;
+
 	public:
 		Node(ID id);
 		Node(ID id,NodeType type);
@@ -53,6 +55,8 @@ namespace nodes
 		Index getFrontCount()const;
 		Edge* getBack(Index index);
 		Index getBackCount()const;
+		const std::list<Edge*>& getListFront()const;
+		const std::list<Edge*>& getListBack()const;
 
 		//setter
 		void setType(NodeType type);
@@ -147,8 +151,8 @@ namespace nodes
 		
 	private: 
 		std::string name;
-		std::list<Node*> toDeleteNodes;
-		std::list<Edge*> toDeleteEdges;
+		std::list<Node*> nodes;
+		std::list<Edge*> edges;
 		Node* origin;
 		unsigned int countNodes,countEdges;
 	};
@@ -182,7 +186,7 @@ class Path : public std::list<nodes::Edge*>
 {
 public:
 	Path(nodes::Direction dir);
-	Path(const Path*);
+	Path(const Path*,nodes::Direction);
 	Path(const Path*,const Path*);
 
 	unsigned short getCountTargets()const;
@@ -270,18 +274,20 @@ public:
 	double getGammaTarget() const;
 	const nodes::Region* getRegion()const;
 	std::list<nodes::Node*> getTargets()const;
+	double getFreactionQ()const;
+	double getFreactionD()const;
+	unsigned short getGenLengthMin() const;
 	
 	void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
 	void creteRegion(std::list<nodes::Node*>& targets);
-	double getFreactionQ()const;
-	double getFreactionD()const;
 
 	virtual void initial();
 	virtual void selection();
 	virtual void save();
 private:
 	void generate(nodes::Node* orig, unsigned short stop,nodes::Direction direction);
+	void generate(nodes::Edge* orig, unsigned short stop,nodes::Direction direction);
 	void generate(Path* path,nodes::Edge* e, unsigned short stop,nodes::Direction direction);
 	void print(nodes::Node*);
 	
@@ -293,6 +299,8 @@ private:
 	std::list<nodes::Node*> targets;
 	double fractionQuality;
 	double fractionDen;
+	nodes::Direction direction;
+	unsigned short genLengthMin;
 };
 
 }

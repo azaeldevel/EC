@@ -111,17 +111,22 @@ namespace nodes
 		if (direction == Direction::FRONT) edgeList = &edgesFront;
 		if (direction == Direction::BACK) edgeList = &edgesBack;
 		
-		//std::cout << "TransEnviroment::nextLessTrans Step 1 node " << getID() << "\n";
 		if(edgeList->empty()) return NULL;
-		//std::cout << "TransEnviroment::nextLessTrans Step 2\n";
 		for(Edge* e : *edgeList)
 		{
 			if(e->getNextCount() <  max) return e;
 		}
-		//std::cout << "TransEnviroment::nextLessTrans Step 3\n";
 		return NULL;
 	}
 
+	const std::list<Edge*>& Node::getListFront()const
+	{
+		return edgesFront;
+	}
+	const std::list<Edge*>& Node::getListBack()const
+	{
+		return edgesBack;
+	}
 
 
 
@@ -171,7 +176,6 @@ namespace nodes
 	
 	
 	
-	
 
 	
 
@@ -188,11 +192,11 @@ namespace nodes
 	}
 	Region::~Region()
 	{
-		for(Node* n : toDeleteNodes)
+		for(Node* n : nodes)
 		{
 			delete n;
 		}
-		for(Edge* e : toDeleteEdges)
+		for(Edge* e : edges)
 		{
 			delete e;
 		}
@@ -211,7 +215,7 @@ namespace nodes
 	Node* Region::newNode(ID id)
 	{
 		Node* n = new Node(id);
-		toDeleteNodes.push_back(n);
+		nodes.push_back(n);
 		if(origin == NULL) origin = n;//si no hay nodo origne registrado
 		countNodes++;
 		
@@ -220,7 +224,7 @@ namespace nodes
 	Node* Region::newNode(ID id,NodeType t)
 	{
 		Node* n = new Node(id,t);
-		toDeleteNodes.push_back(n);
+		nodes.push_back(n);
 		if(origin == NULL) origin = n;//si no hay nodo origne registrado
 		countNodes++;
 		
@@ -229,7 +233,7 @@ namespace nodes
 	Edge* Region::newEdge(unsigned int d,Node* a, Node* n)
 	{
 		Edge* e = new Edge(d,a,n);
-		toDeleteEdges.push_back(e);
+		edges.push_back(e);
 		countEdges++;
 		
 		return e;
@@ -240,8 +244,8 @@ namespace nodes
 		Edge* e2 = new Edge(d,n,a);
 		a->addFront(e1);
 		n->addBack(e2);
-		toDeleteEdges.push_back(e1);
-		toDeleteEdges.push_back(e2);
+		edges.push_back(e1);
+		edges.push_back(e2);
 		countEdges++;
 	}
 	Node* Region::getOrigin()
@@ -250,7 +254,7 @@ namespace nodes
 	}
 	void Region::resetTrans()
 	{
-		for(Edge* e : toDeleteEdges)
+		for(Edge* e : edges)
 		{
 			e->resetNextCount();
 		}
@@ -331,9 +335,8 @@ Path::Path(const Path* pb,const Path* pe)
 		push_back(e);
 	}
 }
-Path::Path(const Path* p) : std::list<nodes::Edge*>(*p)
+Path::Path(const Path* p,nodes::Direction d) : std::list<nodes::Edge*>(*p), direction(d)
 {
-	
 }
 unsigned short Path::getCountTargets()const
 {
@@ -511,9 +514,9 @@ void Single::eval()
 {
 	double flength = ((Enviroment*)env)->getGammaLength() * double(getLengthPath());
 	//flength = ((Enviroment&)getEnviroment()).getFreactionQ() - flength;
-	std::cout << "flength = " << flength << "\n";
+	//std::cout << "flength = " << flength << "\n";
 	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(checkOrder(chromosome.getPath()));
-	std::cout << "fTarget = " << fTarget << "\n";
+	//std::cout << "fTarget = " << fTarget << "\n";
 	fitness = flength + fTarget;	
 }
 void Single::randFill(bool favor)
@@ -616,6 +619,7 @@ unsigned short Single::checkOrder(const Path* p)const
 
 
 
+
 Enviroment::Enviroment()
 {
 	init();
@@ -634,6 +638,7 @@ void Enviroment::init()
 	comparer = &cmpStrength1;
 	fractionDen = 2.0;
 	fractionQuality = 1.0/fractionDen;
+	genLengthMin = 4;
 }
 Enviroment::~Enviroment()
 {
@@ -653,6 +658,38 @@ const nodes::Region* Enviroment::getRegion()const
 	return region;
 }
 
+unsigned short Enviroment::getGenLengthMin() const
+{
+	return genLengthMin;
+}
+
+
+void Enviroment::generate(nodes::Edge* e,unsigned short stop,nodes::Direction direction)
+{
+	if(stop == 0) return;
+	
+	Path* newPath = new Path(direction);		
+	nodes::Edge* edge = e;
+	nodes::Node* node;
+	
+	unsigned short i = 0;
+	do
+	{
+		node = edge->getNext();
+		edge->transNext();
+		newPath->push_back(edge);
+		lstPaths.push_back(newPath);
+		
+		//next iteration
+		i++;
+		edge = node->nextLessTrans(stop,direction);		
+	}
+	while( i < stop and edge != NULL);
+	std::cout << "Generating ..";
+	newPath->print(std::cout);
+	std::cout << "\n";
+}
+
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
 {
 	nodes::Edge* eN = n->nextLessTrans(stop,direction);	
@@ -669,7 +706,7 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 		eN = n->nextLessTrans(stop,direction);
 	}
 }
-void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,nodes::Direction direction)
+void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,nodes::Direction direct)
 {
 	nodes::Node* n = eprev->getNext();
 	nodes::Edge* eN = n->nextLessTrans(stop,direction);
@@ -678,7 +715,7 @@ void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,no
 		Path* newPath = NULL;
 		if(eN)
 		{
-			newPath = new Path(*path);
+			newPath = new Path(path,direct);
 			eN->transNext();
 			newPath->push_back(eN);
 			lstPaths.push_back(newPath);
@@ -694,29 +731,34 @@ void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,no
 void Enviroment::initial()
 {
 	creteRegion(targets);
-
+	for(nodes::Node* node : targets)
+	{
+		std::cout << node->getID() << "\n";
+	}
 	//
 	gammaLength = fractionQuality/double(region->getCountEdges());
 	gammaTarget = fractionQuality/double(targets.size());
 	
 	//
-	for(nodes::Node* n : targets)
+	for(nodes::Node* node : targets)
 	{
-		region->resetTrans();
-		generate(n,1,nodes::Direction::FRONT);
-		//region->resetTrans();
-		//generate(n,1,nodes::Direction::BACK);
-	}
-	std::cout << "Targets : \n";
-	for(nodes::Node* n : targets)
-	{
-		std::cout << "\t" << n->getID() << "\n";
+		std::cout << node->getID() << "\n";
+		for(nodes::Edge* edge : node->edgesFront)
+		{
+			generate(edge,genLengthMin,nodes::Direction::FRONT);
+		}
+		for(nodes::Edge* edge : node->edgesBack)
+		{
+			generate(edge,genLengthMin,nodes::Direction::BACK);
+		}
 	}
 		
 	//generado individuos
 	for(Path* path : lstPaths)
 	{
  		Single* s = new Single(nextID(),*this,path,targets);
+ 		//path->print(std::cout);
+ 		//std::cout << "\n";
 		push_back(s);
 	}
 	//liberando memoria de paths
