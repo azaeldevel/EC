@@ -1,7 +1,7 @@
 
 #include <octetos/core/Error.hh>
 #include <fstream>
-
+#include <algorithm>
 
 #include "GA-trans.hh"
 
@@ -312,6 +312,10 @@ bool Chromosome::growUp()
 {
 	return path->growUp();
 }
+Path* Chromosome::getPath()
+{
+	return path;
+}
 
 
 
@@ -613,10 +617,10 @@ unsigned short Single::checkOrder(const Path* p)const
 }
 
 
-std::list<nodes::Edge*>::const_iterator Single::find(const nodes::Edge* e)const
+std::list<nodes::Edge*>::iterator Single::find(nodes::Edge* e)
 {
-	const Path* path = chromosome.getPath();
-	//return std::find(path->begin(),path->end(),e);
+	Path* path = chromosome.getPath();
+	return std::find(path->begin(),path->end(),e);
 }
 
 

@@ -215,7 +215,8 @@ public:
 
 	unsigned short getLengthPath()const;
 	unsigned short getCountTagetsPath()const;
-	const Path* getPath()const;
+	const Path* getPath() const;
+	Path* getPath();
 
 	const Chromosome& operator = (const Chromosome&);	
 	
@@ -251,7 +252,7 @@ public:
 	
 	bool checkRepitTarget(const Path* p)const;
 	unsigned short checkOrder(const Path* p)const;
-	std::list<nodes::Edge*>::const_iterator find(const nodes::Edge*)const;
+	std::list<nodes::Edge*>::iterator find(nodes::Edge*);
 
 private:
 	unsigned short puntos;
