@@ -287,11 +287,11 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 
 
 
-Population Chromosome::juncting(const Chromosome* c,std::list<Path*>& p)const
+/*Population Chromosome::juncting(const Chromosome* c,std::list<Path*>& p)const
 {
 	//std::cout << "Step 1.1\n";
 	return path->juncting(c->path,p);
-}
+}*/
 void Chromosome::print(std::ostream& p) const
 {
 	path->print(p);
@@ -325,6 +325,9 @@ Path* Chromosome::getPath()
 Path::Path(nodes::Direction d) : direction(d)
 {	
 }
+Path::Path() : direction(nodes::Direction::NOTDIRECT)
+{	
+}
 Path::Path(const Path* pb,const Path* pe)
 {
 	if(pb->size() == 0) throw octetos::core::Exception("La Path de incio esta vacia.",__FILE__,__LINE__);
@@ -352,7 +355,12 @@ unsigned short Path::getCountTargets()const
 		
 	return count;
 }
-Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
+nodes::Direction Path::getDirection()const
+{
+	return direction;
+}
+
+/*Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 {
 	for(nodes::Edge* e1 : *this)
 	{
@@ -376,6 +384,30 @@ Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
 	}
 	
 	return lstp.size();
+}*/
+bool Path::juncting(Path* pB,Path* pE,unsigned short offset)
+{	
+	std::list<nodes::Edge*>::iterator itB = pB->begin();
+	std::list<nodes::Edge*>::iterator itE = pE->begin();
+	std::advance(itB,offset);
+	std::advance(itE,offset);
+	nodes::Edge* eB = *itB;
+	nodes::Edge* eE = *itE;
+	if(eB->getNode() == eE->getNode() and eB->getNext() != eE->getNext())
+	{
+		/*Path pB(b);
+		Path pE(e);		
+		pB.cutAfther(pB.at(offset)->getNode());
+		if(pB.size() < 3) continue;
+		pE.cutBefore(e2->getNode());
+		if(pE.size() < 3) continue;
+		Path(&pB,&pE);
+		return true;*/
+	}
+	/*else
+	{
+		throw octetos::core::Exception("Los Paths indicado no tiene la coincidencia indicada",__FILE__,__LINE__);
+	}*/
 }
 bool Path::cutBefore(nodes::Node* n)
 {
@@ -537,15 +569,24 @@ void Single::randFill(bool favor)
 	
 }
 
-Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node) const
+Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node)
 {
 	Population counNew = 0;	
-	
+	unsigned short i = 0;
 	//buscar un empate entre this y single
-	std::list<nodes::Edge*>::const_iterator it;
+	nodes::Edge* pe;
 	for(nodes::Edge* e : *chromosome.getPath())
 	{
-		it = ((Single*)single)->find(e);
+		pe = ((Single*)single)->find(e);
+		if(pe != NULL)
+		{
+			i++;
+			if(pe->getNext() != e->getNext())
+			{
+				Path* newp = new Path();
+				newp->juncting(chromosome.getPath(),((Single*)single)->chromosome.getPath(),i);
+			}
+		}
 	}
 	//si existe tal empate realizar una usarlos como para union
 		
@@ -576,11 +617,11 @@ void Single::print(nodes::Node&) const
 {
 
 }
-Population Single::juncting(const Single* s,std::list<Path*>& p)const
+/*Population Single::juncting(const Single* s,std::list<Path*>& p)const
 {
 	//std::cout << "Step 1\n";
 	return chromosome.juncting(&s->chromosome,p);
-}
+}*/
 unsigned short Single::getLengthPath()const
 {
 	return chromosome.getLengthPath();
@@ -617,10 +658,13 @@ unsigned short Single::checkOrder(const Path* p)const
 }
 
 
-std::list<nodes::Edge*>::iterator Single::find(nodes::Edge* e)
+nodes::Edge* Single::find(nodes::Edge* e)
 {
+	std::list<nodes::Edge*>::iterator it;
 	Path* path = chromosome.getPath();
-	return std::find(path->begin(),path->end(),e);
+	it = std::find(path->begin(),path->end(),e);
+	if(it == path->end()) return NULL;
+	return *it;
 }
 
 

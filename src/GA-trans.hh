@@ -33,6 +33,7 @@ namespace nodes
 	};
 	enum Direction
 	{
+		NOTDIRECT,
 		FRONT,
 		BACK
 	};
@@ -185,15 +186,19 @@ namespace nodes
 class Path : public std::list<nodes::Edge*>
 {
 public:
+	Path();
 	Path(nodes::Direction dir);
+	Path(const Path*);
 	Path(const Path*,nodes::Direction);
 	Path(const Path*,const Path*);
 
 	unsigned short getCountTargets()const;
 	unsigned short getLength()const;
+	nodes::Direction getDirection()const;
 
 	//const nodes::Node* checkJunct(const Path*)const;
-	Population juncting(const Path*,std::list<Path*>& lp)const;
+	//Population juncting(const Path*,std::list<Path*>& lp)const;
+	bool juncting(Path*,Path*, unsigned short offset);
 	virtual void print(std::ostream&) const;
 	static void print(const nodes::Node* n,std::ostream&);
 	unsigned short countTarget()const;
@@ -220,7 +225,7 @@ public:
 
 	const Chromosome& operator = (const Chromosome&);	
 	
-	Population juncting(const Chromosome*,std::list<Path*>& p)const;
+	//Population juncting(const Chromosome*,std::list<Path*>& p)const;
 	virtual void print(std::ostream&) const;
 	bool growUp();
 
@@ -243,16 +248,16 @@ public:
 
 	virtual void eval();
 	virtual void randFill(bool favor = false);
-	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*) const;
+	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*);
 	virtual void save(std::ofstream& fn);
 	virtual void print(std::ostream&) const;
 	void print(nodes::Node&) const;	
-	Population juncting(const Single*,std::list<Path*>& p)const;
+	//Population juncting(const Single*,std::list<Path*>& p)const;
 	bool growUp();
 	
 	bool checkRepitTarget(const Path* p)const;
 	unsigned short checkOrder(const Path* p)const;
-	std::list<nodes::Edge*>::iterator find(nodes::Edge*);
+	nodes::Edge* find(nodes::Edge*);
 
 private:
 	unsigned short puntos;

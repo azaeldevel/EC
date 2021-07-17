@@ -56,7 +56,7 @@ public:
 		
 	virtual void eval();
 	virtual void randFill(bool favor = false);
-	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*) const;
+	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*);
 	virtual void save(std::ofstream& fn);
 	const octetos::core::MD5sum& getMD5() const;
 	
