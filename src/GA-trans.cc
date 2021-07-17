@@ -395,19 +395,22 @@ bool Path::juncting(Path* pB,Path* pE,unsigned short offset)
 	nodes::Edge* eE = *itE;
 	if(eB->getNode() == eE->getNode() and eB->getNext() != eE->getNext())
 	{
-		/*Path pB(b);
-		Path pE(e);		
-		pB.cutAfther(pB.at(offset)->getNode());
-		if(pB.size() < 3) continue;
-		pE.cutBefore(e2->getNode());
-		if(pE.size() < 3) continue;
+		Path pB(pB);
+		Path pE(pE);	
+		if(offset > 1)
+		{
+			pB.cutAfther(eB->getNode());
+			//if(pB.size() < 3) continue;
+			pE.cutBefore(eB->getNode());
+			//if(pE.size() < 3) continue;
+		}
 		Path(&pB,&pE);
-		return true;*/
+		return true;
 	}
-	/*else
+	else
 	{
 		throw octetos::core::Exception("Los Paths indicado no tiene la coincidencia indicada",__FILE__,__LINE__);
-	}*/
+	}
 }
 bool Path::cutBefore(nodes::Node* n)
 {
@@ -575,24 +578,28 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 	unsigned short i = 0;
 	//buscar un empate entre this y single
 	nodes::Edge* pe;
-	for(nodes::Edge* e : *chromosome.getPath())
-	{
-		pe = ((Single*)single)->find(e);
-		if(pe != NULL)
-		{
-			i++;
-			if(pe->getNext() != e->getNext())
-			{
-				Path* newp = new Path();
-				newp->juncting(chromosome.getPath(),((Single*)single)->chromosome.getPath(),i);
-			}
-		}
-	}
 	//si existe tal empate realizar una usarlos como para union
-		
+	std::cout << "Juntion 1\n";
 	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
-		
+		i = 0;
+		std::cout << "Juntion 1.1\n";
+		for(nodes::Edge* e : *chromosome.getPath())
+		{
+			std::cout << "Juntion 1.1.1\n";
+			pe = ((Single*)single)->find(e);
+			if(pe != NULL)
+			{
+				std::cout << "Juntion 1.1.1.1\n";
+				i++;
+				if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) throw octetos::core::Exception("El sentido de la ruta no coincide.",__LINE__,__FILE__);
+				if(pe->getNext() != e->getNext())
+				{
+					Path* newp = new Path();
+					if(newp->juncting(chromosome.getPath(),((Single*)single)->chromosome.getPath(),i)) counNew++;
+				}
+			}
+		}
 	}
 			
 	return counNew;
