@@ -2,6 +2,7 @@
 #include <octetos/core/Error.hh>
 #include <fstream>
 #include <algorithm>
+#include <iostream>
 
 #include "GA-trans.hh"
 
@@ -127,7 +128,28 @@ namespace nodes
 	{
 		return edgesBack;
 	}
+	Edge* Node::randFront()
+	{		
+		if(edgesFront.size() == 0) return NULL;
+		if(edgesFront.size() == 1) return *edgesFront.begin();
 
+		double rand = randNumber (0.0,double(edgesFront.size()));
+		
+		std::list<Edge*>::iterator it = edgesFront.begin();
+		std::advance(it,rand);
+		return *it;		
+	}
+	Edge* Node::randBack()
+	{		
+		if(edgesBack.size() == 0) return NULL;
+		if(edgesBack.size() == 1) return *edgesBack.begin();
+
+		double rand = randNumber (0.0,double(edgesBack.size()));
+		
+		std::list<Edge*>::iterator it = edgesBack.begin();
+		std::advance(it,rand);
+		return *it;		
+	}
 
 
 
@@ -308,15 +330,14 @@ const Path* Chromosome::getPath()const
 {
 	return path;
 }
-bool Chromosome::growUp()
+/*bool Chromosome::growUp()
 {
 	return path->growUp();
-}
+}*/
 Path* Chromosome::getPath()
 {
 	return path;
 }
-
 
 
 
@@ -497,35 +518,35 @@ unsigned short Path::countTarget()const
 	
 	return count;
 }	
-bool Path::growUp()
+/*bool Path::growUp()
 {
-	nodes::Edge* e = randNext();
-	if(e) 
-	{
-		push_back(e);
-		return true;
-	}	
+	if(size() == 0) return false;
 
-	return false;
-}
-nodes::Edge* Path::randNext()
+	push_back(randNext());
+
+	return true;
+}*/
+/*nodes::Edge* Path::randNext()
 {
-	nodes::Node* n = back()->getNode();
 	float rand = randNumber();
-	std::list<nodes::Edge*>* randEdge;
+	nodes::Node* n = NULL;
+	if(size() > 0) n = back()->getNode();
+	else n = back()->getNode();
+
+	//std::list<nodes::Edge*>* randEdge;
 	if(direction == nodes::Direction::FRONT) 
 	{
 		rand = randNumber(0.0,float(n->getFrontCount() - 1.0));
-		return n->getFront(rand);
+		return n->getFront(rand)->getNext()->getFront(rand);
 	}
 	else if(direction == nodes::Direction::BACK)
 	{
 		rand = randNumber(0.0,float(n->getFrontCount() - 1.0));
-	 	return n->getBack(rand);
+	 	return n->getBack(rand)->getNext()->getFront(rand);
 	}
 	
 	return NULL;	
-}
+}*/
 
 
 
@@ -579,28 +600,31 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 	//buscar un empate entre this y single
 	nodes::Edge* pe;
 	//si existe tal empate realizar una usarlos como para union
-	std::cout << "Juntion 1\n";
+	//std::cout << "Juntion 1\n";
 	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
 		i = 0;
-		std::cout << "Juntion 1.1\n";
+		//std::cout << "Juntion 1.1\n";
 		for(nodes::Edge* e : *chromosome.getPath())
 		{
-			std::cout << "Juntion 1.1.1\n";
+			//std::cout << "Juntion 1.1.1\n";
 			pe = ((Single*)single)->find(e);
 			if(pe != NULL)
 			{
-				std::cout << "Juntion 1.1.1.1\n";
+				//std::cout << "Juntion 1.1.1.1\n";
 				i++;
 				if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) throw octetos::core::Exception("El sentido de la ruta no coincide.",__LINE__,__FILE__);
 				if(pe->getNext() != e->getNext())
 				{
+					//std::cout << "Juntion 1.1.1.1.1\n";
 					Path* newp = new Path();
 					if(newp->juncting(chromosome.getPath(),((Single*)single)->chromosome.getPath(),i)) counNew++;
 				}
 			}
 		}
 	}
+
+	//growUp();
 			
 	return counNew;
 }
@@ -641,11 +665,10 @@ const Chromosome* Single::getChromosome()const
 {
 	return &chromosome;
 }
-bool Single::growUp()
+/*bool Single::growUp()
 {
 	return chromosome.growUp();
-}
-
+}*/
 unsigned short Single::checkOrder(const Path* p)const
 {
 	unsigned short count = 0;
@@ -663,8 +686,6 @@ unsigned short Single::checkOrder(const Path* p)const
 	
 	return count;
 }
-
-
 nodes::Edge* Single::find(nodes::Edge* e)
 {
 	std::list<nodes::Edge*>::iterator it;
@@ -726,69 +747,43 @@ unsigned short Enviroment::getGenLengthMin() const
 }
 
 
-void Enviroment::generate(nodes::Edge* e,unsigned short stop,nodes::Direction direction)
-{
-	if(stop == 0) return;
-	
-	Path* newPath = new Path(direction);		
-	nodes::Edge* edge = e;
-	nodes::Node* node;
-	
-	unsigned short i = 0;
-	do
-	{
-		node = edge->getNext();
-		edge->transNext();
-		newPath->push_back(edge);
-		
-		//next iteration
-		i++;
-		edge = node->nextLessTrans(stop,direction);		
-	}
-	while( i < stop and edge != NULL);
-	lstPaths.push_back(newPath);
-	//std::cout << "Generating ..";
-	//newPath->print(std::cout);
-	//std::cout << "\n";
-}
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
 {
-	nodes::Edge* eN = n->nextLessTrans(stop,direction);	
-	
-	while(eN)
+	//std::cout << "Step 1\n";
+	Path* newPath = new Path(direction);
+	if(direction == nodes::Direction::FRONT)
 	{
-		Path* newPath = new Path(direction);
-		eN->transNext();
-		newPath->push_back(eN);
-		lstPaths.push_back(newPath);	
-		generate(newPath,eN,stop,direction);
+		nodes::Edge* e = n->randFront();
+		if(e != NULL) newPath->push_back(e);
+	}
+	else if(direction == nodes::Direction::BACK)
+	{
+		nodes::Edge* e = n->randBack();
+		if(e != NULL) newPath->push_back(e);
+	}
+	else throw octetos::core::Exception("Direccion no asignada",__LINE__,__FILE__);
 
-		//next iteration
-		eN = n->nextLessTrans(stop,direction);
-	}
-}
-void Enviroment::generate(Path* path, nodes::Edge* eprev, unsigned short stop,nodes::Direction direct)
-{
-	nodes::Node* n = eprev->getNext();
-	nodes::Edge* eN = n->nextLessTrans(stop,direction);
-	do
+	//std::cout << "Step 2\n";
+	for(unsigned short i; i < stop; i++)
 	{
-		Path* newPath = NULL;
-		if(eN)
+		if(direction == nodes::Direction::FRONT)
 		{
-			newPath = new Path(path,direct);
-			eN->transNext();
-			newPath->push_back(eN);
-			lstPaths.push_back(newPath);
+			//std::cout << "Step 2.1\n";
+			nodes::Edge* e = NULL;
+			if(newPath->back() != NULL) if(newPath->back()->getNext() != NULL) e = newPath->back()->getNext()->randFront();
+			if(e != NULL) newPath->push_back(e);			
 		}
-		
-		if(n->getType() == nodes::UNKNOW and eN and newPath) generate(newPath,eN,stop,direction);
-		
-		//next iteration
-		eN = n->nextLessTrans(stop,direction);
+		else if(direction == nodes::Direction::BACK)
+		{
+			//std::cout << "Step 2.1\n";
+			nodes::Edge* e = NULL;
+			if(newPath->back() != NULL) if(newPath->back()->getNext() != NULL) e = newPath->back()->getNext()->randBack();
+			if(e != NULL) newPath->push_back(e);			
+		}
 	}
-	while(eN);
+	//std::cout << "Step 3\n";
+	if(newPath->size() > 1) lstPaths.push_back(newPath);
 }
 void Enviroment::initial()
 {
@@ -801,25 +796,17 @@ void Enviroment::initial()
 	//
 	for(nodes::Node* node : targets)
 	{
-		//std::cout << node->getID() << "\n";
-		for(nodes::Edge* edge : node->edgesFront)
-		{
-			region->resetTrans();
-			generate(edge,genLengthMin,nodes::Direction::FRONT);
-		}
-		for(nodes::Edge* edge : node->edgesBack)
-		{
-			region->resetTrans();
-			generate(edge,genLengthMin,nodes::Direction::BACK);
-		}
+		std::cout << node->getID() << "\n";
+		generate(node,genLengthMin,nodes::Direction::FRONT);
+		//generate(node,genLengthMin,nodes::Direction::BACK);
 	}
 	region->resetTrans();
 	//generado individuos
 	for(Path* path : lstPaths)
 	{
  		Single* s = new Single(nextID(),*this,path,targets);
- 		//s->print(std::cout);
- 		//std::cout << "\n";
+ 		s->print(std::cout);
+ 		std::cout << "\n";
 		push_back(s);
 	}
 	

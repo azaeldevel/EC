@@ -73,7 +73,9 @@ namespace nodes
 		Edge* operator[] (Index index);
 		Edge* nextLessTrans(Direction direction);
 		Edge* nextLessTrans(Explored max,Direction direction);
-		
+		Edge* randFront();
+		Edge* randBack();
+
 	private:
 		ID id; 
 		std::list<Edge*> edgesFront;
@@ -95,7 +97,7 @@ namespace nodes
 		//void setPrevius(Node* n);
 		Node* transNext();
 		//Node* transPrev();
-		virtual Node* getNext();
+		Node* getNext();
 		Node* getNode();
 		unsigned short getNextCount();
 		//unsigned short getPrevCount();
@@ -202,8 +204,8 @@ public:
 	virtual void print(std::ostream&) const;
 	static void print(const nodes::Node* n,std::ostream&);
 	unsigned short countTarget()const;
-	bool growUp();
-	nodes::Edge* randNext();
+	//bool growUp();
+	//nodes::Edge* randNext();
 	
 private:
 	bool cutBefore(nodes::Node*);
@@ -227,7 +229,7 @@ public:
 	
 	//Population juncting(const Chromosome*,std::list<Path*>& p)const;
 	virtual void print(std::ostream&) const;
-	bool growUp();
+	//bool growUp();
 
 private:
 	Path* path;
@@ -253,7 +255,7 @@ public:
 	virtual void print(std::ostream&) const;
 	void print(nodes::Node&) const;	
 	//Population juncting(const Single*,std::list<Path*>& p)const;
-	bool growUp();
+	//bool growUp();
 	
 	bool checkRepitTarget(const Path* p)const;
 	unsigned short checkOrder(const Path* p)const;
@@ -294,8 +296,6 @@ public:
 	virtual void save();
 private:
 	void generate(nodes::Node* orig, unsigned short stop,nodes::Direction direction);
-	void generate(nodes::Edge* orig, unsigned short stop,nodes::Direction direction);
-	void generate(Path* path,nodes::Edge* e, unsigned short stop,nodes::Direction direction);
 	void print(nodes::Node*);
 	
 	//	
