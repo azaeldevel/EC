@@ -199,6 +199,7 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodeB = region->newNode(++countID);//ID:45
 	region->newEdge(447,nodeA,nodeB);
 	nodes::Node* node_45 = nodeB;
+	node_45->setType(nodes::NodeType::TARGET);
 	targets.push_back(node_45);
 	
 	nodeB = region->newNode(++countID);//ID:46

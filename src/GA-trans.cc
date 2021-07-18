@@ -808,7 +808,7 @@ void Enviroment::initial()
 	}
 	//region->resetTrans();
 	//generado individuos
-	/*for(Path* path : lstPaths)
+	for(Path* path : lstPaths)
 	{
  		Single* s = new Single(nextID(),*this,path,targets);
  		s->print(std::cout);
@@ -816,7 +816,7 @@ void Enviroment::initial()
 		push_back(s);
 	}
 	
-	lstPaths.clear();*/
+	lstPaths.clear();
 	
 }
 
