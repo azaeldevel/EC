@@ -270,16 +270,7 @@ namespace nodes
 		
 		return e;
 	}
-	void Region::newEdgeBi(unsigned int d,Node* a, Node* n)
-	{
-		Edge* e1 = new Edge(d,a,n);
-		Edge* e2 = new Edge(d,n,a);
-		a->addFront(e1);
-		n->addBack(e2);
-		edges.push_back(e1);
-		edges.push_back(e2);
-		//countEdges++;
-	}
+
 	Node* Region::getOrigin()
 	{
 		return origin;
@@ -316,14 +307,6 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 	return *this;
 }
 
-
-
-
-/*Population Chromosome::juncting(const Chromosome* c,std::list<Path*>& p)const
-{
-	//std::cout << "Step 1.1\n";
-	return path->juncting(c->path,p);
-}*/
 void Chromosome::print(std::ostream& p) const
 {
 	path->print(p);
@@ -340,10 +323,6 @@ const Path* Chromosome::getPath()const
 {
 	return path;
 }
-/*bool Chromosome::growUp()
-{
-	return path->growUp();
-}*/
 Path* Chromosome::getPath()
 {
 	return path;
@@ -397,31 +376,6 @@ const octetos::core::MD5sum& Path::getMD5()const
 	return md5;
 }
 
-/*Population Path::juncting(const Path* p,std::list<Path*>& lstp)const
-{
-	for(nodes::Edge* e1 : *this)
-	{
-		for(nodes::Edge* e2 : *p)
-		{
-			if(p->front()->getNode() == front()->getNode()) continue;
-			if(p->back()->getNode() == back()->getNode()) continue;
-			
-			if(e1->getNode() == e2->getNode() and e1->getNext() != e2->getNext())
-			{//
-				Path pB(*this);
-				Path pE(*p);		
-				pB.cutAfther(e1->getNode());
-				if(pB.size() < 3) continue;
-				pE.cutBefore(e2->getNode());
-				if(pE.size() < 3) continue;
-				Path*  newp = new Path(&pB,&pE);
-				lstp.push_back(newp);
-			}
-		}
-	}
-	
-	return lstp.size();
-}*/
 bool Path::juncting(Path* pB,Path* pE,unsigned short offset)
 {	
 	std::list<nodes::Edge*>::iterator itB = pB->begin();
@@ -534,35 +488,7 @@ unsigned short Path::countTarget()const
 	
 	return count;
 }	
-/*bool Path::growUp()
-{
-	if(size() == 0) return false;
 
-	push_back(randNext());
-
-	return true;
-}*/
-/*nodes::Edge* Path::randNext()
-{
-	float rand = randNumber();
-	nodes::Node* n = NULL;
-	if(size() > 0) n = back()->getNode();
-	else n = back()->getNode();
-
-	//std::list<nodes::Edge*>* randEdge;
-	if(direction == nodes::Direction::FRONT) 
-	{
-		rand = randNumber(0.0,float(n->getFrontCount() - 1.0));
-		return n->getFront(rand)->getNext()->getFront(rand);
-	}
-	else if(direction == nodes::Direction::BACK)
-	{
-		rand = randNumber(0.0,float(n->getFrontCount() - 1.0));
-	 	return n->getBack(rand)->getNext()->getFront(rand);
-	}
-	
-	return NULL;	
-}*/
 void Path::genMD5()
 {
 	std::string strmd5;
@@ -796,7 +722,7 @@ unsigned short Enviroment::getGenLengthMin() const
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
 {
-	//std::cout << "Step 1\n";
+	std::cout << "Step 1\n";
 	Path* newPath = new Path(direction);
 	if(direction == nodes::Direction::FRONT)
 	{
@@ -811,11 +737,16 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 	else if(direction == nodes::Direction::BACK)
 	{
 		nodes::Edge* e = n->randBack();
-		if(e != NULL) newPath->push_back(e);
+		std::cout << "Step Back 1.1 (" << e << ")\n";
+		if(e != NULL) 
+		{
+			std::cout << "Step 1.1.1 (" << e->getNode()->getID() << ")\n";
+			newPath->push_back(e);
+		}
 	}
 	else throw octetos::core::Exception("Direccion no asignada",__LINE__,__FILE__);
 
-	//std::cout << "Step 2\n";
+	std::cout << "Step 2\n";
 	for(unsigned short i; i < stop; i++)
 	{
 		if(direction == nodes::Direction::FRONT)
@@ -827,13 +758,20 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 		}
 		else if(direction == nodes::Direction::BACK)
 		{
-			//std::cout << "Step 2.1\n";
+			std::cout << "Step 2.1\n";
 			nodes::Edge* e = NULL;
-			if(newPath->back() != NULL) if(newPath->back()->getNext() != NULL) e = newPath->back()->getNext()->randBack();
+			if(newPath->back() != NULL) 
+			{
+				std::cout << "Step 2.1(" << newPath->back() << ")\n";
+				if(newPath->back()->getNext() != NULL) 
+				{
+					e = newPath->back()->getNext()->randBack();
+				}
+			}
 			if(e != NULL) newPath->push_back(e);			
 		}
 	}
-	//std::cout << "Step 3\n";
+	std::cout << "Step 3\n";
 	if(newPath->size() > 1) lstPaths.push_back(newPath);
 }
 void Enviroment::initial()
@@ -852,7 +790,7 @@ void Enviroment::initial()
 		{
 			std::cout << node->getID() << "\n";
 			generate(node,genLengthMin,nodes::Direction::FRONT);
-			//generate(node,genLengthMin,nodes::Direction::BACK);
+			generate(node,genLengthMin,nodes::Direction::BACK);
 		}
 	}
 	

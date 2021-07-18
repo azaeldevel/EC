@@ -9,16 +9,12 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 {
 	//std::cout << "TransEnviroment::creteRegion Step 1\n";
 	region = new nodes::Region(++countID,"Tesing");
-	nodes::Target* target1;
-	nodes::Node* nodeA;
-	nodes::Node* nodeB;
-	//nodes::Edge* edge;
-
-	//std::cout << "TransEnviroment::creteRegion Step 2\n";
-	nodeA = region->newNode(++countID,nodes::NodeType::ORIGIN);//O ID:2
-	nodeB = region->newNode(++countID);//ID:3
-	region->newEdgeFront(250,nodeA,nodeB);
-	nodes::Node* node_O = nodeA;
+	
+	//front
+	nodes::Node* node_2 = region->newNode(++countID,nodes::NodeType::ORIGIN);//O ID:2
+	nodes::Node* node_3 = region->newNode(++countID);//ID:3
+	region->newEdgeFront(250,node_2,node_3);
+	nodes::Node* node_O = node_2;
 	targets.push_back(node_O);
 
 	nodes::Node* node_4 = region->newNode(++countID);
@@ -48,7 +44,6 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodes::Node* node_12 = region->newNode(++countID);
 	region->newEdgeFront(50,node_11,node_12);//ID:12
 	
-	nodeA = nodeB;
 	nodes::Node* node_13 = region->newNode(++countID);
 	region->newEdgeFront(150,node_12,node_13);//ID:13
 	
@@ -58,15 +53,12 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodes::Node* node_15 = region->newNode(++countID);
 	region->newEdgeFront(200,node_14,node_15);//ID:15
 	
-	nodeA = nodeB;
 	nodes::Node* node_16 = region->newNode(++countID);
 	region->newEdgeFront(200,node_15,node_16);//ID:16
 	
-	nodeA = nodeB;
 	nodes::Node* node_17 = region->newNode(++countID);
 	region->newEdgeFront(200,node_16,node_17);//ID:17
 	
-	nodeA = nodeB;
 	nodes::Node* node_18 = region->newNode(++countID);
 	region->newEdgeFront(250,node_17,node_18);//ID:18
 	
@@ -101,10 +93,12 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	region->newEdgeFront(150,node_27,node_28);//ID:28
 	
 	nodes::Node* node_29 = region->newNode(++countID);
-	region->newEdgeFront(250,node_29,node_29);//ID:29
+	region->newEdgeFront(250,node_28,node_29);//ID:29
 	
 	nodes::Node* node_30 = region->newNode(++countID);
 	region->newEdgeFront(150,node_29,node_30);//ID:30
+	
+	region->newEdgeFront(100,node_30,node_O);
 	
 	nodes::Node* node_31 = region->newNode(++countID);
 	region->newEdgeFront(100,node_O,node_31);//ID:31
@@ -168,6 +162,65 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	
 	region->newEdgeFront(100,node_45,node_11);
 	
+	
+	//back
+	region->newEdgeBack(100,node_O,node_30);
+	
+	region->newEdgeBack(100,node_30,node_29);
+	
+	region->newEdgeBack(100,node_29,node_28);
+	
+	region->newEdgeBack(100,node_28,node_27);
+	
+	region->newEdgeBack(100,node_27,node_26);
+	
+	region->newEdgeBack(100,node_26,node_25);
+	
+	region->newEdgeBack(100,node_25,node_24);
+	
+	region->newEdgeBack(100,node_24,node_23);
+	
+	region->newEdgeBack(100,node_23,node_22);
+	
+	region->newEdgeBack(100,node_22,node_21);
+	
+	region->newEdgeBack(100,node_21,node_20);
+	
+	region->newEdgeBack(100,node_20,node_19);
+	
+	region->newEdgeBack(100,node_19,node_18);
+	
+	region->newEdgeBack(100,node_18,node_17);
+	
+	region->newEdgeBack(100,node_17,node_16);
+	
+	region->newEdgeBack(100,node_16,node_15);
+	
+	region->newEdgeBack(100,node_15,node_14);
+	
+	region->newEdgeBack(100,node_14,node_13);
+	
+	region->newEdgeBack(100,node_13,node_12);
+	
+	region->newEdgeBack(100,node_12,node_11);
+	
+	region->newEdgeBack(100,node_11,node_10);
+	
+	region->newEdgeBack(100,node_10,node_9);
+	
+	region->newEdgeBack(100,node_9,node_8);
+	
+	region->newEdgeBack(100,node_8,node_7);
+	
+	region->newEdgeBack(100,node_7,node_6);
+	
+	region->newEdgeBack(100,node_6,node_5);
+	
+	region->newEdgeBack(100,node_5,node_4);
+	
+	region->newEdgeBack(100,node_4,node_3);
+	
+	region->newEdgeBack(100,node_3,node_O);
 }
 
 }
