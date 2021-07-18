@@ -122,7 +122,6 @@ public:
 	
 
 	virtual void eval() = 0;
-	virtual void randFill(bool favor = false) = 0;
 	virtual Population juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel,void*) = 0;
 	virtual void save(std::ofstream& fn) = 0;
 	virtual void print(std::ostream&) const = 0;
@@ -165,7 +164,7 @@ public:
 	//
 	void init();
 	Enviroment();
-	//Enviroment(const std::string& log,Iteration maxIteration);
+	Enviroment(const std::string& log,Iteration maxIteration);
 	Enviroment(Iteration maxIteration);
 	~Enviroment();
 
@@ -202,11 +201,11 @@ public:
 	Single* getRandomSingle() const;
 	
 	virtual bool run();
-	virtual void selection() = 0;
-	virtual void initial()=0;
 	virtual void eval();
 	virtual void juncting();
-	virtual void save()=0;
+	virtual void selection() = 0;
+	virtual void initial() = 0;
+	virtual void save() = 0;
 	//virtual void series(const std::string& logDir,Iteration maxIteBySerie);
 	
 protected:

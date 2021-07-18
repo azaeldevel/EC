@@ -270,6 +270,10 @@ Enviroment::Enviroment(Iteration m) : maxIteration(m)
 {
 	init();	
 }
+Enviroment::Enviroment(const std::string& log,Iteration m) : maxIteration(m), logDirectory(log)
+{
+	init();		
+}
 
 Population Enviroment::getMaxPopulation()const
 {

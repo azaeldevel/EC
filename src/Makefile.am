@@ -9,10 +9,10 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-bin_PROGRAMS = sudoku trans develop
+bin_PROGRAMS = sudoku trans max develop
 lib_LTLIBRARIES = libEC.la
 
-libEC_la_SOURCES = core.cc GA.cc GA-sudoku.cc GA-trans.cc GA-trans-region.cc
+libEC_la_SOURCES = core.cc GA.cc GA-sudoku.cc GA-trans.cc GA-trans-region.cc GA-max.cc
 
 
 sudoku_SOURCES = ec-sudoku.cc
@@ -26,6 +26,11 @@ trans_LDFLAGS =
 trans_CXXFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS) $(ZLIB_CFLAGS)
 trans_LDADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS) $(ZLIB_LIBS) libEC.la
 
+
+max_SOURCES = ec-max.cc
+max_LDFLAGS = 
+max_CXXFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS) $(ZLIB_CFLAGS)
+max_LDADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS) $(ZLIB_LIBS) libEC.la
 
 develop_SOURCES = main.cc 
 develop_LDFLAGS = 
