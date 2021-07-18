@@ -751,15 +751,15 @@ unsigned short Enviroment::getGenLengthMin() const
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
 {
-	std::cout << "Step 1\n";
+	//std::cout << "Step 1\n";
 	Path* newPath = new Path(direction);
 	if(direction == nodes::Direction::FRONT)
 	{
 		nodes::Edge* e = n->randFront();
-		std::cout << "Step 1.1 (" << e << ")\n";
+		//std::cout << "Step 1.1 (" << e << ")\n";
 		if(e != NULL) 
 		{
-			std::cout << "Step 1.1.1 (" << e->getNode()->getID() << ")\n";
+			//std::cout << "Step 1.1.1 (" << e->getNode()->getID() << ")\n";
 			newPath->push_back(e);
 		}
 	}
@@ -770,25 +770,25 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 	}
 	else throw octetos::core::Exception("Direccion no asignada",__LINE__,__FILE__);
 
-	std::cout << "Step 2\n";
+	//std::cout << "Step 2\n";
 	for(unsigned short i; i < stop; i++)
 	{
 		if(direction == nodes::Direction::FRONT)
 		{
-			std::cout << "Step 2.1\n";
+			//std::cout << "Step 2.1\n";
 			nodes::Edge* e = NULL;
 			if(newPath->back() != NULL) if(newPath->back()->getNext() != NULL) e = newPath->back()->getNext()->randFront();
 			if(e != NULL) newPath->push_back(e);			
 		}
 		else if(direction == nodes::Direction::BACK)
 		{
-			std::cout << "Step 2.1\n";
+			//std::cout << "Step 2.1\n";
 			nodes::Edge* e = NULL;
 			if(newPath->back() != NULL) if(newPath->back()->getNext() != NULL) e = newPath->back()->getNext()->randBack();
 			if(e != NULL) newPath->push_back(e);			
 		}
 	}
-	std::cout << "Step 3\n";
+	//std::cout << "Step 3\n";
 	if(newPath->size() > 1) lstPaths.push_back(newPath);
 }
 void Enviroment::initial()
@@ -806,8 +806,7 @@ void Enviroment::initial()
 		generate(node,genLengthMin,nodes::Direction::FRONT);
 		//generate(node,genLengthMin,nodes::Direction::BACK);
 	}
-	//region->resetTrans();
-	//generado individuos
+	
 	for(Path* path : lstPaths)
 	{
  		Single* s = new Single(nextID(),*this,path,targets);
