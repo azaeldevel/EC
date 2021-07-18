@@ -148,7 +148,8 @@ namespace nodes
 		//Street* newStreet(ID id,NodeType type);
 		Target* newTarget();
 		Edge* newEdge(unsigned int time,unsigned int distence,Node* prev, Node* next);
-		Edge* newEdge(unsigned int distence,Node* prev, Node* next);
+		Edge* newEdgeFront(unsigned int distence,Node* prev, Node* next);
+		Edge* newEdgeBack(unsigned int distence,Node* prev, Node* next);
 		void newEdgeBi(unsigned int distence,Node* prev, Node* next);
 		void resetTrans();
 		

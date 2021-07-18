@@ -252,10 +252,19 @@ namespace nodes
 		
 		return n;
 	}
-	Edge* Region::newEdge(unsigned int d,Node* a, Node* n)
+	Edge* Region::newEdgeFront(unsigned int d,Node* a, Node* n)
 	{
 		Edge* e = new Edge(d,a,n);
 		a->addFront(e);
+		edges.push_back(e);
+		//countEdges++;
+		
+		return e;
+	}
+	Edge* Region::newEdgeBack(unsigned int d,Node* a, Node* n)
+	{
+		Edge* e = new Edge(d,a,n);
+		a->addBack(e);
 		edges.push_back(e);
 		//countEdges++;
 		
@@ -758,7 +767,7 @@ void Enviroment::init()
 	fractionDen = 2.0;
 	fractionQuality = 1.0/fractionDen;
 	genLengthMin = 5;
-	threads = 10;
+	threads = 20;
 }
 Enviroment::~Enviroment()
 {
