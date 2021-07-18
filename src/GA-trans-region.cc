@@ -12,7 +12,7 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodes::Target* target1;
 	nodes::Node* nodeA;
 	nodes::Node* nodeB;
-	nodes::Edge* edge;
+	//nodes::Edge* edge;
 
 	//std::cout << "TransEnviroment::creteRegion Step 2\n";
 	nodeA = region->newNode(++countID,nodes::NodeType::ORIGIN);//O ID:2
@@ -52,6 +52,7 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodeA = nodeB;
 	nodeB = region->newNode(++countID);
 	region->newEdge(100,nodeA,nodeB);//ID:11
+	nodes::Node* node_11 = nodeB;
 	
 	nodeA = nodeB;
 	nodeB = region->newNode(++countID);
@@ -197,7 +198,8 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodeA = nodeB;
 	nodeB = region->newNode(++countID);//ID:45
 	region->newEdge(447,nodeA,nodeB);
-	targets.push_back(nodeB);
+	nodes::Node* node_45 = nodeB;
+	targets.push_back(node_45);
 	
 	nodeB = region->newNode(++countID);//ID:46
 	region->newEdge(200,node_44,nodeB);
@@ -209,6 +211,8 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodeA = nodeB;
 	nodeB = region->newNode(++countID);//ID:48
 	region->newEdge(150,nodeA,nodeB);
+	
+	region->newEdge(100,node_45,node_11);
 	
 	/*nodeA = nodeB;
 	nodeB = region->newNode(++countID);//ID:

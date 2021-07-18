@@ -209,8 +209,8 @@ namespace nodes
 
 	Region::Region(ID id, const std::string& name) : Node(id,NodeType::REGION),origin(NULL)
 	{
-		countNodes = 0;
-		countEdges = 0;
+		//countNodes = 0;
+		//countEdges = 0;
 	}
 	Region::~Region()
 	{
@@ -226,11 +226,11 @@ namespace nodes
 	
 	unsigned int Region::getCountNodes()const
 	{
-		return countNodes;
+		return nodes.size();
 	}
 	unsigned int Region::getCountEdges()const
 	{
-		return countEdges;
+		return edges.size();
 	}
 
 
@@ -238,8 +238,8 @@ namespace nodes
 	{
 		Node* n = new Node(id);
 		nodes.push_back(n);
-		if(origin == NULL) origin = n;//si no hay nodo origne registrado
-		countNodes++;
+		//if(origin == NULL) origin = n;//si no hay nodo origne registrado
+		//countNodes++;
 		
 		return n;
 	}
@@ -247,16 +247,17 @@ namespace nodes
 	{
 		Node* n = new Node(id,t);
 		nodes.push_back(n);
-		if(origin == NULL) origin = n;//si no hay nodo origne registrado
-		countNodes++;
+		if(t == NodeType::ORIGIN) origin = n;//si no hay nodo origne registrado
+		//countNodes++;
 		
 		return n;
 	}
 	Edge* Region::newEdge(unsigned int d,Node* a, Node* n)
 	{
 		Edge* e = new Edge(d,a,n);
+		a->addFront(e);
 		edges.push_back(e);
-		countEdges++;
+		//countEdges++;
 		
 		return e;
 	}
@@ -268,7 +269,7 @@ namespace nodes
 		n->addBack(e2);
 		edges.push_back(e1);
 		edges.push_back(e2);
-		countEdges++;
+		//countEdges++;
 	}
 	Node* Region::getOrigin()
 	{
@@ -750,12 +751,17 @@ unsigned short Enviroment::getGenLengthMin() const
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
 {
-	//std::cout << "Step 1\n";
+	std::cout << "Step 1\n";
 	Path* newPath = new Path(direction);
 	if(direction == nodes::Direction::FRONT)
 	{
 		nodes::Edge* e = n->randFront();
-		if(e != NULL) newPath->push_back(e);
+		std::cout << "Step 1.1 (" << e << ")\n";
+		if(e != NULL) 
+		{
+			std::cout << "Step 1.1.1 (" << e->getNode()->getID() << ")\n";
+			newPath->push_back(e);
+		}
 	}
 	else if(direction == nodes::Direction::BACK)
 	{
@@ -764,25 +770,25 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 	}
 	else throw octetos::core::Exception("Direccion no asignada",__LINE__,__FILE__);
 
-	//std::cout << "Step 2\n";
+	std::cout << "Step 2\n";
 	for(unsigned short i; i < stop; i++)
 	{
 		if(direction == nodes::Direction::FRONT)
 		{
-			//std::cout << "Step 2.1\n";
+			std::cout << "Step 2.1\n";
 			nodes::Edge* e = NULL;
 			if(newPath->back() != NULL) if(newPath->back()->getNext() != NULL) e = newPath->back()->getNext()->randFront();
 			if(e != NULL) newPath->push_back(e);			
 		}
 		else if(direction == nodes::Direction::BACK)
 		{
-			//std::cout << "Step 2.1\n";
+			std::cout << "Step 2.1\n";
 			nodes::Edge* e = NULL;
 			if(newPath->back() != NULL) if(newPath->back()->getNext() != NULL) e = newPath->back()->getNext()->randBack();
 			if(e != NULL) newPath->push_back(e);			
 		}
 	}
-	//std::cout << "Step 3\n";
+	std::cout << "Step 3\n";
 	if(newPath->size() > 1) lstPaths.push_back(newPath);
 }
 void Enviroment::initial()
@@ -800,9 +806,9 @@ void Enviroment::initial()
 		generate(node,genLengthMin,nodes::Direction::FRONT);
 		//generate(node,genLengthMin,nodes::Direction::BACK);
 	}
-	region->resetTrans();
+	//region->resetTrans();
 	//generado individuos
-	for(Path* path : lstPaths)
+	/*for(Path* path : lstPaths)
 	{
  		Single* s = new Single(nextID(),*this,path,targets);
  		s->print(std::cout);
@@ -810,7 +816,7 @@ void Enviroment::initial()
 		push_back(s);
 	}
 	
-	lstPaths.clear();
+	lstPaths.clear();*/
 	
 }
 

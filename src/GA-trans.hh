@@ -157,7 +157,7 @@ namespace nodes
 		std::list<Node*> nodes;
 		std::list<Edge*> edges;
 		Node* origin;
-		unsigned int countNodes,countEdges;
+		//unsigned int countNodes,countEdges;
 	};
 
 	class Colony : public Region
