@@ -216,11 +216,15 @@ namespace nodes
 	{
 		for(Node* n : nodes)
 		{
+			for(Edge* e : n->edgesFront)
+			{
+				delete e;
+			}
+			for(Edge* e : n->edgesBack)
+			{
+				delete e;
+			}
 			delete n;
-		}
-		for(Edge* e : edges)
-		{
-			delete e;
 		}
 	}
 	
@@ -230,7 +234,7 @@ namespace nodes
 	}
 	unsigned int Region::getCountEdges()const
 	{
-		return edges.size();
+		return countEdges;
 	}
 
 
@@ -256,17 +260,16 @@ namespace nodes
 	{
 		Edge* e = new Edge(d,a,n);
 		a->addFront(e);
-		edges.push_back(e);
-		//countEdges++;
+		countEdges++;
 		
 		return e;
 	}
 	Edge* Region::newEdgeBack(unsigned int d,Node* a, Node* n)
 	{
 		Edge* e = new Edge(d,a,n);
+		//std::cout << "(" << a->getID() << ")-->(" << n->getID() << ")\n";
 		a->addBack(e);
-		edges.push_back(e);
-		//countEdges++;
+		countEdges++;
 		
 		return e;
 	}
@@ -275,13 +278,7 @@ namespace nodes
 	{
 		return origin;
 	}
-	void Region::resetTrans()
-	{
-		for(Edge* e : edges)
-		{
-			e->resetNextCount();
-		}
-	}
+
 }
 
 

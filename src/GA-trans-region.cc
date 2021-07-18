@@ -220,7 +220,6 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	
 	region->newEdgeBack(100,node_4,node_3);
 	
-	region->newEdgeBack(100,node_3,node_O);
 }
 
 }

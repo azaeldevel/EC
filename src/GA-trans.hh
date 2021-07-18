@@ -41,6 +41,7 @@ namespace nodes
 	class Node
 	{
 	friend class Edge;
+	friend class Region;
 	friend class ec::trans::Enviroment;
 
 	public:
@@ -151,14 +152,13 @@ namespace nodes
 		Edge* newEdgeFront(unsigned int distence,Node* prev, Node* next);
 		Edge* newEdgeBack(unsigned int distence,Node* prev, Node* next);
 		void newEdgeBi(unsigned int distence,Node* prev, Node* next);
-		void resetTrans();
 		
 	private: 
 		std::string name;
 		std::list<Node*> nodes;
-		std::list<Edge*> edges;
+		//std::list<Edge*> edges;
 		Node* origin;
-		//unsigned int countNodes,countEdges;
+		unsigned int countEdges;
 	};
 
 	class Colony : public Region
