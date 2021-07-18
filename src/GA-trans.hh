@@ -197,6 +197,7 @@ public:
 	unsigned short getCountTargets()const;
 	unsigned short getLength()const;
 	nodes::Direction getDirection()const;
+	const octetos::core::MD5sum& getMD5()const;
 
 	//const nodes::Node* checkJunct(const Path*)const;
 	//Population juncting(const Path*,std::list<Path*>& lp)const;
@@ -206,11 +207,14 @@ public:
 	unsigned short countTarget()const;
 	//bool growUp();
 	//nodes::Edge* randNext();
+	void genMD5();
+	void push_back(nodes::Edge*);
 	
 private:
 	bool cutBefore(nodes::Node*);
 	bool cutAfther(nodes::Node*);
 	nodes::Direction direction;
+	octetos::core::MD5sum md5;
 };
 
 class Chromosome : public ec::Chromosome
@@ -255,7 +259,7 @@ public:
 	virtual void print(std::ostream&) const;
 	void print(nodes::Node&) const;	
 	//Population juncting(const Single*,std::list<Path*>& p)const;
-	//bool growUp();
+	bool growUp();
 	
 	bool checkRepitTarget(const Path* p)const;
 	unsigned short checkOrder(const Path* p)const;
@@ -294,6 +298,9 @@ public:
 	virtual void initial();
 	virtual void selection();
 	virtual void save();
+protected:
+	unsigned short threads;
+
 private:
 	void generate(nodes::Node* orig, unsigned short stop,nodes::Direction direction);
 	void print(nodes::Node*);

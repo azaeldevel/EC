@@ -631,21 +631,24 @@ Single* Enviroment::getRandomSingle() const
 }
 void Enviroment::juncting()
 {
+	//std::cout << "Enviroment::juncting Step 1\n";
 	Single *single1,*single2;
-	for(ec::Single* s1 : *this)
+	//std::cout << "Enviroment::juncting Step 2\n";
 	do
 	{
-		single1 = (Single*) s1;
-		
+		//std::cout << "Enviroment::juncting Step 2.1\n";		
 		ec::Single* single1 = getRandomSingle();
 		if(single1 == NULL) continue;
 		ec::Single* single2 = getRandomSingle();
 		if(single2 == NULL) continue;
 		if(single1 == single2) continue;
+		//std::cout << "Enviroment::juncting Step 2.2\n";
 		single1->juncting(newschils,single2,echolevel,NULL);
+		//std::cout << "Enviroment::juncting Step 2.3\n";
 		if(echolevel > 2 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 	}
 	while(newschils.size() + size() <= maxPopulation);
+	//std::cout << "Enviroment::juncting Step 3\n";
 }
 void Enviroment::eval()
 {
