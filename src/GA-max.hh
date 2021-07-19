@@ -16,13 +16,21 @@ namespace ec::max
 	class Chromosome : public ec::Chromosome
 	{
 	public:
+		typedef geneUS (Chromosome::*pfnCombine)(const geneUS&);
+
+	public:
 		Chromosome();
+		Chromosome(geneUS,pfnCombine);
 		geneUS getNumber() const;
-		void mutate();
+		pfnCombine getCombine()const;
+
+		
+		geneUS combination(const geneUS& gene);
 
 	private:
 		geneUS gennumber;
-		geneUS (*_combine)(const geneUS& gene);
+		pfnCombine combine;
+		void randCombine();
 
 	private:	
 		geneUS combine1(const geneUS& gene);
@@ -37,10 +45,12 @@ namespace ec::max
 	class Single : public ec::Single
 	{
 	public:
+		//Single(const Chromosome& ch);
+		Single(ID, Enviroment&, geneUS g,Chromosome::pfnCombine f);
 		/**
 		*\brief Constructor recive el ID del Individuo y el Ambiente
 		*/
-		Single(ID id,Enviroment& env);
+		Single(ID id,Enviroment& e);
 		
 		/**
 		*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
@@ -58,6 +68,8 @@ namespace ec::max
 		*\brief Imprime los datos relevantes del individuo
 		*/
 		virtual void print(std::ostream&) const;
+
+		geneUS mutate(geneUS);
 	private:
 		Chromosome chromo;
 	};
@@ -82,7 +94,7 @@ namespace ec::max
 		void init();
 		~Enviroment();
 
-		virtual bool run();//temp for develop
+		//virtual bool run();//temp for develop
 		/**
 		*\brief Crea la poblacion inicial
 		*/
