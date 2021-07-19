@@ -235,7 +235,7 @@ void Enviroment::init()
 	fout = NULL;
 	stopMaxIterations=enableMinSolutions=false;
 	percen_at_iteration = 0.4;//%
-	comparer = NULL;
+	comparer = &cmpStrength;
 }
 Enviroment::Enviroment()
 {
@@ -662,7 +662,7 @@ void Enviroment::save()
 *\brief Elimina los que no cumple con el criterio de seleccion
 */
 void Enviroment::selection()
-{
+{//TODO:se puede mejorar al comenzar a eliminar desde el final hasta maxProgenitor
 	//eliminar duplicados
 	for(iterator i = begin(); i != end(); i++)
 	{

@@ -30,17 +30,16 @@ struct caret2B_half_Digits3
 
 
 
-geneUS Chromosome::combine(const geneUS& P1,const geneUS& P2)
+geneUS Chromosome::combine(const geneUS& gene)
 {
 	if(sizeof(caret2B_half) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
 	
 	
 }
-geneUS Chromosome::mutate(const geneUS& P1)
+void Chromosome::mutate()
 {
 
 }
-
 
 
 
@@ -85,9 +84,7 @@ Enviroment::Enviroment(const std::string& log)
 	init();
 	logDirectory = log;
 }
-/**
-*\brief Inicializa los datos meimbros
-*/
+
 void Enviroment::init()
 {
 	initPopulation = 1000;
@@ -95,30 +92,8 @@ void Enviroment::init()
 	maxProgenitor = 200;
 }
 
-/**
-*\brief Elimina los que no cumple con el criterio de seleccion
-*/
-void Enviroment::selection()
-{
-	if(size() < maxProgenitor) return;
-	
-	std::list<ec::Single*> todelete;
-	
-	std::list<ec::Single*>::iterator it = begin();
-	std::advance(it,size() - maxProgenitor);
-	for( ; it != end(); it++)
-	{
-		todelete.push_back(*it);
-	}
-	
-	for(ec::Single* s : todelete)
-	{
-		delete s;
-	}
-}
-/**
-*\brief Crea la poblacion inicial
-*/
+
+
 void Enviroment::initial()
 {
 	for(unsigned short i = 0; i < initPopulation; i++)
@@ -134,6 +109,7 @@ Enviroment::~Enviroment()
 		delete s;
 	}
 }
+
 
 
 

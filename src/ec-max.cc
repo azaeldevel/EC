@@ -52,7 +52,10 @@ int main(int argc, const char* argv[])
 	ec::max::Enviroment* max = new ec::max::Enviroment(logDirectory);
 	max->enableEcho(&std::cout,2);
 	
-	return max->run()? EXIT_SUCCESS : EXIT_FAILURE;
+	bool ret = max->run();
+	delete max;
+	
+	return ret? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 

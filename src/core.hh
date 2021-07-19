@@ -267,6 +267,8 @@ protected:
 	//Iteration sliceJam;
 
 	bool (*comparer)(const Single* f,const Single* s);
+
+	bool echoSteps;
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion
