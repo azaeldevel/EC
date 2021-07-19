@@ -3,7 +3,7 @@
 #ifndef AE_GA_HH
 #define AE_GA_HH
 
-#include <iostream>
+
 #include <map>
 
 #include "core.hh"

@@ -24,7 +24,8 @@
 #include <string>
 #include <vector>
 #include <octetos/core/Error.hh>
-
+#include <iostream>
+#include <fstream>
 
 namespace ec
 {

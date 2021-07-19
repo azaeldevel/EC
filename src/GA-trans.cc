@@ -590,7 +590,6 @@ void Single::save(std::ofstream& fn)
 	fn << getAge();
 	fn << ",";
 	chromosome.getPath()->print(fn);
-	fn << "\n";
 }
 
 void Single::print(std::ostream& p) const

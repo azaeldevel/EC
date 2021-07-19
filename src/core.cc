@@ -420,6 +420,7 @@ bool Enviroment::run()
 			for(ec::Single* s : *this)
 			{
 				s->save(fn);
+				fn << "\n";
 			}
 			fn.flush();
 			fn.close();
@@ -437,6 +438,7 @@ bool Enviroment::run()
 			for(Single* s : *this)
 			{
 				s->save(fnSelection);
+				fnSelection << "\n";
 			}
 			fnSelection.flush();
 			fnSelection.close();
@@ -546,7 +548,8 @@ bool Enviroment::run()
 			if(not fnChilds.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 			{
-				s->save(fnChilds);			
+				s->save(fnChilds);	
+				fnChilds << "\n";		
 			}
 			fnChilds.flush();
 			fnChilds.close();
@@ -652,7 +655,8 @@ void Enviroment::save()
 	std::ofstream fn(strfn);
 	for(ec::Single* s : *this)
 	{
-		s->save(fn);
+		s->save(fn);	
+		fn << "\n";
 	}
 	fn.flush();
 	fn.close();
