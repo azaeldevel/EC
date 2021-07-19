@@ -16,11 +16,19 @@ namespace ec::max
 	class Chromosome : public ec::Chromosome
 	{
 	public:
-		geneUS combine(const geneUS& gene);
+		Chromosome();
+		geneUS getNumber() const;
 		void mutate();
 
 	private:
 		geneUS gennumber;
+		geneUS (*_combine)(const geneUS& gene);
+
+	private:	
+		geneUS combine1(const geneUS& gene);
+		geneUS combine2(const geneUS& gene);
+		geneUS combine3(const geneUS& gene);
+		geneUS combine4(const geneUS& gene);
 	};
 
 	/**
@@ -51,7 +59,7 @@ namespace ec::max
 		*/
 		virtual void print(std::ostream&) const;
 	private:
-		
+		Chromosome chromo;
 	};
 
 	/**
@@ -74,7 +82,7 @@ namespace ec::max
 		void init();
 		~Enviroment();
 
-	
+		virtual bool run();//temp for develop
 		/**
 		*\brief Crea la poblacion inicial
 		*/

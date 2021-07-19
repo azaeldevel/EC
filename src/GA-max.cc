@@ -1,40 +1,79 @@
 
 
+#include <limits.h>
+
 #include "GA-max.hh"
 
 namespace ec::max
 {
 
 
-struct caret4B_half
+
+struct caret_2B_half
 {
-	short a:16,b:16;
-};
-struct caret2B_half
-{
-	unsigned short a:8,b:8,c:4;
+	unsigned short a:8,b:8;
 };
 
-struct caret2B_half_Digits1
+Chromosome::Chromosome() : ec::Chromosome("max")
 {
-	unsigned short a:4,e:12;
-};
-struct caret2B_half_Digits2
-{
-	unsigned short a:2,b:2,e:12;
-};
-struct caret2B_half_Digits3
-{
-	unsigned short a:1,b:1,c:1,d:1,e:12;
-};
 
-
-
-geneUS Chromosome::combine(const geneUS& gene)
+}
+geneUS Chromosome::getNumber()const
 {
-	if(sizeof(caret2B_half) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
+	return gennumber;
+}
+
+geneUS Chromosome::combine1(const geneUS& gene)
+{
+	if(sizeof(caret_2B_half) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
 	
+	const caret_2B_half* g1 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gennumber);
+	const caret_2B_half* g2 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gene);
+	caret_2B_half g3;
+	g3.a = g1->a;
+	g3.b = g2->b;
 	
+	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
+	return newgen;
+}
+geneUS Chromosome::combine2(const geneUS& gene)
+{
+	if(sizeof(caret_2B_half) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
+	
+	const caret_2B_half* g1 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gennumber);
+	const caret_2B_half* g2 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gene);
+	caret_2B_half g3;
+	g3.a = g1->b;
+	g3.b = g2->a;
+	
+	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
+	return newgen;
+}
+geneUS Chromosome::combine3(const geneUS& gene)
+{
+	if(sizeof(caret_2B_half) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
+	
+	const caret_2B_half* g1 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gennumber);
+	const caret_2B_half* g2 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gene);
+	caret_2B_half g3;
+	g3.a = g1->a;
+	g3.b = g2->a;
+	
+	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
+	return newgen;
+}
+geneUS Chromosome::combine4(const geneUS& gene)
+{
+	if(sizeof(caret_2B_half) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
+	
+	const caret_2B_half* g1 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gennumber);
+	const caret_2B_half* g2 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gene);
+	caret_2B_half g3;
+	g3.a = g1->b;
+	g3.b = g2->b;
+	
+	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
+	return newgen;
 }
 void Chromosome::mutate()
 {
@@ -55,26 +94,49 @@ Single::Single(ID id,Enviroment& env) : ec::Single(id,env)
 }
 void Single::eval()
 {
-
+	fitness = double(chromo.getNumber()) / double(USHRT_MAX);	
 }
 void Single::save(std::ofstream& fn)
 {
-
+	fn << getID();
+	fn << ",";
+	fn << getFitness();
+	fn << ",";
+	fn << chromo.getNumber();
 }
 Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*)
 {
-
 }
-void Single::print(std::ostream&) const
+void Single::print(std::ostream& fn) const
 {
-
+	fn << getID();
+	fn << ",";
+	fn << getFitness();
+	fn << ",";
+	fn << chromo.getNumber();
 }
 	
 	
 	
 	
 	
+bool Enviroment::run()
+{
+	initial();
 	
+	std::cout << "Lista de numeros : " << "\n";
+	for(ec::Single* s: *this)
+	{
+		((Single*)s)->eval();
+	}
+	sort(comparer);
+	for(ec::Single* s: *this)
+	{
+		((Single*)s)->print(std::cout);
+		std::cout << "\n";
+	}
+	return true;
+}
 Enviroment::Enviroment()
 {
 	init();

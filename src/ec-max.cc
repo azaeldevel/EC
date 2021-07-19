@@ -37,7 +37,7 @@ int main(int argc, const char* argv[])
 		std::cerr << "trans  dirlog\n";
 		return EXIT_SUCCESS;
 	}
-			
+	
 	std::string logDir = argv[1];
 	std::string logDirectory;	
 	bool logFile = not logDir.empty();//
