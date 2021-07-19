@@ -23,6 +23,8 @@
 #include <list>
 #include <string>
 #include <vector>
+#include <octetos/core/Error.hh>
+
 
 namespace ec
 {
@@ -53,14 +55,6 @@ public:
 	virtual ~Chromosome();
 	
 	const Chromosome& operator = (const Chromosome&);
-
-	//
-	static geneF mixture(const geneF& P1,const geneF& P2);
-
-	static geneUS mixture(const geneUS& P1,const geneUS& P2);
-	static geneUS mixtureDigits(const geneUS& P1,const geneUS& P2);
-	static geneUS mutate(const geneUS& P1);
-	static geneUS mutateDigits(const geneUS& P1);
 	
 protected:
 	unsigned int mutated;
@@ -203,9 +197,9 @@ public:
 	virtual bool run();
 	virtual void eval();
 	virtual void juncting();
-	virtual void selection() = 0;
+	virtual void save();
+	virtual void selection();
 	virtual void initial() = 0;
-	virtual void save() = 0;
 	//virtual void series(const std::string& logDir,Iteration maxIteBySerie);
 	
 protected:

@@ -51,27 +51,7 @@ double randNumber(double min,double max)
 	
 	return distr(gen);
 }
-struct caret4B_half
-{
-	short a:16,b:16;
-};
-struct caret2B_half
-{
-	unsigned short a:8,b:8,c:4;
-};
 
-struct caret2B_half_Digits1
-{
-	unsigned short a:4,e:12;
-};
-struct caret2B_half_Digits2
-{
-	unsigned short a:2,b:2,e:12;
-};
-struct caret2B_half_Digits3
-{
-	unsigned short a:1,b:1,c:1,d:1,e:12;
-};
 
 
 
@@ -432,15 +412,29 @@ bool Enviroment::run()
 		sort(comparer);
 		//std::cout << "\tStep C5\n";
 		
+		if(logFile)
+		{
+			std::string strfn = logSubDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
+			std::ofstream fn(strfn);
+			if(not fn.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			for(ec::Single* s : *this)
+			{
+				s->save(fn);
+			}
+			fn.flush();
+			fn.close();
+		}
+		
 		ec::ID countBefore = size();
 		selection();
 		//std::cout << "\tStep C6\n";
 		if(logFile)
 		{
 			std::string strSelection = logSubDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
+			//std::cout << "\t\t" << strSelection << "\n";
 			std::ofstream fnSelection(strSelection);
 			if(not fnSelection.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
-			for(ec::Single* s : *this)
+			for(Single* s : *this)
 			{
 				s->save(fnSelection);
 			}
@@ -471,19 +465,8 @@ bool Enviroment::run()
 			sigma += pow(s->getFitness() - media,2);
 		}
 		sigma /= size();
-
-		if(logFile)
-		{
-			std::string strfn = logSubDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
-			std::ofstream fn(strfn);
-			if(not fn.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
-			for(ec::Single* s : *this)
-			{
-				s->save(fn);
-			}
-			fn.flush();
-			fn.close();
-		}
+		//std::cout << "\tStep C9\n";
+		//std::cout << "\tStep C10\n";
 		ec::Single* leader = *begin();
 		if(echolevel > 1 and fout != NULL) 
 		{			
@@ -492,7 +475,7 @@ bool Enviroment::run()
 			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 		}
-		
+		//std::cout << "\tStep C11\n";
 		if(stopNotDiference and actualIteration > 1)
 		{
 			if(sigma < notDiferenceCota)
@@ -526,7 +509,7 @@ bool Enviroment::run()
 				}
 			}
 		}
-		//std::cout <<  "Step 5\n";
+		//std::cout << "\tStep C12\n";
 
 		if(logFile)
 		{
@@ -663,4 +646,57 @@ void Enviroment::eval()
 		single->eval();
 	}
 }
+void Enviroment::save()
+{
+	std::string strfn = logSubDirectory +  "/solutions-" + std::to_string(actualIteration) + ".csv";
+	std::ofstream fn(strfn);
+	for(ec::Single* s : *this)
+	{
+		s->save(fn);
+	}
+	fn.flush();
+	fn.close();
+}
+
+/**
+*\brief Elimina los que no cumple con el criterio de seleccion
+*/
+void Enviroment::selection()
+{
+	//eliminar duplicados
+	for(iterator i = begin(); i != end(); i++)
+	{
+		//std::cout << "Step 1\n";
+		iterator j = i;
+		//std::cout << "Step 2\n";
+		advance(j,1);
+		//std::cout << "Step 3\n";
+		while(i != j and j != end() and size() >= maxProgenitor)
+		{
+			//std::cout << "Step 3.1\n";
+			if((*i)->getID() == (*j)->getID() )
+			{
+				//std::cout << "Step 3.2\n";
+				delete *j;
+				//std::cout << "Step 3.3\n";
+				j = erase(j);
+				//std::cout << "Step 3.4\n";
+			}
+			else
+			{
+				j++;
+			}
+			///std::cout << "Step 3.5\n";
+		}
+		//std::cout << "Step 4\n";
+	}
+	iterator i = end();
+	while(size() > maxProgenitor)//elimina desde el final hasta alcanzar el conjuto maximo de progenitores
+	{
+		--i;
+		delete *i;
+		i = erase(i);
+	}
+}
+
 }

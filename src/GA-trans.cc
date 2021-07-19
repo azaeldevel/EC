@@ -808,7 +808,7 @@ void Enviroment::initial()
 	
 }
 
-
+/*
 void Enviroment::selection()
 {
 	if(maxPopulation > size()) return;//si no hay mas de la poblocion maxima continuar
@@ -863,21 +863,10 @@ void Enviroment::selection()
 		delete single;
 		remove(single);
 	}
-}
+}*/
 
 
 
-void Enviroment::save()
-{
-	std::string strfn = logSubDirectory +  "/solutions-" + std::to_string(actualIteration) + ".csv";
-	std::ofstream fn(strfn);
-	for(ec::Single* s : *this)
-	{
-		s->save(fn);
-	}
-	fn.flush();
-	fn.close();
-}
 
 std::list<nodes::Node*> Enviroment::getTargets()const
 {

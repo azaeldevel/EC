@@ -682,54 +682,7 @@ double Enviroment::getGamma() const
 
 
 
-void Enviroment::selection()
-{
-	//eliminar duplicados
-	for(iterator i = begin(); i != end(); i++)
-	{
-		//std::cout << "Step 1\n";
-		iterator j = i;
-		//std::cout << "Step 2\n";
-		advance(j,1);
-		//std::cout << "Step 3\n";
-		while(i != j and j != end() and size() >= maxProgenitor)
-		{
-			//std::cout << "Step 3.1\n";
-			if(((Single*)*i)->getMD5().compare(((Single*)*j)->getMD5()) == 0 )
-			{
-				//std::cout << "Step 3.2\n";
-				delete *j;
-				//std::cout << "Step 3.3\n";
-				j = erase(j);
-				//std::cout << "Step 3.4\n";
-			}
-			else
-			{
-				j++;
-			}
-			///std::cout << "Step 3.5\n";
-		}
-		//std::cout << "Step 4\n";
-	}
-	iterator i = end();
-	while(size() > maxProgenitor)//elimina desde el final hasta alcanzar el conjuto maximo de progenitores
-	{
-		--i;
-		delete *i;
-		i = erase(i);
-	}
-}
-void Enviroment::save()
-{
-	std::string strfn = logSubDirectory +  "/solutions-" + std::to_string(actualIteration) + ".csv";
-	std::ofstream fn(strfn);
-	for(ec::Single* s : *this)
-	{
-		s->save(fn);
-	}
-	fn.flush();
-	fn.close();
-}
+
 
 void Enviroment::initial()
 {

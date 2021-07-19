@@ -91,9 +91,8 @@ public:
 	double getGamma() const;
 	void saveSolutions(std::ofstream& f)const;
 	
-	virtual void selection();
+	//virtual void selection();
 	virtual void initial();
-	virtual void save();
 	
 private:
 

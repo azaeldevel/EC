@@ -297,8 +297,8 @@ public:
 	void creteRegion(std::list<nodes::Node*>& targets);
 
 	virtual void initial();
-	virtual void selection();
-	virtual void save();
+	//virtual void selection();
+
 protected:
 	unsigned short threads;
 
