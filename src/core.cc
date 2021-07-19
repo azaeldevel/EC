@@ -236,6 +236,7 @@ void Enviroment::init()
 	stopMaxIterations=enableMinSolutions=false;
 	percen_at_iteration = 0.4;//%
 	comparer = &cmpStrength;
+	echoSteps = false;
 }
 Enviroment::Enviroment()
 {
@@ -339,6 +340,10 @@ const std::string Enviroment::getLogSubDirectory()const
 {
 	return logSubDirectory;
 }
+bool Enviroment::getEchoSteps()const
+{
+	return echoSteps;
+}
 
 
 ID Enviroment::nextID()
@@ -356,18 +361,16 @@ void Enviroment::enableLogFile(bool log)
 	logFile = log;
 }
 bool Enviroment::run()
-{	
-	//std::cout << "\tStep 0\n";
-	
+{
 	if(maxProgenitor < minSolutions) throw octetos::core::Exception("La cantidad de progenoore deveria ser major que la cantidad de soluciones buscadas",__FILE__,__LINE__);
 	actualIteration = 1;
 	
-	//std::cout << "\tStep 1\n";
+	if(echoSteps) std::cout << "\tStep 1\n";
 	initial();
-	//std::cout << "\tStep 2\n";
+	if(echoSteps) std::cout << "\tStep 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
-	//std::cout << "\tStep 3\n";
+	if(echoSteps) std::cout << "\tStep 3\n";
 	logFile = not logDirectory.empty();
 	if(logFile)
 	{
@@ -378,16 +381,16 @@ bool Enviroment::run()
 		shell.mkdir(logSubDirectory);
 		history.open(strhistory);
 	}
-	//std::cout << "\tStep 4\n";
+	if(echoSteps) std::cout << "\tStep 4\n";
 
 	ID oldleaderID = 0;
 	double oldLeaderFitness = 0.0;
 	Iteration countOldLeader = 0;
 	Iteration countOldLeaderFitness = 0;
-	//std::cout << "\tStep 5\n";
+	if(echoSteps) std::cout << "\tStep 5\n";
 	while(true)
 	{
-		//std::cout << "\tStep C1\n";
+		if(echoSteps) std::cout << "\tStep C1\n";
 		if(stopMaxIterations) 
 		{
 			if(actualIteration > maxIteration) 
@@ -401,16 +404,16 @@ bool Enviroment::run()
 			if(maxIteration > 0) (*fout) << ">>> Iteracion : " << actualIteration << "/" << maxIteration << "\n";
 			else (*fout) << ">>> Iteracion : " << actualIteration << "\n";
 		}
-		//std::cout << "\tStep C2\n";
+		if(echoSteps) std::cout << "\tStep C2\n";
 		
 		media = 0.0;
 		sigma = 0.0;
 		
-		//std::cout << "\tStep C3\n";
+		if(echoSteps) std::cout << "\tStep C3\n";
 		eval();
-		//std::cout << "\tStep C4\n";
+		if(echoSteps) std::cout << "\tStep C4\n";
 		sort(comparer);
-		//std::cout << "\tStep C5\n";
+		if(echoSteps) std::cout << "\tStep C5\n";
 		
 		if(logFile)
 		{
@@ -428,7 +431,7 @@ bool Enviroment::run()
 		
 		ec::ID countBefore = size();
 		selection();
-		//std::cout << "\tStep C6\n";
+		if(echoSteps) std::cout << "\tStep C6\n";
 		if(logFile)
 		{
 			std::string strSelection = logSubDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
@@ -443,7 +446,7 @@ bool Enviroment::run()
 			fnSelection.flush();
 			fnSelection.close();
 		}
-		//std::cout << "\tStep C7\n";
+		if(echoSteps) std::cout << "\tStep C7\n";
 		unsigned short removes = countBefore - size();
 		//deletes == 0 ? counUndelete++ : counUndelete = 0;
 		if(echolevel > 1 and fout != NULL) 
@@ -452,7 +455,7 @@ bool Enviroment::run()
 			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
 			(*fout) << "\tEliminados : " << removes << "\n";	
 		}
-		//std::cout << "\tStep C8\n";
+		if(echoSteps) std::cout << "\tStep C8\n";
 		
 		for(ec::Single* s : *this)
 		{
@@ -460,6 +463,7 @@ bool Enviroment::run()
 			media += s->getFitness();
 			s->deltaAge();			
 		}
+		if(echoSteps) std::cout << "\tStep C9\n";
 		media /= size();
 		for(ec::Single* s : *this)
 		{
@@ -467,7 +471,6 @@ bool Enviroment::run()
 			sigma += pow(s->getFitness() - media,2);
 		}
 		sigma /= size();
-		//std::cout << "\tStep C9\n";
 		//std::cout << "\tStep C10\n";
 		ec::Single* leader = *begin();
 		if(echolevel > 1 and fout != NULL) 
@@ -477,7 +480,7 @@ bool Enviroment::run()
 			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 		}
-		//std::cout << "\tStep C11\n";
+		if(echoSteps) std::cout << "\tStep C11\n";
 		if(stopNotDiference and actualIteration > 1)
 		{
 			if(sigma < notDiferenceCota)
@@ -511,7 +514,7 @@ bool Enviroment::run()
 				}
 			}
 		}
-		//std::cout << "\tStep C12\n";
+		if(echoSteps) std::cout << "\tStep C12\n";
 
 		if(logFile)
 		{
@@ -534,13 +537,14 @@ bool Enviroment::run()
 				history .flush();
 			}
 		}
-		//std::cout <<  "Step 6\n";
-				
-		juncting();			
+		if(echoSteps) std::cout << "\tStep C13\n";				
+		juncting();	
+		if(echoSteps) std::cout << "\tStep C14\n";		
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 			push_front(s);		
 		}
+		if(echoSteps) std::cout << "\tStep C15\n";
 		if(logFile)
 		{
 			std::string strChilds = logSubDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
@@ -561,6 +565,7 @@ bool Enviroment::run()
 		newschils.clear();		
 		
 		actualIteration++;
+		if(echoSteps) std::cout << "\tStep C16\n";
 	}
 
 	return false;
@@ -621,24 +626,24 @@ Single* Enviroment::getRandomSingle() const
 }
 void Enviroment::juncting()
 {
-	//std::cout << "Enviroment::juncting Step 1\n";
+	if(echoSteps) std::cout << "Enviroment::juncting Step 1\n";
 	Single *single1,*single2;
-	//std::cout << "Enviroment::juncting Step 2\n";
+	if(echoSteps)  std::cout << "Enviroment::juncting Step 2\n";
 	do
 	{
-		//std::cout << "Enviroment::juncting Step 2.1\n";		
+		if(echoSteps) std::cout << "Enviroment::juncting Step 2.1\n";		
 		ec::Single* single1 = getRandomSingle();
 		if(single1 == NULL) continue;
 		ec::Single* single2 = getRandomSingle();
 		if(single2 == NULL) continue;
 		if(single1 == single2) continue;
-		//std::cout << "Enviroment::juncting Step 2.2\n";
+		if(echoSteps) std::cout << "Enviroment::juncting Step 2.2\n";
 		single1->juncting(newschils,single2,echolevel,NULL);
-		//std::cout << "Enviroment::juncting Step 2.3\n";
+		if(echoSteps) std::cout << "Enviroment::juncting Step 2.3\n";
 		if(echolevel > 2 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
 	}
 	while(newschils.size() + size() <= maxPopulation);
-	//std::cout << "Enviroment::juncting Step 3\n";
+	if(echoSteps) std::cout << "Enviroment::juncting Step 3\n";
 }
 void Enviroment::eval()
 {

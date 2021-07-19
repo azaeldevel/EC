@@ -182,7 +182,7 @@ public:
 	ID nextID();
 	ID getCountID();
 	bool getJam()const;
-
+	bool getEchoSteps()const;
 	
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);
