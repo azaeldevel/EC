@@ -775,6 +775,11 @@ void Enviroment::commands(int argc, const char* argv[])
 }
 void Enviroment::clean()
 {
+	for(ec::Single* s : *this)
+	{
+		delete s;
+	}
+	
 	clear();
 }
 }
