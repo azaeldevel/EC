@@ -27,6 +27,7 @@ namespace ec::max
 		
 		geneUS combination(const geneUS& gene);
 		static geneUS mutate(const geneUS& gene);
+		static geneUS randGenNumber();
 
 	private:
 		geneUS gennumber;

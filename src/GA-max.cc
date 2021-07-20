@@ -20,6 +20,7 @@ struct caret_2B_16b
 
 Chromosome::Chromosome() : ec::Chromosome("max")
 {
+	gennumber = randGenNumber();
 	randCombine();
 }
 Chromosome::Chromosome(geneUS numb,pfnCombine fn): ec::Chromosome("max")
@@ -36,7 +37,79 @@ Chromosome::pfnCombine Chromosome::getCombine()const
 	return combine;
 }
 
-
+geneUS Chromosome::randGenNumber()
+{
+	geneUS g;
+	caret_2B_16b* gene = reinterpret_cast<caret_2B_16b*>((geneUS*)&g);
+	double randNum = randNumber(0.0,1.0);
+		
+	if(randNum < 1.0/16.0)
+	{
+		gene->a = 1;
+	}
+	else if(randNum < 2.0/16.0)
+	{
+		gene->b = 1;
+	}
+	else if(randNum < 3.0/16.0)
+	{
+		gene->c = 1;
+	}
+	else if(randNum < 4.0/16.0)
+	{
+		gene->d = 1;
+	}
+	else if(randNum < 5.0/16.0)
+	{
+		gene->e = 1;
+	}
+	else if(randNum < 6.0/16.0)
+	{
+		gene->f = 1;
+	}
+	else if(randNum < 7.0/16.0)
+	{
+		gene->g = 1;
+	}
+	else if(randNum < 8.0/16.0)
+	{
+		gene->h = 1;
+	}
+	else if(randNum < 9.0/16.0)
+	{
+		gene->i = 1;
+	}
+	else if(randNum < 10.0/16.0)
+	{
+		gene->j = 1;
+	}
+	else if(randNum < 11.0/16.0)
+	{
+		gene->k = 1;
+	}
+	else if(randNum < 12.0/16.0)
+	{
+		gene->l = 1;
+	}
+	else if(randNum < 13.0/16.0)
+	{
+		gene->m = 1;
+	}
+	else if(randNum < 14.0/16.0)
+	{
+		gene->n = 1;
+	}
+	else if(randNum < 15.0/16.0)
+	{
+		gene->o = 1;
+	}
+	else
+	{
+		gene->o = 1;
+	}	
+		
+	return g;
+}
 void Chromosome::randCombine()
 {
 	double randN = randNumber(0.0,1.0);
@@ -85,7 +158,6 @@ geneUS Chromosome::mutate(const geneUS& g)
 	
 	caret_2B_16b gene = *reinterpret_cast<const caret_2B_16b*>((const geneUS*)&g);
 	double randNum = randNumber(0.0,1.0);
-	randNum = randNum/16.0;
 	
 	if(randNum < 1.0/16.0)
 	{
@@ -123,21 +195,29 @@ geneUS Chromosome::mutate(const geneUS& g)
 	{
 		gene.i = not gene.i;
 	}
-	else if(randNum < 12.0/16.0)
+	else if(randNum < 10.0/16.0)
 	{
 		gene.j = not gene.j;
 	}
-	else if(randNum < 13.0/16.0)
+	else if(randNum < 11.0/16.0)
 	{
 		gene.k = not gene.k;
 	}
-	else if(randNum < 14.0/16.0)
+	else if(randNum < 12.0/16.0)
 	{
 		gene.l = not gene.l;
 	}
-	else if(randNum < 15.0/16.0)
+	else if(randNum < 13.0/16.0)
 	{
 		gene.m = not gene.m;
+	}
+	else if(randNum < 14.0/16.0)
+	{
+		gene.n = not gene.n;
+	}
+	else if(randNum < 15.0/16.0)
+	{
+		gene.o = not gene.o;
 	}
 	else if(randNum < 16.0/16.0)
 	{
@@ -145,9 +225,12 @@ geneUS Chromosome::mutate(const geneUS& g)
 	}
 	else
 	{
+		gene.o = not gene.o;
+	}	
 	
-	}
+	geneUS newGen = *reinterpret_cast<geneUS*>(&gene);
 	
+	return newGen;
 }
 
 
@@ -261,7 +344,7 @@ void Enviroment::init()
 	maxProgenitor = 200;
 	echoSteps = false;
 	minSolutions = 10;
-	stopperMaxIterations(500);
+	stopperMaxIterations(100);
 }
 
 
