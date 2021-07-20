@@ -28,15 +28,18 @@ namespace ec::max
 		geneUS combination(const geneUS& gene);
 		static geneUS mutate(const geneUS& gene);
 		static geneUS randGenNumber();
+		static pfnCombine randCombine();
 
 	private:
 		geneUS gennumber;
 		pfnCombine combine;
-		void randCombine();
 
 	private:	
 		geneUS combine1(const geneUS& gene);
 		geneUS combine2(const geneUS& gene);
+		geneUS combine3(const geneUS& gene);
+		geneUS combine4(const geneUS& gene);
+
 	};
 
 	/**

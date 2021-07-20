@@ -21,7 +21,7 @@ struct caret_2B_16b
 Chromosome::Chromosome() : ec::Chromosome("max")
 {
 	gennumber = randGenNumber();
-	randCombine();
+	combine = randCombine();
 }
 Chromosome::Chromosome(geneUS numb,pfnCombine fn): ec::Chromosome("max")
 {
@@ -110,17 +110,27 @@ geneUS Chromosome::randGenNumber()
 		
 	return g;
 }
-void Chromosome::randCombine()
+Chromosome::pfnCombine Chromosome::randCombine()
 {
-	double randN = randNumber(0.0,1.0);
-	if(randN < 0.5)
+	double randN = randNumber(0.0,4.0);
+	unsigned short randUS = randN + 1;
+	switch(randUS)
 	{
-		combine = &Chromosome::combine1;
+		case 1:
+			return &Chromosome::combine1;		
+			break;
+		case 2:
+			return &Chromosome::combine2;		
+			break;
+		case 3:
+			return &Chromosome::combine3;		
+			break;
+		case 4:
+			return &Chromosome::combine4;		
+			break;
 	}
-	else
-	{
-		combine = &Chromosome::combine2;
-	}
+	
+	return &Chromosome::combine4;
 }
 geneUS Chromosome::combination(const geneUS& gene)
 {
@@ -148,6 +158,58 @@ geneUS Chromosome::combine2(const geneUS& gene)
 	caret_2B_half g3;
 	g3.a = g1->b;
 	g3.b = g2->a;
+	
+	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
+	return newgen;
+}
+geneUS Chromosome::combine3(const geneUS& gene)
+{
+	if(sizeof(caret_2B_16b) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
+	
+	const caret_2B_16b* g1 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gennumber);
+	const caret_2B_16b* g2 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gene);
+	caret_2B_16b g3;
+	g3.a = g1->b;
+	g3.b = g2->a;
+	g3.c = g1->c;
+	g3.d = g2->d;
+	g3.e = g1->e;
+	g3.f = g2->f;
+	g3.g = g1->g;
+	g3.h = g2->h;
+	g3.i = g1->i;
+	g3.j = g2->j;
+	g3.k = g1->k;
+	g3.l = g2->l;
+	g3.m = g1->m;
+	g3.n = g2->n;
+	g3.o = g1->o;
+	
+	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
+	return newgen;
+}
+geneUS Chromosome::combine4(const geneUS& gene)
+{
+	if(sizeof(caret_2B_16b) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
+	
+	const caret_2B_16b* g1 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gennumber);
+	const caret_2B_16b* g2 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gene);
+	caret_2B_16b g3;
+	g3.a = g2->b;
+	g3.b = g1->a;
+	g3.c = g2->c;
+	g3.d = g1->d;
+	g3.e = g2->e;
+	g3.f = g1->f;
+	g3.g = g2->g;
+	g3.h = g1->h;
+	g3.i = g2->i;
+	g3.j = g1->j;
+	g3.k = g2->k;
+	g3.l = g1->l;
+	g3.m = g2->m;
+	g3.n = g1->n;
+	g3.o = g2->o;
 	
 	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
 	return newgen;
@@ -343,8 +405,9 @@ void Enviroment::init()
 	maxPopulation = 1000;
 	maxProgenitor = 200;
 	echoSteps = false;
-	minSolutions = 10;
+	stopperMinSolutions(5);
 	stopperMaxIterations(100);
+	epsilon = 1.0/double(USHRT_MAX);
 }
 
 
