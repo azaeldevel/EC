@@ -623,7 +623,7 @@ void Enviroment::init(const std::string& initB)
 	//actualIteration = 1;
 	//maxIteration = 1000;
 	newIteration = true;
-	minSolutions = 1;
+	stopperMinSolutions(1);
 	pMutationEvent = 0.02;
 	pMutableGene = 1.0/81.0;
 	gamma = 1.0/(81.0 * 4.0);
