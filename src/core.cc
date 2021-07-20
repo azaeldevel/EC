@@ -235,9 +235,11 @@ void Enviroment::init()
 	fout = NULL;
 	stopMaxIterations=false;
 	stopMinSolutions = false;
+	stopMaxSerie = false;
 	percen_at_iteration = 0.4;//%
 	comparer = &cmpStrength;
 	echoSteps = false;
+	maxSerie = 0;
 }
 Enviroment::Enviroment()
 {
@@ -402,8 +404,10 @@ bool Enviroment::run()
 		}
 		if(echolevel > 0 and fout != NULL) 
 		{
-			if(maxIteration > 0) (*fout) << ">>> Iteracion : " << actualIteration << "/" << maxIteration << "\n";
-			else (*fout) << ">>> Iteracion : " << actualIteration << "\n";
+			if(maxSerie > 0 and stopMaxSerie) (*fout) << ">>> Serie : " << actualSerie << "/" << maxSerie << " - ";
+			else ">>> ";
+			if(maxIteration > 0) (*fout) << "Iteracion : " << actualIteration << "/" << maxIteration << "\n";
+			else (*fout) << "Iteracion : " << actualIteration << "\n";
 		}
 		if(echoSteps) std::cout << "\tStep C2\n";
 		
@@ -570,7 +574,7 @@ bool Enviroment::run(int argc, const char* argv[])
 }
 bool Enviroment::series()
 {
-	for(unsigned short i = 1 ; i < maxSerie ; i++)
+	for(actualSerie = 1 ; actualSerie <= maxSerie ; actualSerie++)
 	{
 		clean();
 		
@@ -583,7 +587,7 @@ bool Enviroment::series(int argc, const char* argv[])
 {
 	commands(argc,argv);
 	
-	for(unsigned short i = 1 ; i < maxSerie ; i++)
+	for(actualSerie = 1 ; actualSerie <= maxSerie ; actualSerie++)
 	{
 		clean();
 		
@@ -610,6 +614,7 @@ void Enviroment::stopperMinSolutions(Population min)
 void Enviroment::stopperMaxSerie(Iteration max)
 {
 	maxSerie = max;
+	stopMaxSerie = true;
 }
 
 

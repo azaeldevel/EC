@@ -226,7 +226,7 @@ protected:
 	
 	Iteration actualIteration;
 	
-
+	Iteration actualSerie;
 
 	bool newIteration;
 	
@@ -306,6 +306,8 @@ private:
 	bool stopMinSolutions;
 
 	Iteration maxSerie;
+
+	bool stopMaxSerie;
 };
 
 }
