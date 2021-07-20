@@ -405,7 +405,7 @@ void Enviroment::init()
 	maxPopulation = 1000;
 	maxProgenitor = 200;
 	echoSteps = false;
-	stopperMinSolutions(5);
+	stopperMinSolutions(2);
 	stopperMaxIterations(100);
 	epsilon = 1.0/double(USHRT_MAX);
 	//std::cout << "epsilon = " << epsilon << "\n";

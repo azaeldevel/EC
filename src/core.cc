@@ -709,7 +709,7 @@ void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file
 {
 	std::string strfn = logSubDirectory +  "/" + file;
 	std::ofstream fn(strfn);
-	for(ec::Single* s : *this)
+	for(ec::Single* s : lst)
 	{
 		s->save(fn);	
 		fn << "\n";
