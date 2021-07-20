@@ -26,6 +26,7 @@ namespace ec::max
 
 		
 		geneUS combination(const geneUS& gene);
+		static geneUS mutate(const geneUS& gene);
 
 	private:
 		geneUS gennumber;
@@ -35,8 +36,6 @@ namespace ec::max
 	private:	
 		geneUS combine1(const geneUS& gene);
 		geneUS combine2(const geneUS& gene);
-		geneUS combine3(const geneUS& gene);
-		geneUS combine4(const geneUS& gene);
 	};
 
 	/**
@@ -69,7 +68,6 @@ namespace ec::max
 		*/
 		virtual void print(std::ostream&) const;
 
-		geneUS mutate(geneUS);
 	private:
 		Chromosome chromo;
 	};
