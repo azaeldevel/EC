@@ -736,14 +736,14 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 		std::cout << "Step Back 1.1 (" << e << ")\n";
 		if(e != NULL) 
 		{
-			std::cout << "Step 1.1.1 (" << e->getNode()->getID() << ")\n";
+			std::cout << "Step Back 1.1.1 (" << e->getNode()->getID() << ")\n";
 			newPath->push_back(e);
 		}
 	}
 	else throw octetos::core::Exception("Direccion no asignada",__LINE__,__FILE__);
 
 	std::cout << "Step 2\n";
-	for(unsigned short i; i < stop; i++)
+	for(unsigned short i = 0; i < stop; i++)
 	{
 		if(direction == nodes::Direction::FRONT)
 		{
@@ -756,12 +756,14 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 		{
 			std::cout << "Step 2.1\n";
 			nodes::Edge* e = NULL;
-			if(newPath->back() != NULL) 
+			if(newPath->back() != NULL)
 			{
-				std::cout << "Step 2.1(" << newPath->back() << ")\n";
+				std::cout << "Step Back 2.1.1 (" << newPath->back()->getNext()->getID() << ")\n";
 				if(newPath->back()->getNext() != NULL) 
 				{
 					e = newPath->back()->getNext()->randBack();
+					std::cout << "Step Back 2.1.1.1 (" << e->getNode()->getID() << ")\n";
+					
 				}
 			}
 			if(e != NULL) newPath->push_back(e);			
