@@ -496,7 +496,7 @@ bool Enviroment::run()
 			solutions.clear();
 			for(Single* s : *this)
 			{
-				if(std::abs(1.0 - s->getFitness()) < epsilon) solutions.push_back(s);
+				if(1.0 - s->getFitness() < epsilon) solutions.push_back(s);
 				
 				if(solutions.size() >= minSolutions)
 				{

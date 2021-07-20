@@ -408,6 +408,7 @@ void Enviroment::init()
 	stopperMinSolutions(5);
 	stopperMaxIterations(100);
 	epsilon = 1.0/double(USHRT_MAX);
+	//std::cout << "epsilon = " << epsilon << "\n";
 }
 
 
