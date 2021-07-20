@@ -192,6 +192,7 @@ public:
 	//void addTerminator(Terminations);
 	void stopperMaxIterations(Iteration max);
 	void stopperNotDiference(double cota);
+	void stopperMinSolutions(Population);
 	Single* getRandomSingleTop() const;
 	Single* getRandomSingle() const;
 	
@@ -199,6 +200,7 @@ public:
 	virtual void eval();
 	virtual void juncting();
 	virtual void save();
+	virtual void save(const std::list<ec::Single*>&, const std::string&);
 	virtual void selection();
 	virtual void initial() = 0;
 	//virtual void series(const std::string& logDir,Iteration maxIteBySerie);
@@ -219,11 +221,7 @@ protected:
 	
 	Iteration actualIteration;
 	
-	/*
-	*\brief si el programa encuentra al menos las soluciones indcadas podra terminar
-	*
-	*/
-	Population minSolutions;
+
 
 	bool newIteration;
 	
@@ -246,6 +244,7 @@ protected:
 	*/
 	std::list<ec::Single*> newschils;
 
+	std::list<ec::Single*> solutions;
 
 	/**
 	*\brief Inidicatores de terminacion, es un numero entre 0 y 1.
@@ -280,15 +279,26 @@ private:
 
 	//bool inJam;	
 
+
+	Iteration maxIteration;
+
 	/**
 	*\brief Se usa cuando se activa el terminador NOT_NEW_LEADER_AT_PERCEN_ITERATION, para determinar el porcentaje de evaluacion
 	*/
-	bool stopMaxIterations,stopNotDiference,enableMinSolutions;
-	//bool enableNotNewLeaderAtPercen,enableNotIncrementFitnessLeaderAtPercen;
+	bool stopMaxIterations;
+
+	bool stopNotDiference;
 	
 	double notDiferenceCota;
 
-	Iteration maxIteration;
+
+	/*
+	*\brief si el programa encuentra al menos las soluciones indcadas podra terminar
+	*
+	*/
+	Population minSolutions;
+
+	bool stopMinSolutions;
 };
 
 }

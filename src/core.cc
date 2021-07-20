@@ -233,7 +233,8 @@ void Enviroment::init()
 	pMutationEvent = 0.02;
 	pMutableGene = 0.4;
 	fout = NULL;
-	stopMaxIterations=enableMinSolutions=false;
+	stopMaxIterations=false;
+	stopMinSolutions = false;
 	percen_at_iteration = 0.4;//%
 	comparer = &cmpStrength;
 	echoSteps = false;
@@ -490,29 +491,21 @@ bool Enviroment::run()
 				return false;
 			}
 		}
-		if(enableMinSolutions)
+		if(stopMinSolutions)
 		{
-			Population countSols = 0;
-			Iteration counItr = 0;
-			ec::Single* s;
-			for(iterator it = begin(); it != end() and counItr <= minSolutions; it++,counItr++)
+			solutions.clear();
+			for(Single* s : *this)
 			{
-				s = *it;
-				if(1.0 - s->getFitness () < Enviroment::epsilon)
+				if(std::abs(1.0 - s->getFitness()) < epsilon) solutions.push_back(s);
+				
+				if(solutions.size() >= minSolutions)
 				{
-					countSols++;
-					if(countSols >= minSolutions)
-					{
-						if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
-						//s->print((*fout));
-						if(logFile) save();
-						//compress(logDir,logDir+".tar");
-						std::cout << "\tFinalizado devido a solucion minima encontrada\n";
-						history.close();
-						return true;
-					}
+					if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
+					if(logFile) save(solutions,"solution.cvs");
+					history.close();
+					return true;
 				}
-			}
+			}			
 		}
 		if(echoSteps) std::cout << "\tStep C12\n";
 
@@ -581,7 +574,11 @@ void Enviroment::stopperNotDiference(double cota)
 	notDiferenceCota = cota;
 	stopNotDiference = true;
 }
-
+void Enviroment::stopperMinSolutions(Population min)
+{
+	minSolutions = min;
+	stopMinSolutions = true;
+}
 
 
 ec::Single* Enviroment::getProxSolution()
@@ -708,4 +705,16 @@ void Enviroment::selection()
 	}
 }
 
+void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file)
+{
+	std::string strfn = logSubDirectory +  "/" + file;
+	std::ofstream fn(strfn);
+	for(ec::Single* s : *this)
+	{
+		s->save(fn);	
+		fn << "\n";
+	}
+	fn.flush();
+	fn.close();
+}
 }
