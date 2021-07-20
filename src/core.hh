@@ -181,8 +181,10 @@ public:
 	const std::string getLogSubDirectory()const;
 	ID nextID();
 	ID getCountID();
-	bool getJam()const;
+	//bool getJam()const;
 	bool getEchoSteps()const;
+	Single* getRandomSingleTop() const;
+	Single* getRandomSingle() const;
 	
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);
@@ -193,17 +195,20 @@ public:
 	void stopperMaxIterations(Iteration max);
 	void stopperNotDiference(double cota);
 	void stopperMinSolutions(Population);
-	Single* getRandomSingleTop() const;
-	Single* getRandomSingle() const;
+	void stopperMaxSerie(Iteration max);
+	void commands(int argc, const char* argv[]);
 	
 	virtual bool run();
+	virtual bool run(int argc, const char* argv[]);
 	virtual void eval();
 	virtual void juncting();
 	virtual void save();
 	virtual void save(const std::list<ec::Single*>&, const std::string&);
 	virtual void selection();
 	virtual void initial() = 0;
-	//virtual void series(const std::string& logDir,Iteration maxIteBySerie);
+	virtual bool series();
+	virtual bool series(int argc, const char* argv[]);
+	virtual void clean();
 	
 protected:
 	std::string logDirectory;
@@ -299,6 +304,8 @@ private:
 	Population minSolutions;
 
 	bool stopMinSolutions;
+
+	Iteration maxSerie;
 };
 
 }

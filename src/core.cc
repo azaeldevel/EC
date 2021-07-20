@@ -563,7 +563,35 @@ bool Enviroment::run()
 
 	return false;
 }
-
+bool Enviroment::run(int argc, const char* argv[])
+{
+	commands(argc,argv);
+	return run();
+}
+bool Enviroment::series()
+{
+	for(unsigned short i = 1 ; i < maxSerie ; i++)
+	{
+		clean();
+		
+		if(run()) return true;
+	}
+	
+	return false;
+}
+bool Enviroment::series(int argc, const char* argv[])
+{
+	commands(argc,argv);
+	
+	for(unsigned short i = 1 ; i < maxSerie ; i++)
+	{
+		clean();
+		
+		if(run()) return true;
+	}
+	
+	return false;
+}
 void Enviroment::stopperMaxIterations(Iteration max)
 {
 	maxIteration = max;
@@ -578,6 +606,10 @@ void Enviroment::stopperMinSolutions(Population min)
 {
 	minSolutions = min;
 	stopMinSolutions = true;
+}
+void Enviroment::stopperMaxSerie(Iteration max)
+{
+	maxSerie = max;
 }
 
 
@@ -716,5 +748,28 @@ void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file
 	}
 	fn.flush();
 	fn.close();
+}
+
+void Enviroment::commands(int argc, const char* argv[])
+{
+	for(int i = 1; i <= argc; i++)
+	{
+		if(strcmp("--directory-logs",argv[i]) == 0)
+		{
+			logDirectory = argv[++i];
+		}
+		if(strcmp("--max-series",argv[i]) == 0)
+		{
+			stopperMaxSerie(std::atoi(argv[++i]));
+		}
+		if(strcmp("--max-iterations",argv[i]) == 0)
+		{
+			stopperMaxIterations(std::atoi(argv[++i]));
+		}
+	}
+}
+void Enviroment::clean()
+{
+	clear();
 }
 }

@@ -24,13 +24,13 @@
 
 #include <iostream>
 #include <fstream>
-#include <octetos/coreutils/shell.hh>
+//#include <octetos/coreutils/shell.hh>
 #include "GA-sudoku.hh"
 
 
 int main(int argc, const char* argv[])
 {
-	if(argc < 3) 
+	if(argc < 4) 
 	{
 		std::cerr << "Indique lo cuatro parametros necesarion\n";
 		std::cerr << "sudoku InitialBoard dirlog|- iterations series\n";
@@ -39,12 +39,13 @@ int main(int argc, const char* argv[])
 			
 	std::string logDir = argv[1];
 	std::string initBoard = argv[2];
-	std::string logDirectory;
+	//std::string logDirectory;
 	if(logDir.compare("-") == 0) logDir = "";//desactivacion de logs	
-	unsigned int iterations = std::stoi(argv[3]);	
-	bool logFile = not logDir.empty();//enableLogFile ();
+	unsigned int iterations = std::stoi(argv[3]);
+	unsigned int series = std::stoi(argv[4]);	
+	//bool logFile = not logDir.empty();//enableLogFile ();
 	
-	std::ofstream fnSolutions;
+	/*std::ofstream fnSolutions;
 	if(logFile) 
 	{
 		logDirectory = logDir + "/" + std::to_string(ec::sudoku::Enviroment::getDayID());
@@ -52,12 +53,12 @@ int main(int argc, const char* argv[])
 		coreutils::Shell shell;
 		shell.mkdir(logDirectory,true);
 		fnSolutions.open(logStrSolutions);
-	}
+	}*/
 	
-	ec::sudoku::Enviroment* sudoku = new ec::sudoku::Enviroment(initBoard,iterations,logDirectory);		
+	ec::sudoku::Enviroment* sudoku = new ec::sudoku::Enviroment(initBoard,iterations,logDir,series);		
 	sudoku->enableEcho(&std::cout,2);
 	
-	return sudoku->run()? EXIT_SUCCESS : EXIT_FAILURE;
+	return sudoku->series()? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 

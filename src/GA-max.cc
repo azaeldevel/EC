@@ -169,8 +169,8 @@ geneUS Chromosome::combine3(const geneUS& gene)
 	const caret_2B_16b* g1 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gennumber);
 	const caret_2B_16b* g2 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gene);
 	caret_2B_16b g3;
-	g3.a = g1->b;
-	g3.b = g2->a;
+	g3.a = g1->a;
+	g3.b = g2->b;
 	g3.c = g1->c;
 	g3.d = g2->d;
 	g3.e = g1->e;
@@ -195,8 +195,8 @@ geneUS Chromosome::combine4(const geneUS& gene)
 	const caret_2B_16b* g1 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gennumber);
 	const caret_2B_16b* g2 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gene);
 	caret_2B_16b g3;
-	g3.a = g2->b;
-	g3.b = g1->a;
+	g3.a = g2->a;
+	g3.b = g1->b;
 	g3.c = g2->c;
 	g3.d = g1->d;
 	g3.e = g2->e;

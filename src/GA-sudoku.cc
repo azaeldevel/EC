@@ -602,6 +602,14 @@ Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::stri
 	//addTerminator(Terminations::MAXITERATION);
 	//addTerminator(Terminations::MINSOLUTIONS);
 }
+Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::string& logDir,Iteration maxS)
+{
+	init(initB);
+	stopperMaxIterations(maxite);
+	logDirectory = logDir;
+	logFile = not logDirectory.empty();
+	stopperMaxSerie(maxS);
+}
 Enviroment::~Enviroment()
 {
 	for(ec::Single* s : *this)
