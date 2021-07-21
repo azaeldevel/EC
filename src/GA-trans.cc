@@ -559,22 +559,22 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 	//buscar un empate entre this y single
 	nodes::Edge* pe;
 	//si existe tal empate realizar una usarlos como para union
-	std::cout << "Single::juncting Juntion 1\n";
+	//std::cout << "Single::juncting Juntion 1\n";
 	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
-		std::cout << "Single::juncting 1.1\n";
+		//std::cout << "Single::juncting 1.1\n";
 		for(nodes::Edge* e : *chromosome.getPath())
 		{
-			std::cout << "Single::juncting 1.1.1\n";
+			//std::cout << "Single::juncting 1.1.1\n";
 			pe = ((Single*)single)->find(e);
 			if(pe != NULL)
 			{
-				std::cout << "Single::juncting 1.1.1.1\n";
+				//std::cout << "Single::juncting 1.1.1.1\n";
 				i++;
 				if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) throw octetos::core::Exception("El sentido de la ruta no coincide.",__LINE__,__FILE__);
 				if(pe->getNext() != e->getNext())
 				{
-					std::cout << "Single::juncting 1.1.1.1.1\n";
+					//std::cout << "Single::juncting 1.1.1.1.1\n";
 					Path* newp = new Path();
 					if(newp->juncting(chromosome.getPath(),((Single*)single)->chromosome.getPath(),i)) counNew++;
 				}
@@ -785,12 +785,15 @@ void Enviroment::initial()
 	gammaTarget = fractionQuality/double(targets.size());
 	
 	//
-	
+	std::cout << "Targets : \n";
+	for(nodes::Node* node : targets)
+	{
+		std::cout << "\t" << node->getID() << "\n";
+	}
 	for(unsigned short i = 0; i < threads; i++)
 	{
 		for(nodes::Node* node : targets)
 		{
-			//std::cout << node->getID() << "\n";
 			generate(node,genLengthMin,nodes::Direction::FRONT);
 			generate(node,genLengthMin,nodes::Direction::BACK);
 		}
@@ -803,8 +806,8 @@ void Enviroment::initial()
 		{
 			lsmd5.push_back(path->getMD5());
 	 		Single* s = new Single(nextID(),*this,path,targets);
-	 		//s->print(std::cout);
-	 		//std::cout << "\n";
+	 		s->print(std::cout);
+	 		std::cout << "\n";
 			push_back(s);
 		}
 	}
