@@ -98,7 +98,7 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	
 	nodes::Node* node_30 = region->newNode(++countID);
 	region->newEdgeFront(150,node_29,node_30);//ID:30
-	std::cout << "node_30 = " << node_30->getID() << "\n";
+	//std::cout << "node_30 = " << node_30->getID() << "\n";
 	
 	region->newEdgeFront(100,node_30,node_O);
 	

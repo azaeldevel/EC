@@ -103,6 +103,7 @@ namespace nodes
 		unsigned short getNextCount();
 		//unsigned short getPrevCount();
 		void resetNextCount();
+		unsigned int getDistence()const;
 		
 	private:
 		Explored explored;
@@ -138,8 +139,10 @@ namespace nodes
 		const std::string& getName()const;
 		Node* getOrigin();
 		unsigned int getCountNodes()const;
-		unsigned int getCountEdgesFront()const;
-		unsigned int getCountEdgesBack()const;
+		//unsigned int getCountEdgesFront()const;
+		//unsigned int getCountEdgesBack()const;
+		unsigned int getLengthFront()const;
+		unsigned int getLengthBack()const;
 
 		//funtions
 		void connect(Node* from, Node* to);
@@ -159,8 +162,10 @@ namespace nodes
 		std::list<Node*> nodes;
 		//std::list<Edge*> edges;
 		Node* origin;
-		unsigned int countEdgesFront;
-		unsigned int countEdgesBack;
+		//unsigned int countEdgesFront;
+		//unsigned int countEdgesBack;
+		unsigned int lengthFront;
+		unsigned int lengthBack;
 	};
 
 	class Colony : public Region
@@ -193,7 +198,7 @@ class Path : public std::list<nodes::Edge*>
 public:
 	Path();
 	Path(nodes::Direction dir);
-	Path(const Path*);
+	Path(const Path&);
 	Path(const Path*,nodes::Direction);
 	Path(const Path*,const Path*);
 
@@ -212,6 +217,8 @@ public:
 	//nodes::Edge* randNext();
 	void genMD5();
 	void push_back(nodes::Edge*);
+	void reverse(const Path*);
+	nodes::Edge* find(nodes::Edge*);
 	
 private:
 	bool cutBefore(nodes::Node*);
@@ -224,6 +231,7 @@ class Chromosome : public ec::Chromosome
 {
 public:
 	Chromosome(Path* path);
+	Chromosome(const Path& path);
 	Chromosome(const Chromosome& obj);
 	virtual ~Chromosome();
 
@@ -240,16 +248,16 @@ public:
 
 private:
 	Path* path;
-	bool reduce;
+	//bool reduce;
 };
 
 
 class Single : public ec::Single
 {
 public:
-	Single(const Single&, const std::list<nodes::Node*>& targets);
-	Single(ID id,Enviroment&, const Junction& junction, Path*, const std::list<nodes::Node*>& targets);
-	Single(ID id,Enviroment&, Path*, const std::list<nodes::Node*>& targets);
+	Single(const Single&);
+	Single(ID id,Enviroment&, const Junction& junction, Path*);
+	Single(ID id,Enviroment&, Path*);
 
 	unsigned short getLengthPath()const;
 	unsigned short getCountTagetsPath()const;
@@ -271,7 +279,6 @@ public:
 private:
 	unsigned short puntos;
 	Chromosome chromosome;
-	const std::list<nodes::Node*>& lstTargets;
 };
 
 
@@ -286,10 +293,11 @@ public:
 	void init();
 	virtual ~Enviroment();
 
-	double getGammaLength() const;
+	double getGammaLengthFront() const;
+	double getGammaLengthBack() const;
 	double getGammaTarget() const;
 	const nodes::Region* getRegion()const;
-	std::list<nodes::Node*> getTargets()const;
+	const std::list<nodes::Node*>& getTargets()const;
 	double getFreactionQ()const;
 	double getFreactionD()const;
 	unsigned short getGenLengthMin() const;
@@ -312,7 +320,7 @@ private:
 	nodes::Region* region;
 	std::list<Path*> lstPaths;
 	nodes::ID countID;
-	double gammaLength,gammaTarget;
+	double gammaLengthFront,gammaLengthBack,gammaTarget;
 	std::list<nodes::Node*> targets;
 	double fractionQuality;
 	double fractionDen;

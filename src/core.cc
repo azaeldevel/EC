@@ -157,9 +157,13 @@ void Junction::randFill(bool favor)
 
 
 
-Single::Single(const Single&)
+Single::Single(const Single& obj)
 {
-	throw octetos::core::Exception("Operacion invalida.",__FILE__,__LINE__);
+	id = env->nextID();
+	age = 0;
+	fitness = obj.fitness;
+	env = obj.env;
+	junction = obj.junction;
 }
 Single::Single(ec::ID id,Enviroment& e) : env(&e)
 {
