@@ -210,7 +210,8 @@ namespace nodes
 	Region::Region(ID id, const std::string& name) : Node(id,NodeType::REGION),origin(NULL)
 	{
 		//countNodes = 0;
-		//countEdges = 0;
+		countEdgesFront = 0;
+		countEdgesBack = 0;
 	}
 	Region::~Region()
 	{
@@ -232,9 +233,13 @@ namespace nodes
 	{
 		return nodes.size();
 	}
-	unsigned int Region::getCountEdges()const
+	unsigned int Region::getCountEdgesFront()const
 	{
-		return countEdges;
+		return countEdgesFront;
+	}
+	unsigned int Region::getCountEdgesBack()const
+	{
+		return countEdgesBack;
 	}
 
 
@@ -260,7 +265,7 @@ namespace nodes
 	{
 		Edge* e = new Edge(d,a,n);
 		a->addFront(e);
-		countEdges++;
+		countEdgesFront++;
 		
 		return e;
 	}
@@ -269,7 +274,7 @@ namespace nodes
 		Edge* e = new Edge(d,a,n);
 		//std::cout << "(" << a->getID() << ")-->(" << n->getID() << ")\n";
 		a->addBack(e);
-		countEdges++;
+		countEdgesBack++;
 		
 		return e;
 	}
@@ -527,7 +532,7 @@ Single::Single(ID id,Enviroment& e, Path* p,const std::list<nodes::Node*>& t) : 
 void Single::eval()
 {
 	//double minfl = (Enviroment*)env)->getGammaLength() * ((Enviroment*)env)->getTargets().size());
-	double maxfl = ((Enviroment*)env)->getGammaLength() * double(((Enviroment*)env)->getRegion()->getCountEdges());
+	double maxfl = ((Enviroment*)env)->getGammaLength() * double(((Enviroment*)env)->getRegion()->getCountEdgesFront());
 	double flength = ((Enviroment*)env)->getGammaLength() * double(getLengthPath());
 	flength = std::abs(maxfl - flength)/((((Enviroment&)getEnviroment()).getFreactionD()) * maxfl);
 	flength = ((Enviroment&)getEnviroment()).getFreactionQ() - flength;
@@ -554,22 +559,22 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 	//buscar un empate entre this y single
 	nodes::Edge* pe;
 	//si existe tal empate realizar una usarlos como para union
-	//std::cout << "Single::juncting Juntion 1\n";
+	std::cout << "Single::juncting Juntion 1\n";
 	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
-		//std::cout << "Single::juncting 1.1\n";
+		std::cout << "Single::juncting 1.1\n";
 		for(nodes::Edge* e : *chromosome.getPath())
 		{
-			//std::cout << "Single::juncting 1.1.1\n";
+			std::cout << "Single::juncting 1.1.1\n";
 			pe = ((Single*)single)->find(e);
 			if(pe != NULL)
 			{
-				//std::cout << "Single::juncting 1.1.1.1\n";
+				std::cout << "Single::juncting 1.1.1.1\n";
 				i++;
 				if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) throw octetos::core::Exception("El sentido de la ruta no coincide.",__LINE__,__FILE__);
 				if(pe->getNext() != e->getNext())
 				{
-					//std::cout << "Single::juncting 1.1.1.1.1\n";
+					std::cout << "Single::juncting 1.1.1.1.1\n";
 					Path* newp = new Path();
 					if(newp->juncting(chromosome.getPath(),((Single*)single)->chromosome.getPath(),i)) counNew++;
 				}
@@ -718,7 +723,7 @@ unsigned short Enviroment::getGenLengthMin() const
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
 {
-	std::cout << "Step 1\n";
+	//std::cout << "Step 1\n";
 	Path* newPath = new Path(direction);
 	if(direction == nodes::Direction::FRONT)
 	{
@@ -733,16 +738,16 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 	else if(direction == nodes::Direction::BACK)
 	{
 		nodes::Edge* e = n->randBack();
-		std::cout << "Step Back 1.1 (" << e << ")\n";
+		//std::cout << "Step Back 1.1 (" << e << ")\n";
 		if(e != NULL) 
 		{
-			std::cout << "Step Back 1.1.1 (" << e->getNode()->getID() << ")\n";
+			//std::cout << "Step Back 1.1.1 (" << e->getNode()->getID() << ")\n";
 			newPath->push_back(e);
 		}
 	}
 	else throw octetos::core::Exception("Direccion no asignada",__LINE__,__FILE__);
 
-	std::cout << "Step 2\n";
+	//std::cout << "Step 2\n";
 	for(unsigned short i = 0; i < stop; i++)
 	{
 		if(direction == nodes::Direction::FRONT)
@@ -754,22 +759,21 @@ void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction di
 		}
 		else if(direction == nodes::Direction::BACK)
 		{
-			std::cout << "Step 2.1\n";
+			//std::cout << "Step 2.1\n";
 			nodes::Edge* e = NULL;
 			if(newPath->back() != NULL)
 			{
-				std::cout << "Step Back 2.1.1 (" << newPath->back()->getNext()->getID() << ")\n";
+				//std::cout << "Step Back 2.1.1 (" << newPath->back()->getNext()->getID() << ")\n";
 				if(newPath->back()->getNext() != NULL) 
 				{
 					e = newPath->back()->getNext()->randBack();
-					std::cout << "Step Back 2.1.1.1 (" << e->getNode()->getID() << ")\n";
-					
+					//std::cout << "Step Back 2.1.1.1 (" << e->getNode()->getID() << ")\n";					
 				}
 			}
 			if(e != NULL) newPath->push_back(e);			
 		}
 	}
-	std::cout << "Step 3\n";
+	//std::cout << "Step 3\n";
 	if(newPath->size() > 1) lstPaths.push_back(newPath);
 }
 void Enviroment::initial()
@@ -777,7 +781,7 @@ void Enviroment::initial()
 	creteRegion(targets);
 	
 	//
-	gammaLength = fractionQuality/double(region->getCountEdges());
+	gammaLength = fractionQuality/double(region->getCountEdgesFront());
 	gammaTarget = fractionQuality/double(targets.size());
 	
 	//
@@ -786,7 +790,7 @@ void Enviroment::initial()
 	{
 		for(nodes::Node* node : targets)
 		{
-			std::cout << node->getID() << "\n";
+			//std::cout << node->getID() << "\n";
 			generate(node,genLengthMin,nodes::Direction::FRONT);
 			generate(node,genLengthMin,nodes::Direction::BACK);
 		}
@@ -799,14 +803,13 @@ void Enviroment::initial()
 		{
 			lsmd5.push_back(path->getMD5());
 	 		Single* s = new Single(nextID(),*this,path,targets);
-	 		s->print(std::cout);
-	 		std::cout << "\n";
+	 		//s->print(std::cout);
+	 		//std::cout << "\n";
 			push_back(s);
 		}
 	}
 	
-	lstPaths.clear();
-	
+	lstPaths.clear();	
 }
 
 /*

@@ -240,6 +240,7 @@ void Enviroment::init()
 	comparer = &cmpStrength;
 	echoSteps = false;
 	maxSerie = 0;
+	epsilon = 1.0e-29;
 }
 Enviroment::Enviroment()
 {

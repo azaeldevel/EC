@@ -138,7 +138,8 @@ namespace nodes
 		const std::string& getName()const;
 		Node* getOrigin();
 		unsigned int getCountNodes()const;
-		unsigned int getCountEdges()const;
+		unsigned int getCountEdgesFront()const;
+		unsigned int getCountEdgesBack()const;
 
 		//funtions
 		void connect(Node* from, Node* to);
@@ -158,7 +159,8 @@ namespace nodes
 		std::list<Node*> nodes;
 		//std::list<Edge*> edges;
 		Node* origin;
-		unsigned int countEdges;
+		unsigned int countEdgesFront;
+		unsigned int countEdgesBack;
 	};
 
 	class Colony : public Region
