@@ -579,6 +579,10 @@ Single::Single(ID id,Enviroment& e,const Junction& j, Path* p) : ec::Single(id,e
 Single::Single(ID id,Enviroment& e, Path* p) : ec::Single(id,e),chromosome(p),puntos(0)
 {
 }
+Single::~Single()
+{
+
+}
 
 void Single::eval()
 {
@@ -626,18 +630,26 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 			bool flsingleP = false;
 			Path *singleP;
 			std::cout << "Single::juncting 1.1.1.a\n";
-			if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) 
+			nodes::Edge* pe = ((Single*)single)->find(e);
+			if(pe != NULL)
 			{
-				singleP = new Path();
-				singleP->reverse(((Single*)single)->chromosome.getPath());
-				flsingleP = true;
+				if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) 
+				{
+					singleP = new Path();
+					singleP->reverse(((Single*)single)->chromosome.getPath());
+					flsingleP = true;
+				}
+				else
+				{
+					singleP = ((Single*)single)->chromosome.getPath();
+				}
 			}
 			else
 			{
 				singleP = ((Single*)single)->chromosome.getPath();
 			}
 			std::cout << "Single::juncting 1.1.1.b\n";
-			nodes::Edge* pe = singleP->find(e);
+			
 			std::cout << "Single::juncting 1.1.1.c\n";
 			if(pe != NULL)
 			{				
@@ -796,6 +808,7 @@ void Enviroment::init()
 	fractionQuality = 1.0/fractionDen;
 	genLengthMin = 5;
 	threads = 20;
+	region = NULL;
 }
 Enviroment::~Enviroment()
 {

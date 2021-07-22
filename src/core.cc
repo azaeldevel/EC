@@ -252,7 +252,7 @@ Enviroment::Enviroment()
 }
 Enviroment::~Enviroment()
 {
-
+	if(size() > 0) free();
 }
 
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
@@ -263,6 +263,7 @@ Enviroment::Enviroment(const std::string& log,Iteration m) : maxIteration(m), lo
 {
 	init();		
 }
+
 
 Population Enviroment::getMaxPopulation()const
 {
@@ -581,7 +582,7 @@ bool Enviroment::series()
 {
 	for(actualSerie = 1 ; actualSerie <= maxSerie ; actualSerie++)
 	{
-		clean();
+		free();
 		
 		if(run()) return true;
 	}
@@ -594,7 +595,7 @@ bool Enviroment::series(int argc, const char* argv[])
 	
 	for(actualSerie = 1 ; actualSerie <= maxSerie ; actualSerie++)
 	{
-		clean();
+		free();
 		
 		if(run()) return true;
 	}
@@ -778,9 +779,9 @@ void Enviroment::commands(int argc, const char* argv[])
 		}
 	}
 }
-void Enviroment::clean()
+void Enviroment::free()
 {
-	for(ec::Single* s : *this)
+	for(Single* s : *this)
 	{
 		delete s;
 	}

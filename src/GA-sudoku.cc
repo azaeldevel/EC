@@ -612,10 +612,6 @@ Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::stri
 }
 Enviroment::~Enviroment()
 {
-	for(ec::Single* s : *this)
-	{
-		delete s;
-	}
 }
 void Enviroment::init(const std::string& initB)
 {

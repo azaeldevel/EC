@@ -161,7 +161,7 @@ public:
 	Enviroment();
 	Enviroment(const std::string& log,Iteration maxIteration);
 	Enviroment(Iteration maxIteration);
-	~Enviroment();
+	virtual ~Enviroment();
 
 	//getters
 	Population getMaxPopulation()const;
@@ -208,7 +208,7 @@ public:
 	virtual void initial() = 0;
 	virtual bool series();
 	virtual bool series(int argc, const char* argv[]);
-	virtual void clean();
+	virtual void free();
 	
 protected:
 	std::string logDirectory;

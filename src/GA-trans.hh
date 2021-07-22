@@ -258,6 +258,7 @@ public:
 	Single(const Single&);
 	Single(ID id,Enviroment&, const Junction& junction, Path*);
 	Single(ID id,Enviroment&, Path*);
+	virtual ~Single();
 
 	unsigned short getLengthPath()const;
 	unsigned short getCountTagetsPath()const;
