@@ -48,7 +48,9 @@ double randNumber();
 double randNumber(double max);
 double randNumber(double min, double max);
 
-
+/**
+*\brief Representa nuestro conjunto de variables
+*/
 class Chromosome
 {
 public:
@@ -92,11 +94,19 @@ private:
 	geneUS algorit;	
 };
 
-
+/**
+*\brief Representa una posible solucion a nuestro problema
+*/
 class Single
 {
 public:
+	/**
+	*\brief Constructor de copia
+	*/
 	Single(const Single&);
+	/**
+	*\brief Constructor que recive el ID del Individuo y el Ambiente
+	*/
 	Single(ID id,Enviroment&);	
 	Single(ID id,Enviroment&,const Junction& junction);
 	virtual ~Single();
@@ -115,10 +125,21 @@ public:
 	bool mudable()const;
 	void init();
 	
-
+	/**
+	*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
+	*/
 	virtual void eval() = 0;
+	/**
+	*\brief Realiza el apareo entre dos individuos
+	*/
 	virtual Population juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel,void*) = 0;
+	/**
+	*\brief Crea un arcivo CSV con los datos relevantes del individuo
+	*/
 	virtual void save(std::ofstream& fn) = 0;
+	/**
+	*\brief Imprime los datos relevantes del individuo
+	*/
 	virtual void print(std::ostream&) const = 0;
 
 protected:
@@ -135,8 +156,15 @@ private:
 	Junction junction;
 };
 
+/**
+*\brief Algoritmo de ordenamiento
+*/
 bool cmpStrength(const Single* f,const Single* s);
+/**
+*\brief Algoritmo de ordenamiento
+*/
 bool cmpStrength1(const Single* f,const Single* s);
+/*
 enum MethodeSelection
 {
 	INCREMENTING_MEDIA,
@@ -150,13 +178,19 @@ enum Terminations
 	FORLEADER_INCREMENTFITNESS,
 	JAM
 };
-
+*/
+/**
+*\brief Pricipales variables de control y proceso
+*/
 class Enviroment : public std::list<ec::Single*>
 {
 public:
 	//
 
 	//
+	/**
+	*\brief Inizializa las variables
+	*/
 	void init();
 	Enviroment();
 	Enviroment(const std::string& log,Iteration maxIteration);
@@ -179,6 +213,9 @@ public:
 	static unsigned long getTimeID();
 	std::ostream* getFout();
 	const std::string getLogSubDirectory()const;
+	/**
+	*\brief Develbe el siguiento ID paa un nuevo objeto Single
+	*/
 	ID nextID();
 	ID getCountID();
 	//bool getJam()const;
@@ -198,16 +235,53 @@ public:
 	void stopperMaxSerie(Iteration max);
 	void commands(int argc, const char* argv[]);
 	
+	/**
+	*\brief Inicia la ejecution del algoritmo
+	*/
 	virtual bool run();
+	/**
+	*\brief Inicia la ejecution del algoritmo con los parametro de linea de comando
+	*/
 	virtual bool run(int argc, const char* argv[]);
+	/**
+	*\brief Inicia el proceso de veluacion
+	*/
 	virtual void eval();
+	/**
+	*\brief Inicia el proceso de apareo
+	*/
 	virtual void juncting();
+	
+	/**
+	*\brief Inicia el proceso de guardar
+	*/
 	virtual void save();
-	virtual void save(const std::list<ec::Single*>&, const std::string&);
+	/**
+	*\brief Inicia el proceso de gualdar la lista indicada, llamando a la funcion Single.save() de cada obejto en la lista
+	*\param ls lista de objetos para guardar
+	*\param file nombre de archivo que se genera
+	*/
+	virtual void save(const std::list<ec::Single*>& ls, const std::string& file);
+	/**
+	*\brief Inicia el proceso de seleccion de individuos
+	*/
 	virtual void selection();
+	/**
+	*\brief Crea la poblacion inicial
+	*/
 	virtual void initial() = 0;
+
+	/**
+	*\brief Inicia el proceso de serie
+	*/
 	virtual bool series();
-	virtual bool series(int argc, const char* argv[]);
+	/**
+	*\brief Inicia el proceso de serie con argumentos de linea de comandos
+	*/
+	virtual bool series(int argc, const char* argv[]);	
+	/**
+	*\brief Libera la memoria ocupada por la actual poblacion y vacia la lista
+	*/
 	virtual void free();
 	
 protected:

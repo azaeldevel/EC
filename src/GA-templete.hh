@@ -29,7 +29,7 @@ namespace ec::alg
 	{
 	public:
 		/**
-		*\brief Constructor recive el ID del Individuo y el Ambiente
+		*\brief Constructor que recive el ID del Individuo y el Ambiente
 		*/
 		Single(ID id,Enviroment& env);
 		
