@@ -421,6 +421,7 @@ bool Path::juncting(Path* pB,Path* pE,unsigned short offset)
 			//if(pE.size() < 3) continue;
 		}
 		Path(&pB,&pE);
+		genMD5();
 		return true;
 	}
 	else

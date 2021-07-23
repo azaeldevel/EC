@@ -164,21 +164,7 @@ bool cmpStrength(const Single* f,const Single* s);
 *\brief Algoritmo de ordenamiento
 */
 bool cmpStrength1(const Single* f,const Single* s);
-/*
-enum MethodeSelection
-{
-	INCREMENTING_MEDIA,
-	LEADER_STRONG,
-};
-enum Terminations
-{
-	MAXITERATION,
-	MINSOLUTIONS,
-	FORLEADER_NEW,
-	FORLEADER_INCREMENTFITNESS,
-	JAM
-};
-*/
+
 /**
 *\brief Pricipales variables de control y proceso
 */
