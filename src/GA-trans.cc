@@ -300,16 +300,17 @@ namespace nodes
 
 
 
-Chromosome::Chromosome(Path* p) : ec::Chromosome("trans::Chromosome"),path(p)
+Chromosome::Chromosome(Path* p) : ec::Chromosome("trans::Chromosome")
 {
-
+	path = p;
 }
-Chromosome::Chromosome(const Path& p) : ec::Chromosome("trans::Chromosome"),path(new Path(p))
+Chromosome::Chromosome(const Path& p) : ec::Chromosome("trans::Chromosome")
 {
-
+	path = new Path(p);
 }
-Chromosome::Chromosome(const Chromosome& obj) : ec::Chromosome("TransChromosome"),path(new Path(*obj.path))
+Chromosome::Chromosome(const Chromosome& obj) : ec::Chromosome("trans::Chromosome")
 {
+	path = new Path(*obj.path);
 }
 Chromosome::~Chromosome()
 {
@@ -356,12 +357,7 @@ Path::Path() : direction(nodes::Direction::NOTDIRECT)
 }
 Path::Path(const Path& obj)
 {
-	for(nodes::Edge* e : obj)
-	{
-		push_back(e);
-	}
-	direction = obj.direction;
-	md5 = obj.md5;	
+	operator =(obj);	
 }
 Path::Path(const Path* pb,const Path* pe)
 {
@@ -381,6 +377,17 @@ Path::Path(const Path* pb,const Path* pe)
 Path::Path(const Path* p,nodes::Direction d) : std::list<nodes::Edge*>(*p), direction(d)
 {
 	genMD5();
+}
+const Path& Path::operator = (const Path& obj)
+{
+	for(nodes::Edge* e : obj)
+	{
+		push_back(e);
+	}
+	direction = obj.direction;
+	md5 = obj.md5;
+	
+	return *this;
 }
 unsigned short Path::getCountTargets()const
 {
@@ -554,7 +561,6 @@ void Path::reverse(const Path* p)
 	}
 	genMD5();
 }
-
 nodes::Edge* Path::find(nodes::Edge* e)
 {
 	iterator it;
@@ -571,13 +577,13 @@ nodes::Edge* Path::find(nodes::Edge* e)
 
 
 
-Single::Single(const Single& s) : ec::Single(s),puntos(s.puntos),chromosome(s.chromosome)
+Single::Single(const Single& s) : ec::Single(s),chromosome(s.chromosome)
 {
 }
-Single::Single(ID id,Enviroment& e,const Junction& j, Path* p) : ec::Single(id,e,j),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e,const Junction& j, Path* p) : ec::Single(id,e,j),chromosome(p)
 {
 }
-Single::Single(ID id,Enviroment& e, Path* p) : ec::Single(id,e),chromosome(p),puntos(0)
+Single::Single(ID id,Enviroment& e, Path* p) : ec::Single(id,e),chromosome(p)
 {
 }
 Single::~Single()
@@ -592,7 +598,7 @@ void Single::eval()
 	{
 		flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthFront() * double(getLengthPath());
 	}
-	else if(chromosome.getPath()->getDirection() == nodes::Direction::FRONT)
+	else if(chromosome.getPath()->getDirection() == nodes::Direction::BACK)
 	{
 		flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthBack() * double(getLengthPath());
 	}
@@ -602,7 +608,7 @@ void Single::eval()
 	{
 		fTarget = ((Enviroment&)getEnviroment()).getFreactionQ()/fTarget;
 	}
-	//std::cout << "(" << getID() << ") : ";
+	//std::cout << "(" << getID() << ") : \n";
 	//std::cout << "\tflength = " << flength << "\n";
 	//std::cout << "\tfTarget = " << fTarget << "\n";
 	fitness = flength + fTarget;	
@@ -619,19 +625,24 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 	//std::cout << "Single::juncting Juntion 1\n";
 	for(ec::geneUS i = 1; i < getJunction().get_number(); i++)
 	{
-		std::cout << "Single::juncting 1.1\n";
-		std::cout << "Apareo : " << i << "/" << getJunction().get_number() << "\n";
-		print(std::cout);
-		std::cout << "\n";
+		unsigned short nodepos = 0;
+		//std::cout << "Single::juncting 1.1\n";
+		//std::cout << "Apareo : " << i << "/" << getJunction().get_number() << "\n";
+		if(env->getEchoSteps())
+		{
+			print(std::cout);
+			std::cout << "\n";
+		}
 		for(nodes::Edge* e : *chromosome.getPath())
 		{
 			if(e == NULL) throw octetos::core::Exception("Puntero Nulo",__LINE__,__FILE__);
 			
-			std::cout << "Single::juncting 1.1.1\n";
+			//std::cout << "Single::juncting 1.1.1\n";
 			bool flsingleP = false;
-			Path *singleP;
-			std::cout << "Single::juncting 1.1.1.a\n";
+			Path *singleP = NULL;
+			//std::cout << "Single::juncting 1.1.1.a\n";
 			nodes::Edge* pe = ((Single*)single)->find(e);
+			nodepos++;
 			if(pe != NULL)
 			{
 				if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) 
@@ -649,12 +660,13 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 			{
 				singleP = ((Single*)single)->chromosome.getPath();
 			}
-			std::cout << "Single::juncting 1.1.1.b\n";
+			//std::cout << "Single::juncting 1.1.1.b\n";
 			
-			std::cout << "Single::juncting 1.1.1.c\n";
+			//std::cout << "Single::juncting 1.1.1.c\n";
+			//std::cout << "pe -> " << pe << "\n";
 			if(pe != NULL)
-			{				
-				std::cout << "Single::juncting 1.1.1.1\n";
+			{
+				//std::cout << "Single::juncting 1.1.1.1\n";
 				/*print(std::cout);
 				std::cout << "  || ";
 				singleP->print(std::cout);
@@ -664,10 +676,10 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 				if(pe->getNext() != e->getNext())
 				{
 					std::cout << "Single::juncting 1.1.1.1.1\n";
-					i++;				
+					//i++;				
 					
 					Path *newP = new Path();
-					if(newP->juncting(chromosome.getPath(),singleP,i)) 
+					if(newP->juncting(chromosome.getPath(),singleP,nodepos)) 
 					{
 						flsingleP = false;//no eliminar
 						counNew++;
@@ -683,14 +695,15 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 						}
 						Single* newSingle = new Single(env->nextID(),*((Enviroment*)env),*genJ,newP);
 						chils.push_back(newSingle);
-					}				
+					}	
+					//std::cout << "Single::juncting 1.1.1.1.2\n";			
 				}
 			}
 			if(flsingleP) delete singleP;
 		}
 	}
 
-	if(chils.size() == 0) 
+	//if(chils.size() == counNew) 
 	{
 		Single* newSingle = new Single(*this);
 		newSingle->growUp();
@@ -801,15 +814,18 @@ Enviroment::Enviroment(const std::string& log)
 void Enviroment::init()
 {
 	countID = 0;//contador de nodos
-	maxPopulation = 250;
-	stopperMaxIterations(1000);
-	stopperNotDiference(1.0e-20);
+	initPopulation = 1000;
+	maxPopulation = 1000;
+	maxProgenitor = 250;
+	stopperMaxIterations(3000);
+	//stopperNotDiference(1.0e-20);
 	comparer = &cmpStrength1;
 	fractionDen = 2.0;
 	fractionQuality = 1.0/fractionDen;
 	genLengthMin = 5;
 	threads = 20;
 	region = NULL;
+	//echoSteps = true;
 }
 Enviroment::~Enviroment()
 {
@@ -842,6 +858,8 @@ unsigned short Enviroment::getGenLengthMin() const
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)
 {
+	if(lstPaths.size() >= initPopulation) return;
+	
 	//std::cout << "Step 1\n";
 	Path* newPath = new Path(direction);
 	if(direction == nodes::Direction::FRONT)

@@ -159,10 +159,10 @@ void Junction::randFill(bool favor)
 
 Single::Single(const Single& obj)
 {
+	env = obj.env;
 	id = env->nextID();
 	age = 0;
 	fitness = obj.fitness;
-	env = obj.env;
 	junction = obj.junction;
 }
 Single::Single(ec::ID id,Enviroment& e) : env(&e)
@@ -240,11 +240,21 @@ void Enviroment::init()
 	stopMaxIterations=false;
 	stopMinSolutions = false;
 	stopMaxSerie = false;
-	percen_at_iteration = 0.4;//%
+	//percen_at_iteration = 0.4;//%
 	comparer = &cmpStrength;
 	echoSteps = false;
 	maxSerie = 0;
-	epsilon = 1.0e-29;
+	epsilon = 1.0e-28;
+	maxPopulation = 0;
+	maxProgenitor = 0;
+	initPopulation = 0;
+	echolevel = 0;
+	logFile = false;
+	sigma = 0;
+	media = 0;
+	actualSerie = 0;
+	newIteration = false;
+	fout = &std::cout;
 }
 Enviroment::Enviroment()
 {
@@ -371,9 +381,13 @@ void Enviroment::enableLogFile(bool log)
 }
 bool Enviroment::run()
 {
-	if(maxProgenitor < minSolutions) throw octetos::core::Exception("La cantidad de progenoore deveria ser major que la cantidad de soluciones buscadas",__FILE__,__LINE__);
-	actualIteration = 1;
 	
+	if(stopMinSolutions and minSolutions == 0) throw octetos::core::Exception("La cantida minima de soluciones requeridad deve ser mayor que 0",__FILE__,__LINE__);
+	if(initPopulation == 0) throw octetos::core::Exception("La poblacion inicial deve ser mayor que 0",__FILE__,__LINE__);
+	if(maxProgenitor > maxPopulation) throw octetos::core::Exception("La catidad de progenitores deve ser menor que la popblacion",__FILE__,__LINE__);
+	if(maxProgenitor == 0) throw octetos::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
+	
+	actualIteration = 1;	
 	if(echoSteps) std::cout << "\tStep 1\n";
 	initial();
 	if(echoSteps) std::cout << "\tStep 2\n";
@@ -383,7 +397,7 @@ bool Enviroment::run()
 	logFile = not logDirectory.empty();
 	if(logFile)
 	{
-		session = getSession();
+		//session = getSession();
 		logSubDirectory = logDirectory +"/" + std::to_string(getTimeID());
 		std::string strhistory = logSubDirectory + "/historial.csv";
 		coreutils::Shell shell;
@@ -462,7 +476,6 @@ bool Enviroment::run()
 		//deletes == 0 ? counUndelete++ : counUndelete = 0;
 		if(echolevel > 1 and fout != NULL) 
 		{
-			(*fout) << "\tTamano de la poblacion : " << size() << "\n";
 			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
 			(*fout) << "\tEliminados : " << removes << "\n";	
 		}
@@ -492,7 +505,7 @@ bool Enviroment::run()
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 		}
 		if(echoSteps) std::cout << "\tStep C11\n";
-		if(stopNotDiference and actualIteration > 1)
+		/*if(stopNotDiference and actualIteration > 1)
 		{
 			if(sigma < notDiferenceCota)
 			{
@@ -500,7 +513,7 @@ bool Enviroment::run()
 				history.close();
 				return false;
 			}
-		}
+		}*/
 		if(stopMinSolutions)
 		{
 			solutions.clear();
@@ -607,11 +620,11 @@ void Enviroment::stopperMaxIterations(Iteration max)
 	maxIteration = max;
 	stopMaxIterations = true;
 }
-void Enviroment::stopperNotDiference(double cota)
+/*void Enviroment::stopperNotDiference(double cota)
 {
 	notDiferenceCota = cota;
 	stopNotDiference = true;
-}
+}*/
 void Enviroment::stopperMinSolutions(Population min)
 {
 	minSolutions = min;
@@ -664,11 +677,14 @@ Single* Enviroment::getRandomSingle() const
 	
 	return NULL;
 }
+
 void Enviroment::juncting()
 {
 	if(echoSteps) std::cout << "Enviroment::juncting Step 1\n";
 	Single *single1,*single2;
+	Population countNew = 0;
 	if(echoSteps)  std::cout << "Enviroment::juncting Step 2\n";
+	newschils.clear();
 	do
 	{
 		if(echoSteps) std::cout << "Enviroment::juncting Step 2.1\n";		
@@ -678,9 +694,9 @@ void Enviroment::juncting()
 		if(single2 == NULL) continue;
 		if(single1 == single2) continue;
 		if(echoSteps) std::cout << "Enviroment::juncting Step 2.2\n";
-		single1->juncting(newschils,single2,echolevel,NULL);
+		countNew += single1->juncting(newschils,single2,echolevel,NULL);
 		if(echoSteps) std::cout << "Enviroment::juncting Step 2.3\n";
-		if(echolevel > 2 and fout != NULL) (*fout) << "\tSe ha unido " << single1->getID() << " con " << single2->getID() << "\n";
+		if(echoSteps) std::cout << "Nuevos Individuos " <<  newschils.size() << "\n";		
 	}
 	while(newschils.size() + size() <= maxPopulation);
 	if(echoSteps) std::cout << "Enviroment::juncting Step 3\n";

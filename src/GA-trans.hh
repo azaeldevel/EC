@@ -202,6 +202,8 @@ public:
 	Path(const Path*,nodes::Direction);
 	Path(const Path*,const Path*);
 
+	const Path& operator =(const Path& );
+
 	unsigned short getCountTargets()const;
 	unsigned short getLength()const;
 	nodes::Direction getDirection()const;
@@ -278,7 +280,7 @@ public:
 	nodes::Edge* find(nodes::Edge*);
 
 private:
-	unsigned short puntos;
+	//unsigned short puntos;
 	Chromosome chromosome;
 };
 

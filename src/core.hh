@@ -208,6 +208,7 @@ public:
 	bool getEchoSteps()const;
 	Single* getRandomSingleTop() const;
 	Single* getRandomSingle() const;
+
 	
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);
@@ -216,7 +217,7 @@ public:
 	void write_archive(const char *outname, const char **filename);
 	//void addTerminator(Terminations);
 	void stopperMaxIterations(Iteration max);
-	void stopperNotDiference(double cota);
+	//void stopperNotDiference(double cota);
 	void stopperMinSolutions(Population);
 	void stopperMaxSerie(Iteration max);
 	void commands(int argc, const char* argv[]);
@@ -276,7 +277,7 @@ protected:
 	Population initPopulation;
 	Population maxPopulation;
 
-	ID idCount = 1;
+	ID idCount;
 	Population maxProgenitor;
 	
 	unsigned short echolevel;
@@ -302,7 +303,7 @@ protected:
 
 	std::ostream* fout;
 
-	unsigned long session;
+	//unsigned long session;
 
 	/**
 	*\brief Para almacenar temporamente los nuevos individuos creados
@@ -314,7 +315,7 @@ protected:
 	/**
 	*\brief Inidicatores de terminacion, es un numero entre 0 y 1.
 	*/
-	float percen_at_iteration;
+	//float percen_at_iteration;
 
 	/**
 	*\brief Contador de atasco
@@ -352,9 +353,9 @@ private:
 	*/
 	bool stopMaxIterations;
 
-	bool stopNotDiference;
+	//bool stopNotDiference;
 	
-	double notDiferenceCota;
+	//double notDiferenceCota;
 
 
 	/*

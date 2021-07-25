@@ -51,10 +51,11 @@ int main(int argc, const char* argv[])
 	
 	ec::max::Enviroment* max = new ec::max::Enviroment(logDirectory);
 	max->enableEcho(&std::cout,2);
-	
+	//std::cout << "Step 1\n";
 	bool ret = max->run();
-	delete max;
-	
+	//std::cout << "Step 2\n";
+	//delete max;//no es necesario delete en mian ya que se llama automaticamente
+	//std::cout << "Step 3\n";
 	return ret? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
