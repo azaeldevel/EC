@@ -52,9 +52,15 @@ namespace nodes
 		//getters
 		ID getID() const;
 		NodeType getType()const;
+		/**
+		*\brief 0 base index
+		*/
 		Edge* getFront(Index index);
 		//std::list<Edge*>& getListFront();
 		Index getFrontCount()const;
+		/**
+		*\brief 0 base index
+		*/
 		Edge* getBack(Index index);
 		Index getBackCount()const;
 		const std::list<Edge*>& getListFront()const;
@@ -71,11 +77,16 @@ namespace nodes
 		*/
 		void addFront(Edge* edge);
 		void addBack(Edge* edge);
+		/**
+		*\brief 0 base index
+		*/
 		Edge* operator[] (Index index);
 		Edge* nextLessTrans(Direction direction);
 		Edge* nextLessTrans(Explored max,Direction direction);
 		Edge* randFront();
 		Edge* randBack();
+		unsigned short countFront()const;
+		unsigned short countBack()const;
 
 	private:
 		ID id; 
@@ -100,6 +111,7 @@ namespace nodes
 		//Node* transPrev();
 		Node* getNext();
 		Node* getNode();
+		const Node* getNode()const;
 		unsigned short getNextCount();
 		//unsigned short getPrevCount();
 		void resetNextCount();
@@ -211,7 +223,8 @@ public:
 
 	//const nodes::Node* checkJunct(const Path*)const;
 	//Population juncting(const Path*,std::list<Path*>& lp)const;
-	bool juncting(Path*,Path*, unsigned short offset);
+	bool juncting(const Path* pB,const Path* pE, unsigned short offset);
+	bool juncting(const Path* pB,const Path* pE,const nodes::Edge* e);
 	virtual void print(std::ostream&) const;
 	static void print(const nodes::Node* n,std::ostream&);
 	unsigned short countTarget()const;
@@ -221,10 +234,22 @@ public:
 	void push_back(nodes::Edge*);
 	void reverse(const Path*);
 	nodes::Edge* find(nodes::Edge*);
+	unsigned short countCorners() const;
+	/**
+	*\brief 1-based index, get the i-esimo coners in path
+	*\return NULL if index is 0 or not found
+	*/
+	nodes::Edge* findCorner(unsigned short);
+	/**
+	*\brief 1-based index,  get the i-esimo target in path
+	*\return NULL if index is 0 or not found
+	*/
+	nodes::Edge* findTarget(unsigned short);
 	
+	bool cutBefore(const nodes::Node*);
+	bool cutAfther(const nodes::Node*);
+
 private:
-	bool cutBefore(nodes::Node*);
-	bool cutAfther(nodes::Node*);
 	nodes::Direction direction;
 	octetos::core::MD5sum md5;
 };
@@ -269,6 +294,7 @@ public:
 	virtual void eval();
 	virtual void randFill(bool favor = false);
 	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*);
+	virtual Population juncting(std::list<ec::Single*>& chils,unsigned short loglevel,void*);
 	virtual void save(std::ofstream& fn);
 	virtual void print(std::ostream&) const;
 	void print(nodes::Node&) const;	
@@ -277,7 +303,7 @@ public:
 	
 	bool checkRepitTarget(const Path* p)const;
 	unsigned short checkOrder(const Path* p)const;
-	nodes::Edge* find(nodes::Edge*);
+	//nodes::Edge* findTarget(nodes::Edge*, unsigned short i);
 
 private:
 	//unsigned short puntos;

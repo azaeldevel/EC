@@ -86,20 +86,32 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 
 
 
-
+Junction::Junction(const Junction& obj): Chromosome("Junction")
+{
+	number = obj.number;
+	algorit = obj.algorit;
+	type = obj.type;//backward compatible
+}
 Junction::Junction(): Chromosome("Junction")
 {
 	number = randChild();
 	algorit = randAlgt();
+	type = TypeJuntion::BINARY;//backward compatible
 }
 Junction::Junction(geneUS n,geneUS a): Chromosome("Junction")
 {
-	number = n;
-	algorit = a;
+	number = randChild();
+	algorit = randAlgt();
+	type = TypeJuntion::BINARY;//backward compatible
+}
+Junction::Junction(TypeJuntion t): Chromosome("Junction")
+{
+	number = randChild();
+	algorit = randAlgt();
+	type = t;//backward compatible
 }
 Junction::~Junction()
 {
-
 }
 geneUS Junction::get_number()const
 {
@@ -108,6 +120,10 @@ geneUS Junction::get_number()const
 geneUS Junction::get_algorit()const
 {
 	return algorit;
+}
+geneUS Junction::get_type()const
+{
+	return type;
 }
 
 void Junction::combine(const Chromosome& P1,const Chromosome& P2)
@@ -119,6 +135,7 @@ void Junction::copy(const Chromosome& P)
 {
 	number = ((Junction&)P).number;
 	algorit = ((Junction&)P).algorit;
+	type = ((Junction&)P).type;
 }
 void Junction::mutate(float p)
 {
@@ -134,6 +151,13 @@ geneUS Junction::randAlgt()
 
 	return COMBINE;
 }
+geneUS Junction::randType()
+{
+	double randNum = randNumber(0.0,1.0)/2.0;
+	if(randNum < 0.5) return TypeJuntion::UNARY;
+
+	return TypeJuntion::BINARY;
+}
 geneUS Junction::randChild()
 {
 	return randNumber(1.0, 5.0);
@@ -142,8 +166,14 @@ void Junction::randFill(bool favor)
 {
 	number = randChild();
 	algorit = randAlgt();
+	if(type == TypeJuntion::NOT_TYPE) type = TypeJuntion::BINARY;//backward compatible
 }
-
+void Junction::randFill(TypeJuntion t)
+{
+	number = randChild();
+	algorit = randAlgt();
+	type = t;//backward compatible
+}
 
 
 
@@ -179,7 +209,6 @@ Single::~Single()
 {
 
 }
-
 
 ID Single::getID()const
 {

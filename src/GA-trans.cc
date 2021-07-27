@@ -39,7 +39,7 @@ namespace nodes
 	Edge* Node::getFront(Index index)
 	{
 		std::list<Edge*>::iterator it = edgesFront.begin();
-		std::advance(it, index);
+		if(index > 0)std::advance(it, index);
 		return *it;
 	}
 
@@ -50,7 +50,7 @@ namespace nodes
 	Edge* Node::getBack(Index index)
 	{
 		std::list<Edge*>::iterator it = edgesBack.begin();
-		std::advance(it, index);
+		if(index > 0)std::advance(it, index);
 		return *it;
 	}
 	Index Node::getBackCount()const
@@ -83,7 +83,7 @@ namespace nodes
 	Edge* Node::operator[](Index index)
 	{
 		std::list<Edge*>::iterator it = edgesFront.begin();
-		std::advance(it, index);
+		if(index > 0) std::advance(it, index);
 		return *it;
 	}	
 	Edge* Node::nextLessTrans(Direction direction)
@@ -150,7 +150,15 @@ namespace nodes
 		std::advance(it,rand);
 		return *it;		
 	}
-
+	
+	unsigned short Node::countFront()const
+	{
+		return edgesFront.size();
+	}
+	unsigned short Node::countBack()const
+	{
+		return edgesBack.size();
+	}
 
 
 
@@ -175,6 +183,10 @@ namespace nodes
 		return next;
 	}
 	Node* Edge::getNode()
+	{
+		return node;
+	}
+	const Node* Edge::getNode() const
 	{
 		return node;
 	}
@@ -408,10 +420,10 @@ const octetos::core::MD5sum& Path::getMD5()const
 	return md5;
 }
 
-bool Path::juncting(Path* pB,Path* pE,unsigned short offset)
+bool Path::juncting(const Path* pB,const Path* pE,unsigned short offset)
 {	
-	std::list<nodes::Edge*>::iterator itB = pB->begin();
-	std::list<nodes::Edge*>::iterator itE = pE->begin();
+	std::list<nodes::Edge*>::const_iterator itB = pB->begin();
+	std::list<nodes::Edge*>::const_iterator itE = pE->begin();
 	std::advance(itB,offset);
 	std::advance(itE,offset);
 	nodes::Edge* eB = *itB;
@@ -423,9 +435,7 @@ bool Path::juncting(Path* pB,Path* pE,unsigned short offset)
 		if(offset > 1)
 		{
 			pB.cutAfther(eB->getNode());
-			//if(pB.size() < 3) continue;
 			pE.cutBefore(eB->getNode());
-			//if(pE.size() < 3) continue;
 		}
 		Path(&pB,&pE);
 		genMD5();
@@ -436,7 +446,30 @@ bool Path::juncting(Path* pB,Path* pE,unsigned short offset)
 		throw octetos::core::Exception("Los Paths indicado no tiene la coincidencia indicada",__FILE__,__LINE__);
 	}
 }
-bool Path::cutBefore(nodes::Node* n)
+bool Path::juncting(const Path* pB,const Path* pE,const nodes::Edge* e)
+{	
+	std::list<nodes::Edge*>::const_iterator itB = std::find(pB->begin(),pB->end(),e);
+	std::list<nodes::Edge*>::const_iterator itE = std::find(pE->begin(),pE->end(),e);
+	
+	if(itB == pB->end()) return false;
+	if(itE == pE->end()) return false;
+		
+	if((*itB)->getNode() == (*itE)->getNode() and (*itB)->getNext() != (*itE)->getNext())
+	{
+		Path tempB(*pB);
+		Path tempE(*pE);	
+		tempB.cutAfther(e->getNode());
+		tempE.cutBefore(e->getNode());
+		Path(&tempB,&tempE);
+		genMD5();
+		return true;
+	}
+	else
+	{
+		throw octetos::core::Exception("Los Paths indicado no tiene la coincidencia indicada",__FILE__,__LINE__);
+	}
+}
+bool Path::cutBefore(const nodes::Node* n)
 {
 	std::list<nodes::Edge*> toDelete;
 	for(nodes::Edge* e : *this)
@@ -458,7 +491,7 @@ bool Path::cutBefore(nodes::Node* n)
 	
 	return true;
 }
-bool Path::cutAfther(nodes::Node* n)
+bool Path::cutAfther(const nodes::Node* n)
 {
 	std::list<nodes::Edge*> toDelete;
 	bool cut = false;
@@ -568,7 +601,61 @@ nodes::Edge* Path::find(nodes::Edge* e)
 	if(it == end()) return NULL;
 	return *it;
 }
-
+unsigned short Path::countCorners() const
+{
+	unsigned short count = 0 ;
+	for(nodes::Edge* e : *this)
+	{
+		if(direction == nodes::Direction::FRONT)
+		{
+			if(e->getNode()->countFront() > 2) count++;
+		}
+		else if(direction == nodes::Direction::BACK)
+		{
+			if(e->getNode()->countBack() > 2) count++;
+		}
+		else
+		{
+			throw octetos::core::Exception("Direccion desconocida",__FILE__,__LINE__);
+		}
+	}
+	
+	return count;
+}
+nodes::Edge* Path::findCorner(unsigned short i)
+{
+	if(i == 0 ) return NULL;
+	unsigned short count = 0 ;
+	for(nodes::Edge* e : *this)
+	{
+		if(direction == nodes::Direction::FRONT)
+		{
+			if(e->getNode()->countFront() > 2) count++;			
+		}
+		else if(direction == nodes::Direction::BACK)
+		{
+			if(e->getNode()->countBack() > 2) count++;
+		}
+		else
+		{
+			throw octetos::core::Exception("Direccion desconocida",__FILE__,__LINE__);
+		}
+		if(count == i) return e;
+	}
+	
+	return NULL;
+}
+nodes::Edge* Path::findTarget(unsigned short i)
+{
+	unsigned short count = 0 ;
+	for(nodes::Edge* e : *this)
+	{
+		if(e->getNode()->getType() != nodes::NodeType::UNKNOW) count++;
+		if(count == i) return e;
+	}
+	
+	return NULL;
+}
 
 
 
@@ -611,21 +698,63 @@ void Single::eval()
 	//std::cout << "(" << getID() << ") : \n";
 	//std::cout << "\tflength = " << flength << "\n";
 	//std::cout << "\tfTarget = " << fTarget << "\n";
-	fitness = flength + fTarget;	
+	fitness = fTarget;	
 }
 void Single::randFill(bool favor)
 {
 	
 }
 
+Population Single::juncting(std::list<ec::Single*>& chils,unsigned short loglevel,void* node)
+{
+	if(getJunction().get_type() != ec::Junction::TypeJuntion::UNARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
+	Population counNew = 0;
+	
+	for(ec::geneUS i = 1; i < getJunction().get_number(); i++)
+	{
+		unsigned short corners = chromosome.getPath()->countCorners();
+		nodes::Edge* pe = NULL;
+		if(corners > 1)
+		{
+			double randCorner = randNumber(0.0,double(corners - 1));
+			pe = chromosome.getPath()->findCorner(randCorner + 1);
+			if(pe != NULL)
+			{
+				Path* newPath = new Path(chromosome.getPath()->getDirection());
+				if(newPath->cutAfther(pe->getNode()))
+				{
+					counNew++;
+					Single* newSingle = new Single(env->nextID(),*((Enviroment*)env),getJunction(),newPath);
+					chils.push_back(newSingle);
+				}
+			}
+		}
+		else
+		{
+			pe = chromosome.getPath()->findCorner(1);
+			if(pe != NULL)
+			{
+				Path* newPath = new Path(chromosome.getPath()->getDirection());
+				if(newPath->cutAfther(pe->getNode()))
+				{
+					counNew++;
+					Single* newSingle = new Single(env->nextID(),*((Enviroment*)env),getJunction(),newPath);
+					chils.push_back(newSingle);
+				}
+			}
+		}
+	}	
+	
+	return counNew;
+}
 Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node)
 {
 	Population counNew = 0;	
+	if(getJunction().get_type() == ec::Junction::TypeJuntion::UNARY) return juncting(chils,loglevel,node);
 	
 	//std::cout << "Single::juncting Juntion 1\n";
 	for(ec::geneUS i = 1; i < getJunction().get_number(); i++)
 	{
-		unsigned short nodepos = 0;
 		//std::cout << "Single::juncting 1.1\n";
 		//std::cout << "Apareo : " << i << "/" << getJunction().get_number() << "\n";
 		if(env->getEchoSteps())
@@ -633,74 +762,70 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 			print(std::cout);
 			std::cout << "\n";
 		}
-		for(nodes::Edge* e : *chromosome.getPath())
+		
+		unsigned short nodepos = 0;
+		
+		//std::cout << "Single::juncting 1.1.1\n";
+		bool flsingleP = false;
+		Path *singleP = NULL;
+		//std::cout << "Single::juncting 1.1.1.a\n";
+		nodes::Edge* pe = NULL;
+		nodes::Edge* singleE = NULL;
+		unsigned short edgecount = chromosome.getPath()->countCorners();
+		for(unsigned short i = 1; i <= edgecount; i++)
 		{
-			if(e == NULL) throw octetos::core::Exception("Puntero Nulo",__LINE__,__FILE__);
-			
-			//std::cout << "Single::juncting 1.1.1\n";
-			bool flsingleP = false;
-			Path *singleP = NULL;
-			//std::cout << "Single::juncting 1.1.1.a\n";
-			nodes::Edge* pe = ((Single*)single)->find(e);
-			nodepos++;
-			if(pe != NULL)
+			if(edgecount > 0) 
 			{
-				if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) 
+				if(edgecount > 1)
 				{
-					singleP = new Path();
-					singleP->reverse(((Single*)single)->chromosome.getPath());
-					flsingleP = true;
+					double randEdge = randNumber(0.0,double(edgecount - 1));
+					pe = chromosome.getPath()->findCorner(randEdge + 1);
 				}
 				else
 				{
-					singleP = ((Single*)single)->chromosome.getPath();
-				}
+					pe = chromosome.getPath()->findCorner(1);				
+				}			
+			}
+			
+			singleE = ((Single*)single)->chromosome.getPath()->find(pe);
+			if(singleE != NULL) break;//si no hay coinciendia con single regres al inicio
+		}
+		
+		if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) 
+		{
+			singleP = new Path();
+			singleP->reverse(((Single*)single)->chromosome.getPath());
+			flsingleP = true;
+		}
+		else
+		{
+			singleP = ((Single*)single)->chromosome.getPath();
+		}
+			
+		Path *newP = new Path(chromosome.getPath()->getDirection());
+		if(newP->juncting(chromosome.getPath(),singleP,singleE)) 
+		{
+			//flsingleP = false;//no eliminar
+			counNew++;
+			double randJ = randNumber(0.0,1.0);
+			const Junction* genJ;
+			if(randJ < 0.5)
+			{
+				genJ = &getJunction();
 			}
 			else
 			{
-				singleP = ((Single*)single)->chromosome.getPath();
+				genJ = &((Single*)single)->getJunction();
 			}
-			//std::cout << "Single::juncting 1.1.1.b\n";
-			
-			//std::cout << "Single::juncting 1.1.1.c\n";
-			//std::cout << "pe -> " << pe << "\n";
-			if(pe != NULL)
-			{
-				//std::cout << "Single::juncting 1.1.1.1\n";
-				/*print(std::cout);
-				std::cout << "  || ";
-				singleP->print(std::cout);
-				std::cout << "\n";*/
-				if(pe->getNext() == NULL) continue;
-				if(e->getNext() == NULL) continue;
-				if(pe->getNext() != e->getNext())
-				{
-					std::cout << "Single::juncting 1.1.1.1.1\n";
-					//i++;				
-					
-					Path *newP = new Path();
-					if(newP->juncting(chromosome.getPath(),singleP,nodepos)) 
-					{
-						flsingleP = false;//no eliminar
-						counNew++;
-						double randJ = randNumber(0.0,1.0);
-						const Junction* genJ;
-						if(randJ < 0.5)
-						{
-							genJ = &getJunction();
-						}
-						else
-						{
-							genJ = &((Single*)single)->getJunction();
-						}
-						Single* newSingle = new Single(env->nextID(),*((Enviroment*)env),*genJ,newP);
-						chils.push_back(newSingle);
-					}	
-					//std::cout << "Single::juncting 1.1.1.1.2\n";			
-				}
-			}
-			if(flsingleP) delete singleP;
+			Single* newSingle = new Single(env->nextID(),*((Enviroment*)env),*genJ,newP);
+			chils.push_back(newSingle);
+		}	
+		else
+		{
+			delete newP;
 		}
+		if(flsingleP) delete singleP;
+		
 	}
 
 	//if(chils.size() == counNew) 
@@ -785,14 +910,7 @@ unsigned short Single::checkOrder(const Path* p)const
 	
 	return count;
 }
-nodes::Edge* Single::find(nodes::Edge* e)
-{
-	std::list<nodes::Edge*>::iterator it;
-	Path* path = chromosome.getPath();
-	it = std::find(path->begin(),path->end(),e);
-	if(it == path->end()) return NULL;
-	return *it;
-}
+
 
 
 
@@ -817,7 +935,7 @@ void Enviroment::init()
 	initPopulation = 1000;
 	maxPopulation = 1000;
 	maxProgenitor = 250;
-	stopperMaxIterations(3000);
+	stopperMaxIterations(1000);
 	//stopperNotDiference(1.0e-20);
 	comparer = &cmpStrength1;
 	fractionDen = 2.0;
@@ -940,10 +1058,12 @@ void Enviroment::initial()
 	std::list<octetos::core::MD5sum> lsmd5;
 	for(Path* path : lstPaths)
 	{
-		if(std::find(lsmd5.begin(),lsmd5.end(),path->getMD5()) == lsmd5.end())
+		//if(std::find(lsmd5.begin(),lsmd5.end(),path->getMD5()) == lsmd5.end())
 		{
 			lsmd5.push_back(path->getMD5());
-	 		Single* s = new Single(nextID(),*this,path);
+			ec::Junction juntion;
+			juntion.randFill(ec::Junction::randType());
+	 		Single* s = new Single(nextID(),*this,juntion,path);
 	 		//s->print(std::cout);
 	 		//std::cout << "\n";
 			push_back(s);

@@ -70,6 +70,12 @@ private:
 class Junction : public Chromosome
 {
 public:
+	enum TypeJuntion
+	{
+		NOT_TYPE,
+		UNARY,
+		BINARY,	
+	};
 	enum AlgCode
 	{
 		COPY,
@@ -78,20 +84,27 @@ public:
 public:
 	Junction();
 	virtual ~Junction();
+	Junction(const Junction& );
 	Junction(geneUS number,geneUS algorit);
+	Junction(TypeJuntion type);
 	geneUS get_number()const;
 	geneUS get_algorit()const;
+	geneUS get_type()const;
 	static geneUS randAlgt();
 	static geneUS randChild();
+	static geneUS randType();
 	
 	
 	virtual void combine(const Chromosome& P1,const Chromosome& P2);
 	virtual void copy(const Chromosome& P);
 	virtual void mutate(float p);
 	virtual void randFill(bool favor = false);
+	virtual void randFill(TypeJuntion);
 private:
 	geneUS number;
-	geneUS algorit;	
+	geneUS algorit;
+	TypeJuntion type;
+	
 };
 
 /**
