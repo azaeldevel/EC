@@ -230,7 +230,18 @@ Enviroment& Single::getEnviroment()const
 {
 	return *env;
 }
-
+Population Single::juncting(std::list<Single*>& chils,unsigned short loglevel,void*)
+{
+	if(getJunction().get_type() != ec::Junction::TypeJuntion::UNARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
+	
+	return 0;
+}
+Population Single::juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel,void*)
+{
+	if(getJunction().get_type() != ec::Junction::TypeJuntion::BINARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
+	
+	return 0;
+}
 bool Single::mudable()const
 {
 	double numrand = randNumber(0.0,1.0);
@@ -719,8 +730,18 @@ void Enviroment::juncting()
 		if(echoSteps) std::cout << "Enviroment::juncting Step 2.1\n";		
 		ec::Single* single1 = getRandomSingle();
 		if(single1 == NULL) continue;
+		while(single1->getJunction().get_type() == Junction::TypeJuntion::UNARY)
+		{
+			countNew += single1->juncting(newschils,echolevel,NULL);
+			if(newschils.size() + size() > maxPopulation) return;
+		}
 		ec::Single* single2 = getRandomSingle();
 		if(single2 == NULL) continue;
+		while(single2->getJunction().get_type() == Junction::TypeJuntion::UNARY)
+		{
+			countNew += single2->juncting(newschils,echolevel,NULL);
+			if(newschils.size() + size() > maxPopulation) return;
+		}
 		if(single1 == single2) continue;
 		if(echoSteps) std::cout << "Enviroment::juncting Step 2.2\n";
 		countNew += single1->juncting(newschils,single2,echolevel,NULL);

@@ -141,11 +141,14 @@ public:
 	/**
 	*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
 	*/
-	virtual void eval() = 0;
+	virtual void eval() = 0;/**
+	*\brief Realiza el apareo entre dos individuos
+	*/
+	virtual Population juncting(std::list<Single*>& chils,unsigned short loglevel,void*);
 	/**
 	*\brief Realiza el apareo entre dos individuos
 	*/
-	virtual Population juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel,void*) = 0;
+	virtual Population juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel,void*);
 	/**
 	*\brief Crea un arcivo CSV con los datos relevantes del individuo
 	*/
