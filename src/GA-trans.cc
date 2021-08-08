@@ -689,10 +689,6 @@ void Single::eval()
 	{
 		flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthBack() * double(getLengthPath());
 	}
-	if(flength < 0)
-	{
-	
-	}
 	
 	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(getCountTagetsPath());
 	if(fTarget > ((Enviroment&)getEnviroment()).getFreactionQ())
@@ -750,7 +746,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,unsigned short logleve
 					}
 					counNew++;
 					Single* newSingle = new Single(env->nextID(),*((Enviroment*)env),getJunction(),newPath);
-					newSingle->eval();
+					//newSingle->eval();
 					
 					chils.push_back(newSingle);
 				}
@@ -1000,7 +996,7 @@ Enviroment::Enviroment(const std::string& log)
 void Enviroment::init()
 {
 	countID = 0;//contador de nodos
-	initPopulation = 1000;
+	initPopulation = 10000;
 	maxPopulation = 1000;
 	maxProgenitor = 250;
 	stopperMaxIterations(1000);
@@ -1009,7 +1005,7 @@ void Enviroment::init()
 	fractionDen = 2.0;
 	fractionQuality = 1.0/fractionDen;
 	genLengthMin = 5;
-	threads = 20;
+	threads = 40;
 	region = NULL;
 	//echoSteps = true;
 }
@@ -1132,8 +1128,8 @@ void Enviroment::initial()
 			ec::Junction juntion;
 			juntion.randFill(ec::Junction::randType());
 	 		Single* s = new Single(nextID(),*this,juntion,path);
-	 		s->print(std::cout);
-	 		std::cout << "\n";
+	 		//s->print(std::cout);
+	 		//std::cout << "\n";
 			push_back(s);
 			/*if(path->getDirection() == nodes::Direction::BACK)
 			{
