@@ -275,8 +275,8 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	region->newEdgeFront(250,node_32,node_38);
 	region->newEdgeBack(250,node_38,node_32);
 	
-	region->newEdgeFront(300,node_33,node_39);
-	region->newEdgeBack(300,node_39,node_33);
+	region->newEdgeFront(200,node_33,node_39);
+	region->newEdgeBack(200,node_39,node_33);
 	
 	region->newEdgeFront(350,node_36,node_41);
 	region->newEdgeBack(350,node_41,node_36);
