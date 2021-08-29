@@ -80,8 +80,8 @@ public:
 	
 	//
 	Enviroment();	
-	Enviroment(const std::string& initTable);
-	Enviroment(const std::string& initTable,Iteration maxIteration);
+	//Enviroment(const std::string& initTable);
+	//Enviroment(const std::string& initTable,Iteration maxIteration);
 	Enviroment(const std::string& initTable,Iteration maxIteration,const std::string& logDir);
 	Enviroment(const std::string& initTable,Iteration maxIteration,const std::string& logDir,Iteration maxSeries);
 	virtual ~Enviroment();

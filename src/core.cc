@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
-#include <octetos/coreutils/shell.hh>
+
 #include <fstream>
 
 #include "core.hh"
@@ -309,9 +309,19 @@ Enviroment::Enviroment(Iteration m) : maxIteration(m)
 {
 	init();	
 }
-Enviroment::Enviroment(const std::string& log,Iteration m) : maxIteration(m), logDirectory(log)
+Enviroment::Enviroment(Iteration m,Iteration ms) : maxIteration(m),maxSerie(ms)
 {
-	init();		
+	init();	
+}
+Enviroment::Enviroment(const std::string& logDir,Iteration m) : maxIteration(m)
+{
+	init();
+}
+Enviroment::Enviroment(const std::string& logDir,Iteration mi,Iteration ms) : maxIteration(mi),maxSerie(ms)
+{
+	init();	
+	logDirectory = logDir + "/" + std::to_string(getDayID());
+	if(not shell.exists(logDirectory)) shell.mkdir(logDirectory,true);
 }
 
 
@@ -414,14 +424,12 @@ void Enviroment::enableEcho(std::ostream* f, unsigned short level)
 	fout = f;
 	echolevel = level;
 }
-
-void Enviroment::enableLogFile(bool log)
+/*void Enviroment::enableLogFile(bool log)
 {
 	logFile = log;
-}
+}*/
 bool Enviroment::run()
 {
-	
 	if(stopMinSolutions and minSolutions == 0) throw octetos::core::Exception("La cantida minima de soluciones requeridad deve ser mayor que 0",__FILE__,__LINE__);
 	if(initPopulation == 0) throw octetos::core::Exception("La poblacion inicial deve ser mayor que 0",__FILE__,__LINE__);
 	if(maxProgenitor > maxPopulation) throw octetos::core::Exception("La catidad de progenitores deve ser menor que la popblacion",__FILE__,__LINE__);
@@ -439,8 +447,8 @@ bool Enviroment::run()
 	{
 		//session = getSession();
 		logSubDirectory = logDirectory +"/" + std::to_string(getTimeID());
-		std::string strhistory = logSubDirectory + "/historial.csv";
-		coreutils::Shell shell;
+		//std::cout << "\t\t" << logSubDirectory << "\n";
+		std::string strhistory = logSubDirectory + "/historial.csv";		
 		shell.mkdir(logSubDirectory);
 		history.open(strhistory);
 	}
@@ -484,6 +492,7 @@ bool Enviroment::run()
 		{
 			std::string strfn = logSubDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fn(strfn);
+			//std::cout << "\t\t" << strfn << "\n";
 			if(not fn.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ec::Single* s : *this)
 			{

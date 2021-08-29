@@ -26,6 +26,7 @@
 #include <octetos/core/Error.hh>
 #include <iostream>
 #include <fstream>
+#include <octetos/coreutils/shell.hh>
 
 namespace ec
 {
@@ -196,7 +197,9 @@ public:
 	void init();
 	Enviroment();
 	Enviroment(const std::string& log,Iteration maxIteration);
+	Enviroment(const std::string& log,Iteration maxIteration,Iteration maxSerie);
 	Enviroment(Iteration maxIteration);
+	Enviroment(Iteration maxIteration,Iteration maxSerie);
 	virtual ~Enviroment();
 
 	//getters
@@ -228,7 +231,7 @@ public:
 	
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);
-	void enableLogFile(bool log);
+	//void enableLogFile(bool log);
 	unsigned short getEchoLevel()const;
 	void write_archive(const char *outname, const char **filename);
 	//void addTerminator(Terminations);
@@ -351,6 +354,8 @@ protected:
 	bool (*comparer)(const Single* f,const Single* s);
 
 	bool echoSteps;
+
+	coreutils::Shell shell;
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion

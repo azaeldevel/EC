@@ -584,7 +584,7 @@ void Single::printInit(std::ostream& out) const
 Enviroment::Enviroment()
 {
 }
-Enviroment::Enviroment(const std::string& initB)
+/*Enviroment::Enviroment(const std::string& initB)
 {
 	init(initB);
 }
@@ -592,22 +592,22 @@ Enviroment::Enviroment(const std::string& initB,Iteration maxite)
 {
 	init(initB);
 	stopperMaxIterations(maxite);
-}
-Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::string& logDir)
+}*/
+Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::string& logDir)  : ec::Enviroment (logDir,maxite)
 {
 	init(initB);
 	stopperMaxIterations(maxite);
-	logDirectory = logDir;
-	logFile = not logDirectory.empty();	
+	//logDirectory = logDir + "/" + std::to_string(ec::sudoku::Enviroment::getDayID());
+	//shell.mkdir(logDirectory);
+	//logFile = not logDirectory.empty();	
 	//addTerminator(Terminations::MAXITERATION);
 	//addTerminator(Terminations::MINSOLUTIONS);
 }
-Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::string& logDir,Iteration maxS)
+Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::string& logDir,Iteration maxS) : ec::Enviroment (logDir,maxite,maxS)
 {
 	init(initB);
 	stopperMaxIterations(maxite);
-	logDirectory = logDir;
-	logFile = not logDirectory.empty();
+	//logFile = not logDirectory.empty();
 	stopperMaxSerie(maxS);
 }
 Enviroment::~Enviroment()
@@ -640,13 +640,15 @@ void Enviroment::init(const std::string& initB)
 }
 void Enviroment::initBoard(const std::string& initTable)
 {
-	//std::cout << "Step 1.1.1\n";
+	//std::cout << "Enviroment::initBoard : Step 1\n";
 	std::ifstream file(initTable);
 	if(not file.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
 	std::string strline; 
 	std::vector<unsigned short> inits;
-	while (std::getline(file, strline)) 
+	//std::cout << "Enviroment::initBoard : Step 2\n";
+	while (std::getline(file, strline))
 	{
+		//std::cout << strline << "\n";
 	  	char *tok = strtok((char*)strline.c_str()," "); 
 		while (tok!=NULL) 
 		{
@@ -655,7 +657,7 @@ void Enviroment::initBoard(const std::string& initTable)
 		    tok=strtok(NULL," ");
 		}
 	}
-	//std::cout << "Step 1.1.2\n";
+	//std::cout << "Enviroment::initBoard : Step 3\n";
 	unsigned short index = 0;	
 	//std::cout << "sudokuInit = " << sudokuInit << "\n";
 	for(unsigned short i = 0; i < 3; i++)
@@ -665,14 +667,14 @@ void Enviroment::initBoard(const std::string& initTable)
 			for(unsigned short k = 0; k < 3; k++)
 			{
 				for(unsigned short l = 0; l < 3; l++)
-				{					
+				{
 					sudokuInit[i][k].setNumber(j,l,inits[index]);
 					index++;
 				}
 			}
 		}
 	}
-	//std::cout << "Step 1.1.3\n";
+	//std::cout << "Enviroment::initBoard : Step 4\n";
 }
 unsigned short Enviroment::getFaltantes() const
 {
@@ -689,9 +691,10 @@ double Enviroment::getGamma() const
 
 void Enviroment::initial()
 {
-	//std::cout << "Step 1.1\n";
+	//std::cout << "Enviroment::initial : Step 1\n";
+	//std::cout << "fnBoard = " << fnBoard << "\n";
 	initBoard(fnBoard);
-	//std::cout << "Step 1.2\n";
+	//std::cout << "Enviroment::initial : Step 2\n";
 	//poblacion inicial
 	//std::cout << "sudokuInit = " << sudokuInit << "\n";
 	for(Population i = 0; i < initPopulation; i++,idCount++)
@@ -700,7 +703,7 @@ void Enviroment::initial()
 		s->randFill();
 		push_back(s);		
 	}
-	//std::cout << "Step 1.3\n";
+	//std::cout << "Enviroment::initial : Step 3\n";
 }
 
 
