@@ -916,6 +916,14 @@ void Enviroment::commands(int argc, const char* argv[])
 		{
 			
 		}
+		if(strcmp("--mutation-event",argv[i]) == 0)
+		{
+			pMutationEvent = std::stod(argv[++i]);
+		}
+		if(strcmp("--mutation-gene",argv[i]) == 0)
+		{
+			pMutableGene = std::stod(argv[++i]);
+		}
 	}
 }
 void Enviroment::free()
