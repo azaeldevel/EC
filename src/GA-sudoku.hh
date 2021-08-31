@@ -58,7 +58,7 @@ public:
 	virtual void randFill(bool favor = false);
 	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*);
 	virtual void save(std::ofstream& fn);
-	const octetos::core::MD5sum& getMD5() const;
+	const oct::core::StringMD5& getMD5() const;
 	
 	void print(std::ostream&) const;
 	void printInit(std::ostream&) const;
@@ -67,7 +67,7 @@ public:
 private:
 	Chromosome** tabla;
 	Chromosome (*intiVals)[3];
-	octetos::core::MD5sum md5;
+	oct::core::StringMD5 md5;
 
 	//
 	void genMD5();

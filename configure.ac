@@ -21,7 +21,7 @@ LT_INIT
 
 PKG_CHECK_MODULES(OCTETOS_CORE,octetos-core)
 
-PKG_CHECK_MODULES(OCTETOS_COREUTILS,octetos-coreutils)
+dnl PKG_CHECK_MODULES(OCTETOS_COREUTILS,octetos-coreutils)
 
 dnl AC_SEARCH_LIBS([tar_open], [libtar tar], [], [AC_MSG_ERROR([unable to find the tar_open() function])])
 dnl AC_CHECK_HEADERS([libtar.h],[libtar.h=yes; break;])

@@ -90,6 +90,8 @@ namespace ec::max
 		*\brief Constructor que recive un directorio para guardar estadisticas
 		*/
 		Enviroment(const std::string& log);
+
+		Enviroment(int argc, const char* argv[]);
 		/**
 		*\brief Inicia las variables
 		*/

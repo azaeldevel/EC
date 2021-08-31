@@ -4,7 +4,6 @@
 #include <octetos/core/Error.hh>
 #include <fstream>
 #include <iterator>
-#include <octetos/coreutils/shell.hh>
 #include <algorithm>
 #include <unistd.h>
 #include <string.h>

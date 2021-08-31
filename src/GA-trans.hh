@@ -219,7 +219,7 @@ public:
 	unsigned short getCountTargets()const;
 	unsigned short getLength()const;
 	nodes::Direction getDirection()const;
-	const octetos::core::MD5sum& getMD5()const;
+	const oct::core::StringMD5& getMD5()const;
 
 	//const nodes::Node* checkJunct(const Path*)const;
 	//Population juncting(const Path*,std::list<Path*>& lp)const;
@@ -251,7 +251,7 @@ public:
 
 private:
 	nodes::Direction direction;
-	octetos::core::MD5sum md5;
+	oct::core::StringMD5 md5;
 };
 
 class Chromosome : public ec::Chromosome

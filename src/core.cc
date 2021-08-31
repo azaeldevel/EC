@@ -313,17 +313,50 @@ Enviroment::Enviroment(Iteration m,Iteration ms) : maxIteration(m),maxSerie(ms)
 {
 	init();	
 }
-Enviroment::Enviroment(const std::string& logDir,Iteration m) : maxIteration(m)
+Enviroment::Enviroment(const std::string& logDir)
 {
 	init();
-}
-Enviroment::Enviroment(const std::string& logDir,Iteration mi,Iteration ms) : maxIteration(mi),maxSerie(ms)
-{
-	init();	
-	logDirectory = logDir + "/" + std::to_string(getDayID());
+	logDirectory = logDir;
 	if(not shell.exists(logDirectory)) shell.mkdir(logDirectory,true);
 }
-
+Enviroment::Enviroment(const std::string& logDir,Iteration m) : maxIteration(m)
+{
+	if(not shell.exists(logDir)) 
+	{
+		std::string msg = "El directorio '";
+		msg += logDir + "' no existe.";
+		throw oct::core::Exception(msg,__FILE__,__LINE__);
+	}
+	init();
+	logDirectory = logDir;
+	//if(not shell.exists(logDirectory)) shell.mkdir(logDirectory,true);
+}
+Enviroment::Enviroment(const std::string& logDir,Iteration mi,Iteration ms) : maxIteration(mi),maxSerie(ms)
+{	
+	if(not shell.exists(logDir)) 
+	{
+		std::string msg = "El directorio '";
+		msg += logDir + "' no existe.";
+		throw oct::core::Exception(msg,__FILE__,__LINE__);
+	}
+	init();	
+	logDirectory = logDir + "/serie-" + std::to_string(getDayID());//para iteracion
+	if(not shell.exists(logDirectory)) 
+	{
+		shell.mkdir(logDirectory,true);
+	}
+	else
+	{
+		std::string msg = "El directorio '";
+		msg += logDir + "' no existe.";
+		throw oct::core::Exception(msg,__FILE__,__LINE__);
+	}
+}
+Enviroment::Enviroment(int argc, const char* argv[])
+{
+	init();
+	commands(argc,argv);	
+}
 
 Population Enviroment::getMaxPopulation()const
 {
@@ -431,9 +464,9 @@ void Enviroment::enableEcho(std::ostream* f, unsigned short level)
 bool Enviroment::run()
 {
 	if(stopMinSolutions and minSolutions == 0) throw octetos::core::Exception("La cantida minima de soluciones requeridad deve ser mayor que 0",__FILE__,__LINE__);
-	if(initPopulation == 0) throw octetos::core::Exception("La poblacion inicial deve ser mayor que 0",__FILE__,__LINE__);
-	if(maxProgenitor > maxPopulation) throw octetos::core::Exception("La catidad de progenitores deve ser menor que la popblacion",__FILE__,__LINE__);
-	if(maxProgenitor == 0) throw octetos::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
+	if(initPopulation == 0) throw oct::core::Exception("La poblacion inicial deve ser mayor que 0",__FILE__,__LINE__);
+	if(maxProgenitor > maxPopulation) throw oct::core::Exception("La catidad de progenitores deve ser menor que la popblacion",__FILE__,__LINE__);
+	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
 	
 	actualIteration = 1;	
 	if(echoSteps) std::cout << "\tStep 1\n";
@@ -485,6 +518,10 @@ bool Enviroment::run()
 		if(echoSteps) std::cout << "\tStep C3\n";
 		eval();
 		if(echoSteps) std::cout << "\tStep C4\n";
+		if(not comparer)
+		{
+			throw oct::core::Exception("No se a asignado el creterio de coparacion.",__FILE__,__LINE__);
+		}
 		sort(comparer);
 		if(echoSteps) std::cout << "\tStep C5\n";
 		
@@ -493,7 +530,7 @@ bool Enviroment::run()
 			std::string strfn = logSubDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fn(strfn);
 			//std::cout << "\t\t" << strfn << "\n";
-			if(not fn.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			if(not fn.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ec::Single* s : *this)
 			{
 				s->save(fn);
@@ -511,7 +548,7 @@ bool Enviroment::run()
 			std::string strSelection = logSubDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
 			//std::cout << "\t\t" << strSelection << "\n";
 			std::ofstream fnSelection(strSelection);
-			if(not fnSelection.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			if(not fnSelection.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(Single* s : *this)
 			{
 				s->save(fnSelection);
@@ -614,7 +651,7 @@ bool Enviroment::run()
 		{
 			std::string strChilds = logSubDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fnChilds(strChilds);
-			if(not fnChilds.is_open()) throw octetos::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 			{
 				s->save(fnChilds);	
@@ -726,7 +763,10 @@ Single* Enviroment::getRandomSingle() const
 	
 	return NULL;
 }
-
+void Enviroment::setEchoSteps(bool e)
+{
+	echoSteps = e;
+}
 void Enviroment::juncting()
 {
 	if(echoSteps) std::cout << "Enviroment::juncting Step 1\n";
@@ -838,19 +878,43 @@ void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file
 
 void Enviroment::commands(int argc, const char* argv[])
 {
-	for(int i = 1; i <= argc; i++)
+	for(int i = 1; i < argc; i++)
 	{
 		if(strcmp("--directory-logs",argv[i]) == 0)
 		{
-			logDirectory = argv[++i];
+			logDirectory = argv[++i];			
+			if(not shell.exists(logDirectory)) 
+			{
+				std::string msg = "El directorio '";
+				msg += logDirectory + "' no existe.";
+				throw oct::core::Exception(msg,__FILE__,__LINE__);
+			}
 		}
 		if(strcmp("--max-series",argv[i]) == 0)
 		{
+			if(logDirectory.empty()) throw oct::core::Exception("Asigne primero el directorio de ejecucion",__FILE__,__LINE__);
+			
+			logDirectory = logDirectory + "/serie-" + std::to_string(getDayID());//para iteracion
+			if(not shell.exists(logDirectory)) 
+			{
+				shell.mkdir(logDirectory,true);
+			}
+			else
+			{
+				std::string msg = "El directorio '";
+				msg += logDirectory + "' ya existe.";
+				throw oct::core::Exception(msg,__FILE__,__LINE__);
+			}
+			
 			stopperMaxSerie(std::atoi(argv[++i]));
 		}
 		if(strcmp("--max-iterations",argv[i]) == 0)
 		{
 			stopperMaxIterations(std::atoi(argv[++i]));
+		}
+		if(strcmp("--max-treat",argv[i]) == 0)
+		{
+			
 		}
 	}
 }

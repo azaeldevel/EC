@@ -393,10 +393,14 @@ Enviroment::Enviroment()
 {
 	init();
 }
-Enviroment::Enviroment(const std::string& log)
+Enviroment::Enviroment(const std::string& log) : ec::Enviroment()
 {
 	init();
 	logDirectory = log;
+}
+Enviroment::Enviroment(int argc, const char* argv[]) : ec::Enviroment(argc,argv)
+{
+	init();
 }
 
 void Enviroment::init()
@@ -404,11 +408,12 @@ void Enviroment::init()
 	initPopulation = 1000;
 	maxPopulation = 1000;
 	maxProgenitor = 200;
-	echoSteps = false;
+	//echoSteps = false;
 	stopperMinSolutions(2);
 	stopperMaxIterations(100);
 	epsilon = 1.0/double(USHRT_MAX);
 	//std::cout << "epsilon = " << epsilon << "\n";
+	comparer = &ec::cmpStrength;
 }
 
 

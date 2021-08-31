@@ -24,7 +24,7 @@
 
 
 #include <fstream>
-#include <octetos/coreutils/shell.hh>
+#include <octetos/core/shell.hh>
 
 #include "GA-max.hh"
 
@@ -40,17 +40,18 @@ int main(int argc, const char* argv[])
 	//std::cout << "sizeof(unsigned short) = " << sizeof(unsigned short) << "\n";
 	std::string logDir = argv[1];
 	std::string logDirectory;	
-	bool logFile = not logDir.empty();//
+	//bool logFile = not logDir.empty();//
 	
-	if(logFile) 
+	/*if(logFile) 
 	{
 		logDirectory = logDir + "/" + std::to_string(ec::Enviroment::getDayID());
-		coreutils::Shell shell;
+		oct::core::Shell shell;
 		shell.mkdir(logDirectory,true);
-	}
+	}*/
 	
-	ec::max::Enviroment* max = new ec::max::Enviroment(logDirectory);
+	ec::max::Enviroment* max = new ec::max::Enviroment(argc,argv);
 	max->enableEcho(&std::cout,2);
+	//max->setEchoSteps(true);
 	//std::cout << "Step 1\n";
 	bool ret = max->run();
 	//std::cout << "Step 2\n";

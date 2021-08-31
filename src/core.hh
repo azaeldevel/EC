@@ -26,7 +26,7 @@
 #include <octetos/core/Error.hh>
 #include <iostream>
 #include <fstream>
-#include <octetos/coreutils/shell.hh>
+#include <octetos/core/shell.hh>
 
 namespace ec
 {
@@ -61,7 +61,7 @@ public:
 	const Chromosome& operator = (const Chromosome&);
 	
 protected:
-	unsigned int mutated;
+	//unsigned int mutated;
 private:
 	std::string name;
 };
@@ -196,10 +196,12 @@ public:
 	*/
 	void init();
 	Enviroment();
+	Enviroment(const std::string& log);
 	Enviroment(const std::string& log,Iteration maxIteration);
 	Enviroment(const std::string& log,Iteration maxIteration,Iteration maxSerie);
 	Enviroment(Iteration maxIteration);
 	Enviroment(Iteration maxIteration,Iteration maxSerie);
+	Enviroment(int argc, const char* argv[]);
 	virtual ~Enviroment();
 
 	//getters
@@ -225,6 +227,7 @@ public:
 	ID getCountID();
 	//bool getJam()const;
 	bool getEchoSteps()const;
+	void setEchoSteps(bool);
 	Single* getRandomSingleTop() const;
 	Single* getRandomSingle() const;
 
@@ -239,7 +242,7 @@ public:
 	//void stopperNotDiference(double cota);
 	void stopperMinSolutions(Population);
 	void stopperMaxSerie(Iteration max);
-	void commands(int argc, const char* argv[]);
+	virtual void commands(int argc, const char* argv[]);
 	
 	/**
 	*\brief Inicia la ejecution del algoritmo
@@ -355,7 +358,8 @@ protected:
 
 	bool echoSteps;
 
-	coreutils::Shell shell;
+	//
+	oct::core::Shell shell;
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion

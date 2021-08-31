@@ -24,7 +24,7 @@
 
 
 #include <fstream>
-#include <octetos/coreutils/shell.hh>
+#include <octetos/core/shell.hh>
 
 #include "GA-trans.hh"
 
@@ -45,7 +45,7 @@ int main(int argc, const char* argv[])
 	if(logFile) 
 	{
 		logDirectory = logDir + "/" + std::to_string(ec::trans::Enviroment::getDayID());
-		coreutils::Shell shell;
+		oct::core::Shell shell;
 		shell.mkdir(logDirectory,true);
 	}
 	

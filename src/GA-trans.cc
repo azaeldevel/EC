@@ -415,7 +415,7 @@ nodes::Direction Path::getDirection()const
 {
 	return direction;
 }
-const octetos::core::MD5sum& Path::getMD5()const
+const oct::core::StringMD5& Path::getMD5()const
 {
 	return md5;
 }
