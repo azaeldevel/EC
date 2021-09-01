@@ -94,7 +94,7 @@ void Chromosome::copy(const ec::Chromosome& P)
 		}
 	}
 }
-void Chromosome::mutate(float p)
+void Chromosome::mutate(double p)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -442,7 +442,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 			throw octetos::core::Exception("Algoritmo desconocido",__FILE__,__LINE__);
 		}
 			
-		if(mudable())
+		if(mutation())
 		{
 			for(unsigned short i = 0; i < 3; i++)
 			{
@@ -594,7 +594,7 @@ Enviroment::Enviroment(const std::string& initB,Iteration maxite)
 }*/
 Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::string& logDir)  : ec::Enviroment (logDir,maxite)
 {
-	init(initB);
+	init();
 	stopperMaxIterations(maxite);
 	//logDirectory = logDir + "/" + std::to_string(ec::sudoku::Enviroment::getDayID());
 	//shell.mkdir(logDirectory);
@@ -604,15 +604,27 @@ Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::stri
 }
 Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::string& logDir,Iteration maxS) : ec::Enviroment (logDir,maxite,maxS)
 {
-	init(initB);
+	init();
 	stopperMaxIterations(maxite);
 	//logFile = not logDirectory.empty();
 	stopperMaxSerie(maxS);
 }
+Enviroment::Enviroment(int argc, const char* argv[]) : ec::Enviroment(argc,argv)
+{
+	init();
+	for(int i = 1; i < argc; i++)
+	{
+		if(strcmp("--board",argv[i]) == 0)
+		{
+			//std::cout << "--board = " << argv[++i] << "\n";
+			fnBoard = argv[++i];
+		}
+	}
+}
 Enviroment::~Enviroment()
 {
 }
-void Enviroment::init(const std::string& initB)
+void Enviroment::init()
 {
 	maxPopulation = 810;//81*a
 	initPopulation = maxPopulation;
@@ -627,11 +639,11 @@ void Enviroment::init(const std::string& initB)
 	//maxIteration = 1000;
 	newIteration = true;
 	stopperMinSolutions(1);
-	pMutationEvent = 0.02;
-	pMutableGene = 1.0/81.0;
+	if(pMutationEvent < 0.0) pMutationEvent = 0.002;
+	if(pMutableGene < 0.0) pMutableGene = 0.80;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
-	fnBoard = initB;
+	//fnBoard = initB;
 	//iterJam = 1500;
 	//addTerminator(ae::Terminations::JAM);
 	//sliceJam = iterJam /10;

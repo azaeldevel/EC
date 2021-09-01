@@ -26,7 +26,7 @@ public:
 	
 	virtual void combine(const ec::Chromosome& P1,const ec::Chromosome& P2);
 	virtual void copy(const ec::Chromosome& P1);
-	virtual void mutate(float p);
+	virtual void mutate(double p);
 	virtual void randFill(bool favor = false);
 
 	/*
@@ -84,10 +84,11 @@ public:
 	//Enviroment(const std::string& initTable,Iteration maxIteration);
 	Enviroment(const std::string& initTable,Iteration maxIteration,const std::string& logDir);
 	Enviroment(const std::string& initTable,Iteration maxIteration,const std::string& logDir,Iteration maxSeries);
+	Enviroment(int argc, const char* argv[]);
 	virtual ~Enviroment();
-	void init(const std::string& initB);
+	void init();
 	void initBoard(const std::string& initTable);
-
+	
 	unsigned short getFaltantes() const;
 	double getGamma() const;
 	void saveSolutions(std::ofstream& f)const;

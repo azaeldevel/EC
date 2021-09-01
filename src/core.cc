@@ -242,7 +242,7 @@ Population Single::juncting(std::list<Single*>& chils,const Single* single,unsig
 	
 	return 0;
 }
-bool Single::mudable()const
+bool Single::mutation()const
 {
 	double numrand = randNumber(0.0,1.0);
 	if(numrand <= env->getProbabilityMutationEvent()) return true;
@@ -274,8 +274,8 @@ void Enviroment::init()
 	logFile = false;
 	//sigmaReduction = 1.0;
 	minSolutions = 0;
-	pMutationEvent = 0.02;
-	pMutableGene = 0.4;
+	pMutationEvent = -1.0;
+	pMutableGene = -1.0;
 	fout = NULL;
 	stopMaxIterations=false;
 	stopMinSolutions = false;
@@ -480,9 +480,9 @@ bool Enviroment::run()
 	{
 		//session = getSession();
 		logSubDirectory = logDirectory +"/" + std::to_string(getTimeID());
-		//std::cout << "\t\t" << logSubDirectory << "\n";
-		std::string strhistory = logSubDirectory + "/historial.csv";		
+		//std::cout << "\t\t" << logSubDirectory << "\n";		
 		shell.mkdir(logSubDirectory);
+		std::string strhistory = logSubDirectory + "/historial.csv";
 		history.open(strhistory);
 	}
 	if(echoSteps) std::cout << "\tStep 4\n";
@@ -628,13 +628,11 @@ bool Enviroment::run()
 				history  << ",";
 				history  << media;
 				history  << ",";
-				history  << sigma;	
+				history  << sigma;
 				history  << ",";
 				history  << pMutationEvent;
 				history  << ",";
 				history  << pMutableGene;
-				//history  << ",";
-				//history  << getFaltantes();
 				history  << "\n";
 				history .flush();
 			}
@@ -890,39 +888,51 @@ void Enviroment::commands(int argc, const char* argv[])
 				throw oct::core::Exception(msg,__FILE__,__LINE__);
 			}
 		}
-		if(strcmp("--max-series",argv[i]) == 0)
+		if(strcmp("--iterations",argv[i]) == 0)
+		{
+			//std::cout << "--max-iterations = " << argv[++i] << "\n";
+			stopperMaxIterations(std::stoi(argv[++i]));
+		}
+		if(strcmp("--serie",argv[i]) == 0)
 		{
 			if(logDirectory.empty()) throw oct::core::Exception("Asigne primero el directorio de ejecucion",__FILE__,__LINE__);
 			
-			logDirectory = logDirectory + "/serie-" + std::to_string(getDayID());//para iteracion
-			if(not shell.exists(logDirectory)) 
+			serieName = argv[++i];
+			std::string strDay = std::to_string(getDayID());
+			std::string log = logDirectory + "/" + serieName;//para iteracion
+			//std::cout << "logDirectory = " << log << "\n";
+			if(not shell.exists(log)) 
 			{
-				shell.mkdir(logDirectory,true);
-			}
-			else
+				shell.mkdir(log);
+			}	
+			/*else
 			{
 				std::string msg = "El directorio '";
-				msg += logDirectory + "' ya existe.";
+				msg += log + "' ya existe.";
 				throw oct::core::Exception(msg,__FILE__,__LINE__);
+			}*/
+			std::string logSub = log + "/" + strDay;		
+			if(not shell.exists(logSub)) 
+			{
+				logDirectory = logSub;
+				shell.mkdir(logSub);
 			}
 			
-			stopperMaxSerie(std::atoi(argv[++i]));
-		}
-		if(strcmp("--max-iterations",argv[i]) == 0)
-		{
-			stopperMaxIterations(std::atoi(argv[++i]));
+			stopperMaxSerie(std::stoi(argv[++i]));
+			//std::cout << "serie = " << argv[i] << "\n";
 		}
 		if(strcmp("--max-treat",argv[i]) == 0)
 		{
-			
 		}
 		if(strcmp("--mutation-event",argv[i]) == 0)
 		{
 			pMutationEvent = std::stod(argv[++i]);
+			//std::cout << "pMutationEvent = " << pMutationEvent << "\n";
 		}
 		if(strcmp("--mutation-gene",argv[i]) == 0)
 		{
 			pMutableGene = std::stod(argv[++i]);
+			//std::cout << "pMutableGene = " << pMutableGene << "\n";
 		}
 	}
 }

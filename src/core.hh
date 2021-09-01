@@ -136,7 +136,7 @@ public:
 	void deltaAge();
 	//void deltaStrength();
 	float efficiency()const;
-	bool mudable()const;
+	bool mutation()const;
 	void init();
 	
 	/**
@@ -394,6 +394,9 @@ private:
 	Iteration maxSerie;
 
 	bool stopMaxSerie;
+
+	std::string serieName;
+	
 };
 
 }
