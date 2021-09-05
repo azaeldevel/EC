@@ -6,7 +6,7 @@
 
 #include <map>
 
-#include "core.hh"
+#include "ec.hh"
 
 
 namespace ec::ga
