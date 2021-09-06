@@ -680,25 +680,29 @@ Single::~Single()
 
 void Single::eval()
 {
-	double flength = 0.0;
-	if(chromosome.getPath()->getDirection() == nodes::Direction::FRONT)
-	{
-		flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthFront() * double(getLengthPath());
-	}
-	else if(chromosome.getPath()->getDirection() == nodes::Direction::BACK)
-	{
-		flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthBack() * double(getLengthPath());
-	}
+	double flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthBack() * double(getLengthPath());
 	
 	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(getCountTagetsPath());
 	if(fTarget > ((Enviroment&)getEnviroment()).getFreactionQ())
 	{
 		fTarget = ((Enviroment&)getEnviroment()).getFreactionQ()/(((Enviroment*)env)->getFreactionD() * fTarget);
 	}
+	
+	double fDirection = 0.0;
+	if(((Enviroment*)env)->get_direction())	
+	{
+		if(chromosome.getPath()->getDirection() == nodes::Direction::FRONT) fDirection = ((Enviroment*)env)->getFreactionQ();
+	}
+	else
+	{
+		fDirection = ((Enviroment*)env)->getFreactionQ();
+	}
+
+	
 	//std::cout << "(" << getID() << ") : \n";
 	//std::cout << "\tflength = " << flength << "\n";
 	//std::cout << "\tfTarget = " << fTarget << "\n";
-	fitness = fTarget + flength;	
+	fitness = fTarget + flength + fDirection;	
 }
 void Single::randFill(bool favor)
 {
@@ -998,16 +1002,19 @@ void Enviroment::init()
 	countID = 0;//contador de nodos
 	initPopulation = 10000;
 	maxPopulation = 1000;
-	maxProgenitor = 250;
-	stopperMaxIterations(1000);
+	maxProgenitor = 500;
+	stopperMaxIterations(500);
 	//stopperNotDiference(1.0e-20);
 	//comparer = &cmpStrength1;
-	fractionDen = 2.0;
+	fractionDen = 3.0;
 	fractionQuality = 1.0/fractionDen;
 	genLengthMin = 5;
 	threads = 40;
 	region = NULL;
 	//echoSteps = true;
+	
+	//
+	direction = false;
 }
 Enviroment::~Enviroment()
 {
@@ -1035,7 +1042,10 @@ unsigned short Enviroment::getGenLengthMin() const
 {
 	return genLengthMin;
 }
-
+bool Enviroment::get_direction()const
+{
+	return direction;
+}
 
 
 void Enviroment::generate(nodes::Node* n,unsigned short stop,nodes::Direction direction)

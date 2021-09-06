@@ -330,6 +330,7 @@ public:
 	double getFreactionQ()const;
 	double getFreactionD()const;
 	unsigned short getGenLengthMin() const;
+	bool get_direction()const;
 	
 	void saveSolutions(const std::string& dir)const;
 	void saveSolutions(std::ofstream& f)const;
@@ -353,8 +354,12 @@ private:
 	std::list<nodes::Node*> targets;
 	double fractionQuality;
 	double fractionDen;
-	nodes::Direction direction;
+	//nodes::Direction direction;
 	unsigned short genLengthMin;
+	/**
+	*\brief true si la direccion es importante false si no
+	*/
+	bool direction;
 };
 
 }
