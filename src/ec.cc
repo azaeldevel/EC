@@ -94,19 +94,25 @@ Junction::Junction(const Junction& obj): Chromosome("Junction")
 }
 Junction::Junction(): Chromosome("Junction")
 {
-	number = randChild();
+	number = randNumber(1.0,9.0);
+	algorit = randAlgt();
+	type = TypeJuntion::BINARY;//backward compatible
+}
+Junction::Junction(unsigned short max): Chromosome("Junction")
+{
+	number = max;
 	algorit = randAlgt();
 	type = TypeJuntion::BINARY;//backward compatible
 }
 Junction::Junction(geneUS n,geneUS a): Chromosome("Junction")
 {
-	number = randChild();
+	number = randNumber(1.0,9.0);
 	algorit = randAlgt();
 	type = TypeJuntion::BINARY;//backward compatible
 }
 Junction::Junction(TypeJuntion t): Chromosome("Junction")
 {
-	number = randChild();
+	number = randNumber(1.0,9.0);
 	algorit = randAlgt();
 	type = t;//backward compatible
 }
@@ -143,6 +149,7 @@ void Junction::mutate(float p)
 	if(numrd1 <= p) number = randNumber(1.0,10.0);
 	numrd1 = randNumber(0.0,1.0);
 	if(numrd1 <= p) algorit = randAlgt();
+	//if(numrd1 <= p) maxChilds = randNumber(1.0,10.0);
 }
 geneUS Junction::randAlgt()
 {
@@ -158,19 +165,19 @@ geneUS Junction::randType()
 
 	return TypeJuntion::BINARY;
 }
-geneUS Junction::randChild()
+/*geneUS Junction::randChild()
 {
-	return randNumber(1.0, 5.0);
-}
+	return randNumber(1.0, maxChilds);
+}*/
 void Junction::randFill(bool favor)
 {
-	number = randChild();
+	number = randNumber(1.0,9.0);
 	algorit = randAlgt();
 	if(type == TypeJuntion::NOT_TYPE) type = TypeJuntion::BINARY;//backward compatible
 }
 void Junction::randFill(TypeJuntion t)
 {
-	number = randChild();
+	number = randNumber(1.0,9.0);
 	algorit = randAlgt();
 	type = t;//backward compatible
 }

@@ -523,7 +523,7 @@ void Single::save(std::ofstream& fn)
 		}
 	}
 }
-const octetos::core::MD5sum& Single::getMD5()const
+const oct::core::StringMD5& Single::getMD5()const
 {
 	return md5;
 }

@@ -84,6 +84,7 @@ public:
 	};
 public:
 	Junction();
+	Junction(unsigned short maxChilds);
 	virtual ~Junction();
 	Junction(const Junction& );
 	Junction(geneUS number,geneUS algorit);
@@ -92,7 +93,7 @@ public:
 	geneUS get_algorit()const;
 	geneUS get_type()const;
 	static geneUS randAlgt();
-	static geneUS randChild();
+	//static geneUS randChild();
 	static geneUS randType();
 	
 	
@@ -105,7 +106,6 @@ private:
 	geneUS number;
 	geneUS algorit;
 	TypeJuntion type;
-	
 };
 
 /**
@@ -245,11 +245,11 @@ public:
 	virtual void commands(int argc, const char* argv[]);
 	
 	/**
-	*\brief Inicia la ejecution del algoritmo
+	*\brief Inicia la ejecution del algoritmo(funcion de entrada)
 	*/
 	virtual bool run();
 	/**
-	*\brief Inicia la ejecution del algoritmo con los parametro de linea de comando
+	*\brief Inicia la ejecution del algoritmo con los parametro de linea de comando(funcion de entrada)
 	*/
 	virtual bool run(int argc, const char* argv[]);
 	/**
@@ -281,11 +281,11 @@ public:
 	virtual void initial() = 0;
 
 	/**
-	*\brief Inicia el proceso de serie
+	*\brief Inicia el proceso de serie(funcion de entrada)
 	*/
 	virtual bool series();
 	/**
-	*\brief Inicia el proceso de serie con argumentos de linea de comandos
+	*\brief Inicia el proceso de serie con argumentos de linea de comandos(funcion de entrada)
 	*/
 	virtual bool series(int argc, const char* argv[]);	
 	/**
@@ -397,6 +397,8 @@ private:
 
 	std::string serieName;
 	
+	unsigned short maxChilds;
+
 };
 
 }
