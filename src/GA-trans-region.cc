@@ -15,7 +15,7 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodes::Node* node_3 = region->newNode(++countID);//ID:3
 	region->newEdgeFront(250,node_2,node_3);
 	nodes::Node* node_O = node_2;
-	targets.push_back(node_O);
+	
 
 	nodes::Node* node_4 = region->newNode(++countID);
 	region->newEdgeFront(200,node_3,node_4);//ID:4
@@ -151,7 +151,7 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	nodes::Node* node_45 = region->newNode(++countID);//ID:45
 	region->newEdgeFront(447,node_44,node_45);
 	node_45->setType(nodes::NodeType::TARGET);
-	targets.push_back(node_45);
+	
 	
 	nodes::Node* node_46 = region->newNode(++countID);//ID:46
 	region->newEdgeFront(200,node_44,node_46);
@@ -293,8 +293,10 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	region->newEdgeFront(100,node_47,node_9);
 	region->newEdgeBack(100,node_9,node_47);
 	
-	
-	
+	targets.push_back(node_O);
+	targets.push_back(node_15);
+	targets.push_back(node_35);
+	targets.push_back(node_45);
 }
 
 }

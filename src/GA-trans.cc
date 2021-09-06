@@ -680,14 +680,17 @@ Single::~Single()
 
 void Single::eval()
 {
-	double flength;
-	if(chromosome.getPath()->getDirection() == nodes::Direction::FRONT)
+	double flength = 0.0;
+	if(getCountTagetsPath() >= ((Enviroment*)env)->getTargets().size())
 	{
-		flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthFront() * double(getLengthPath());
-	}
-	else if(chromosome.getPath()->getDirection() == nodes::Direction::BACK)
-	{
-		flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthBack() * double(getLengthPath());
+		if(chromosome.getPath()->getDirection() == nodes::Direction::FRONT)
+		{
+			flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthFront() * double(getLengthPath());
+		}
+		else if(chromosome.getPath()->getDirection() == nodes::Direction::BACK)
+		{
+			flength = ((Enviroment*)env)->getFreactionQ() - ((Enviroment*)env)->getGammaLengthBack() * double(getLengthPath());
+		}
 	}
 	
 	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(getCountTagetsPath());
@@ -1011,7 +1014,7 @@ void Enviroment::init()
 	initPopulation = 10000;
 	maxPopulation = 1000;
 	maxProgenitor = 500;
-	stopperMaxIterations(250);
+	stopperMaxIterations(2000);
 	//stopperNotDiference(1.0e-20);
 	//comparer = &cmpStrength1;
 	fractionDen = 3.0;
@@ -1022,7 +1025,7 @@ void Enviroment::init()
 	//echoSteps = true;
 	
 	//
-	direction = false;
+	direction = true;
 }
 Enviroment::~Enviroment()
 {
