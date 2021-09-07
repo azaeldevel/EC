@@ -11,10 +11,11 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	region = new nodes::Region(++countID,"Tesing");
 	
 	//front
-	nodes::Node* node_2 = region->newNode(++countID,nodes::NodeType::ORIGIN);//O ID:2
+	nodes::Node* node_2 = region->newNode(++countID);//O ID:2
 	nodes::Node* node_3 = region->newNode(++countID);//ID:3
 	region->newEdgeFront(250,node_2,node_3);
 	nodes::Node* node_O = node_2;
+	origin = node_2;
 	
 
 	nodes::Node* node_4 = region->newNode(++countID);
@@ -150,7 +151,6 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	
 	nodes::Node* node_45 = region->newNode(++countID);//ID:45
 	region->newEdgeFront(447,node_44,node_45);
-	node_45->setType(nodes::NodeType::TARGET);
 	
 	
 	nodes::Node* node_46 = region->newNode(++countID);//ID:46
@@ -294,9 +294,13 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	region->newEdgeBack(100,node_9,node_47);
 	
 	targets.push_back(node_O);
+	node_O->setType(nodes::NodeType::TARGET);
 	targets.push_back(node_15);
+	node_15->setType(nodes::NodeType::TARGET);
 	targets.push_back(node_35);
+	node_35->setType(nodes::NodeType::TARGET);
 	targets.push_back(node_45);
+	node_45->setType(nodes::NodeType::TARGET);
 }
 
 }

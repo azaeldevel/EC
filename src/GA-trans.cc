@@ -222,7 +222,7 @@ namespace nodes
 
 
 
-	Region::Region(ID id, const std::string& name) : Node(id,NodeType::REGION),origin(NULL)
+	Region::Region(ID id, const std::string& name) : Node(id,NodeType::REGION)
 	{
 		//countNodes = 0;
 		lengthFront = 0;
@@ -278,7 +278,7 @@ namespace nodes
 	{
 		Node* n = new Node(id,t);
 		nodes.push_back(n);
-		if(t == NodeType::ORIGIN) origin = n;//si no hay nodo origne registrado
+		//if(t == NodeType::ORIGIN) origin = n;//si no hay nodo origne registrado
 		//countNodes++;
 		
 		return n;
@@ -301,10 +301,10 @@ namespace nodes
 		return e;
 	}
 
-	Node* Region::getOrigin()
+	/*Node* Region::getOrigin()
 	{
 		return origin;
-	}
+	}*/
 
 }
 
@@ -369,7 +369,12 @@ Path::Path() : direction(nodes::Direction::NOTDIRECT)
 }
 Path::Path(const Path& obj)
 {
-	operator =(obj);	
+	for(nodes::Edge* e : obj)
+	{
+		push_back(e);
+	}	
+	direction = obj.direction;
+	md5 = obj.md5;
 }
 Path::Path(const Path* pb,const Path* pe)
 {
@@ -406,7 +411,7 @@ unsigned short Path::getCountTargets()const
 	unsigned short count  = 0;
 	for(nodes::Edge* e : *this)
 	{
-		if(e->getNode()->getType() != nodes::NodeType::UNKNOW) count++;
+		if(e->getNode()->getType() == nodes::NodeType::TARGET) count++;
 	}
 		
 	return count;
@@ -489,6 +494,7 @@ bool Path::cutBefore(const nodes::Node* n)
 		remove(e);
 	}
 	
+	genMD5();
 	return true;
 }
 bool Path::cutAfther(const nodes::Node* n)
@@ -510,7 +516,19 @@ bool Path::cutAfther(const nodes::Node* n)
 	{
 		remove(e);
 	}
+	
+	genMD5();
 	return true;
+}
+bool Path::cutAfther(unsigned short point)
+{
+	std::list<nodes::Edge*>::iterator it = begin();
+	std::advance(it,point);
+	if(it != end()) 
+	{
+		return cutAfther((*it)->getNode());
+	}
+	return false;
 }
 void Path::print(std::ostream& p) const
 {
@@ -720,7 +738,7 @@ void Single::randFill(bool favor)
 	
 }
 
-Population Single::juncting(std::list<ec::Single*>& chils,unsigned short loglevel,void* node)
+/*Population Single::juncting(std::list<ec::Single*>& chils,unsigned short loglevel,void* node)
 {
 	if(getJunction().get_type() != ec::Junction::TypeJuntion::UNARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
 	Population counNew = 0;
@@ -805,7 +823,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,unsigned short logleve
 	}	
 	
 	return counNew;
-}
+}*/
 Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void* node)
 {
 	Population counNew = 0;	
@@ -902,17 +920,27 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 		else
 		{
 			delete newP;
+			//if(chromosome.getPath()->getLength() < genLengthMin) continue;
+			newP = new Path(*chromosome.getPath());
+			unsigned short cutPount = (unsigned short)randNumber(newP->getLength() - 1);
+			newP->cutAfther(cutPount);
+			const Junction* genJ = &getJunction();
+			Single* newSingle = new Single(env->nextID(),*((Enviroment*)env),*genJ,newP);
+			newSingle->growUp();
+			chils.push_back(newSingle);
+			counNew++;
+			//
+			newP = new Path(*(((const Single*)single)->chromosome.getPath()));
+			cutPount = (unsigned short)randNumber(newP->getLength() - 1);
+			newP->cutAfther(cutPount);
+			genJ = &single->getJunction();
+			newSingle = new Single(env->nextID(),*((Enviroment*)env),*genJ,newP);
+			newSingle->growUp();
+			chils.push_back(newSingle);			
+			counNew++;
 		}
 		if(flsingleP) delete singleP;
 		
-	}
-
-	//if(chils.size() == counNew) 
-	{
-		Single* newSingle = new Single(*this);
-		newSingle->growUp();
-		chils.push_back(newSingle);
-		counNew++;
 	}
 			
 	return counNew;
@@ -1226,7 +1254,7 @@ void Enviroment::selection()
 
 
 
-const std::list<nodes::Node*>& Enviroment::getTargets()const
+const Targets& Enviroment::getTargets()const
 {
 	return targets;
 }

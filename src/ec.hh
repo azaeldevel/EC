@@ -145,7 +145,7 @@ public:
 	virtual void eval() = 0;/**
 	*\brief Realiza el apareo entre dos individuos
 	*/
-	virtual Population juncting(std::list<Single*>& chils,unsigned short loglevel,void*);
+	//virtual Population juncting(std::list<Single*>& chils,unsigned short loglevel,void*);
 	/**
 	*\brief Realiza el apareo entre dos individuos
 	*/

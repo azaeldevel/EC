@@ -173,7 +173,6 @@ namespace nodes
 		std::string name;
 		std::list<Node*> nodes;
 		//std::list<Edge*> edges;
-		Node* origin;
 		//unsigned int countEdgesFront;
 		//unsigned int countEdgesBack;
 		unsigned int lengthFront;
@@ -248,6 +247,7 @@ public:
 	
 	bool cutBefore(const nodes::Node*);
 	bool cutAfther(const nodes::Node*);
+	bool cutAfther(unsigned short point);
 
 private:
 	nodes::Direction direction;
@@ -294,7 +294,7 @@ public:
 	virtual void eval();
 	virtual void randFill(bool favor = false);
 	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*);
-	virtual Population juncting(std::list<ec::Single*>& chils,unsigned short loglevel,void*);
+	//virtual Population juncting(std::list<ec::Single*>& chils,unsigned short loglevel,void*);
 	virtual void save(std::ofstream& fn);
 	virtual void print(std::ostream&) const;
 	void print(nodes::Node&) const;	
@@ -310,6 +310,10 @@ private:
 	Chromosome chromosome;
 };
 
+struct Targets : public std::list<nodes::Node*>
+{
+
+};
 
 class Enviroment : public ec::Enviroment
 {
@@ -326,7 +330,7 @@ public:
 	double getGammaLengthBack() const;
 	double getGammaTarget() const;
 	const nodes::Region* getRegion()const;
-	const std::list<nodes::Node*>& getTargets()const;
+	const Targets& getTargets()const;
 	double getFreactionQ()const;
 	double getFreactionD()const;
 	unsigned short getGenLengthMin() const;
@@ -351,7 +355,7 @@ private:
 	std::list<Path*> lstPaths;
 	nodes::ID countID;
 	double gammaLengthFront,gammaLengthBack,gammaTarget;
-	std::list<nodes::Node*> targets;
+	Targets targets;
 	double fractionQuality;
 	double fractionDen;
 	//nodes::Direction direction;
@@ -360,6 +364,8 @@ private:
 	*\brief true si la direccion es importante false si no
 	*/
 	bool direction;
+
+	nodes::Node* origin;
 };
 
 }
