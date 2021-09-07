@@ -44,7 +44,7 @@ int main(int argc, const char* argv[])
 	
 	if(logFile) 
 	{
-		logDirectory = logDir + "/" + std::to_string(ec::trans::Enviroment::getDayID());
+		logDirectory = logDir + "/" + std::to_string(oct::core::getDayID());
 		oct::core::Shell shell;
 		shell.mkdir(logDirectory,true);
 	}

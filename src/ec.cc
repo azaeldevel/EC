@@ -320,10 +320,11 @@ Enviroment::Enviroment(Iteration m,Iteration ms) : maxIteration(m),maxSerie(ms)
 {
 	init();	
 }
-Enviroment::Enviroment(const std::string& logDir)
+Enviroment::Enviroment(const std::string& logDir,bool subtree)
 {
 	init();
-	logDirectory = logDir;
+	if(subtree) logDirectory = logDir + "/" + std::to_string(oct::core::getDayID());
+	else logDirectory = logDir;
 	if(not shell.exists(logDirectory)) shell.mkdir(logDirectory,true);
 }
 Enviroment::Enviroment(const std::string& logDir,Iteration m) : maxIteration(m)
@@ -347,7 +348,7 @@ Enviroment::Enviroment(const std::string& logDir,Iteration mi,Iteration ms) : ma
 		throw oct::core::Exception(msg,__FILE__,__LINE__);
 	}
 	init();	
-	logDirectory = logDir + "/serie-" + std::to_string(getDayID());//para iteracion
+	logDirectory = logDir + "/serie-" + std::to_string(oct::core::getDayID());//para iteracion
 	if(not shell.exists(logDirectory)) 
 	{
 		shell.mkdir(logDirectory,true);
@@ -397,6 +398,7 @@ double Enviroment::getProbabilityMutationEvent()const
 {
 	return pMutationEvent;
 }
+/*
 unsigned long Enviroment::getSession()const
 {
 	std::time_t t = std::time(0);   // get time now
@@ -433,6 +435,7 @@ unsigned long Enviroment::getTimeID()
 	
     return v;
 }
+*/
 ID Enviroment::getCountID()
 {
 	return idCount;
@@ -486,9 +489,9 @@ bool Enviroment::run()
 	if(logFile)
 	{
 		//session = getSession();
-		logSubDirectory = logDirectory +"/" + std::to_string(getTimeID());
+		logSubDirectory = logDirectory +"/" + std::to_string(oct::core::getTimeID());
 		//std::cout << "\t\t" << logSubDirectory << "\n";		
-		shell.mkdir(logSubDirectory);
+		if(not shell.exists(logSubDirectory)) shell.mkdir(logSubDirectory);
 		std::string strhistory = logSubDirectory + "/historial.csv";
 		history.open(strhistory);
 	}
@@ -905,7 +908,7 @@ void Enviroment::commands(int argc, const char* argv[])
 			if(logDirectory.empty()) throw oct::core::Exception("Asigne primero el directorio de ejecucion",__FILE__,__LINE__);
 			
 			serieName = argv[++i];
-			std::string strDay = std::to_string(getDayID());
+			std::string strDay = std::to_string(oct::core::getDayID());
 			std::string log = logDirectory + "/" + serieName;//para iteracion
 			//std::cout << "logDirectory = " << log << "\n";
 			if(not shell.exists(log)) 

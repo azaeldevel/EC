@@ -196,7 +196,7 @@ public:
 	*/
 	void init();
 	Enviroment();
-	Enviroment(const std::string& log);
+	Enviroment(const std::string& log, bool subtree);
 	Enviroment(const std::string& log,Iteration maxIteration);
 	Enviroment(const std::string& log,Iteration maxIteration,Iteration maxSerie);
 	Enviroment(Iteration maxIteration);
@@ -216,8 +216,8 @@ public:
 	double getProbabilityMutationEvent()const;
 	//void remove(ae::Single*);
 	unsigned long getSession()const;
-	static unsigned long getDayID();
-	static unsigned long getTimeID();
+	//static unsigned long getDayID();
+	//static unsigned long getTimeID();
 	std::ostream* getFout();
 	const std::string getLogSubDirectory()const;
 	/**

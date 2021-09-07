@@ -293,14 +293,15 @@ void Enviroment::creteRegion(std::list<nodes::Node*>& targets)
 	region->newEdgeFront(100,node_47,node_9);
 	region->newEdgeBack(100,node_9,node_47);
 	
-	targets.push_back(node_O);
+	
 	node_O->setType(nodes::NodeType::TARGET);
-	targets.push_back(node_15);
-	node_15->setType(nodes::NodeType::TARGET);
-	targets.push_back(node_35);
-	node_35->setType(nodes::NodeType::TARGET);
-	targets.push_back(node_45);
 	node_45->setType(nodes::NodeType::TARGET);
+	node_15->setType(nodes::NodeType::TARGET);
+	node_35->setType(nodes::NodeType::TARGET);
+	targets.push_back(node_O);
+	targets.push_back(node_45);
+	targets.push_back(node_15);
+	targets.push_back(node_35);
 }
 
-}
+}	

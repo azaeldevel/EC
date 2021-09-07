@@ -456,8 +456,8 @@ bool Path::juncting(const Path* pB,const Path* pE,const nodes::Edge* e)
 	std::list<nodes::Edge*>::const_iterator itB = std::find(pB->begin(),pB->end(),e);
 	std::list<nodes::Edge*>::const_iterator itE = std::find(pE->begin(),pE->end(),e);
 	
-	if(itB == pB->end()) return false;
-	if(itE == pE->end()) return false;
+	if(itB == pB->end()) throw oct::core::Exception("Los Paths indicado no tiene la coincidencia indicada",__FILE__,__LINE__);
+	if(itE == pE->end()) throw oct::core::Exception("Los Paths indicado no tiene la coincidencia indicada",__FILE__,__LINE__);
 		
 	if((*itB)->getNode() == (*itE)->getNode() and (*itB)->getNext() != (*itE)->getNext())
 	{
@@ -471,7 +471,7 @@ bool Path::juncting(const Path* pB,const Path* pE,const nodes::Edge* e)
 	}
 	else
 	{
-		throw octetos::core::Exception("Los Paths indicado no tiene la coincidencia indicada",__FILE__,__LINE__);
+		throw oct::core::Exception("Los Paths indicado no tiene la coincidencia indicada",__FILE__,__LINE__);
 	}
 }
 bool Path::cutBefore(const nodes::Node* n)
@@ -634,7 +634,7 @@ unsigned short Path::countCorners() const
 		}
 		else
 		{
-			throw octetos::core::Exception("Direccion desconocida",__FILE__,__LINE__);
+			throw oct::core::Exception("Direccion desconocida",__FILE__,__LINE__);
 		}
 	}
 	
@@ -714,7 +714,7 @@ void Single::eval()
 	double fTarget = ((Enviroment*)env)->getGammaTarget() * double(getCountTagetsPath());
 	if(fTarget > ((Enviroment&)getEnviroment()).getFreactionQ())
 	{
-		fTarget = ((Enviroment&)getEnviroment()).getFreactionQ()/(((Enviroment*)env)->getFreactionD() * fTarget);
+		fTarget = 2.0 * ((Enviroment&)getEnviroment()).getFreactionQ()/(((Enviroment*)env)->getFreactionD() * fTarget);
 	}
 	
 	double fDirection;
@@ -727,17 +727,35 @@ void Single::eval()
 		fDirection = ((Enviroment*)env)->getFreactionQ();
 	}
 
+	double fOrder = double(checkOrder());
+	fOrder = ((Enviroment*)env)->getGammaTarget() * fOrder;
 	
 	//std::cout << "(" << getID() << ") : \n";
 	//std::cout << "\tflength = " << flength << "\n";
 	//std::cout << "\tfTarget = " << fTarget << "\n";
-	fitness = fTarget + flength + fDirection;	
+	fitness = fTarget + flength + fDirection + fOrder;	
 }
 void Single::randFill(bool favor)
 {
 	
 }
-
+unsigned int Single::checkOrder() const
+{
+	unsigned int count = 0;
+	std::list<nodes::Edge*>::const_iterator itPath = chromosome.getPath()->begin();
+	std::list<nodes::Node*>::const_iterator itTarget = ((Enviroment*)env)->getTargets().begin();
+	
+	for(unsigned int i = 0; i < chromosome.getPath()->size(); i++,itPath++)
+	{
+		if(*itTarget == (*itPath)->getNode()) 
+		{
+			count++;
+			itTarget++;
+		}
+	}
+	
+	return count;
+}
 /*Population Single::juncting(std::list<ec::Single*>& chils,unsigned short loglevel,void* node)
 {
 	if(getJunction().get_type() != ec::Junction::TypeJuntion::UNARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
@@ -849,7 +867,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 		nodes::Edge* pe = NULL;
 		nodes::Edge* singleE = NULL;
 		unsigned short edgecount = chromosome.getPath()->countCorners();
-		for(unsigned short i = 1; i <= edgecount; i++)
+		for(unsigned short i = 1; i <= edgecount; i++)//busca los nodos en comun
 		{
 			if(edgecount > 0) 
 			{
@@ -867,7 +885,11 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 			singleE = ((Single*)single)->chromosome.getPath()->find(pe);
 			if(singleE != NULL) break;//si no hay coinciendia con single regres al inicio
 		}
+		Path *newP = NULL;
+		if(singleE == NULL) goto duplicate;
+		//if(pe->getNode() != singleE->getNode() or pe->getNext() == singleE->getNext()) goto duplicate;
 		
+		//convierte al path a la misma direccion
 		if(chromosome.getPath()->getDirection() != ((Single*)single)->chromosome.getPath()->getDirection()) 
 		{
 			singleP = new Path();
@@ -879,7 +901,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 			singleP = ((Single*)single)->chromosome.getPath();
 		}
 			
-		Path *newP = new Path(chromosome.getPath()->getDirection());
+		newP = new Path(chromosome.getPath()->getDirection());
 		if(newP->juncting(chromosome.getPath(),singleP,singleE)) 
 		{
 			if(newP->getDirection() == nodes::Direction::FRONT)
@@ -920,7 +942,7 @@ Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* sing
 		else
 		{
 			delete newP;
-			//if(chromosome.getPath()->getLength() < genLengthMin) continue;
+		duplicate:
 			newP = new Path(*chromosome.getPath());
 			unsigned short cutPount = (unsigned short)randNumber(newP->getLength() - 1);
 			newP->cutAfther(cutPount);
@@ -1031,10 +1053,9 @@ Enviroment::Enviroment()
 {
 	init();
 }
-Enviroment::Enviroment(const std::string& log)
+Enviroment::Enviroment(const std::string& log) : ec::Enviroment(log,true)
 {
 	init();
-	logDirectory = log;
 }
 void Enviroment::init()
 {
@@ -1042,10 +1063,10 @@ void Enviroment::init()
 	initPopulation = 10000;
 	maxPopulation = 1000;
 	maxProgenitor = 500;
-	stopperMaxIterations(2000);
+	stopperMaxIterations(5000);
 	//stopperNotDiference(1.0e-20);
 	//comparer = &cmpStrength1;
-	fractionDen = 3.0;
+	fractionDen = 5.0; //target 2, longitud 1, direccion 1, orden 1
 	fractionQuality = 1.0/fractionDen;
 	genLengthMin = 5;
 	threads = 40;

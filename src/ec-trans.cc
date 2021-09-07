@@ -40,13 +40,15 @@ int main(int argc, const char* argv[])
 			
 	std::string logDir = argv[1];
 	std::string logDirectory;	
-	bool logFile = not logDir.empty();//
+	//bool logFile = not logDir.empty();//
 	
-	if(logFile) 
+	//if(logFile) 
 	{
+		//logDirectory = logDir + "/trans/" + std::to_string(oct::core::getDayID()) + "/" + std::to_string(oct::core::getTimeID()); 
+		//logDirectory = logDir + "/trans/" + std::to_string(oct::core::getDayID());
 		logDirectory = logDir + "/trans/";
-		oct::core::Shell shell;
-		shell.mkdir(logDirectory,true);
+		//oct::core::Shell shell;
+		//shell.mkdir(logDirectory,true);
 	}
 	
 	ec::trans::Enviroment* trans = new ec::trans::Enviroment(logDirectory);

@@ -300,6 +300,7 @@ public:
 	void print(nodes::Node&) const;	
 	//Population juncting(const Single*,std::list<Path*>& p)const;
 	bool growUp();
+	unsigned int checkOrder()const;
 	
 	bool checkRepitTarget(const Path* p)const;
 	unsigned short checkOrder(const Path* p)const;
