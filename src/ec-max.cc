@@ -34,7 +34,7 @@ int main(int argc, const char* argv[])
 	if(argc < 2) 
 	{
 		std::cerr << "Indique el parametro necesarion\n";
-		std::cerr << "trans  dirlog\n";
+		std::cerr << "trans  --directory-logs dir\n";
 		return EXIT_SUCCESS;
 	}
 	//std::cout << "sizeof(unsigned short) = " << sizeof(unsigned short) << "\n";
@@ -55,7 +55,7 @@ int main(int argc, const char* argv[])
 	//std::cout << "Step 1\n";
 	bool ret = max->run();
 	//std::cout << "Step 2\n";
-	//delete max;//no es necesario delete en mian ya que se llama automaticamente
+	delete max;//no es necesario delete en mian ya que se llama automaticamente
 	//std::cout << "Step 3\n";
 	return ret? EXIT_SUCCESS : EXIT_FAILURE;
 }

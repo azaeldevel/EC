@@ -40,8 +40,11 @@ int main(int argc, const char* argv[])
 	std::cout << "Step 0.0\n";	
 	ec::sudoku::Enviroment* sudoku = new ec::sudoku::Enviroment(argc,argv);
 	sudoku->enableEcho(&std::cout,2);
+	bool check = sudoku->run();
 	
-	return sudoku->run()? EXIT_SUCCESS : EXIT_FAILURE;
+	
+	
+	return check? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 
