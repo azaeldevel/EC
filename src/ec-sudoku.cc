@@ -37,18 +37,9 @@ int main(int argc, const char* argv[])
 		return EXIT_SUCCESS;
 	}
 			
-	/*std::string logDir = argv[1];
-	std::string initBoard = argv[2];
-	if(logDir.compare("-") == 0) logDir = "";//desactivacion de logs	
-	unsigned int iterations = std::stoi(argv[3]);
-	unsigned int series = std::stoi(argv[4]);	*/
-	//bool logFile = not logDir.empty();//enableLogFile ();
-	//std::string logDirectorySerie = logDir + "/" + std::to_string(ec::sudoku::Enviroment::getDayID());;
-		
-	//ec::sudoku::Enviroment* sudoku = new ec::sudoku::Enviroment(initBoard,iterations,logDirectorySerie,series);		
+	std::cout << "Step 0.0\n";	
 	ec::sudoku::Enviroment* sudoku = new ec::sudoku::Enviroment(argc,argv);
 	sudoku->enableEcho(&std::cout,2);
-	//sudoku->setEchoSteps(true);
 	
 	return sudoku->run()? EXIT_SUCCESS : EXIT_FAILURE;
 }

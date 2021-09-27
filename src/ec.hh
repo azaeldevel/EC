@@ -395,7 +395,7 @@ private:
 
 	bool stopMaxSerie;
 
-	std::string serieName;
+	//std::string serieName;
 	
 	unsigned short maxChilds;
 

@@ -886,11 +886,12 @@ void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file
 
 void Enviroment::commands(int argc, const char* argv[])
 {
+	std::cout << "Enviroment::commands : Step 1.0\n";
 	for(int i = 1; i < argc; i++)
 	{
 		if(strcmp("--directory-logs",argv[i]) == 0)
 		{
-			logDirectory = argv[++i];			
+			logDirectory = argv[++i];		
 			if(not shell.exists(logDirectory)) 
 			{
 				std::string msg = "El directorio '";
@@ -900,28 +901,15 @@ void Enviroment::commands(int argc, const char* argv[])
 		}
 		if(strcmp("--iterations",argv[i]) == 0)
 		{
-			//std::cout << "--max-iterations = " << argv[++i] << "\n";
 			stopperMaxIterations(std::stoi(argv[++i]));
 		}
 		if(strcmp("--serie",argv[i]) == 0)
 		{
 			if(logDirectory.empty()) throw oct::core::Exception("Asigne primero el directorio de ejecucion",__FILE__,__LINE__);
 			
-			serieName = argv[++i];
+			//serieName = argv[++i];
 			std::string strDay = std::to_string(oct::core::getDayID());
-			std::string log = logDirectory + "/" + serieName;//para iteracion
-			//std::cout << "logDirectory = " << log << "\n";
-			if(not shell.exists(log)) 
-			{
-				shell.mkdir(log);
-			}	
-			/*else
-			{
-				std::string msg = "El directorio '";
-				msg += log + "' ya existe.";
-				throw oct::core::Exception(msg,__FILE__,__LINE__);
-			}*/
-			std::string logSub = log + "/" + strDay;		
+			std::string logSub = logDirectory + "/" + strDay;		
 			if(not shell.exists(logSub)) 
 			{
 				logDirectory = logSub;
@@ -937,12 +925,10 @@ void Enviroment::commands(int argc, const char* argv[])
 		if(strcmp("--mutation-event",argv[i]) == 0)
 		{
 			pMutationEvent = std::stod(argv[++i]);
-			//std::cout << "pMutationEvent = " << pMutationEvent << "\n";
 		}
 		if(strcmp("--mutation-gene",argv[i]) == 0)
 		{
 			pMutableGene = std::stod(argv[++i]);
-			//std::cout << "pMutableGene = " << pMutableGene << "\n";
 		}
 	}
 }

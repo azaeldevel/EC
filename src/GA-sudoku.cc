@@ -611,7 +611,9 @@ Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::stri
 }
 Enviroment::Enviroment(int argc, const char* argv[]) : ec::Enviroment(argc,argv)
 {
+	std::cout << "Step 1.0\n";
 	init();
+	std::cout << "Step 3.0\n";
 	for(int i = 1; i < argc; i++)
 	{
 		if(strcmp("--board",argv[i]) == 0)
@@ -620,6 +622,7 @@ Enviroment::Enviroment(int argc, const char* argv[]) : ec::Enviroment(argc,argv)
 			fnBoard = argv[++i];
 		}
 	}
+	std::cout << "Step 3.0\n";
 }
 Enviroment::~Enviroment()
 {
