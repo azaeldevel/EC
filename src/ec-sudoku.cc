@@ -42,7 +42,7 @@ int main(int argc, const char* argv[])
 	sudoku->enableEcho(&std::cout,2);
 	bool check = sudoku->run();
 	
-	
+	delete sudoku; 
 	
 	return check? EXIT_SUCCESS : EXIT_FAILURE;
 }

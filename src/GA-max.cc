@@ -428,10 +428,7 @@ void Enviroment::initial()
 }
 Enviroment::~Enviroment()
 {
-	for(ec::Single* s : *this)
-	{
-		delete s;
-	}
+	
 }
 
 
