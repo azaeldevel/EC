@@ -764,9 +764,18 @@ Single* Enviroment::getRandomSingle() const
 {
 	float maxp = std::distance(begin(),end());
 	const_iterator it = begin();
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::lognormal_distribution<double> d(0.0,1.0);
 	
-	double rndnum = randNumber(0.0,maxp);
-	std::advance(it,rndnum);
+	double unit = 1.0/double(size());
+	double randN = d(gen);
+	unsigned int index = randN/unit;
+	//std::cout << "randN : " << randN << "\n";
+	//std::cout << "unit : " << unit << "\n";
+	//std::cout << "index : " << index << "\n";
+	std::advance(it,index);
 	if(it != end()) return *it;
 	
 	return NULL;

@@ -21,7 +21,7 @@ void Single::save(std::ofstream& fn)
 }
 Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
 {
-
+	
 }
 void Single::print(std::ostream&) const
 {

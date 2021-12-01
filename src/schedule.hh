@@ -11,6 +11,30 @@ namespace oct::ec::sche
 	
 	class Enviroment;
 
+	struct Time
+	{
+		tm begin;
+		tm end;
+
+		Time()
+		{
+			begin = {0};
+			end = {0};
+		}
+	};
+
+	class Target
+	{
+	public:
+		virtual const std::string& get_name() = 0;
+	};
+
+	struct Grain
+	{
+		const Target* target;
+		Time time;
+	};
+	
 
 	/**
 	*\brief Representa una posible solucion a nuestro problema
