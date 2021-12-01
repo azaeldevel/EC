@@ -360,6 +360,7 @@ protected:
 
 	//
 	oct::core::Shell shell;
+	
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion
