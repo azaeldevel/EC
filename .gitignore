@@ -4,7 +4,6 @@
 Debug/
 *~
 Makefile.in
-*.csv
 aclocal.m4
 ae.anjuta
 autom4te.cache/

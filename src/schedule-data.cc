@@ -290,10 +290,12 @@ namespace oct::ec::sche
 					strptime(strH.c_str(), "%H:%M",&time.begin);
 					std::getline(ssTime,strH,'-');
 					strptime(strH.c_str(), "%H:%M",&time.end);
-					/*std::cout << std::put_time(&time.begin, "%H:%M");
+					/*
+					std::cout << std::put_time(&time.begin, "%H:%M");
 					std::cout << "-";
 					std::cout << std::put_time(&time.end, "%H:%M");
-					std::cout << ",";*/
+					std::cout << ",";
+					*/
 					row.push_back(time);
 				}
 				rooms.push_back(row);	
