@@ -13,13 +13,13 @@
 #include "sudoku.hh"
 
 
-namespace ec::sudoku
+namespace oct::ec::sudoku
 {
 
 
 
 
-Chromosome::Chromosome(const Chromosome& obj) : ec::Chromosome("sudoku::Chromosome")
+Chromosome::Chromosome(const Chromosome& obj) : oct::ec::Chromosome("sudoku::Chromosome")
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -175,11 +175,11 @@ void Chromosome::resetCollision()
 
 
 
-Single::Single(const Single& obj) : ec::Single(obj)
+Single::Single(const Single& obj) : oct::ec::Single(obj)
 {
 
 }
-Single::Single(unsigned int id,Enviroment& e,Chromosome init[][3]) : ec::Single(id,e)
+Single::Single(unsigned int id,Enviroment& e,Chromosome init[][3]) : oct::ec::Single(id,e)
 {
 	//std::cout << "Step 1.2.1\n";
 	//std::cout << "init = " << init << "\n";
@@ -382,7 +382,7 @@ void Single::randFill(bool favor)
 		}
 	}
 }
-Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*)
+Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
 {
 	//std::cout << "\t" << idCount << " puede tener " << getJunction().get_number() << " hijos\n";
 	ID idCount;

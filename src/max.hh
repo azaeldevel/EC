@@ -6,14 +6,14 @@
 #include "GA.hh"
 
 
-namespace ec::max
+namespace oct::ec::max
 {
 	class Enviroment;
 
 	/**
 	*\brief Representa nuestro conjunto de variables
 	*/
-	class Chromosome : public ec::Chromosome
+	class Chromosome : public oct::ec::Chromosome
 	{
 	public:
 		typedef geneUS (Chromosome::*pfnCombine)(const geneUS&);
@@ -45,7 +45,7 @@ namespace ec::max
 	/**
 	*\brief Representa una posible solucion a nuestro problema
 	*/
-	class Single : public ec::Single
+	class Single : public oct::ec::Single
 	{
 	public:
 		//Single(const Chromosome& ch);
@@ -66,7 +66,7 @@ namespace ec::max
 		/**
 		*\brief Realiza el apareo entre dos individuos
 		*/
-		virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*);
+		virtual Population juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*);
 		/**
 		*\brief Imprime los datos relevantes del individuo
 		*/
@@ -79,7 +79,7 @@ namespace ec::max
 	/**
 	*\brief Variables de control y proceso
 	*/
-	class Enviroment : public ec::Enviroment
+	class Enviroment : public oct::ec::Enviroment
 	{
 	public:
 		/**

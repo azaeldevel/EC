@@ -4,7 +4,7 @@
 
 #include "max.hh"
 
-namespace ec::max
+namespace oct::ec::max
 {
 
 
@@ -18,12 +18,12 @@ struct caret_2B_16b
 	unsigned short a:1,b:1,c:1,d:1,e:1,f:1,g:1,h:1,i:1,j:1,k:1,l:1,m:1,n:1,o:1;
 };
 
-Chromosome::Chromosome() : ec::Chromosome("max")
+Chromosome::Chromosome() : oct::ec::Chromosome("max")
 {
 	gennumber = randGenNumber();
 	combine = randCombine();
 }
-Chromosome::Chromosome(geneUS numb,pfnCombine fn): ec::Chromosome("max")
+Chromosome::Chromosome(geneUS numb,pfnCombine fn): oct::ec::Chromosome("max")
 {
 	gennumber = numb;
 	combine = fn;
@@ -302,10 +302,10 @@ geneUS Chromosome::mutate(const geneUS& g)
 
 
 
-Single::Single(ID id,Enviroment& e,geneUS g,Chromosome::pfnCombine f) : ec::Single(id,e),chromo(g,f)
+Single::Single(ID id,Enviroment& e,geneUS g,Chromosome::pfnCombine f) : oct::ec::Single(id,e),chromo(g,f)
 {
 }
-Single::Single(ID id,Enviroment& env) : ec::Single(id,env)
+Single::Single(ID id,Enviroment& env) : oct::ec::Single(id,env)
 {
 
 }
@@ -322,7 +322,7 @@ void Single::save(std::ofstream& fn)
 	fn << ",";
 	fn << chromo.getNumber();
 }
-Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*)
+Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
 {
 	if(env->getEchoSteps()) std::cout << "Single::juncting Step 1\n";
 	Population countNews = 0;
@@ -393,12 +393,12 @@ Enviroment::Enviroment()
 {
 	init();
 }
-Enviroment::Enviroment(const std::string& log) : ec::Enviroment()
+Enviroment::Enviroment(const std::string& log) : oct::ec::Enviroment()
 {
 	init();
 	logDirectory = log;
 }
-Enviroment::Enviroment(int argc, const char* argv[]) : ec::Enviroment(argc,argv)
+Enviroment::Enviroment(int argc, const char* argv[]) : oct::ec::Enviroment(argc,argv)
 {
 	init();
 }
@@ -413,7 +413,7 @@ void Enviroment::init()
 	stopperMaxIterations(100);
 	epsilon = 1.0/double(USHRT_MAX);
 	//std::cout << "epsilon = " << epsilon << "\n";
-	comparer = &ec::cmpStrength;
+	comparer = &oct::ec::cmpStrength;
 }
 
 

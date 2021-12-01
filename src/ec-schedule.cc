@@ -44,7 +44,7 @@ int main(int argc, const char* argv[])
 		shell.mkdir(logDirectory,true);
 	}
 	
-	ec::sche::Enviroment* sche = new ec::sche::Enviroment(logDirectory);
+	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment(logDirectory);
 	sche->enableEcho(&std::cout,2);
 	
 	bool ret = sche->run();

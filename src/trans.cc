@@ -6,7 +6,7 @@
 
 #include "trans.hh"
 
-namespace ec::trans
+namespace oct::ec::trans
 {
 
 
@@ -14,7 +14,7 @@ Enviroment::Enviroment()
 {
 	init();
 }
-Enviroment::Enviroment(const std::string& log) : ec::Enviroment(log,true)
+Enviroment::Enviroment(const std::string& log) : oct::ec::Enviroment(log,true)
 {
 	init();
 }

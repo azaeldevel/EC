@@ -49,7 +49,7 @@ int main(int argc, const char* argv[])
 		shell.mkdir(logDirectory,true);
 	}*/
 	
-	ec::max::Enviroment* max = new ec::max::Enviroment(argc,argv);
+	oct::ec::max::Enviroment* max = new oct::ec::max::Enviroment(argc,argv);
 	max->enableEcho(&std::cout,2);
 	//max->setEchoSteps(true);
 	//std::cout << "Step 1\n";

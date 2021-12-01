@@ -6,7 +6,7 @@
 #include "GA.hh"
 
 
-namespace ec::sche
+namespace oct::ec::sche
 {
 	
 	class Enviroment;
@@ -15,7 +15,7 @@ namespace ec::sche
 	/**
 	*\brief Representa una posible solucion a nuestro problema
 	*/
-	class Single : public ec::Single
+	class Single : public oct::ec::Single
 	{
 	public:
 		/**
@@ -34,7 +34,7 @@ namespace ec::sche
 		/**
 		*\brief Realiza el apareo entre dos individuos
 		*/
-		virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*);
+		virtual Population juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*);
 		/**
 		*\brief Imprime los datos relevantes del individuo
 		*/
@@ -46,7 +46,7 @@ namespace ec::sche
 	/**
 	*\brief Variables de control y proceso
 	*/
-	class Enviroment : public ec::Enviroment
+	class Enviroment : public oct::ec::Enviroment
 	{
 	public:
 		/**

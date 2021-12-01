@@ -8,12 +8,12 @@
 #include "GA.hh"
 
 
-namespace ec::sudoku
+namespace oct::ec::sudoku
 {
 class Enviroment;
 
 
-class Chromosome : public ec::Chromosome
+class Chromosome : public oct::ec::Chromosome
 {
 public:
 	Chromosome();
@@ -44,7 +44,7 @@ private:
 	geneUS numbers[3][3];
 };
 
-class Single : public ec::Single
+class Single : public oct::ec::Single
 {
 public:
 	Single(const Single&);
@@ -56,7 +56,7 @@ public:
 		
 	virtual void eval();
 	virtual void randFill(bool favor = false);
-	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*);
+	virtual Population juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*);
 	virtual void save(std::ofstream& fn);
 	const oct::core::StringMD5& getMD5() const;
 	
@@ -73,7 +73,7 @@ private:
 	void genMD5();
 };
 
-class Enviroment : public ec::Enviroment
+class Enviroment : public oct::ec::Enviroment
 {
 public:
 	//

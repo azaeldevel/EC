@@ -28,7 +28,7 @@
 #include <fstream>
 #include <octetos/core/shell.hh>
 
-namespace ec
+namespace oct::ec
 {
 class Enviroment;
 

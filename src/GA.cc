@@ -4,7 +4,7 @@
 #include "GA.hh"
 
 
-namespace ec::ga
+namespace oct::ec::ga
 {
 
 Single::Single(const Single& obj) : ec::Single(obj)

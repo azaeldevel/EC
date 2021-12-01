@@ -2,7 +2,7 @@
 
 #include "schedule.hh"
 
-namespace ec::sche
+namespace oct::ec::sche
 {
 	
 
@@ -19,7 +19,7 @@ void Single::save(std::ofstream& fn)
 {
 
 }
-Population Single::juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*)
+Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
 {
 
 }

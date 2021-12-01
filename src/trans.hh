@@ -10,7 +10,7 @@
 #include "GA.hh"
 
 
-namespace ec::trans
+namespace oct::ec::trans
 {
 class Enviroment;
 typedef unsigned long Index;
@@ -23,7 +23,7 @@ namespace nodes
 
 	};
 }
-class Chromosome : public ec::Chromosome
+class Chromosome : public oct::ec::Chromosome
 {
 public:
 	Chromosome();
@@ -40,7 +40,7 @@ private:
 };
 
 
-class Single : public ec::Single
+class Single : public oct::ec::Single
 {
 public:
 	Single(const Single&);
@@ -48,7 +48,7 @@ public:
 
 	virtual void eval();
 	virtual void randFill(bool favor = false);
-	virtual Population juncting(std::list<ec::Single*>& chils,const ec::Single* single,unsigned short loglevel,void*);
+	virtual Population juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*);
 	virtual void save(std::ofstream& fn);
 	virtual void print(std::ostream&) const;
 	unsigned int checkOrder()const;
@@ -63,7 +63,7 @@ struct Targets : public std::list<nodes::Node*>
 
 };
 
-class Enviroment : public ec::Enviroment
+class Enviroment : public oct::ec::Enviroment
 {
 public:
 	//

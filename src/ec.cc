@@ -15,7 +15,7 @@
 #include "ec.hh"
 
 
-namespace ec
+namespace oct::ec
 {
 
 

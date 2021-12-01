@@ -51,7 +51,7 @@ int main(int argc, const char* argv[])
 		//shell.mkdir(logDirectory,true);
 	}
 	
-	ec::trans::Enviroment* trans = new ec::trans::Enviroment(logDirectory);
+	oct::ec::trans::Enviroment* trans = new oct::ec::trans::Enviroment(logDirectory);
 	trans->enableEcho(&std::cout,2);
 	
 	return trans->run()? EXIT_SUCCESS : EXIT_FAILURE;

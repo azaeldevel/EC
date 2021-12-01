@@ -9,7 +9,7 @@
 #include "ec.hh"
 
 
-namespace ec::ga
+namespace oct::ec::ga
 {
 
 class Single : public ec::Single
