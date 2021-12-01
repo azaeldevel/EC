@@ -5,36 +5,14 @@
 
 #include "GA.hh"
 
+#include "schedule-data.hh"
+
+
 
 namespace oct::ec::sche
-{
+{	
 	
-	class Enviroment;
 
-	struct Time
-	{
-		tm begin;
-		tm end;
-
-		Time()
-		{
-			begin = {0};
-			end = {0};
-		}
-	};
-
-	class Target
-	{
-	public:
-		virtual const std::string& get_name() = 0;
-	};
-
-	struct Grain
-	{
-		const Target* target;
-		Time time;
-	};
-	
 
 	/**
 	*\brief Representa una posible solucion a nuestro problema
@@ -82,18 +60,26 @@ namespace oct::ec::sche
 		*/
 		Enviroment(const std::string& log);
 		/**
+		*\brief Constructor que recive un directorio para guardar estadisticas
+		*/
+		Enviroment(const std::string& log, Pile& pile);
+		/**
 		*\brief Inicia las variables
 		*/
 		void init();
+		
 		~Enviroment();
-
 	
 		/**
 		*\brief Crea la poblacion inicial
 		*/
 		virtual void initial();
-	private:
 
+		static void pulverize_hours(core::DataTime& t1,core::DataTime& t2,std::vector<core::DataTime>& out);
+
+		void testing();
+	private:
+		Pile* pile;
 	};
 
 }
