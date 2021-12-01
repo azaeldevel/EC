@@ -13,7 +13,7 @@ bin_PROGRAMS = ec-sudoku ec-trans ec-max ec-schedule
 noinst_PROGRAMS = develop
 lib_LTLIBRARIES = libEC.la
 
-libEC_la_SOURCES = ec.cc GA.cc GA-sudoku.cc GA-trans.cc GA-trans-region.cc GA-max.cc GA-schedule.cc
+libEC_la_SOURCES = ec.cc GA.cc sudoku.cc trans.cc trans-region.cc max.cc schedule.cc
 libEC_la_LDFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS)
 libEC_la_LIBADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS)
 

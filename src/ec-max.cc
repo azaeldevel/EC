@@ -26,7 +26,7 @@
 #include <fstream>
 #include <octetos/core/shell.hh>
 
-#include "GA-max.hh"
+#include "max.hh"
 
 
 int main(int argc, const char* argv[])

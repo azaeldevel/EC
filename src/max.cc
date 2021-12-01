@@ -2,7 +2,7 @@
 #include <iostream>
 #include <limits.h>
 
-#include "GA-max.hh"
+#include "max.hh"
 
 namespace ec::max
 {

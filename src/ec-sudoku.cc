@@ -25,7 +25,7 @@
 #include <iostream>
 #include <fstream>
 //#include <octetos/coreutils/shell.hh>
-#include "GA-sudoku.hh"
+#include "sudoku.hh"
 
 
 int main(int argc, const char* argv[])

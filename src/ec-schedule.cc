@@ -21,7 +21,7 @@
 #include <fstream>
 #include <octetos/core/shell.hh>
 
-#include "GA-schedule.hh"
+#include "schedule.hh"
 
 
 int main(int argc, const char* argv[])

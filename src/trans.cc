@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "GA-trans.hh"
+#include "trans.hh"
 
 namespace ec::trans
 {

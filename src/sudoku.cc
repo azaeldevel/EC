@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 
-#include "GA-sudoku.hh"
+#include "sudoku.hh"
 
 
 namespace ec::sudoku
