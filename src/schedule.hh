@@ -51,18 +51,11 @@ namespace oct::ec::sche
 	class Enviroment : public oct::ec::Enviroment
 	{
 	public:
-		/**
-		*\brief Constructor que solomante llama a init
-		*/
-		Enviroment();
+
 		/**
 		*\brief Constructor que recive un directorio para guardar estadisticas
 		*/
-		Enviroment(const std::string& log);
-		/**
-		*\brief Constructor que recive un directorio para guardar estadisticas
-		*/
-		Enviroment(const std::string& log, Pile& pile);
+		Enviroment(const std::string& log,const std::string& dir);
 		/**
 		*\brief Inicia las variables
 		*/
@@ -75,11 +68,13 @@ namespace oct::ec::sche
 		*/
 		virtual void initial();
 
-		static void pulverize_hours(core::DataTime& t1,core::DataTime& t2,std::vector<core::DataTime>& out);
+		void pulverize_hours(core::DataTime& t1,core::DataTime& t2,std::vector<core::DataTime>& out);
 
 		void testing();
 	private:
-		Pile* pile;
+		std::string directory;
+		Pile pile;
+		Data data;
 	};
 
 }

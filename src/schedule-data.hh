@@ -13,7 +13,7 @@ namespace oct::core
 		DataTime();
 		const time_t* operator =(const time_t*);
 		int get_week_day()const;
-		int diffHours(DataTime& dt);
+		double diff(DataTime& dt)const;
 	};
 
 	class Person
@@ -52,11 +52,14 @@ namespace oct::ec::sche
 			MS,//Monday - Sturday
 		};
 	public:
+		Configuration();
 		Configuration(const std::string& name);
+		long to_hours(double )const;
+		unsigned int get_time_per_hour() const;
 
 	private:
 		SchemaWeek schema;
-		
+		unsigned int time_per_hour;//en minutes
 	};
 		
 	
@@ -114,6 +117,7 @@ namespace oct::ec::sche
 		};
 		
 	public: 
+		Teachers();
 		Teachers(const std::string& fn);
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
@@ -133,6 +137,7 @@ namespace oct::ec::sche
 		
 	public: 
 		Subjects(const std::string& fn);
+		Subjects();
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
 	private:
@@ -150,6 +155,7 @@ namespace oct::ec::sche
 		};
 		
 	public: 
+		Teachers_Subjects();
 		Teachers_Subjects(const std::string& fn);
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
@@ -169,6 +175,7 @@ namespace oct::ec::sche
 		};
 		
 	public:
+		Rooms();
 		Rooms(const std::string& fn);
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
@@ -187,6 +194,15 @@ namespace oct::ec::sche
 	};
 	
 	typedef std::vector<Target> Pile;
+
+	struct Data
+	{
+		Configuration config;
+		Teachers teachers;
+		Subjects subjects;
+		Rooms rooms;
+		Teachers_Subjects teachers_subjects;
+	};
 	
 	
 

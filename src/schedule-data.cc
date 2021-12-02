@@ -84,10 +84,51 @@ namespace oct::core
 			if(i < names.size() - 1) n += " "; 
 		}
 	}
+
+	DataTime::DataTime()
+	{
+		(tm&)*this = {0};
+	}
+	const time_t* DataTime::operator =(const time_t* t)
+	{
+		tm* thistm = localtime(t);
+		(tm&)*this = *thistm;
+		return t;
+	}
+	int DataTime::get_week_day()const
+	{
+		return tm_wday;
+	}
+
+	double DataTime::diff(DataTime& dt)const
+	{
+		time_t tm1,tm2;
+		tm t = *this;
+		tm1 = mktime(&t);
+		tm2 = mktime(&dt);
+		return difftime(tm2, tm1);		
+	}
 }
 
 namespace oct::ec::sche
 {
+	Configuration::Configuration()
+	{
+		schema = SchemaWeek::MS;
+		time_per_hour = 60;
+	}
+	unsigned int Configuration::get_time_per_hour() const
+	{
+		return time_per_hour;
+	}
+	long Configuration::to_hours(double t)const
+	{
+		long mins = t/60.0;
+		long hours = mins/time_per_hour;
+		return hours;
+	}
+
+	
 	
 
 	Teacher::Teacher(const std::string& name,const std::string& ap,const std::string& am) : oct::core::Person(name,ap,am)
@@ -172,6 +213,10 @@ namespace oct::ec::sche
 	{
 		loadFile(fn);
 	}
+	Teachers::Teachers()
+	{
+
+	}
 	void Teachers::loadFile(const std::string& fn)
 	{
 		std::fstream csv(fn, std::ios::in);
@@ -237,6 +282,10 @@ namespace oct::ec::sche
 	{
 		loadFile(fn);
 	}
+	Subjects::Subjects()
+	{
+
+	}
 	void Subjects::loadFile(const std::string& fn)
 	{
 		std::fstream csv(fn, std::ios::in);
@@ -290,6 +339,10 @@ namespace oct::ec::sche
 	{
 		loadFile(fn);
 	}
+	Teachers_Subjects::Teachers_Subjects()
+	{
+
+	}
 	void Teachers_Subjects::loadFile(const std::string& fn)
 	{
 		std::fstream csv(fn, std::ios::in);
@@ -340,6 +393,10 @@ namespace oct::ec::sche
 	Rooms::Rooms(const std::string& fn)
 	{
 		loadFile(fn);
+	}
+	Rooms::Rooms()
+	{
+		
 	}
 	void Rooms::loadFile(const std::string& fn)
 	{

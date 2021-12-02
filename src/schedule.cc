@@ -5,29 +5,7 @@
 
 namespace oct::core
 {
-	DataTime::DataTime()
-	{
-		(tm&)*this = {0};
-	}
-	const time_t* DataTime::operator =(const time_t* t)
-	{
-		tm* thistm = gmtime(t);
-		
-		return t;
-	}
-	int DataTime::get_week_day()const
-	{
-		return tm_wday;
-	}
 
-	int DataTime::diffHours(DataTime& dt)
-	{
-		time_t tm1,tm2;
-		tm1 = mktime(this);
-		tm2 = mktime(&dt);
-		double diff = difftime(tm2, tm1);
-		return diff/60.0;
-	}
 }
 
 
@@ -62,20 +40,18 @@ void Single::print(std::ostream&) const
 	
 	
 	
-Enviroment::Enviroment()
-{
-	init();
-}
 
-Enviroment::Enviroment(const std::string& log)
+
+Enviroment::Enviroment(const std::string& log,const std::string& dir)
 {
 	init();
 	logDirectory = log;
-}
-Enviroment::Enviroment(const std::string& log, Pile& p) : pile(&p)
-{
-	init();
-	logDirectory = log;
+	directory = dir;
+	data.subjects.loadFile(dir+"/subjects.csv");
+	data.teachers.loadFile(dir+"/teachers.csv");
+	data.rooms.loadFile(dir+"/rooms.csv");
+	data.teachers_subjects.loadFile(dir+"/teachers-subjects.csv");
+	
 	if(not shell.exists(logDirectory)) 
 	{
 		shell.mkdir(logDirectory);
@@ -90,20 +66,21 @@ Enviroment::Enviroment(const std::string& log, Pile& p) : pile(&p)
 
 Enviroment::~Enviroment()
 {
-	delete pile;
+	
 }
 void Enviroment::init()
 {
 	initPopulation = 1000;
 	maxPopulation = 1000;
 	maxProgenitor = 200;
-	pile = NULL;	
 }
 
 
 
 void Enviroment::initial()
 {
+	
+	
 	for(unsigned short i = 0; i < initPopulation; i++)
 	{
 		Single* single = new Single(nextID(),*this);
@@ -112,16 +89,19 @@ void Enviroment::initial()
 }
 void Enviroment::pulverize_hours(core::DataTime& t1,core::DataTime& t2,std::vector<core::DataTime>& out)
 {
-	int hours = t2.diffHours(t1);
-
+	int hours = data.config.to_hours(t1.diff(t2));
+	
+	std::cout << "pulverizando " << hours << "\n";
 	if(hours < 1) return;
 
 	out.resize(hours);
 	time_t t = mktime(&t1);
 	out[0] = &t;
+	std::cout << "t = " << t << "\n";
 	for(int i = 1; i < hours; i++)
 	{
 		t += 3600; // 60 segundos por 60 minutos = una hora
+		std::cout << "t = " << t << "\n";
 		out[i] = &t;
 	}
 }
