@@ -100,12 +100,13 @@ namespace oct::core
 		return tm_wday;
 	}
 
-	double DataTime::diff(DataTime& dt)const
+	double DataTime::diff(const DataTime& dt)const
 	{
 		time_t tm1,tm2;
-		tm t = *this;
-		tm1 = mktime(&t);
-		tm2 = mktime(&dt);
+		tm t1 = *this;
+		tm t2 = dt;
+		tm1 = mktime(&t1);
+		tm2 = mktime(&t2);
 		return difftime(tm2, tm1);		
 	}
 }
@@ -114,13 +115,19 @@ namespace oct::ec::sche
 {
 	Configuration::Configuration()
 	{
-		schema = SchemaWeek::MS;
+		schema_week = SchemaWeek::MS;
 		time_per_hour = 60;
 	}
+	
 	unsigned int Configuration::get_time_per_hour() const
 	{
 		return time_per_hour;
 	}
+	Configuration::SchemaWeek Configuration::get_schema_week()const
+	{
+		return schema_week;
+	}
+	
 	long Configuration::to_hours(double t)const
 	{
 		long mins = t/60.0;
@@ -216,6 +223,10 @@ namespace oct::ec::sche
 	Teachers::Teachers()
 	{
 
+	}
+	const std::list<Teachers::Row>& Teachers::get_list() const
+	{
+		return teachers;
 	}
 	void Teachers::loadFile(const std::string& fn)
 	{

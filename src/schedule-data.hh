@@ -13,7 +13,7 @@ namespace oct::core
 		DataTime();
 		const time_t* operator =(const time_t*);
 		int get_week_day()const;
-		double diff(DataTime& dt)const;
+		double diff(const DataTime& dt)const;
 	};
 
 	class Person
@@ -56,9 +56,10 @@ namespace oct::ec::sche
 		Configuration(const std::string& name);
 		long to_hours(double )const;
 		unsigned int get_time_per_hour() const;
+		SchemaWeek get_schema_week()const;
 
 	private:
-		SchemaWeek schema;
+		SchemaWeek schema_week;
 		unsigned int time_per_hour;//en minutes
 	};
 		
@@ -70,7 +71,7 @@ namespace oct::ec::sche
 		Teacher(const std::string& name);
 		Teacher();
 		
-		virtual const std::string& get_name();
+		const std::string& get_name();
 		
 	private:
 		std::string name;
@@ -107,7 +108,8 @@ namespace oct::ec::sche
 	
 	
 	class Teachers
-	{
+	{		
+	public:
 		struct Row : public std::vector<Time>
 		{
 			Teacher teacher;
@@ -115,10 +117,12 @@ namespace oct::ec::sche
 			Row();
 			Row(int z);		
 		};
-		
-	public: 
+	
+	public:
 		Teachers();
 		Teachers(const std::string& fn);
+		const std::list<Row>& get_list() const;
+
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
 
@@ -185,10 +189,15 @@ namespace oct::ec::sche
 	};
 	
 	typedef std::vector<core::DataTime> DaysTimes;
+	struct TeacherDust
+	{
+		const Teacher* teacher;
+		std::vector<DaysTimes> times;
+	};
 
 	struct Target
 	{
-		std::vector<DaysTimes> teacher;
+		std::vector<TeacherDust> teachers;
 		unsigned int subject;
 		std::vector<DaysTimes> room;
 	};
