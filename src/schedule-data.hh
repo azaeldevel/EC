@@ -78,11 +78,14 @@ namespace oct::ec::sche
 	public:
 		Subject(const std::string& name);
 		Subject();
+		void set(const std::string& name,unsigned int time );
 
-		virtual const std::string& get_name();
+		const std::string& get_name();
+		unsigned int get_time()const;
 		
 	private:
 		std::string name;
+		unsigned int time;//tiempo que se devfe impartir de clase
 	};
 	
 	class Room 
@@ -124,13 +127,30 @@ namespace oct::ec::sche
 		struct Row
 		{
 			Subject subject;
-			Teacher teacher;
 
 			Row();
 		};
 		
 	public: 
 		Subjects(const std::string& fn);
+		void loadFile(const std::string& fn);
+		void print(std::ostream&);
+	private:
+		std::list<Row> rooms;
+	};
+
+	class Teachers_Subjects
+	{
+		struct Row
+		{
+			Subject subject;
+			Teacher teacher;
+
+			Row();
+		};
+		
+	public: 
+		Teachers_Subjects(const std::string& fn);
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
 	private:

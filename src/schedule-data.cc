@@ -151,7 +151,15 @@ namespace oct::ec::sche
 	{
 		return name;
 	}
-
+	void Subject::set(const std::string& n,unsigned int t)
+	{
+		name = n;
+		time = t;
+	}
+	unsigned int Subject::get_time()const
+	{
+		return time;
+	}
 
 	
 	Teachers::Row::Row()
@@ -194,7 +202,13 @@ namespace oct::ec::sche
 				teachers.push_back(row);	
 				//std::cout << "\n";
 			}
-		}		
+		}	
+		else
+		{
+			std::string msg = "Fallo la aperturade '";
+			msg += fn + "'";
+			throw core::Exception(msg,__FILE__,__LINE__);
+		}	
 	}
 	void Teachers::print(std::ostream& out)
 	{
@@ -232,9 +246,62 @@ namespace oct::ec::sche
 			while(std::getline(csv,line))
 			{
 				std::stringstream str(line);
+				Subjects::Row row;
+				//std::cout << line;
+				//std::cout << data << ",";
+
+				std::getline(str,data,',');
+				//std::cout << data << ",";
+				std::string name = data;	
+				
+				std::getline(str,data,',');
+				std::string time = data;
+				//std::cout << "\n";
+				row.subject.set(name,std::stoi(time));
+				rooms.push_back(row);
+			}
+		}
+		else
+		{
+			std::string msg = "Fallo la aperturade '";
+			msg += fn + "'";
+			throw core::Exception(msg,__FILE__,__LINE__);
+		}		
+	}
+	void Subjects::print(std::ostream& out)
+	{
+		for(Row& row : rooms)
+		{
+			out << row.subject.get_name() << ",";
+			out << row.subject.get_time();
+			out << "\n";
+		}
+	}
+
+
+
+
+
+	Teachers_Subjects::Row::Row()
+	{
+		
+	}
+	Teachers_Subjects::Teachers_Subjects(const std::string& fn)
+	{
+		loadFile(fn);
+	}
+	void Teachers_Subjects::loadFile(const std::string& fn)
+	{
+		std::fstream csv(fn, std::ios::in);
+		std::string line,data;
+		if(csv.is_open())
+		{
+			while(std::getline(csv,line))
+			{
+				std::stringstream str(line);
 				//std::cout << line;
 				std::getline(str,data,',');
-				Subjects::Row row;
+				Teachers_Subjects::Row row;
 				row.teacher = data;
 				//std::cout << data << ",";
 
@@ -244,9 +311,15 @@ namespace oct::ec::sche
 				//std::cout << "\n";
 				rooms.push_back(row);
 			}
-		}		
+		}	
+		else
+		{
+			std::string msg = "Fallo la aperturade '";
+			msg += fn + "'";
+			throw core::Exception(msg,__FILE__,__LINE__);
+		}
 	}
-	void Subjects::print(std::ostream& out)
+	void Teachers_Subjects::print(std::ostream& out)
 	{
 		for(Row& row : rooms)
 		{
@@ -256,6 +329,7 @@ namespace oct::ec::sche
 		}
 	}
 
+	
 	
 	Rooms::Row::Row()
 	{
@@ -301,7 +375,13 @@ namespace oct::ec::sche
 				rooms.push_back(row);	
 				//std::cout << "\n";
 			}
-		}		
+		}	
+		else
+		{
+			std::string msg = "Fallo la aperturade '";
+			msg += fn + "'";
+			throw core::Exception(msg,__FILE__,__LINE__);
+		}	
 	}	
 	void Rooms::print(std::ostream& out)
 	{

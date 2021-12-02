@@ -78,9 +78,13 @@ Enviroment::Enviroment(const std::string& log, Pile& p) : pile(&p)
 	logDirectory = log;
 	if(not shell.exists(logDirectory)) 
 	{
-		std::string msg = "El directorio '";
-		msg += logDirectory + "' no existe.";
-		throw oct::core::Exception(msg,__FILE__,__LINE__);
+		shell.mkdir(logDirectory);
+		if(not shell.exists(logDirectory))
+		{
+			std::string msg = "El directorio '";
+			msg += logDirectory + "' no existe.";
+			throw oct::core::Exception(msg,__FILE__,__LINE__);
+		}
 	}
 }
 

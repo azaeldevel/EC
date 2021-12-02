@@ -56,11 +56,13 @@ int main(int argc, const char* argv[])
 	bool ret;
 	//ret = sche->run();
 	//oct::ec::sche::Teachers teachers("tests/teachers.csv");
-	//oct::ec::sche::Subjects subjects("tests/subjects.csv");
-	oct::ec::sche::Rooms rooms("tests/rooms.csv");
+	oct::ec::sche::Subjects subjects("tests/subjects.csv");
+	//oct::ec::sche::Rooms rooms("tests/rooms.csv");
+	//oct::ec::sche::Teachers_Subjects teachers_subjects("tests/teachers-subjects.csv");
 	//teachers.print(std::cout);
-	//subjects.print(std::cout);
-	rooms.print(std::cout);
+	subjects.print(std::cout);
+	//rooms.print(std::cout);
+	//teachers_subjects.print(std::cout);
 	delete sche;
 	
 	return ret? EXIT_SUCCESS : EXIT_FAILURE;
