@@ -1,6 +1,6 @@
 
 
-AC_INIT(octetos-ec, 0.3.1-alpha, azael.devel@gmail.com)
+AC_INIT(octetos-ec, 0.4.0-alpha, azael.devel@gmail.com)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -21,13 +21,14 @@ LT_INIT
 
 PKG_CHECK_MODULES(OCTETOS_CORE,octetos-core)
 
-dnl PKG_CHECK_MODULES(OCTETOS_COREUTILS,octetos-coreutils)
-
-dnl AC_SEARCH_LIBS([tar_open], [libtar tar], [], [AC_MSG_ERROR([unable to find the tar_open() function])])
-dnl AC_CHECK_HEADERS([libtar.h],[libtar.h=yes; break;])
+AM_CONDITIONAL(WITH_TESTS, test x"$with_tests" = "xyes")
+AC_ARG_WITH([tests], AS_HELP_STRING([--with-tests], [Compilando con soporte para Tests]))
+if test "x$with_tests" = "xyes"; then 
+	PKG_CHECK_MODULES(CUNIT,cunit)
+fi
 
 AC_OUTPUT([
 Makefile
 src/Makefile
-
+tests/Makefile
 ])

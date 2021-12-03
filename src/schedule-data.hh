@@ -84,7 +84,7 @@ namespace oct::ec::sche
 		Subject();
 		void set(const std::string& name,unsigned int time );
 
-		const std::string& get_name();
+		const std::string& get_name()const;
 		unsigned int get_time()const;
 		
 	private:
@@ -138,11 +138,13 @@ namespace oct::ec::sche
 
 	class Subjects
 	{
+	public:
 		struct Row
 		{
 			Subject subject;
 
 			Row();
+			void print(std::ostream&)const;
 		};
 		
 	public: 
@@ -150,8 +152,12 @@ namespace oct::ec::sche
 		Subjects();
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
+		const Row* search(const std::string&) const;
 	private:
-		std::list<Row> rooms;
+		void indexing();
+	private:
+		std::list<Row> subjects;
+		std::map<std::string, Row*> subject_by_name;
 	};
 
 	class Teachers_Subjects
@@ -169,8 +175,14 @@ namespace oct::ec::sche
 		Teachers_Subjects(const std::string& fn);
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
+		void searchTeachers(const std::string&, std::list<Row*>& ) const;
+		void searchSubjects(const std::string&, std::list<Row*>& ) const;
 	private:
-		std::list<Row> rooms;
+		void indexing();
+	private:
+		std::list<Row> teachers_subjects;
+		std::multimap<std::string, Row*> teachers_by_name;
+		std::multimap<std::string, Row*> subjects_by_name;
 	};
 
 	class Rooms
@@ -190,6 +202,9 @@ namespace oct::ec::sche
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
 		
+	private:
+		void indexing();
+
 	private:
 		std::list<Row> rooms;
 	};

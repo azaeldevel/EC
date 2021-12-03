@@ -168,7 +168,7 @@ namespace oct::ec::sche
 	{
 		
 	}
-	const std::string& Subject::get_name()
+	const std::string& Subject::get_name()const
 	{
 		return name;
 	}
@@ -289,6 +289,12 @@ namespace oct::ec::sche
 	{
 		
 	}
+	void Subjects::Row::print(std::ostream& out) const
+	{
+		out << subject.get_name() << ",";
+		out << subject.get_time();
+	}
+	
 	Subjects::Subjects(const std::string& fn)
 	{
 		loadFile(fn);
@@ -318,8 +324,9 @@ namespace oct::ec::sche
 				std::string time = data;
 				//std::cout << "\n";
 				row.subject.set(name,std::stoi(time));
-				rooms.push_back(row);
+				subjects.push_back(row);
 			}
+			indexing();
 		}
 		else
 		{
@@ -330,14 +337,27 @@ namespace oct::ec::sche
 	}
 	void Subjects::print(std::ostream& out)
 	{
-		for(Row& row : rooms)
+		for(Row& row : subjects)
 		{
-			out << row.subject.get_name() << ",";
-			out << row.subject.get_time();
+			row.print(out);
 			out << "\n";
 		}
+	}		
+	void Subjects::indexing()
+	{
+		if(subject_by_name.size() > 0) subject_by_name.clear();
+		for(Row& row : subjects)
+		{
+			subject_by_name.insert({row.subject.get_name().c_str(),&row});
+		}
 	}
+	const Subjects::Row* Subjects::search(const std::string& str) const
+	{
+		std::map<std::string, Row*>::const_iterator it = subject_by_name.find(str);
 
+		if(it != subject_by_name.end()) return it->second;
+		return NULL;		
+	}
 
 
 
@@ -373,7 +393,7 @@ namespace oct::ec::sche
 				//std::cout << data << ",";
 				row.subject = data;				
 				//std::cout << "\n";
-				rooms.push_back(row);
+				teachers_subjects.push_back(row);
 			}
 		}	
 		else
@@ -385,14 +405,32 @@ namespace oct::ec::sche
 	}
 	void Teachers_Subjects::print(std::ostream& out)
 	{
-		for(Row& row : rooms)
+		for(Row& row : teachers_subjects)
 		{
 			out << row.teacher.get_name() << ",";
 			out << row.subject.get_name();
 			out << "\n";
 		}
 	}
+	void Teachers_Subjects::searchTeachers(const std::string&, std::list<Row*>& l) const
+	{
 
+		
+	}
+	void Teachers_Subjects::searchSubjects(const std::string&, std::list<Row*>& l) const
+	{
+
+	}	
+	void Teachers_Subjects::indexing()
+	{
+		if(teachers_by_name.size() > 0) teachers_by_name.clear();
+		if(subjects_by_name.size() > 0) subjects_by_name.clear();
+		for(Row& row : teachers_subjects)
+		{
+			teachers_by_name.insert({row.teacher.get_name().c_str(),&row});
+			subjects_by_name.insert({row.subject.get_name().c_str(),&row});
+		}
+	}
 	
 	
 	Rooms::Row::Row()

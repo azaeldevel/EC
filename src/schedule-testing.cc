@@ -63,6 +63,11 @@ namespace oct::ec::sche
 		const Teachers::Row* row = data.teachers.search("Leticia Mojica");
 		if(row) row->print(std::cout);
 		else std::cout << "No se encontro el maestro indicado\n";
+		std::cout << "\n";
+		const Subjects::Row* rowSuject = data.subjects.search("Fisica");
+		if(rowSuject) rowSuject->print(std::cout);
+		else std::cout << "No se encontro el maestro indicado\n";
+		
 		//clase
 		pile.at(0).subject = 5;
 		//

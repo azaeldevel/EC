@@ -8,12 +8,11 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-bin_PROGRAMS = ae
+check_PROGRAMS = v0
+TESTS= $(check_PROGRAMS)
 
-ae_SOURCES = main.cc
 
-ae_LDFLAGS = 
-
-ae_LDADD = 
-
-ae_CXXFLAGS = $(top_srcdir)/src
+v0_LDFLAGS =
+v0_LDADD = $(CUNIT_LIBS) $(top_builddir)/src/libEC.la
+v0_CPPFLAGS = $(CUNIT_CFLAGS) -I$(top_srcdir)/src -I$(top_builddir)/src 
+v0_SOURCES = v0.cc  
