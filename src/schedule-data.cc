@@ -45,44 +45,27 @@ extern "C" char* strptime(const char* s,const char* f,struct tm* tm)
 
 namespace oct::core
 {
-	Person::Person(const std::string& name,const std::string& ap,const std::string& am)
+	Person::Person(const std::string& n,const std::string& ap,const std::string& am)
 	{
-		names.resize(3);
-
-		names[0] = name;
-		names[1] = ap;
-		names[2] = am;
+		name = n + " " + ap + " " + am;
 	}
-	Person::Person(const std::string& name)
+	Person::Person(const std::string& n)
 	{
-		operator =(name);
+		name = n;
 	}
 	Person::Person()
 	{
 	}
 	 
-	const Person& Person::operator =(const std::string& name)
+	const std::string& Person::operator =(const std::string& n)
 	{
-		std::stringstream ss(name);
-		std::string word;
-
-		unsigned int count = 0;
-		while(std::getline(ss,word,' '))
-		{
-			count++;
-			names.push_back(word);
-		}
-		names.resize(count);
+		name = n;
 		
-		return *this;
+		return n;
 	}
-	void Person::get_name(std::string& n)
+	const std::string& Person::get_name()const
 	{
-		for(unsigned int i = 0; i < names.size(); i++)
-		{
-			n += names[i];
-			if(i < names.size() - 1) n += " "; 
-		}
+		return name;
 	}
 
 	DataTime::DataTime()
@@ -150,16 +133,6 @@ namespace oct::ec::sche
 	{
 		
 	}
-	const std::string& Teacher::get_name()
-	{
-		if(name.empty()) 
-		{
-			Person::get_name(name);
-		}
-		return name;
-	}
-
-
 
 
 
@@ -216,6 +189,18 @@ namespace oct::ec::sche
 	Teachers::Row::Row(int z) : std::vector<ec::sche::Time>(z)
 	{
 	}
+	void Teachers::Row::print(std::ostream& out) const
+	{
+		out << teacher.get_name() << ",";
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			out << std::put_time(&at(i).begin, "%H:%M");
+			out << "-";
+			out << std::put_time(&at(i).end, "%H:%M");
+			if(i < size() - 1) out << ",";
+		}
+	}
+	
 	Teachers::Teachers(const std::string& fn)
 	{
 		loadFile(fn);
@@ -249,15 +234,18 @@ namespace oct::ec::sche
 					strptime(strH.c_str(), "%H:%M",&time.begin);
 					std::getline(ssTime,strH,'-');
 					strptime(strH.c_str(), "%H:%M",&time.end);
-					/*std::cout << std::put_time(&time.begin, "%H:%M");
+					/*
+					std::cout << std::put_time(&time.begin, "%H:%M");
 					std::cout << "-";
 					std::cout << std::put_time(&time.end, "%H:%M");
-					std::cout << ",";*/
+					std::cout << ",";
+					*/
 					row.push_back(time);
 				}
 				teachers.push_back(row);	
 				//std::cout << "\n";
 			}
+			indexing();
 		}	
 		else
 		{
@@ -270,18 +258,30 @@ namespace oct::ec::sche
 	{
 		for(Row& row : teachers)
 		{
-			out << row.teacher.get_name() << ",";
-			for(unsigned int i = 0; i < row.size(); i++)
-			{
-				out << std::put_time(&row[i].begin, "%H:%M");
-				out << "-";
-				out << std::put_time(&row[i].end, "%H:%M");
-				if(i < row.size() - 1) out << ",";
-			}
+			row.print(out);
 			out << "\n";
 		}
+	}	
+	void Teachers::indexing()
+	{
+		if(teacher_by_name.size() > 0) teacher_by_name.clear();
+		for(Row& row : teachers)
+		{
+			teacher_by_name.insert({row.teacher.get_name().c_str(),&row});
+		}
+	}
+	const Teachers::Row* Teachers::search(const std::string& str) const
+	{
+		std::map<std::string, Row*>::const_iterator it = teacher_by_name.find(str);
+
+		if(it != teacher_by_name.end()) return it->second;
+		return NULL;		
 	}
 
+
+
+
+	
 
 	
 	

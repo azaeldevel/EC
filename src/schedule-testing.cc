@@ -11,10 +11,10 @@ namespace oct::ec::sche
 	void Enviroment::testing()
 	{
 		
-		data.subjects.loadFile(directory+"/subjects.csv");
-		data.teachers.loadFile(directory+"/teachers.csv");
-		data.rooms.loadFile(directory+"/rooms.csv");
-		data.teachers_subjects.loadFile(directory+"/teachers-subjects.csv");
+		data.subjects.loadFile(directory + "/subjects.csv");
+		data.teachers.loadFile(directory + "/teachers.csv");
+		data.rooms.loadFile(directory + "/rooms.csv");
+		data.teachers_subjects.loadFile(directory + "/teachers-subjects.csv");
 		
 		pile.resize(4);
 
@@ -43,7 +43,8 @@ namespace oct::ec::sche
 			}
 			i++;
 		}
-		/*for(const TeacherDust& dust : pile.at(0).teachers)
+		/*
+		for(const TeacherDust& dust : pile.at(0).teachers)
 		{
 			std::string name;
 			((core::Person*)dust.teacher)->get_name(name);
@@ -56,15 +57,18 @@ namespace oct::ec::sche
 					std::cout << "\t\t" << std::put_time(&dt, "%H:%M") << "\n";
 				}
 			}
-		}*/
+		}
+		*/
+		//data.teachers.print(std::cout);
+		const Teachers::Row* row = data.teachers.search("Leticia Mojica");
+		if(row) row->print(std::cout);
+		else std::cout << "No se encontro el maestro indicado\n";
 		//clase
 		pile.at(0).subject = 5;
 		//
 		//horarion de salon
 		//strptime("8:00", "%H:%M",&begin);
 		//strptime("13:00", "%H:%M",&end);
-		
-		
 	}
 
 

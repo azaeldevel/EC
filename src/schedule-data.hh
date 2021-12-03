@@ -3,6 +3,8 @@
 #ifndef EC_SCHEDULE_DATA_HH
 #define EC_SCHEDULE_DATA_HH
 
+#include <map>
+
 #include "GA.hh"
 
 namespace oct::core
@@ -23,11 +25,11 @@ namespace oct::core
 		Person(const std::string& name);
 		Person();
 
-		const Person& operator =(const std::string& name);
-		virtual void get_name(std::string&);
+		const std::string& operator =(const std::string& name);
+		const std::string& get_name()const;
 
 	private:
-		std::vector<std::string> names; 
+		std::string name; 
 	};
 
 }
@@ -70,9 +72,7 @@ namespace oct::ec::sche
 		Teacher(const std::string& name,const std::string& ap,const std::string& am);
 		Teacher(const std::string& name);
 		Teacher();
-		
-		const std::string& get_name();
-		
+				
 	private:
 		std::string name;
 	};
@@ -115,7 +115,8 @@ namespace oct::ec::sche
 			Teacher teacher;
 
 			Row();
-			Row(int z);		
+			Row(int z);	
+			void print(std::ostream&)const; 	
 		};
 	
 	public:
@@ -125,9 +126,14 @@ namespace oct::ec::sche
 
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
+		const Row* search(const std::string&) const;
+
+	private:
+		void indexing();
 
 	private:
 		std::list<Row> teachers;
+		std::map<std::string, Row*> teacher_by_name;
 	};
 
 	class Subjects
