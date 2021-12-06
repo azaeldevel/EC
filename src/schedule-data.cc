@@ -153,7 +153,7 @@ namespace oct::ec::sche
 		
 		return *this;
 	}
-	const std::string& Room::get_name()
+	const std::string& Room::get_name()const
 	{
 		return name;
 	}
@@ -335,9 +335,9 @@ namespace oct::ec::sche
 			throw core::Exception(msg,__FILE__,__LINE__);
 		}		
 	}
-	void Subjects::print(std::ostream& out)
+	void Subjects::print(std::ostream& out)const
 	{
-		for(Row& row : subjects)
+		for(const Row& row : subjects)
 		{
 			row.print(out);
 			out << "\n";
@@ -358,13 +358,21 @@ namespace oct::ec::sche
 		if(it != subject_by_name.end()) return it->second;
 		return NULL;		
 	}
-
+	const std::list<Subjects::Row>& Subjects::get_list() const
+	{
+		return subjects;
+	}
 
 
 
 	Teachers_Subjects::Row::Row()
 	{
 		
+	}	
+	void Teachers_Subjects::Row::print(std::ostream& out)const
+	{
+		out << teacher.get_name() << ",";
+		out << subject.get_name();
 	}
 	Teachers_Subjects::Teachers_Subjects(const std::string& fn)
 	{
@@ -373,7 +381,12 @@ namespace oct::ec::sche
 	Teachers_Subjects::Teachers_Subjects()
 	{
 
+	}	
+	const std::list<Teachers_Subjects::Row>& Teachers_Subjects::get_list() const
+	{
+		return teachers_subjects;
 	}
+	
 	void Teachers_Subjects::loadFile(const std::string& fn)
 	{
 		std::fstream csv(fn, std::ios::in);
@@ -395,6 +408,7 @@ namespace oct::ec::sche
 				//std::cout << "\n";
 				teachers_subjects.push_back(row);
 			}
+			indexing();
 		}	
 		else
 		{
@@ -403,23 +417,31 @@ namespace oct::ec::sche
 			throw core::Exception(msg,__FILE__,__LINE__);
 		}
 	}
-	void Teachers_Subjects::print(std::ostream& out)
+	void Teachers_Subjects::print(std::ostream& out)const
 	{
-		for(Row& row : teachers_subjects)
+		for(const Row& row : teachers_subjects)
 		{
-			out << row.teacher.get_name() << ",";
-			out << row.subject.get_name();
+			row.print(out);
 			out << "\n";
 		}
 	}
-	void Teachers_Subjects::searchTeachers(const std::string&, std::list<Row*>& l) const
+	void Teachers_Subjects::searchTeachers(const std::string& str, std::list<Row*>& l)const
 	{
-
-		
+		typedef std::multimap<std::string, Row*>::const_iterator iterator;
+		std::pair<iterator,iterator> result = teachers_by_name.equal_range(str);
+		for(iterator it = result.first; it != result.second; it++)
+		{
+			l.push_back(it->second);
+		}
 	}
-	void Teachers_Subjects::searchSubjects(const std::string&, std::list<Row*>& l) const
+	void Teachers_Subjects::searchSubjects(const std::string& str, std::list<Row*>& l)const
 	{
-
+		typedef std::multimap<std::string, Row*>::const_iterator iterator;
+		std::pair<iterator,iterator> result = subjects_by_name.equal_range(str);
+		for(iterator it = result.first; it != result.second; it++)
+		{
+			l.push_back(it->second);
+		}
 	}	
 	void Teachers_Subjects::indexing()
 	{
@@ -427,8 +449,8 @@ namespace oct::ec::sche
 		if(subjects_by_name.size() > 0) subjects_by_name.clear();
 		for(Row& row : teachers_subjects)
 		{
-			teachers_by_name.insert({row.teacher.get_name().c_str(),&row});
-			subjects_by_name.insert({row.subject.get_name().c_str(),&row});
+			teachers_by_name.insert({row.teacher.get_name(),&row});
+			subjects_by_name.insert({row.subject.get_name(),&row});
 		}
 	}
 	
@@ -438,7 +460,20 @@ namespace oct::ec::sche
 	}
 	Rooms::Row::Row(int z) : std::vector<ec::sche::Time>(z)
 	{
+	}		
+	void Rooms::Row::print(std::ostream& out)const
+	{
+		out << room.get_name() << ",";
+		out << subject.get_name() << ",";
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			out << std::put_time(&at(i).begin, "%H:%M");
+			out << "-";
+			out << std::put_time(&at(i).end, "%H:%M");
+			if(i < size() - 1) out << ",";
+		}
 	}
+	
 	Rooms::Rooms(const std::string& fn)
 	{
 		loadFile(fn);
@@ -446,7 +481,12 @@ namespace oct::ec::sche
 	Rooms::Rooms()
 	{
 		
+	}	
+	const std::list<Rooms::Row>& Rooms::get_list() const
+	{
+		return rooms;
 	}
+	
 	void Rooms::loadFile(const std::string& fn)
 	{
 		std::fstream csv(fn, std::ios::in);
@@ -481,6 +521,7 @@ namespace oct::ec::sche
 				rooms.push_back(row);	
 				//std::cout << "\n";
 			}
+			indexing();
 		}	
 		else
 		{
@@ -489,20 +530,31 @@ namespace oct::ec::sche
 			throw core::Exception(msg,__FILE__,__LINE__);
 		}	
 	}	
-	void Rooms::print(std::ostream& out)
+	void Rooms::print(std::ostream& out)const
 	{
+		for(const Row& row : rooms)
+		{
+			row.print(out);
+			out << "\n";
+		}
+	}	
+	void Rooms::searchRooms(const std::string& str, std::list<Row*>& l)const
+	{
+		typedef std::multimap<std::string, Row*>::const_iterator iterator;
+		std::pair<iterator,iterator> result = rooms_by_name.equal_range(str);
+		for(iterator it = result.first; it != result.second; it++)
+		{
+			l.push_back(it->second);
+		}
+	}
+	void Rooms::indexing()
+	{
+		if(rooms_by_name.size() > 0) rooms_by_name.clear();
+		if(subjects_by_name.size() > 0) subjects_by_name.clear();
 		for(Row& row : rooms)
 		{
-			out << row.room.get_name() << ",";
-			out << row.subject.get_name() << ",";
-			for(unsigned int i = 0; i < row.size(); i++)
-			{
-				out << std::put_time(&row[i].begin, "%H:%M");
-				out << "-";
-				out << std::put_time(&row[i].end, "%H:%M");
-				if(i < row.size() - 1) out << ",";
-			}
-			out << "\n";
+			rooms_by_name.insert({row.room.get_name(),&row});
+			subjects_by_name.insert({row.subject.get_name(),&row});
 		}
 	}
 }

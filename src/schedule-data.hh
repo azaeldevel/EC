@@ -98,7 +98,7 @@ namespace oct::ec::sche
 		Room(const std::string& name);
 		Room();
 
-		virtual const std::string& get_name();
+		const std::string& get_name()const;
 		Room& operator =(const std::string&);
 		
 	private:
@@ -151,8 +151,10 @@ namespace oct::ec::sche
 		Subjects(const std::string& fn);
 		Subjects();
 		void loadFile(const std::string& fn);
-		void print(std::ostream&);
+		void print(std::ostream&)const;
 		const Row* search(const std::string&) const;
+		const std::list<Row>& get_list() const;
+		
 	private:
 		void indexing();
 	private:
@@ -162,21 +164,24 @@ namespace oct::ec::sche
 
 	class Teachers_Subjects
 	{
+	public: 
 		struct Row
 		{
 			Subject subject;
 			Teacher teacher;
 
 			Row();
+			void print(std::ostream&)const;
 		};
 		
 	public: 
 		Teachers_Subjects();
 		Teachers_Subjects(const std::string& fn);
 		void loadFile(const std::string& fn);
-		void print(std::ostream&);
-		void searchTeachers(const std::string&, std::list<Row*>& ) const;
-		void searchSubjects(const std::string&, std::list<Row*>& ) const;
+		void print(std::ostream&)const;
+		const std::list<Row>& get_list() const;
+		void searchTeachers(const std::string&, std::list<Row*>& )const;
+		void searchSubjects(const std::string&, std::list<Row*>& )const;
 	private:
 		void indexing();
 	private:
@@ -187,6 +192,7 @@ namespace oct::ec::sche
 
 	class Rooms
 	{
+	public:
 		struct Row : public std::vector<ec::sche::Time>
 		{
 			Room room;
@@ -194,19 +200,27 @@ namespace oct::ec::sche
 			
 			Row();
 			Row(int z);		
+			void print(std::ostream&)const;
 		};
 		
 	public:
 		Rooms();
 		Rooms(const std::string& fn);
+		const std::list<Row>& get_list() const;
+
 		void loadFile(const std::string& fn);
-		void print(std::ostream&);
+		void print(std::ostream&)const;
+
+		void searchRooms(const std::string&, std::list<Row*>& )const;
+		void searchSubjects(const std::string&, std::list<Row*>& )const;
 		
 	private:
 		void indexing();
 
 	private:
 		std::list<Row> rooms;
+		std::multimap<std::string, Row*> rooms_by_name;
+		std::multimap<std::string, Row*> subjects_by_name;
 	};
 	
 	typedef std::vector<core::DataTime> DaysTimes;
