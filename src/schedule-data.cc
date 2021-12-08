@@ -371,14 +371,14 @@ namespace oct::ec::sche
 	}	
 	void Teachers_Subjects::Row::print(std::ostream& out)const
 	{
-		out << teacher.get_name() << ",";
-		out << subject.get_name();
+		out << teacher->get_name() << ",";
+		out << subject->get_name();
 	}
-	Teachers_Subjects::Teachers_Subjects(const std::string& fn)
+	Teachers_Subjects::Teachers_Subjects(const std::string& fn,const Data* d) : dataObject(d)
 	{
-		loadFile(fn);
+		loadFile(fn,d);
 	}
-	Teachers_Subjects::Teachers_Subjects()
+	Teachers_Subjects::Teachers_Subjects()  : dataObject(NULL)
 	{
 
 	}	
@@ -387,7 +387,7 @@ namespace oct::ec::sche
 		return teachers_subjects;
 	}
 	
-	void Teachers_Subjects::loadFile(const std::string& fn)
+	void Teachers_Subjects::loadFile(const std::string& fn,const Data* d)
 	{
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data;
@@ -399,12 +399,33 @@ namespace oct::ec::sche
 				//std::cout << line;
 				std::getline(str,data,',');
 				Teachers_Subjects::Row row;
-				row.teacher = data;
+				const Teachers::Row* rt = d->teachers.search(data);
+				if(rt)
+				{
+					row.teacher = &rt->teacher;
+				}
+				else 	
+				{
+					std::string msg = "Archivo '";
+					msg += fn + "', el maestro '" + data + "', no esta registrada en su correpondiente archivo.";
+					throw core::Exception(msg,__FILE__,__LINE__);
+				}
 				//std::cout << data << ",";
 
 				std::getline(str,data,',');
-				//std::cout << data << ",";
-				row.subject = data;				
+				//std::cout << data << ",";				
+				const Subjects::Row* rs = d->subjects.search(data);
+				if(rs)
+				{
+					row.subject = &rs->subject;
+				}
+				else 	
+				{
+					std::string msg = "Archivo '";
+					msg += fn + "', la materia '" + data + "', no esta registrada en su correpondiente archivo.";
+					throw core::Exception(msg,__FILE__,__LINE__);
+				}
+								
 				//std::cout << "\n";
 				teachers_subjects.push_back(row);
 			}
@@ -449,8 +470,10 @@ namespace oct::ec::sche
 		if(subjects_by_name.size() > 0) subjects_by_name.clear();
 		for(Row& row : teachers_subjects)
 		{
-			teachers_by_name.insert({row.teacher.get_name(),&row});
-			subjects_by_name.insert({row.subject.get_name(),&row});
+			if(not row.teacher) throw core::Exception("Valor nulo para puntero de Maestro",__FILE__,__LINE__);
+			teachers_by_name.insert({row.teacher->get_name(),&row});
+			if(not row.subject) throw core::Exception("Valor nulo para puntero de Materia",__FILE__,__LINE__);
+			subjects_by_name.insert({row.subject->get_name(),&row});
 		}
 	}
 	
@@ -659,7 +682,8 @@ namespace oct::ec::sche
 		subjects.loadFile(dir + "/subjects.csv");
 		teachers.loadFile(dir + "/teachers.csv");
 		rooms.loadFile(dir + "/rooms.csv");
-		teachers_subjects.loadFile(dir + "/teachers-subjects.csv");
+		//
+		teachers_subjects.loadFile(dir + "/teachers-subjects.csv",this);
 		groups.loadFile(dir + "/groups.csv",this);
 	}
 }

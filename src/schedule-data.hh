@@ -168,8 +168,8 @@ namespace oct::ec::sche
 	public: 
 		struct Row
 		{
-			Subject subject;
-			Teacher teacher;
+			const Subject* subject;
+			const Teacher* teacher;
 
 			Row();
 			void print(std::ostream&)const;
@@ -177,8 +177,8 @@ namespace oct::ec::sche
 		
 	public: 
 		Teachers_Subjects();
-		Teachers_Subjects(const std::string& fn);
-		void loadFile(const std::string& fn);
+		Teachers_Subjects(const std::string& fn,const Data* data);
+		void loadFile(const std::string& fn,const Data* data);
 		void print(std::ostream&)const;
 		const std::list<Row>& get_list() const;
 		void searchTeachers(const std::string&, std::list<Row*>& )const;
@@ -189,6 +189,7 @@ namespace oct::ec::sche
 		std::list<Row> teachers_subjects;
 		std::multimap<std::string, Row*> teachers_by_name;
 		std::multimap<std::string, Row*> subjects_by_name;
+		const Data* dataObject;
 	};
 
 	class Rooms

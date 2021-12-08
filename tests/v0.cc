@@ -29,7 +29,7 @@ void testDeveloping()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.subjects.get_list().size() == 6)
+	if(data.subjects.get_list().size() == 8)
 	{
 		CU_ASSERT(true);
 	}
@@ -69,7 +69,7 @@ void testDeveloping()
 		//std::cout << "No se encontro el maestro indicado\n";
 		CU_ASSERT(false);
 	}
-	std::cout << "\n";
+	//std::cout << "\n";
 	const oct::ec::sche::Subjects::Row* rowSuject = data.subjects.search("Fisica");
 	if(rowSuject) 
 	{
@@ -81,7 +81,7 @@ void testDeveloping()
 		//std::cout << "No se encontro el maestro indicado\n";
 		CU_ASSERT(false);		
 	}
-	std::cout << "\n";
+	//std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
 	std::list<oct::ec::sche::Teachers_Subjects::Row*> rowTS;
 	data.teachers_subjects.searchSubjects("Espanol",rowTS);
@@ -101,7 +101,7 @@ void testDeveloping()
 		CU_ASSERT(false);		
 	}
 	
-	std::cout << "\n";
+	//std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
 	const oct::ec::sche::Rooms::Row* rowR1 = data.rooms.search("1A");
 	if(rowR1) 

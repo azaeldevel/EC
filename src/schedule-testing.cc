@@ -14,7 +14,6 @@ namespace oct::ec::sche
 		data.subjects.loadFile(directory + "/subjects.csv");
 		data.teachers.loadFile(directory + "/teachers.csv");
 		data.rooms.loadFile(directory + "/rooms.csv");
-		data.teachers_subjects.loadFile(directory + "/teachers-subjects.csv");
 		
 		pile.resize(4);
 
