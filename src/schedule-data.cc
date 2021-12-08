@@ -557,45 +557,64 @@ namespace oct::ec::sche
 
 	Groups::Row::Row()
 	{
-	}
-	Groups::Row::Row(int z) : std::vector<ec::sche::Time>(z)
-	{
 	}		
 	void Groups::Row::print(std::ostream& out)const
 	{
-		out << room.get_name() << ",";
-		out << teacher.get_name() << ",";
+		out << room->get_name() << ",";
+		//out << teacher.get_name() << ",";
 	}
 	
-	Groups::Groups(const std::string& fn)
+	Groups::Groups(const std::string& fn,const Subjects* s,const Rooms* r) : subjects(s),rooms(r)
 	{
-		loadFile(fn);
+		loadFile(fn,s,r);
 	}
-	Groups::Groups()
+	Groups::Groups() : subjects(NULL),rooms(NULL)
 	{
 		
 	}	
 	const std::list<Groups::Row>& Groups::get_list() const
 	{
-		return rooms;
+		return groups;
 	}
 	
-	void Groups::loadFile(const std::string& fn)
+	void Groups::loadFile(const std::string& fn,const Subjects* s,const Rooms* r)
 	{
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
 		{
-			std::getline(csv,line);
-			
 			while(std::getline(csv,line))
 			{
-				std::getline(line,data,',');
-				Row row
-				row.room = data;
-				while(std::getline(line,data,','))
+				std::stringstream str(line);
+				std::getline(str,data,',');
+				Groups::Row row;
+				//std::cout << "room : " << data << " : ";
+				const Rooms::Row* newr = r->search(data);
+				if(newr) 
 				{
-					row.push_back(data);					
+					row.room = &newr->room;
+				}
+				else 	
+				{
+					std::string msg = "Archivo '";
+					msg += fn + "', la materia '" + data + "', no esta registrada en su correpondiente archivo.";
+					throw core::Exception(msg,__FILE__,__LINE__);
+				}	
+				
+				while(std::getline(str,data,','))
+				{	
+					//std::cout << data << ",";
+					const Subjects::Row* news = s->search(data);	
+					if(news) 
+					{
+						row.push_back(&news->subject);
+					}
+					else 	
+					{
+						std::string msg = "Archivo '";
+						msg += fn + "', la materia '" + data + "', no esta registrada en su correpondiente archivo.";
+						throw core::Exception(msg,__FILE__,__LINE__);
+					}		
 				}
 				groups.push_back(row);
 			}
@@ -610,25 +629,25 @@ namespace oct::ec::sche
 	}	
 	void Groups::print(std::ostream& out)const
 	{
-		for(const Row& row : rooms)
+		for(const Row& row : groups)
 		{
 			row.print(out);
 			out << "\n";
 		}
 	}
-	const Groups::Row* Rooms::search(const std::string& str) const
+	const Groups::Row* Groups::search(const std::string& str) const
 	{
-		std::map<std::string, Row*>::const_iterator it = rooms_by_name.find(str);
+		std::map<std::string, Row*>::const_iterator it = groups_by_name.find(str);
 
-		if(it != rooms_by_name.end()) return it->second;
+		if(it != groups_by_name.end()) return it->second;
 		return NULL;		
 	}
-	void Rooms::indexing()
+	void Groups::indexing()
 	{
-		if(teacher.size() > 0) teacher.clear();
-		for(Row& row : rooms)
+		if(groups_by_name.size() > 0) groups_by_name.clear();
+		for(Row& row : groups)
 		{
-			rooms_by_name.insert({row.room.get_name(),&row});
+			groups_by_name.insert({row.room->get_name(),&row});
 		}
 	}
 }

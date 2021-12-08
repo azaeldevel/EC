@@ -223,21 +223,20 @@ namespace oct::ec::sche
 	class Groups
 	{
 	public:
-		struct Row : public std::vector<Subject>
+		struct Row : public std::vector<const Subject*>
 		{
-			Room room;
+			const Room* room;
 			
-			Row();
-			Row(int z);		
+			Row();	
 			void print(std::ostream&) const;
 		};
 		
 	public:
-		Gropus();
-		Gropus(const std::string& fn);
+		Groups();
+		Groups(const std::string& fn,const Subjects* subjects,const Rooms* room);
 		const std::list<Row>& get_list() const;
 
-		void loadFile(const std::string& fn);
+		void loadFile(const std::string& fn,const Subjects* subjects,const Rooms* room);
 		void print(std::ostream&)const;
 
 		const Row* search(const std::string&)const;
@@ -247,7 +246,9 @@ namespace oct::ec::sche
 
 	private:
 		std::list<Row> groups;
-		std::multimap<std::string, Row*> rooms_by_name;
+		std::multimap<std::string, Row*> groups_by_name;
+		const Subjects* subjects;
+		const Rooms* rooms;
 	};
 	
 	typedef std::vector<core::DataTime> DaysTimes;
@@ -273,6 +274,7 @@ namespace oct::ec::sche
 		Subjects subjects;
 		Rooms rooms;
 		Teachers_Subjects teachers_subjects;
+		Groups groups;
 	};
 	
 	

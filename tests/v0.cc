@@ -13,6 +13,7 @@ int init(void)
 	data.teachers.loadFile("../../tests/teachers.csv");
 	data.rooms.loadFile("../../tests/rooms.csv");
 	data.teachers_subjects.loadFile("../../tests/teachers-subjects.csv");
+	data.groups.loadFile("../../tests/groups.csv",&data.subjects,&data.rooms);
 
 	return 0;
 }
@@ -39,7 +40,7 @@ void testDeveloping()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.rooms.get_list().size() == 2)
+	if(data.rooms.get_list().size() == 3)
 	{
 		//std::cout << "count : " << data.rooms.get_list().size() << "\n";
 		CU_ASSERT(true);
@@ -108,7 +109,20 @@ void testDeveloping()
 	const oct::ec::sche::Rooms::Row* rowR1 = data.rooms.search("1A");
 	if(rowR1) 
 	{
-		row->print(std::cout);
+		//row->print(std::cout);
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		//std::cout << "No se encontro el maestro indicado\n";
+		CU_ASSERT(false);		
+	}
+	
+	std::cout << "\n";
+	const oct::ec::sche::Groups::Row* rowG1 = data.groups.search("1A");
+	if(rowG1) 
+	{
+		//rowG1->print(std::cout);
 		CU_ASSERT(true);
 	}
 	else 
