@@ -38,6 +38,7 @@ namespace oct::ec::sche
 {
 	
 	class Enviroment;
+	struct Data;
 
 	struct Time
 	{
@@ -233,10 +234,10 @@ namespace oct::ec::sche
 		
 	public:
 		Groups();
-		Groups(const std::string& fn,const Subjects* subjects,const Rooms* room);
+		Groups(const std::string& fn,const Data* data);
 		const std::list<Row>& get_list() const;
 
-		void loadFile(const std::string& fn,const Subjects* subjects,const Rooms* room);
+		void loadFile(const std::string& fn,const Data* data);
 		void print(std::ostream&)const;
 
 		const Row* search(const std::string&)const;
@@ -247,8 +248,7 @@ namespace oct::ec::sche
 	private:
 		std::list<Row> groups;
 		std::multimap<std::string, Row*> groups_by_name;
-		const Subjects* subjects;
-		const Rooms* rooms;
+		const Data* dataObjects;
 	};
 	
 	typedef std::vector<core::DataTime> DaysTimes;
@@ -275,6 +275,8 @@ namespace oct::ec::sche
 		Rooms rooms;
 		Teachers_Subjects teachers_subjects;
 		Groups groups;
+
+		void load(const std::string& dir);
 	};
 	
 	

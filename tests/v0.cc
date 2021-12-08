@@ -9,11 +9,8 @@ static oct::ec::sche::Data data;
 
 int init(void)
 {
-	data.subjects.loadFile("../../tests/subjects.csv");
-	data.teachers.loadFile("../../tests/teachers.csv");
-	data.rooms.loadFile("../../tests/rooms.csv");
-	data.teachers_subjects.loadFile("../../tests/teachers-subjects.csv");
-	data.groups.loadFile("../../tests/groups.csv",&data.subjects,&data.rooms);
+	
+	data.load("../../tests");
 
 	return 0;
 }

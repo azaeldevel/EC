@@ -564,11 +564,11 @@ namespace oct::ec::sche
 		//out << teacher.get_name() << ",";
 	}
 	
-	Groups::Groups(const std::string& fn,const Subjects* s,const Rooms* r) : subjects(s),rooms(r)
+	Groups::Groups(const std::string& fn,const Data* d) : dataObjects(d)
 	{
-		loadFile(fn,s,r);
+		loadFile(fn,d);
 	}
-	Groups::Groups() : subjects(NULL),rooms(NULL)
+	Groups::Groups() : dataObjects(NULL)
 	{
 		
 	}	
@@ -577,7 +577,7 @@ namespace oct::ec::sche
 		return groups;
 	}
 	
-	void Groups::loadFile(const std::string& fn,const Subjects* s,const Rooms* r)
+	void Groups::loadFile(const std::string& fn,const Data* d)
 	{
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strTime,strH;
@@ -589,7 +589,7 @@ namespace oct::ec::sche
 				std::getline(str,data,',');
 				Groups::Row row;
 				//std::cout << "room : " << data << " : ";
-				const Rooms::Row* newr = r->search(data);
+				const Rooms::Row* newr = d->rooms.search(data);
 				if(newr) 
 				{
 					row.room = &newr->room;
@@ -604,7 +604,7 @@ namespace oct::ec::sche
 				while(std::getline(str,data,','))
 				{	
 					//std::cout << data << ",";
-					const Subjects::Row* news = s->search(data);	
+					const Subjects::Row* news = d->subjects.search(data);	
 					if(news) 
 					{
 						row.push_back(&news->subject);
@@ -649,6 +649,18 @@ namespace oct::ec::sche
 		{
 			groups_by_name.insert({row.room->get_name(),&row});
 		}
+	}
+	
+	
+	
+	
+	void Data::load(const std::string& dir)
+	{
+		subjects.loadFile(dir + "/subjects.csv");
+		teachers.loadFile(dir + "/teachers.csv");
+		rooms.loadFile(dir + "/rooms.csv");
+		teachers_subjects.loadFile(dir + "/teachers-subjects.csv");
+		groups.loadFile(dir + "/groups.csv",this);
 	}
 }
 
