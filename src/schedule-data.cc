@@ -464,7 +464,6 @@ namespace oct::ec::sche
 	void Rooms::Row::print(std::ostream& out)const
 	{
 		out << room.get_name() << ",";
-		out << subject.get_name() << ",";
 		for(unsigned int i = 0; i < size(); i++)
 		{
 			out << std::put_time(&at(i).begin, "%H:%M");
@@ -500,8 +499,8 @@ namespace oct::ec::sche
 				Rooms::Row row;
 				//std::cout << data << ",";
 				row.room = data;
-				std::getline(str,data,',');
-				row.subject = data;
+				//std::getline(str,data,',');
+				//row.subject = data;
 				ec::sche::Time time;
 				while(std::getline(str,data,','))
 				{
@@ -537,24 +536,99 @@ namespace oct::ec::sche
 			row.print(out);
 			out << "\n";
 		}
-	}	
-	void Rooms::searchRooms(const std::string& str, std::list<Row*>& l)const
+	}
+	const Rooms::Row* Rooms::search(const std::string& str) const
 	{
-		typedef std::multimap<std::string, Row*>::const_iterator iterator;
-		std::pair<iterator,iterator> result = rooms_by_name.equal_range(str);
-		for(iterator it = result.first; it != result.second; it++)
-		{
-			l.push_back(it->second);
-		}
+		std::map<std::string, Row*>::const_iterator it = rooms_by_name.find(str);
+
+		if(it != rooms_by_name.end()) return it->second;
+		return NULL;		
 	}
 	void Rooms::indexing()
 	{
 		if(rooms_by_name.size() > 0) rooms_by_name.clear();
-		if(subjects_by_name.size() > 0) subjects_by_name.clear();
 		for(Row& row : rooms)
 		{
 			rooms_by_name.insert({row.room.get_name(),&row});
-			subjects_by_name.insert({row.subject.get_name(),&row});
+		}
+	}
+
+
+
+	Groups::Row::Row()
+	{
+	}
+	Groups::Row::Row(int z) : std::vector<ec::sche::Time>(z)
+	{
+	}		
+	void Groups::Row::print(std::ostream& out)const
+	{
+		out << room.get_name() << ",";
+		out << teacher.get_name() << ",";
+	}
+	
+	Groups::Groups(const std::string& fn)
+	{
+		loadFile(fn);
+	}
+	Groups::Groups()
+	{
+		
+	}	
+	const std::list<Groups::Row>& Groups::get_list() const
+	{
+		return rooms;
+	}
+	
+	void Groups::loadFile(const std::string& fn)
+	{
+		std::fstream csv(fn, std::ios::in);
+		std::string line,data,strTime,strH;
+		if(csv.is_open())
+		{
+			std::getline(csv,line);
+			
+			while(std::getline(csv,line))
+			{
+				std::getline(line,data,',');
+				Row row
+				row.room = data;
+				while(std::getline(line,data,','))
+				{
+					row.push_back(data);					
+				}
+				groups.push_back(row);
+			}
+			indexing();
+		}	
+		else
+		{
+			std::string msg = "Fallo la aperturade '";
+			msg += fn + "'";
+			throw core::Exception(msg,__FILE__,__LINE__);
+		}	
+	}	
+	void Groups::print(std::ostream& out)const
+	{
+		for(const Row& row : rooms)
+		{
+			row.print(out);
+			out << "\n";
+		}
+	}
+	const Groups::Row* Rooms::search(const std::string& str) const
+	{
+		std::map<std::string, Row*>::const_iterator it = rooms_by_name.find(str);
+
+		if(it != rooms_by_name.end()) return it->second;
+		return NULL;		
+	}
+	void Rooms::indexing()
+	{
+		if(teacher.size() > 0) teacher.clear();
+		for(Row& row : rooms)
+		{
+			rooms_by_name.insert({row.room.get_name(),&row});
 		}
 	}
 }

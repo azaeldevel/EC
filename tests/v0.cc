@@ -39,7 +39,7 @@ void testDeveloping()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.rooms.get_list().size() == 16)
+	if(data.rooms.get_list().size() == 2)
 	{
 		//std::cout << "count : " << data.rooms.get_list().size() << "\n";
 		CU_ASSERT(true);
@@ -105,16 +105,10 @@ void testDeveloping()
 	
 	std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
-	std::list<oct::ec::sche::Rooms::Row*> rowR1;
-	data.rooms.searchRooms("1A",rowR1);
-	if(rowR1.size() >0) 
+	const oct::ec::sche::Rooms::Row* rowR1 = data.rooms.search("1A");
+	if(rowR1) 
 	{
-		//
-		/*for(oct::ec::sche::Rooms::Row* row : rowR1)
-		{
-			row->print(std::cout);
-			std::cout << "\n";
-		}*/
+		row->print(std::cout);
 		CU_ASSERT(true);
 	}
 	else 
@@ -124,7 +118,7 @@ void testDeveloping()
 	}
 }
 int main(int argc, char *argv[])
-{  
+{
 
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();

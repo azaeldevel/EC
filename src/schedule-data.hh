@@ -196,11 +196,10 @@ namespace oct::ec::sche
 		struct Row : public std::vector<ec::sche::Time>
 		{
 			Room room;
-			Subject subject;
 			
 			Row();
 			Row(int z);		
-			void print(std::ostream&)const;
+			void print(std::ostream&) const;
 		};
 		
 	public:
@@ -211,8 +210,7 @@ namespace oct::ec::sche
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
 
-		void searchRooms(const std::string&, std::list<Row*>& )const;
-		void searchSubjects(const std::string&, std::list<Row*>& )const;
+		const Row* search(const std::string&)const;
 		
 	private:
 		void indexing();
@@ -220,7 +218,36 @@ namespace oct::ec::sche
 	private:
 		std::list<Row> rooms;
 		std::multimap<std::string, Row*> rooms_by_name;
-		std::multimap<std::string, Row*> subjects_by_name;
+	};
+
+	class Groups
+	{
+	public:
+		struct Row : public std::vector<Subject>
+		{
+			Room room;
+			
+			Row();
+			Row(int z);		
+			void print(std::ostream&) const;
+		};
+		
+	public:
+		Gropus();
+		Gropus(const std::string& fn);
+		const std::list<Row>& get_list() const;
+
+		void loadFile(const std::string& fn);
+		void print(std::ostream&)const;
+
+		const Row* search(const std::string&)const;
+		
+	private:
+		void indexing();
+
+	private:
+		std::list<Row> groups;
+		std::multimap<std::string, Row*> rooms_by_name;
 	};
 	
 	typedef std::vector<core::DataTime> DaysTimes;
