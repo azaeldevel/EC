@@ -28,7 +28,7 @@
 
 #include "schedule.hh"
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 
 extern "C" char* strptime(const char* s,const char* f,struct tm* tm) 
 {
@@ -104,6 +104,7 @@ namespace oct::ec::sche
 	{
 		schema_week = SchemaWeek::MS;
 		time_per_hour = 60;
+		format = FormatDataTime::HOUR;
 	}
 	
 	unsigned int Configuration::get_time_per_hour() const
@@ -301,7 +302,8 @@ namespace oct::ec::sche
 	
 
 	
-	/*Teachers::Row::Row()
+	/*
+	Teachers::Row::Row()
 	{
 	}
 	Teachers::Row::Row(int z) : std::vector<ec::sche::Time>(z)
@@ -317,7 +319,8 @@ namespace oct::ec::sche
 			out << std::put_time(&at(i).end, "%H:%M");
 			if(i < size() - 1) out << ",";
 		}
-	}*/
+	}
+	*/
 	
 	Teachers::Teachers(const std::string& fn)
 	{
@@ -407,7 +410,7 @@ namespace oct::ec::sche
 
 	
 	
-	Subjects::Row::Row()
+	/*Subjects::Row::Row()
 	{
 		
 	}
@@ -415,7 +418,7 @@ namespace oct::ec::sche
 	{
 		out << subject.get_name() << ",";
 		out << subject.get_time();
-	}
+	}*/
 	
 	Subjects::Subjects(const std::string& fn, const Data* d)
 	{
@@ -619,7 +622,7 @@ namespace oct::ec::sche
 	}
 	
 	
-	Rooms::Row::Row()
+	/*Rooms::Row::Row()
 	{
 	}
 	Rooms::Row::Row(int z) : std::vector<ec::sche::Time>(z)
@@ -635,7 +638,7 @@ namespace oct::ec::sche
 			out << std::put_time(&at(i).end, "%H:%M");
 			if(i < size() - 1) out << ",";
 		}
-	}
+	}*/
 	
 	Rooms::Rooms(const std::string& fn)
 	{
@@ -719,10 +722,10 @@ namespace oct::ec::sche
 
 
 
-	Groups::Row::Row()
+	Groups::Group::Group()
 	{
 	}		
-	void Groups::Row::print(std::ostream& out)const
+	void Groups::Group::print(std::ostream& out)const
 	{
 		out << room->get_name() << ",";
 		//out << teacher.get_name() << ",";
@@ -736,7 +739,7 @@ namespace oct::ec::sche
 	{
 		
 	}	
-	const std::list<Groups::Row>& Groups::get_list() const
+	const std::list<Groups::Group>& Groups::get_list() const
 	{
 		return groups;
 	}
@@ -751,7 +754,7 @@ namespace oct::ec::sche
 			{
 				std::stringstream str(line);
 				std::getline(str,data,',');
-				Groups::Row row;
+				Group row;
 				//std::cout << "room : " << data << " : ";
 				const Room* newr = d->rooms.search(data);
 				if(newr) 
@@ -793,15 +796,15 @@ namespace oct::ec::sche
 	}	
 	void Groups::print(std::ostream& out)const
 	{
-		for(const Row& row : groups)
+		for(const Group& row : groups)
 		{
 			row.print(out);
 			out << "\n";
 		}
 	}
-	const Groups::Row* Groups::search(const std::string& str) const
+	const Groups::Group* Groups::search(const std::string& str) const
 	{
-		std::map<std::string, Row*>::const_iterator it = groups_by_name.find(str);
+		std::map<std::string, Group*>::const_iterator it = groups_by_name.find(str);
 
 		if(it != groups_by_name.end()) return it->second;
 		return NULL;		
@@ -809,9 +812,9 @@ namespace oct::ec::sche
 	void Groups::indexing()
 	{
 		if(groups_by_name.size() > 0) groups_by_name.clear();
-		for(Row& row : groups)
+		for(Group& g : groups)
 		{
-			groups_by_name.insert({row.room->get_name(),&row});
+			groups_by_name.insert({g.room->get_name(),&g});
 		}
 	}
 	
@@ -821,6 +824,7 @@ namespace oct::ec::sche
 	void Data::load(const std::string& dir)
 	{
 		subjects.loadFile(dir + "/subjects.csv",this);
+		((Targets&)teachers) = this;
 		teachers.loadFile(dir + "/teachers.csv");
 		rooms.loadFile(dir + "/rooms.csv");
 		//

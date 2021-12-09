@@ -12,9 +12,15 @@ namespace oct::core
 namespace oct::ec::sche
 {
 	
+	
+	void Studen::init_rand(const sche::Groups::Group*)
+	{
+	
+	}
+	
 
 
-Single::Single(ID id,Enviroment& env) : ec::Single(id,env)
+Single::Single(ID id,Enviroment& env, const std::vector<Studen>&) : ec::Single(id,env)
 {
 
 }
@@ -66,9 +72,11 @@ Enviroment::~Enviroment()
 }
 void Enviroment::init()
 {
-	initPopulation = 1000;
-	maxPopulation = 1000;
-	maxProgenitor = 200;
+	initPopulation = 100;
+	maxPopulation = 100;
+	maxProgenitor = 20;
+	
+	data.load("tests");
 }
 
 
@@ -76,16 +84,31 @@ void Enviroment::init()
 void Enviroment::initial()
 {
 	
+	int count = data.groups.get_list().size();
+	std::vector<std::vector<Studen>> inits;
+	inits.resize(initPopulation);
 	
-	for(unsigned short i = 0; i < initPopulation; i++)
+	//
+	for(unsigned int i = 0; i < inits.size(); i++)
 	{
-		Single* single = new Single(nextID(),*this);
+		inits[i].resize(data.groups.get_list().size());
+		Groups::const_iterator it = data.groups.get_list().begin();
+		for(unsigned int j = 0; j < data.groups.get_list().size(); j++,it++)
+		{
+			inits[i][j].init_rand(&*it);
+		}
+	}
+	
+	//creando individuuos
+	for(const std::vector<Studen>& s : inits)
+	{
+		Single* single = new Single(nextID(),*this,s);
 		push_back(single);
 	}
 }
 void Enviroment::pulverize_hours(const core::DataTime& t1,const core::DataTime& t2,std::vector<core::DataTime>& out)
 {
-	int hours = data.config.to_hours(t1.diff(t2));
+	int hours = data.config.to_hours(t1.diff(t2));	
 	
 	//std::cout << "pulverizando " << hours << "\n";
 	if(hours < 1) return;

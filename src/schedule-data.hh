@@ -176,14 +176,14 @@ namespace oct::ec::sche
 	class Teachers : public Targets
 	{		
 	public:
-		struct Row : public std::vector<Time>
+		/*struct Row : public std::vector<Time>
 		{
 			Teacher teacher;
 
 			Row();
 			Row(int z);	
 			void print(std::ostream&)const; 	
-		};
+		};*/
 	
 	public:
 		Teachers();
@@ -205,13 +205,13 @@ namespace oct::ec::sche
 	class Subjects
 	{
 	public:
-		struct Row
+		/*struct Row
 		{
 			Subject subject;
 
 			Row();
 			void print(std::ostream&)const;
-		};
+		};*/
 		
 	public: 
 		Subjects(const std::string& fn, const Data* );
@@ -260,14 +260,14 @@ namespace oct::ec::sche
 	class Rooms
 	{
 	public:
-		struct Row : public std::vector<ec::sche::Time>
+		/*struct Row : public std::vector<ec::sche::Time>
 		{
 			Room room;
 			
 			Row();
 			Row(int z);		
 			void print(std::ostream&) const;
-		};
+		};*/
 		
 	public:
 		Rooms();
@@ -290,30 +290,32 @@ namespace oct::ec::sche
 	class Groups
 	{
 	public:
-		struct Row : public std::vector<const Subject*>
+		struct Group : public std::vector<const Subject*>
 		{
 			const Room* room;
 			
-			Row();	
+			Group();	
 			void print(std::ostream&) const;
 		};
-		
+		typedef std::list<Group>::iterator iterator;
+		typedef std::list<Group>::const_iterator const_iterator;
+
 	public:
 		Groups();
 		Groups(const std::string& fn,const Data* data);
-		const std::list<Row>& get_list() const;
+		const std::list<Group>& get_list() const;
 
 		void loadFile(const std::string& fn,const Data* data);
 		void print(std::ostream&)const;
 
-		const Row* search(const std::string&)const;
+		const Group* search(const std::string&)const;
 		
 	private:
 		void indexing();
 
 	private:
-		std::list<Row> groups;
-		std::multimap<std::string, Row*> groups_by_name;
+		std::list<Group> groups;
+		std::multimap<std::string, Group*> groups_by_name;
 		const Data* dataObjects;
 	};
 	

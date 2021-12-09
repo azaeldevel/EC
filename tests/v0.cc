@@ -116,7 +116,7 @@ void testDeveloping()
 	}
 	
 	std::cout << "\n";
-	const oct::ec::sche::Groups::Row* rowG1 = data.groups.search("1A");
+	const oct::ec::sche::Groups::Group* rowG1 = data.groups.search("1A");
 	if(rowG1) 
 	{
 		//rowG1->print(std::cout);
