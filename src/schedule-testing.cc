@@ -11,7 +11,7 @@ namespace oct::ec::sche
 	void Enviroment::testing()
 	{
 		
-		data.subjects.loadFile(directory + "/subjects.csv");
+		/*data.subjects.loadFile(directory + "/subjects.csv",&data);
 		data.teachers.loadFile(directory + "/teachers.csv");
 		data.rooms.loadFile(directory + "/rooms.csv");
 		
@@ -30,7 +30,7 @@ namespace oct::ec::sche
 			throw core::Exception("Esquema de semana desconocido",__FILE__,__LINE__);
 		}
 		pile.at(0).room.resize(1);//un salon
-		pile.at(0).room.at(0).resize(1);//turno matutino
+		pile.at(0).room.at(0).resize(1);//turno matutino*/
 		//horarion de maestro 1	
 		int i = 0;
 		/*for(const Teachers::Row& row : data.teachers.get_list())
@@ -61,7 +61,7 @@ namespace oct::ec::sche
 		//data.teachers.print(std::cout);
 				
 		//clase
-		pile.at(0).subject = 5;
+		//pile.at(0).subject = 5;
 		//
 		//horarion de salon
 		//strptime("8:00", "%H:%M",&begin);

@@ -9,7 +9,7 @@ static oct::ec::sche::Data data;
 
 int init(void)
 {
-	
+	data.config.set_schema(oct::ec::sche::Configuration::Schema::WITH_SUBJECTS_TIMES);
 	data.load("../../tests");
 
 	return 0;

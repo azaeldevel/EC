@@ -51,23 +51,55 @@ namespace oct::ec::sche
 	public:
 		enum SchemaWeek
 		{
-			MF,//Mondy - Fraday
-			MS,//Monday - Sturday
+			MF,//Monday - Fraday
+			MS,//Monday - Saturday
 		};
+		enum Schema
+		{
+			UNKNOW,
+			NORMAL,
+			WITH_SUBJECTS_TIMES,
+		};
+		enum FormatDataTime
+		{
+			NONE,
+			HOUR,
+			DAY_HOUR,
+		};
+
 	public:
 		Configuration();
 		Configuration(const std::string& name);
 		long to_hours(double )const;
 		unsigned int get_time_per_hour() const;
 		SchemaWeek get_schema_week()const;
+		Schema get_schema()const;
+		void set_schema(Schema);
+		const std::string& get_format_string_datatime()const;
 
 	private:
 		SchemaWeek schema_week;
 		unsigned int time_per_hour;//en minutes
+		Schema schema;
+		FormatDataTime format;
+		static std::string formats_dt_hour;
+		static std::string formats_dt_day_hour;
 	};
 		
-	
-	class Teacher : public oct::core::Person
+	class Target
+	{
+	public:
+		Target();
+		Target(const Configuration*);
+
+		const Configuration* operator =(const Configuration*);
+
+	private:
+		const Configuration* config;
+	};
+
+
+	class Teacher : public oct::core::Person, public Target
 	{
 	public:
 		Teacher(const std::string& name,const std::string& ap,const std::string& am);
@@ -85,7 +117,7 @@ namespace oct::ec::sche
 		std::list<Time> times;//horario de disponibilidad
 	};
 		
-	class Subject
+	class Subject : public Target
 	{
 	public:
 		Subject(const std::string& name);
@@ -107,7 +139,7 @@ namespace oct::ec::sche
 		std::list<Time> times;
 	};
 	
-	class Room
+	class Room : public Target
 	{
 	public:
 		Room(const std::string& name);
@@ -128,8 +160,20 @@ namespace oct::ec::sche
 	};
 
 	
+	class Targets
+	{
+
+	public:
+		Targets();
+		Targets(const Data*);
+		
+		const Data* operator = (const Data*);
+
+	protected:
+		const Data* dataObject;
+	};
 	
-	class Teachers
+	class Teachers : public Targets
 	{		
 	public:
 		struct Row : public std::vector<Time>
@@ -170,9 +214,9 @@ namespace oct::ec::sche
 		};
 		
 	public: 
-		Subjects(const std::string& fn);
+		Subjects(const std::string& fn, const Data* );
 		Subjects();
-		void loadFile(const std::string& fn);
+		void loadFile(const std::string& fn, const Data* );
 		void print(std::ostream&)const;
 		const Subject* search(const std::string&) const;
 		const std::list<Subject>& get_list() const;
@@ -280,12 +324,12 @@ namespace oct::ec::sche
 		std::vector<DaysTimes> times;
 	};
 
-	struct Target
+	/*struct Target
 	{
 		std::vector<TeacherDust> teachers;
 		unsigned int subject;
 		std::vector<DaysTimes> room;
-	};
+	};*/
 	
 	typedef std::vector<Target> Pile;
 
