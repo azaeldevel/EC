@@ -92,16 +92,19 @@ namespace oct::ec::sche
 		Subject();
 		void set(const std::string& name,unsigned int time );
 
+		std::list<Time>& get_times();
+		const std::list<Time>& get_times()const;
+
 		const std::string& get_name()const;
 		unsigned int get_time()const;
 		void print(std::ostream&)const;
 
 	public:		
-		std::vector<Time> times;
 
 	private:
 		std::string name;
 		unsigned int time;//tiempo que se devfe impartir de clase
+		std::list<Time> times;
 	};
 	
 	class Room
@@ -110,15 +113,18 @@ namespace oct::ec::sche
 		Room(const std::string& name);
 		Room();
 
+		std::list<Time>& get_times();
+		const std::list<Time>& get_times()const;
+
 		const std::string& get_name()const;
 		Room& operator =(const std::string&);
 		void print(std::ostream&) const;
 		
 	public:		
-		std::vector<Time> times;
 
 	private:
 		std::string name;
+		std::list<Time> times;
 	};
 
 	

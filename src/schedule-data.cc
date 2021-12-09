@@ -166,6 +166,15 @@ namespace oct::ec::sche
 	{
 		
 	}
+	
+	std::list<Time>& Room::get_times()
+	{
+		return times;
+	}
+	const std::list<Time>& Room::get_times()const
+	{
+		return times;
+	}
 	Room& Room::operator =(const std::string& n)
 	{
 		name = n;
@@ -179,12 +188,12 @@ namespace oct::ec::sche
 	void Room::print(std::ostream& out)const
 	{
 		out << get_name() << ",";
-		for(unsigned int i = 0; i < times.size(); i++)
+		for(const Time& t : times)
 		{
-			out << std::put_time(&times.at(i).begin, "%H:%M");
+			out << std::put_time(&t.begin, "%H:%M");
 			out << "-";
-			out << std::put_time(&times.at(i).end, "%H:%M");
-			if(i < times.size() - 1) out << ",";
+			out << std::put_time(&t.end, "%H:%M");
+			out << ",";
 		}
 	}
 	
@@ -212,6 +221,14 @@ namespace oct::ec::sche
 	{
 		return time;
 	}	
+	std::list<Time>& Subject::get_times()
+	{
+		return times;
+	}
+	const std::list<Time>& Subject::get_times()const
+	{
+		return times;
+	}
 	void Subject::print(std::ostream& out) const
 	{
 		out << get_name() << ",";
@@ -580,7 +597,7 @@ namespace oct::ec::sche
 					std::cout << std::put_time(&time.end, "%H:%M");
 					std::cout << ",";
 					*/
-					room.times.push_back(time);
+					room.get_times().push_back(time);
 				}
 				rooms.push_back(room);	
 				//std::cout << "\n";
