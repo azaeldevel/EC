@@ -74,11 +74,16 @@ namespace oct::ec::sche
 		Teacher(const std::string& name);
 		Teacher();
 				
+		void print(std::ostream&)const; 
+		
+	public:		
+		std::vector<Time> times;
+
 	private:
 		std::string name;
 	};
 		
-	class Subject 
+	class Subject
 	{
 	public:
 		Subject(const std::string& name);
@@ -87,13 +92,17 @@ namespace oct::ec::sche
 
 		const std::string& get_name()const;
 		unsigned int get_time()const;
-		
+		void print(std::ostream&)const;
+
+	public:		
+		std::vector<Time> times;
+
 	private:
 		std::string name;
 		unsigned int time;//tiempo que se devfe impartir de clase
 	};
 	
-	class Room 
+	class Room
 	{
 	public:
 		Room(const std::string& name);
@@ -101,7 +110,11 @@ namespace oct::ec::sche
 
 		const std::string& get_name()const;
 		Room& operator =(const std::string&);
+		void print(std::ostream&) const;
 		
+	public:		
+		std::vector<Time> times;
+
 	private:
 		std::string name;
 	};
@@ -123,18 +136,18 @@ namespace oct::ec::sche
 	public:
 		Teachers();
 		Teachers(const std::string& fn);
-		const std::list<Row>& get_list() const;
+		const std::list<Teacher>& get_list() const;
 
 		void loadFile(const std::string& fn);
 		void print(std::ostream&);
-		const Row* search(const std::string&) const;
+		const Teacher* search(const std::string&) const;
 
 	private:
 		void indexing();
 
 	private:
-		std::list<Row> teachers;
-		std::map<std::string, Row*> teacher_by_name;
+		std::list<Teacher> teachers;
+		std::map<std::string, Teacher*> teacher_by_name;
 	};
 
 	class Subjects
@@ -153,14 +166,14 @@ namespace oct::ec::sche
 		Subjects();
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
-		const Row* search(const std::string&) const;
-		const std::list<Row>& get_list() const;
+		const Subject* search(const std::string&) const;
+		const std::list<Subject>& get_list() const;
 		
 	private:
 		void indexing();
 	private:
-		std::list<Row> subjects;
-		std::map<std::string, Row*> subject_by_name;
+		std::list<Subject> subjects;
+		std::map<std::string, Subject*> subject_by_name;
 	};
 
 	class Teachers_Subjects
@@ -207,19 +220,19 @@ namespace oct::ec::sche
 	public:
 		Rooms();
 		Rooms(const std::string& fn);
-		const std::list<Row>& get_list() const;
+		const std::list<Room>& get_list() const;
 
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
 
-		const Row* search(const std::string&)const;
+		const Room* search(const std::string&)const;
 		
 	private:
 		void indexing();
 
 	private:
-		std::list<Row> rooms;
-		std::multimap<std::string, Row*> rooms_by_name;
+		std::list<Room> rooms;
+		std::multimap<std::string, Room*> rooms_by_name;
 	};
 
 	class Groups

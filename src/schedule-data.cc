@@ -133,6 +133,17 @@ namespace oct::ec::sche
 	{
 		
 	}
+	void Teacher::print(std::ostream& out) const
+	{
+		out << get_name() << ",";
+		for(unsigned int i = 0; i < times.size(); i++)
+		{
+			out << std::put_time(&times.at(i).begin, "%H:%M");
+			out << "-";
+			out << std::put_time(&times.at(i).end, "%H:%M");
+			if(i < times.size() - 1) out << ",";
+		}
+	}
 
 
 
@@ -157,7 +168,19 @@ namespace oct::ec::sche
 	{
 		return name;
 	}
-
+	void Room::print(std::ostream& out)const
+	{
+		out << get_name() << ",";
+		for(unsigned int i = 0; i < times.size(); i++)
+		{
+			out << std::put_time(&times.at(i).begin, "%H:%M");
+			out << "-";
+			out << std::put_time(&times.at(i).end, "%H:%M");
+			if(i < times.size() - 1) out << ",";
+		}
+	}
+	
+	
 
 	
 	Subject::Subject(const std::string& n)
@@ -180,7 +203,18 @@ namespace oct::ec::sche
 	unsigned int Subject::get_time()const
 	{
 		return time;
+	}	
+	void Subject::print(std::ostream& out) const
+	{
+		out << get_name() << ",";
+		out << get_time();
 	}
+	
+	
+	
+	
+	
+	
 
 	
 	Teachers::Row::Row()
@@ -209,7 +243,7 @@ namespace oct::ec::sche
 	{
 
 	}
-	const std::list<Teachers::Row>& Teachers::get_list() const
+	const std::list<Teacher>& Teachers::get_list() const
 	{
 		return teachers;
 	}
@@ -223,9 +257,9 @@ namespace oct::ec::sche
 			{
 				std::stringstream str(line);
 				std::getline(str,data,',');
-				Teachers::Row row;
+				Teacher teacher;
 				//std::cout << data << ",";
-				row.teacher = data;
+				teacher = data;
 				ec::sche::Time time;
 				while(std::getline(str,data,','))
 				{
@@ -240,9 +274,9 @@ namespace oct::ec::sche
 					std::cout << std::put_time(&time.end, "%H:%M");
 					std::cout << ",";
 					*/
-					row.push_back(time);
+					teacher.times.push_back(time);
 				}
-				teachers.push_back(row);	
+				teachers.push_back(teacher);	
 				//std::cout << "\n";
 			}
 			indexing();
@@ -256,7 +290,7 @@ namespace oct::ec::sche
 	}
 	void Teachers::print(std::ostream& out)
 	{
-		for(Row& row : teachers)
+		for(Teacher& row : teachers)
 		{
 			row.print(out);
 			out << "\n";
@@ -265,14 +299,14 @@ namespace oct::ec::sche
 	void Teachers::indexing()
 	{
 		if(teacher_by_name.size() > 0) teacher_by_name.clear();
-		for(Row& row : teachers)
+		for(Teacher& t : teachers)
 		{
-			teacher_by_name.insert({row.teacher.get_name().c_str(),&row});
+			teacher_by_name.insert({t.get_name().c_str(),&t});
 		}
 	}
-	const Teachers::Row* Teachers::search(const std::string& str) const
+	const Teacher* Teachers::search(const std::string& str) const
 	{
-		std::map<std::string, Row*>::const_iterator it = teacher_by_name.find(str);
+		std::map<std::string, Teacher*>::const_iterator it = teacher_by_name.find(str);
 
 		if(it != teacher_by_name.end()) return it->second;
 		return NULL;		
@@ -312,7 +346,7 @@ namespace oct::ec::sche
 			while(std::getline(csv,line))
 			{
 				std::stringstream str(line);
-				Subjects::Row row;
+				Subject subject;
 				//std::cout << line;
 				//std::cout << data << ",";
 
@@ -323,8 +357,8 @@ namespace oct::ec::sche
 				std::getline(str,data,',');
 				std::string time = data;
 				//std::cout << "\n";
-				row.subject.set(name,std::stoi(time));
-				subjects.push_back(row);
+				subject.set(name,std::stoi(time));
+				subjects.push_back(subject);
 			}
 			indexing();
 		}
@@ -337,28 +371,28 @@ namespace oct::ec::sche
 	}
 	void Subjects::print(std::ostream& out)const
 	{
-		for(const Row& row : subjects)
+		for(const Subject& s : subjects)
 		{
-			row.print(out);
+			s.print(out);
 			out << "\n";
 		}
 	}		
 	void Subjects::indexing()
 	{
 		if(subject_by_name.size() > 0) subject_by_name.clear();
-		for(Row& row : subjects)
+		for(Subject& s : subjects)
 		{
-			subject_by_name.insert({row.subject.get_name().c_str(),&row});
+			subject_by_name.insert({s.get_name().c_str(),&s});
 		}
 	}
-	const Subjects::Row* Subjects::search(const std::string& str) const
+	const Subject* Subjects::search(const std::string& str) const
 	{
-		std::map<std::string, Row*>::const_iterator it = subject_by_name.find(str);
+		std::map<std::string, Subject*>::const_iterator it = subject_by_name.find(str);
 
 		if(it != subject_by_name.end()) return it->second;
 		return NULL;		
 	}
-	const std::list<Subjects::Row>& Subjects::get_list() const
+	const std::list<Subject>& Subjects::get_list() const
 	{
 		return subjects;
 	}
@@ -399,10 +433,10 @@ namespace oct::ec::sche
 				//std::cout << line;
 				std::getline(str,data,',');
 				Teachers_Subjects::Row row;
-				const Teachers::Row* rt = d->teachers.search(data);
+				const Teacher* rt = d->teachers.search(data);
 				if(rt)
 				{
-					row.teacher = &rt->teacher;
+					row.teacher = rt;
 				}
 				else 	
 				{
@@ -414,10 +448,10 @@ namespace oct::ec::sche
 
 				std::getline(str,data,',');
 				//std::cout << data << ",";				
-				const Subjects::Row* rs = d->subjects.search(data);
+				const Subject* rs = d->subjects.search(data);
 				if(rs)
 				{
-					row.subject = &rs->subject;
+					row.subject = rs;
 				}
 				else 	
 				{
@@ -504,7 +538,7 @@ namespace oct::ec::sche
 	{
 		
 	}	
-	const std::list<Rooms::Row>& Rooms::get_list() const
+	const std::list<Room>& Rooms::get_list() const
 	{
 		return rooms;
 	}
@@ -519,9 +553,9 @@ namespace oct::ec::sche
 			{
 				std::stringstream str(line);
 				std::getline(str,data,',');
-				Rooms::Row row;
+				Room room;
 				//std::cout << data << ",";
-				row.room = data;
+				room = data;
 				//std::getline(str,data,',');
 				//row.subject = data;
 				ec::sche::Time time;
@@ -538,9 +572,9 @@ namespace oct::ec::sche
 					std::cout << std::put_time(&time.end, "%H:%M");
 					std::cout << ",";
 					*/
-					row.push_back(time);
+					room.times.push_back(time);
 				}
-				rooms.push_back(row);	
+				rooms.push_back(room);	
 				//std::cout << "\n";
 			}
 			indexing();
@@ -554,15 +588,15 @@ namespace oct::ec::sche
 	}	
 	void Rooms::print(std::ostream& out)const
 	{
-		for(const Row& row : rooms)
+		for(const Room& r : rooms)
 		{
-			row.print(out);
+			r.print(out);
 			out << "\n";
 		}
 	}
-	const Rooms::Row* Rooms::search(const std::string& str) const
+	const Room* Rooms::search(const std::string& str) const
 	{
-		std::map<std::string, Row*>::const_iterator it = rooms_by_name.find(str);
+		std::map<std::string, Room*>::const_iterator it = rooms_by_name.find(str);
 
 		if(it != rooms_by_name.end()) return it->second;
 		return NULL;		
@@ -570,9 +604,9 @@ namespace oct::ec::sche
 	void Rooms::indexing()
 	{
 		if(rooms_by_name.size() > 0) rooms_by_name.clear();
-		for(Row& row : rooms)
+		for(Room& r : rooms)
 		{
-			rooms_by_name.insert({row.room.get_name(),&row});
+			rooms_by_name.insert({r.get_name(),&r});
 		}
 	}
 
@@ -612,10 +646,10 @@ namespace oct::ec::sche
 				std::getline(str,data,',');
 				Groups::Row row;
 				//std::cout << "room : " << data << " : ";
-				const Rooms::Row* newr = d->rooms.search(data);
+				const Room* newr = d->rooms.search(data);
 				if(newr) 
 				{
-					row.room = &newr->room;
+					row.room = newr;
 				}
 				else 	
 				{
@@ -627,10 +661,10 @@ namespace oct::ec::sche
 				while(std::getline(str,data,','))
 				{	
 					//std::cout << data << ",";
-					const Subjects::Row* news = d->subjects.search(data);	
+					const Subject* news = d->subjects.search(data);	
 					if(news) 
 					{
-						row.push_back(&news->subject);
+						row.push_back(news);
 					}
 					else 	
 					{

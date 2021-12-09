@@ -58,7 +58,7 @@ void testDeveloping()
 
 
 	
-	const oct::ec::sche::Teachers::Row* row = data.teachers.search("Leticia Mojica");
+	const oct::ec::sche::Teacher* row = data.teachers.search("Leticia Mojica");
 	if(row) 
 	{
 		//row->print(std::cout);
@@ -70,7 +70,7 @@ void testDeveloping()
 		CU_ASSERT(false);
 	}
 	//std::cout << "\n";
-	const oct::ec::sche::Subjects::Row* rowSuject = data.subjects.search("Fisica");
+	const oct::ec::sche::Subject* rowSuject = data.subjects.search("Fisica");
 	if(rowSuject) 
 	{
 		//rowSuject->print(std::cout);
@@ -103,7 +103,7 @@ void testDeveloping()
 	
 	//std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
-	const oct::ec::sche::Rooms::Row* rowR1 = data.rooms.search("1A");
+	const oct::ec::sche::Room* rowR1 = data.rooms.search("1A");
 	if(rowR1) 
 	{
 		//row->print(std::cout);

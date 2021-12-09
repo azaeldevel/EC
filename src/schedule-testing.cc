@@ -33,7 +33,7 @@ namespace oct::ec::sche
 		pile.at(0).room.at(0).resize(1);//turno matutino
 		//horarion de maestro 1	
 		int i = 0;
-		for(const Teachers::Row& row : data.teachers.get_list())
+		/*for(const Teachers::Row& row : data.teachers.get_list())
 		{
 			for(int j = 0; j < row.size(); j++)
 			{
@@ -41,7 +41,7 @@ namespace oct::ec::sche
 				pulverize_hours(row[j].begin,row[j].end,pile.at(0).teachers.at(i).times.at(j));
 			}
 			i++;
-		}
+		}*/
 		/*
 		for(const TeacherDust& dust : pile.at(0).teachers)
 		{
