@@ -39,12 +39,21 @@ namespace oct::ec::sche
 	
 	class Enviroment;
 	struct Data;
-
+	class Configuration;
+	
+	typedef std::vector<core::DataTime> Day;
 	struct Time
 	{
 		core::DataTime begin;
 		core::DataTime end;
+
+		void granulate(const Configuration*, Day& out);
+		void set_begin(const Configuration*,const std::string& str);
+		void set_end(const Configuration*,const std::string& str);
+		
 	};
+	
+	
 
 	class Configuration
 	{
@@ -93,6 +102,7 @@ namespace oct::ec::sche
 		Target(const Configuration*);
 
 		const Configuration* operator =(const Configuration*);
+		const Configuration* set(const Configuration*);
 
 	private:
 		const Configuration* config;
@@ -105,8 +115,8 @@ namespace oct::ec::sche
 		Teacher(const std::string& name,const std::string& ap,const std::string& am);
 		Teacher(const std::string& name);
 		Teacher();
-		std::list<Time>& get_times();
-		const std::list<Time>& get_times()const;
+		std::list<Day>& get_times();
+		const std::list<Day>& get_times()const;
 				
 		void print(std::ostream&)const; 
 		
@@ -114,7 +124,7 @@ namespace oct::ec::sche
 
 	private:
 		std::string name;
-		std::list<Time> times;//horario de disponibilidad
+		std::list<Day> times;//horario de disponibilidad
 	};
 		
 	class Subject : public Target
@@ -168,6 +178,7 @@ namespace oct::ec::sche
 		Targets(const Data*);
 		
 		const Data* operator = (const Data*);
+		const Data* set(const Data*);
 
 	protected:
 		const Data* dataObject;

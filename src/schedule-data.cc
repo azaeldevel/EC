@@ -96,8 +96,40 @@ namespace oct::core
 
 namespace oct::ec::sche
 {
-	std::string Configuration::formats_dt_hour = "%H:%M";
-	
+
+	void Time::granulate(const Configuration* config, Day& out)
+	{
+		int hours = config->to_hours(begin.diff(end));	
+		
+		//std::cout << "pulverizando " << hours << "\n";
+		if(hours < 1) return;
+
+		out.resize(hours);
+		tm tm1 = begin;
+		time_t t = mktime(&tm1);
+		out[0] = &t;
+		//std::cout << "t = " << t << "\n";
+		for(int i = 1; i < hours; i++)
+		{
+			t += 3600; // 60 segundos por 60 minutos = una hora
+			//std::cout << "t = " << t << "\n";
+			out[i] = &t;
+		}
+	}
+	void Time::set_begin(const Configuration* config,const std::string& str)
+	{
+		strptime(str.c_str(), config->get_format_string_datatime().c_str(),&begin);
+	}
+	void Time::set_end(const Configuration* config,const std::string& str)
+	{
+		strptime(str.c_str(), config->get_format_string_datatime().c_str(),&end);
+	}
+
+
+
+
+
+	std::string Configuration::formats_dt_hour = "%H:%M";	
 	std::string Configuration::formats_dt_day_hour = "%w %H:%M";
 	
 	Configuration::Configuration()
@@ -159,6 +191,11 @@ namespace oct::ec::sche
 		config = c;
 		return c;
 	}
+	const Configuration* Target::set(const Configuration* c)
+	{
+		config = c;
+		return c;
+	}
 	
 	
 	
@@ -178,22 +215,25 @@ namespace oct::ec::sche
 	{
 		
 	}
-	std::list<Time>& Teacher::get_times()
+	std::list<Day>& Teacher::get_times()
 	{
 		return times;
 	}
-	const std::list<Time>& Teacher::get_times()const
+	const std::list<Day>& Teacher::get_times()const
 	{
 		return times;
 	}
 	void Teacher::print(std::ostream& out) const
 	{
 		out << get_name() << ",";
-		for(const Time& t : times)
+		for(const Day& day : times)
 		{
-			out << std::put_time(&t.begin, "%H:%M");
-			out << "-";
-			out << std::put_time(&t.end, "%H:%M");
+			for(const core::DataTime& dt: day)
+			{
+				out << std::put_time(&dt, "%w %H:%M");
+				out << " ";
+				//out << std::put_time(&t.end, "%H:%M");
+			}
 			out << ",";
 		}
 	}
@@ -294,6 +334,11 @@ namespace oct::ec::sche
 	{
 		dataObject = d;
 		return d;
+	}		
+	const Data* Targets::set(const Data* d)
+	{
+		dataObject = d;
+		return d;
 	}
 	
 	
@@ -302,25 +347,6 @@ namespace oct::ec::sche
 	
 
 	
-	/*
-	Teachers::Row::Row()
-	{
-	}
-	Teachers::Row::Row(int z) : std::vector<ec::sche::Time>(z)
-	{
-	}
-	void Teachers::Row::print(std::ostream& out) const
-	{
-		out << teacher.get_name() << ",";
-		for(unsigned int i = 0; i < size(); i++)
-		{
-			out << std::put_time(&at(i).begin, "%H:%M");
-			out << "-";
-			out << std::put_time(&at(i).end, "%H:%M");
-			if(i < size() - 1) out << ",";
-		}
-	}
-	*/
 	
 	Teachers::Teachers(const std::string& fn)
 	{
@@ -345,28 +371,22 @@ namespace oct::ec::sche
 				std::stringstream str(line);
 				std::getline(str,data,',');
 				Teacher teacher;
+				((Target&)teacher) = &dataObject->config;
 				//std::cout << data << ",";
 				teacher = data;
 				ec::sche::Time time;
+				Day day;
 				int timeDay = 0;
 				while(std::getline(str,data,','))
 				{
 					std::stringstream ssTime(data);
 					std::getline(ssTime,strH,'-');
-					strptime(strH.c_str(), dataObject->config.get_format_string_datatime().c_str(),&time.begin);
-					//if(dataObject->config.) time.begin.tm_wday = timeDay;
+					time.set_begin(&dataObject->config,strH);
 					std::getline(ssTime,strH,'-');
-					strptime(strH.c_str(), dataObject->config.get_format_string_datatime().c_str(),&time.end);
-					//time.begin.tm_wday = timeDay;
-					/*
-					std::cout << std::put_time(&time.begin, "%H:%M");
-					std::cout << "-";
-					std::cout << std::put_time(&time.end, "%H:%M");
-					std::cout << ",";
-					*/
-					teacher.get_times().push_back(time);
+					time.set_end(&dataObject->config,strH);
+					time.granulate(&dataObject->config,day);
+					teacher.get_times().push_back(day);
 				}
-				((Target&)teacher) = &dataObject->config;
 				teachers.push_back(teacher);	
 				//std::cout << "\n";
 			}

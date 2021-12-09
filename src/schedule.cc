@@ -15,31 +15,31 @@ namespace oct::ec::sche
 	
 	void Studen::init_rand(const sche::Groups::Group*)
 	{
-	
+		
 	}
 	
 
 
-Single::Single(ID id,Enviroment& env, const std::vector<Studen>&) : ec::Single(id,env)
-{
+	Single::Single(ID id,Enviroment& env, const std::vector<Studen>&) : ec::Single(id,env)
+	{
 
-}
-void Single::eval()
-{
+	}
+	void Single::eval()
+	{
 
-}
-void Single::save(std::ofstream& fn)
-{
+	}
+	void Single::save(std::ofstream& fn)
+	{
 
-}
-Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
-{
-	
-}
-void Single::print(std::ostream&) const
-{
+	}
+	Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
+	{
+		
+	}
+	void Single::print(std::ostream&) const
+	{
 
-}
+	}
 	
 	
 	

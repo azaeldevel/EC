@@ -127,6 +127,52 @@ void testDeveloping()
 		//std::cout << "No se encontro el maestro indicado\n";
 		CU_ASSERT(false);		
 	}
+	
+	
+	oct::ec::sche::Time time1;
+	time1.set_begin(&data.config, "8:00");
+	if(time1.begin.tm_hour == 8) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time1.begin.tm_hour = " << time1.begin.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	time1.set_end(&data.config, "20:00");
+	if(time1.end.tm_hour == 20) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time1.end.tm_hour = " << time1.end.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	oct::ec::sche::Day day;
+	time1.granulate(&data.config,day);
+	if(day.size() == 12) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "day.size() = " << day.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	for(int i = 0; i < day.size(); i++)
+	{
+		if(day[i].tm_hour == i + 8)
+		{
+			CU_ASSERT(true);
+		}
+		else
+		{
+			std::cout << "day[i].tm_hour = " << i + 8 << "\n";
+			CU_ASSERT(false);
+		}
+	}
 }
 int main(int argc, char *argv[])
 {
