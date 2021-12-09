@@ -133,15 +133,23 @@ namespace oct::ec::sche
 	{
 		
 	}
+	std::list<Time>& Teacher::get_times()
+	{
+		return times;
+	}
+	const std::list<Time>& Teacher::get_times()const
+	{
+		return times;
+	}
 	void Teacher::print(std::ostream& out) const
 	{
 		out << get_name() << ",";
-		for(unsigned int i = 0; i < times.size(); i++)
+		for(const Time& t : times)
 		{
-			out << std::put_time(&times.at(i).begin, "%H:%M");
+			out << std::put_time(&t.begin, "%H:%M");
 			out << "-";
-			out << std::put_time(&times.at(i).end, "%H:%M");
-			if(i < times.size() - 1) out << ",";
+			out << std::put_time(&t.end, "%H:%M");
+			out << ",";
 		}
 	}
 
@@ -274,7 +282,7 @@ namespace oct::ec::sche
 					std::cout << std::put_time(&time.end, "%H:%M");
 					std::cout << ",";
 					*/
-					teacher.times.push_back(time);
+					teacher.get_times().push_back(time);
 				}
 				teachers.push_back(teacher);	
 				//std::cout << "\n";

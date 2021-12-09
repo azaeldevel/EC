@@ -73,14 +73,16 @@ namespace oct::ec::sche
 		Teacher(const std::string& name,const std::string& ap,const std::string& am);
 		Teacher(const std::string& name);
 		Teacher();
+		std::list<Time>& get_times();
+		const std::list<Time>& get_times()const;
 				
 		void print(std::ostream&)const; 
 		
 	public:		
-		std::vector<Time> times;
 
 	private:
 		std::string name;
+		std::list<Time> times;//horario de disponibilidad
 	};
 		
 	class Subject
