@@ -23,10 +23,18 @@
 #include <list>
 #include <string>
 #include <vector>
-#include <octetos/core/Error.hh>
 #include <iostream>
 #include <fstream>
-#include <octetos/core/shell.hh>
+
+#if defined(__GNUG__) && defined(__linux__)
+    #include <octetos/core/Error.hh>
+    #include <octetos/core/shell.hh>
+#elif defined(__GNUG__) && (defined(_WIN32) || defined(_WIN64))
+    #include <Error.hh>
+    #include <shell.hh>
+#else
+    #error "Pltaforma desconocida"
+#endif
 
 
 namespace oct::ec
@@ -58,9 +66,9 @@ class Chromosome
 public:
 	Chromosome(const std::string name);
 	virtual ~Chromosome();
-	
+
 	const Chromosome& operator = (const Chromosome&);
-	
+
 protected:
 	//unsigned int mutated;
 private:
@@ -76,7 +84,7 @@ public:
 	{
 		NOT_TYPE,
 		UNARY,
-		BINARY,	
+		BINARY,
 	};
 	enum AlgCode
 	{
@@ -96,8 +104,8 @@ public:
 	static geneUS randAlgt();
 	//static geneUS randChild();
 	static geneUS randType();
-	
-	
+
+
 	virtual void combine(const Chromosome& P1,const Chromosome& P2);
 	virtual void copy(const Chromosome& P);
 	virtual void mutate(float p);
@@ -122,16 +130,16 @@ public:
 	/**
 	*\brief Constructor que recive el ID del Individuo y el Ambiente
 	*/
-	Single(ID id,Enviroment&);	
+	Single(ID id,Enviroment&);
 	Single(ID id,Enviroment&,const Junction& junction);
 	virtual ~Single();
-	
+
 	ID getID()const;
 	//const std::vector<Chromosome*>& getChromosome()const;
 	unsigned short getAge() const;
 	double getFitness() const;
 	const Junction& getJunction()const;
-	Enviroment& getEnviroment()const;	
+	Enviroment& getEnviroment()const;
 
 	void add(Chromosome&);
 	void deltaAge();
@@ -139,7 +147,7 @@ public:
 	float efficiency()const;
 	bool mutation()const;
 	void init();
-	
+
 	/**
 	*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
 	*/
@@ -208,7 +216,7 @@ public:
 	//getters
 	Population getMaxPopulation()const;
 	Population getInitPopulation()const;
-	Population getMaxProgenitor()const;	
+	Population getMaxProgenitor()const;
 	double getSigma() const;
 	//double getSigmaReduction() const;
 	double getMedia() const;
@@ -232,7 +240,7 @@ public:
 	Single* getRandomSingleTop() const;
 	Single* getRandomSingle() const;
 
-	
+
 	void compress(const std::string& in, const std::string& out);
 	void enableEcho(std::ostream* f, unsigned short level);
 	//void enableLogFile(bool log);
@@ -244,7 +252,7 @@ public:
 	void stopperMinSolutions(Population);
 	void stopperMaxSerie(Iteration max);
 	virtual void commands(int argc, const char* argv[]);
-	
+
 	/**
 	*\brief Inicia la ejecution del algoritmo(funcion de entrada)
 	*/
@@ -261,7 +269,7 @@ public:
 	*\brief Inicia el proceso de apareo
 	*/
 	virtual void juncting();
-	
+
 	/**
 	*\brief Inicia el proceso de guardar
 	*/
@@ -288,12 +296,12 @@ public:
 	/**
 	*\brief Inicia el proceso de serie con argumentos de linea de comandos(funcion de entrada)
 	*/
-	virtual bool series(int argc, const char* argv[]);	
+	virtual bool series(int argc, const char* argv[]);
 	/**
 	*\brief Libera la memoria ocupada por la actual poblacion y vacia la lista
 	*/
 	virtual void free();
-	
+
 protected:
 	std::string logDirectory;
 	std::string logSubDirectory;
@@ -302,18 +310,18 @@ protected:
 
 	ID idCount;
 	Population maxProgenitor;
-	
+
 	unsigned short echolevel;
 	bool logFile;
 	double sigma;
 	double media;
-	
+
 	Iteration actualIteration;
-	
+
 	Iteration actualSerie;
 
 	bool newIteration;
-	
+
 	double epsilon;
 	/**
 	*\brief numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
@@ -361,16 +369,16 @@ protected:
 
 	//
 	oct::core::Shell shell;
-	
+
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion
 	*/
 	ec::Single* getProxSolution();
-	
+
 	//std::vector<Terminations> terminations;
 
-	//bool inJam;	
+	//bool inJam;
 
 
 	Iteration maxIteration;
@@ -381,7 +389,7 @@ private:
 	bool stopMaxIterations;
 
 	//bool stopNotDiference;
-	
+
 	//double notDiferenceCota;
 
 
@@ -398,7 +406,7 @@ private:
 	bool stopMaxSerie;
 
 	//std::string serieName;
-	
+
 	unsigned short maxChilds;
 
 };

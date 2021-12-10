@@ -1,6 +1,5 @@
 
 #include <random>
-#include <octetos/core/Error.hh>
 #include <iostream>
 #include <algorithm>
 #include <ctime>
@@ -32,7 +31,7 @@ double randNumber()
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> distr(0.0, 1.0);
-	
+
 	return distr(gen);
 }
 double randNumber(double max)
@@ -40,7 +39,7 @@ double randNumber(double max)
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> distr(0.0, max);
-	
+
 	return distr(gen);
 }
 double randNumber(double min,double max)
@@ -48,7 +47,7 @@ double randNumber(double min,double max)
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> distr(min, max);
-	
+
 	return distr(gen);
 }
 
@@ -59,7 +58,7 @@ double randNumber(double min,double max)
 
 
 
-	
+
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
@@ -240,20 +239,20 @@ Enviroment& Single::getEnviroment()const
 /*Population Single::juncting(std::list<Single*>& chils,unsigned short loglevel,void*)
 {
 	if(getJunction().get_type() != ec::Junction::TypeJuntion::UNARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
-	
+
 	return 0;
 }*/
 Population Single::juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel,void*)
 {
 	if(getJunction().get_type() != ec::Junction::TypeJuntion::BINARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
-	
+
 	return 0;
 }
 bool Single::mutation()const
 {
 	double numrand = randNumber(0.0,1.0);
 	if(numrand <= env->getProbabilityMutationEvent()) return true;
-	else return false;	
+	else return false;
 }
 void Single::deltaAge()
 {
@@ -305,7 +304,7 @@ void Enviroment::init()
 }
 Enviroment::Enviroment()
 {
-	init();	
+	init();
 }
 Enviroment::~Enviroment()
 {
@@ -314,11 +313,11 @@ Enviroment::~Enviroment()
 
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
 {
-	init();	
+	init();
 }
 Enviroment::Enviroment(Iteration m,Iteration ms) : maxIteration(m),maxSerie(ms)
 {
-	init();	
+	init();
 }
 Enviroment::Enviroment(const std::string& logDir,bool subtree)
 {
@@ -329,7 +328,7 @@ Enviroment::Enviroment(const std::string& logDir,bool subtree)
 }
 Enviroment::Enviroment(const std::string& logDir,Iteration m) : maxIteration(m)
 {
-	if(not shell.exists(logDir)) 
+	if(not shell.exists(logDir))
 	{
 		std::string msg = "El directorio '";
 		msg += logDir + "' no existe.";
@@ -340,16 +339,16 @@ Enviroment::Enviroment(const std::string& logDir,Iteration m) : maxIteration(m)
 	//if(not shell.exists(logDirectory)) shell.mkdir(logDirectory,true);
 }
 Enviroment::Enviroment(const std::string& logDir,Iteration mi,Iteration ms) : maxIteration(mi),maxSerie(ms)
-{	
-	if(not shell.exists(logDir)) 
+{
+	if(not shell.exists(logDir))
 	{
 		std::string msg = "El directorio '";
 		msg += logDir + "' no existe.";
 		throw oct::core::Exception(msg,__FILE__,__LINE__);
 	}
-	init();	
+	init();
 	logDirectory = logDir + "/serie-" + std::to_string(oct::core::getDayID());//para iteracion
-	if(not shell.exists(logDirectory)) 
+	if(not shell.exists(logDirectory))
 	{
 		shell.mkdir(logDirectory,true);
 	}
@@ -363,7 +362,7 @@ Enviroment::Enviroment(const std::string& logDir,Iteration mi,Iteration ms) : ma
 Enviroment::Enviroment(int argc, const char* argv[])
 {
 	init();
-	commands(argc,argv);	
+	commands(argc,argv);
 }
 
 Population Enviroment::getMaxPopulation()const
@@ -410,7 +409,7 @@ unsigned long Enviroment::getSession()const
 	v += now->tm_hour * 10000;
 	v += now->tm_min * 100;
 	v += now->tm_sec;
-	
+
     return v;
 }
 unsigned long Enviroment::getDayID()
@@ -421,7 +420,7 @@ unsigned long Enviroment::getDayID()
 	unsigned long v = (now->tm_year + 1900) * 10000;
 	v += (now->tm_mon + 1 ) * 100;
 	v += now->tm_mday;
-	
+
     return v;
 }
 unsigned long Enviroment::getTimeID()
@@ -432,7 +431,7 @@ unsigned long Enviroment::getTimeID()
 	unsigned long v = now->tm_hour * 10000;
 	v += now->tm_min * 100;
 	v += now->tm_sec;
-	
+
     return v;
 }
 */
@@ -477,8 +476,8 @@ bool Enviroment::run()
 	if(initPopulation == 0) throw oct::core::Exception("La poblacion inicial deve ser mayor que 0",__FILE__,__LINE__);
 	if(maxProgenitor > maxPopulation) throw oct::core::Exception("La catidad de progenitores deve ser menor que la popblacion",__FILE__,__LINE__);
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
-	
-	actualIteration = 1;	
+
+	actualIteration = 1;
 	if(echoSteps) std::cout << "\tStep 1\n";
 	initial();
 	if(echoSteps) std::cout << "\tStep 2\n";
@@ -490,7 +489,7 @@ bool Enviroment::run()
 	{
 		//session = getSession();
 		logSubDirectory = logDirectory +"/" + std::to_string(oct::core::getTimeID());
-		//std::cout << "\t\t" << logSubDirectory << "\n";		
+		//std::cout << "\t\t" << logSubDirectory << "\n";
 		if(not shell.exists(logSubDirectory)) shell.mkdir(logSubDirectory);
 		std::string strhistory = logSubDirectory + "/historial.csv";
 		history.open(strhistory);
@@ -505,15 +504,15 @@ bool Enviroment::run()
 	while(true)
 	{
 		if(echoSteps) std::cout << "\tStep C1\n";
-		if(stopMaxIterations) 
+		if(stopMaxIterations)
 		{
-			if(actualIteration > maxIteration) 
+			if(actualIteration > maxIteration)
 			{
 				history.close();
 				return false;
 			}
 		}
-		if(echolevel > 0 and fout != NULL) 
+		if(echolevel > 0 and fout != NULL)
 		{
 			if(maxSerie > 0 and stopMaxSerie) (*fout) << ">>> Serie : " << actualSerie << "/" << maxSerie << " - ";
 			else ">>> ";
@@ -521,10 +520,10 @@ bool Enviroment::run()
 			else (*fout) << "Iteracion : " << actualIteration << "\n";
 		}
 		if(echoSteps) std::cout << "\tStep C2\n";
-		
+
 		media = 0.0;
 		sigma = 0.0;
-		
+
 		if(echoSteps) std::cout << "\tStep C3\n";
 		eval();
 		if(echoSteps) std::cout << "\tStep C4\n";
@@ -534,7 +533,7 @@ bool Enviroment::run()
 		}
 		sort(comparer);
 		if(echoSteps) std::cout << "\tStep C5\n";
-		
+
 		if(logFile)
 		{
 			std::string strfn = logSubDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
@@ -549,7 +548,7 @@ bool Enviroment::run()
 			fn.flush();
 			fn.close();
 		}
-		
+
 		ec::ID countBefore = size();
 		selection();
 		if(echoSteps) std::cout << "\tStep C6\n";
@@ -570,18 +569,18 @@ bool Enviroment::run()
 		if(echoSteps) std::cout << "\tStep C7\n";
 		unsigned short removes = countBefore - size();
 		//deletes == 0 ? counUndelete++ : counUndelete = 0;
-		if(echolevel > 1 and fout != NULL) 
+		if(echolevel > 1 and fout != NULL)
 		{
 			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
-			(*fout) << "\tEliminados : " << removes << "\n";	
+			(*fout) << "\tEliminados : " << removes << "\n";
 		}
 		if(echoSteps) std::cout << "\tStep C8\n";
-		
+
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
 			media += s->getFitness();
-			s->deltaAge();			
+			s->deltaAge();
 		}
 		if(echoSteps) std::cout << "\tStep C9\n";
 		media /= size();
@@ -593,8 +592,8 @@ bool Enviroment::run()
 		sigma /= size();
 		//std::cout << "\tStep C10\n";
 		ec::Single* leader = *begin();
-		if(echolevel > 1 and fout != NULL) 
-		{			
+		if(echolevel > 1 and fout != NULL)
+		{
 			std::cout << "\tLider : " << leader->getFitness() << "\n";
 			(*fout) << "\tmedia : " << media << "\n";
 			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
@@ -616,7 +615,7 @@ bool Enviroment::run()
 			for(Single* s : *this)
 			{
 				if(1.0 - s->getFitness() < epsilon) solutions.push_back(s);
-				
+
 				if(solutions.size() >= minSolutions)
 				{
 					if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
@@ -624,13 +623,13 @@ bool Enviroment::run()
 					history.close();
 					return true;
 				}
-			}			
+			}
 		}
 		if(echoSteps) std::cout << "\tStep C12\n";
 
 		if(logFile)
 		{
-			if(history.is_open()) 
+			if(history.is_open())
 			{
 				history  << actualIteration;
 				history  << ",";
@@ -647,12 +646,12 @@ bool Enviroment::run()
 				history .flush();
 			}
 		}
-		if(echoSteps) std::cout << "\tStep C13\n";				
-		juncting();	
-		if(echoSteps) std::cout << "\tStep C14\n";		
+		if(echoSteps) std::cout << "\tStep C13\n";
+		juncting();
+		if(echoSteps) std::cout << "\tStep C14\n";
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
-			push_front(s);		
+			push_front(s);
 		}
 		if(echoSteps) std::cout << "\tStep C15\n";
 		if(logFile)
@@ -662,18 +661,18 @@ bool Enviroment::run()
 			if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 			{
-				s->save(fnChilds);	
-				fnChilds << "\n";		
+				s->save(fnChilds);
+				fnChilds << "\n";
 			}
 			fnChilds.flush();
 			fnChilds.close();
 		}
-		if(echolevel > 1 and fout != NULL) 
+		if(echolevel > 1 and fout != NULL)
 		{
 			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
 		}
-		newschils.clear();		
-		
+		newschils.clear();
+
 		actualIteration++;
 		if(echoSteps) std::cout << "\tStep C16\n";
 	}
@@ -690,23 +689,23 @@ bool Enviroment::series()
 	for(actualSerie = 1 ; actualSerie <= maxSerie ; actualSerie++)
 	{
 		free();
-		
+
 		if(run()) return true;
 	}
-	
+
 	return false;
 }
 bool Enviroment::series(int argc, const char* argv[])
 {
 	commands(argc,argv);
-	
+
 	for(actualSerie = 1 ; actualSerie <= maxSerie ; actualSerie++)
 	{
 		free();
-		
+
 		if(run()) return true;
 	}
-	
+
 	return false;
 }
 void Enviroment::stopperMaxIterations(Iteration max)
@@ -739,7 +738,7 @@ ec::Single* Enviroment::getProxSolution()
 		s = *it;
 		if(1.0 - s->getFitness() > epsilon) return s;
 	}
-	
+
 	return *begin();
 }
 
@@ -747,7 +746,7 @@ Single* Enviroment::getRandomSingleTop() const
 {
 	float maxp = std::distance(begin(),end());
 	const_iterator it = begin();
-	
+
 	double rndnum = randNumber(0.0,1.0);
 	if(rndnum < 0.30)
 	{
@@ -757,7 +756,7 @@ Single* Enviroment::getRandomSingleTop() const
 	{
 		return *begin()++;
 	}
-	
+
 	return NULL;
 }
 Single* Enviroment::getRandomSingle() const
@@ -768,7 +767,7 @@ Single* Enviroment::getRandomSingle() const
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::lognormal_distribution<double> d(0.0,1.0);
-	
+
 	double unit = 1.0/double(size());
 	double randN = d(gen);
 	unsigned int index = randN/unit;
@@ -777,7 +776,7 @@ Single* Enviroment::getRandomSingle() const
 	//std::cout << "index : " << index << "\n";
 	std::advance(it,index);
 	if(it != end()) return *it;
-	
+
 	return NULL;
 }
 void Enviroment::setEchoSteps(bool e)
@@ -793,7 +792,7 @@ void Enviroment::juncting()
 	newschils.clear();
 	do
 	{
-		if(echoSteps) std::cout << "Enviroment::juncting Step 2.1\n";		
+		if(echoSteps) std::cout << "Enviroment::juncting Step 2.1\n";
 		ec::Single* single1 = getRandomSingle();
 		if(single1 == NULL) continue;
 		/*while(single1->getJunction().get_type() == Junction::TypeJuntion::UNARY)
@@ -812,7 +811,7 @@ void Enviroment::juncting()
 		if(echoSteps) std::cout << "Enviroment::juncting Step 2.2\n";
 		countNew += single1->juncting(newschils,single2,echolevel,NULL);
 		if(echoSteps) std::cout << "Enviroment::juncting Step 2.3\n";
-		if(echoSteps) std::cout << "Nuevos Individuos " <<  newschils.size() << "\n";		
+		if(echoSteps) std::cout << "Nuevos Individuos " <<  newschils.size() << "\n";
 	}
 	while(newschils.size() + size() <= maxPopulation);
 	if(echoSteps) std::cout << "Enviroment::juncting Step 3\n";
@@ -832,7 +831,7 @@ void Enviroment::save()
 	std::ofstream fn(strfn);
 	for(ec::Single* s : *this)
 	{
-		s->save(fn);	
+		s->save(fn);
 		fn << "\n";
 	}
 	fn.flush();
@@ -886,7 +885,7 @@ void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file
 	std::ofstream fn(strfn);
 	for(ec::Single* s : lst)
 	{
-		s->save(fn);	
+		s->save(fn);
 		fn << "\n";
 	}
 	fn.flush();
@@ -900,8 +899,8 @@ void Enviroment::commands(int argc, const char* argv[])
 	{
 		if(strcmp("--directory-logs",argv[i]) == 0)
 		{
-			logDirectory = argv[++i];		
-			if(not shell.exists(logDirectory)) 
+			logDirectory = argv[++i];
+			if(not shell.exists(logDirectory))
 			{
 				std::string msg = "El directorio '";
 				msg += logDirectory + "' no existe.";
@@ -915,16 +914,16 @@ void Enviroment::commands(int argc, const char* argv[])
 		if(strcmp("--serie",argv[i]) == 0)
 		{
 			if(logDirectory.empty()) throw oct::core::Exception("Asigne primero el directorio de ejecucion",__FILE__,__LINE__);
-			
+
 			//serieName = argv[++i];
 			std::string strDay = std::to_string(oct::core::getDayID());
-			std::string logSub = logDirectory + "/" + strDay;		
-			if(not shell.exists(logSub)) 
+			std::string logSub = logDirectory + "/" + strDay;
+			if(not shell.exists(logSub))
 			{
 				logDirectory = logSub;
 				shell.mkdir(logSub);
 			}
-			
+
 			stopperMaxSerie(std::stoi(argv[++i]));
 			//std::cout << "serie = " << argv[i] << "\n";
 		}
@@ -947,7 +946,7 @@ void Enviroment::free()
 	{
 		delete s;
 	}
-	
+
 	clear();
 }
 }

@@ -21,3 +21,4 @@ tests/Makefile.in
 logs/
 github-pull
 github-push
+.objs/

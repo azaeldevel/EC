@@ -1,14 +1,12 @@
 
 #include <list>
 #include <math.h>
-#include <octetos/core/Error.hh>
 #include <fstream>
 #include <iterator>
 #include <algorithm>
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
-
 
 #include "sudoku.hh"
 
@@ -25,7 +23,7 @@ Chromosome::Chromosome(const Chromosome& obj) : oct::ec::Chromosome("sudoku::Chr
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			numbers[i][j] = obj.numbers[i][j];	
+			numbers[i][j] = obj.numbers[i][j];
 		}
 	}
 }
@@ -35,7 +33,7 @@ Chromosome::Chromosome() : ec::Chromosome("sudoku::Chromosome")
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			numbers[i][j] = 0 ;	
+			numbers[i][j] = 0 ;
 		}
 	}
 }
@@ -43,13 +41,13 @@ Chromosome::Chromosome() : ec::Chromosome("sudoku::Chromosome")
 const Chromosome& Chromosome::operator = (const Chromosome& obj)
 {
 	ec::Chromosome::operator =(obj);
-	
+
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
 			//std::cout << "numbers[" << i << "][" << j << "]" << "\n";
-			numbers[i][j] = obj.numbers[i][j];	
+			numbers[i][j] = obj.numbers[i][j];
 		}
 	}
 
@@ -57,7 +55,7 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 }
 geneUS Chromosome::getNumber(unsigned short i,unsigned short j)const
 {
-	return numbers[i][j];	
+	return numbers[i][j];
 }
 void Chromosome::setNumber(unsigned short i,unsigned short j,geneUS g)
 {
@@ -80,7 +78,7 @@ void Chromosome::combine(const ec::Chromosome& P1,const ec::Chromosome& P2)
 			else
 			{
 				numbers[i][j] = ((const Chromosome&)P2).numbers[i][j];
-			}			
+			}
 		}
 	}
 }
@@ -146,7 +144,7 @@ geneUS Chromosome::freeNumber()const
 	{
 		if(not used[i]) return i;
 	}
-	
+
 	return 0;
 }
 void Chromosome::resetCollision()
@@ -160,7 +158,7 @@ void Chromosome::resetCollision()
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{
-					if(numbers[i][j] == numbers[k][l]) 
+					if(numbers[i][j] == numbers[k][l])
 					{
 						numbers[i][j] = 0;
 						numbers[k][l] = 0;
@@ -198,7 +196,7 @@ Single::Single(unsigned int id,Enviroment& e,Chromosome init[][3]) : oct::ec::Si
 	//std::cout << "Step 1.2.2\n";
 	intiVals = init;
 	//std::cout << "Step 1.2.3\n";
-	genMD5();
+	//genMD5();
 	//std::cout << "Step 1.2.4\n";
 }
 Single::~Single()
@@ -211,11 +209,12 @@ Single::~Single()
 }
 Single::Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome init[][3],const Junction& junction) : ec::Single(id,e,junction)
 {
-	tabla = newData;	
+	tabla = newData;
 	intiVals = init;
-	genMD5();
+	//genMD5();
 }
 
+/*
 void Single::genMD5()
 {
 	std::string strmd5;
@@ -226,7 +225,7 @@ void Single::genMD5()
 			for(unsigned short k = 0; k < 3; k++)
 			{
 				for(unsigned short l = 0; l < 3; l++)
-				{					
+				{
 					 strmd5 += std::to_string(tabla[i][j].getNumber(k,l));
 				}
 			}
@@ -234,10 +233,11 @@ void Single::genMD5()
 	}
 	md5.set(strmd5);
 }
+*/
 void Single::eval()
 {
 	double fails = 0.0;
-		
+
 	//conteo por cuadro
 	//std::cout << "Por cuadro\n";
 	for(unsigned short i = 0; i < 3; i++)
@@ -248,7 +248,7 @@ void Single::eval()
 			for(unsigned short k = 0; k < 3; k++)
 			{
 				for(unsigned short l = 0; l < 3; l++)
-				{				
+				{
 					if(tabla[i][j].getNumber(k,l) > 9)
 					{
 						fails++;
@@ -268,7 +268,7 @@ void Single::eval()
 		}
 	}
 
-	
+
 	//por linea
 	//std::cout << "Por linea\n";
 	for(unsigned short i = 0; i < 3; i++)
@@ -279,7 +279,7 @@ void Single::eval()
 			for(unsigned short k = 0; k < 3; k++)
 			{
 				for(unsigned short l = 0; l < 3; l++)
-				{					
+				{
 					if(tabla[i][k].getNumber(j,l) > 9)
 					{
 						fails++;
@@ -288,8 +288,8 @@ void Single::eval()
 					else
 					{
 						if(tabla[i][k].getNumber(j,l) > 0) countD[tabla[i][k].getNumber(j,l) - 1]++;//cuentas la cantidad de digitos repetidos
-					}						
-					//std::cout << "tabla[" << i << "]" << "[" << k << "]" << ".set(" << j << "," << l << ") is " << tabla[i][k].set(j,l) << "\n"; 
+					}
+					//std::cout << "tabla[" << i << "]" << "[" << k << "]" << ".set(" << j << "," << l << ") is " << tabla[i][k].set(j,l) << "\n";
 				}
 			}
 			for(unsigned short c : countD)
@@ -309,7 +309,7 @@ void Single::eval()
 			for(unsigned short k = 0; k < 3; k++)
 			{
 				for(unsigned short l = 0; l < 3; l++)
-				{				
+				{
 					if(tabla[k][i].getNumber(l,j) > 9)
 					{
 						fails++;
@@ -318,9 +318,9 @@ void Single::eval()
 					else
 					{
 						if(tabla[k][i].getNumber(l,j) > 0)  countD[tabla[k][i].getNumber(l,j) - 1]++;//cuentas la cantidad de digitos repetidos
-					}						
-					//std::cout << "tabla[" << k << "]" << "[" << i << "]" << ".set(" << l << "," << j << ") is " << tabla[k][i].set(l,j) << "\n"; 
-				}	
+					}
+					//std::cout << "tabla[" << k << "]" << "[" << i << "]" << ".set(" << l << "," << j << ") is " << tabla[k][i].set(l,j) << "\n";
+				}
 			}
 			for(unsigned short c : countD)
 			{
@@ -338,20 +338,20 @@ void Single::eval()
 			for(unsigned short k = 0; k < 3; k++)
 			{
 				for(unsigned short l = 0; l < 3; l++)
-				{				
+				{
 					if(tabla[i][j].getNumber(k,l) == 0)
 					{
-						fails++;						
+						fails++;
 					}
 				}
 			}
 		}
 	}
-	
+
 	fitness = 1.0 - (fails * (((const sudoku::Enviroment&)getEnviroment()).getGamma()));
 }
-	
-	
+
+
 
 const Chromosome& Single::getTalba(unsigned short i,unsigned short j)const
 {
@@ -367,7 +367,7 @@ void Single::randFill(bool favor)
 			for(unsigned short j = 0; j < 3; j++)
 			{
 				tabla[i][j].resetCollision();
-				tabla[i][j].randFill(favor);			
+				tabla[i][j].randFill(favor);
 			}
 		}
 	}
@@ -390,7 +390,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 	for(ec::geneUS i = 0; i < getJunction().get_number(); i++,countNew++)
 	{
 		idCount = getEnviroment().nextID();
-		
+
 		Chromosome** newtabla = new Chromosome*[3];
 		for(unsigned short i = 0; i < 3; i++)
 		{
@@ -410,7 +410,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 				}
 			}
 			newj.combine(getJunction(),single->getJunction());
-			break;		
+			break;
 		case ec::Junction::AlgCode::COPY:
 			{
 				double numrd = randNumber();
@@ -425,7 +425,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 						else
 						{
 							newtabla[i][j].copy(((Single*)single)->tabla[i][j]);
-						}					
+						}
 					}
 				}
 				if(numrd < 0.5)
@@ -441,7 +441,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 		default:
 			throw octetos::core::Exception("Algoritmo desconocido",__FILE__,__LINE__);
 		}
-			
+
 		if(mutation())
 		{
 			for(unsigned short i = 0; i < 3; i++)
@@ -464,7 +464,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 				{
 					for(unsigned short l = 0; l < 3; l++)
 					{
-						if(intiVals[i][j].getNumber(k,l) != 0) 
+						if(intiVals[i][j].getNumber(k,l) != 0)
 						{
 							newtabla[i][j].setNumber(k,l,intiVals[i][j].getNumber(k,l));
 						}
@@ -472,7 +472,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 				}
 			}
 		}
-	
+
 		//tratar de desatascar
 		/*if(getEnviroment().getJam())
 		{
@@ -492,7 +492,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 			}
 		}*/
 		Single* s = new Single(idCount,(Enviroment&)*env,newtabla,intiVals,newj);
-		if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n"; 
+		if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n";
 		chils.push_back(s);
 	}
 	return countNew;
@@ -501,11 +501,11 @@ void Single::save(std::ofstream& fn)
 {
 	fn << getID();
 	fn << ",";
-	fn << getFitness();	
+	fn << getFitness();
 	fn << ",";
 	fn << getErros();
-	fn << ",";
-	fn << getMD5();
+	//fn << ",";
+	//fn << getMD5();
 	fn << ",";
 	fn << getAge();
 	for(unsigned short i = 0; i < 3; i++)
@@ -523,10 +523,12 @@ void Single::save(std::ofstream& fn)
 		}
 	}
 }
+/*
 const oct::core::StringMD5& Single::getMD5()const
 {
 	return md5;
 }
+*/
 unsigned int Single::getErros()const
 {
 	return (1.0 - fitness) * (1.0 / (((sudoku::Enviroment&)getEnviroment()).getGamma()));
@@ -542,7 +544,7 @@ void Single::print(std::ostream& out) const
 			for(unsigned short k = 0; k < 3; k++)
 			{
 				for(unsigned short l = 0; l < 3; l++)
-				{					
+				{
 					out << " " << tabla[i][k].getNumber(j,l) ;
 				}
 			}
@@ -559,7 +561,7 @@ void Single::printInit(std::ostream& out) const
 			for(unsigned short k = 0; k < 3; k++)
 			{
 				for(unsigned short l = 0; l < 3; l++)
-				{					
+				{
 					out << " " << intiVals[i][k].getNumber(j,l) ;
 				}
 			}
@@ -598,7 +600,7 @@ Enviroment::Enviroment(const std::string& initB,Iteration maxite,const std::stri
 	stopperMaxIterations(maxite);
 	//logDirectory = logDir + "/" + std::to_string(ec::sudoku::Enviroment::getDayID());
 	//shell.mkdir(logDirectory);
-	//logFile = not logDirectory.empty();	
+	//logFile = not logDirectory.empty();
 	//addTerminator(Terminations::MAXITERATION);
 	//addTerminator(Terminations::MINSOLUTIONS);
 }
@@ -637,7 +639,7 @@ void Enviroment::init()
 	echolevel = 0;
 	sigma = 0.0;
 	media = 0.0;
-	
+
 	//actualIteration = 1;
 	//maxIteration = 1000;
 	newIteration = true;
@@ -657,22 +659,22 @@ void Enviroment::initBoard(const std::string& initTable)
 	//std::cout << "Enviroment::initBoard : Step 1\n";
 	std::ifstream file(initTable);
 	if(not file.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
-	std::string strline; 
+	std::string strline;
 	std::vector<unsigned short> inits;
 	//std::cout << "Enviroment::initBoard : Step 2\n";
 	while (std::getline(file, strline))
 	{
 		//std::cout << strline << "\n";
-	  	char *tok = strtok((char*)strline.c_str()," "); 
-		while (tok!=NULL) 
+	  	char *tok = strtok((char*)strline.c_str()," ");
+		while (tok!=NULL)
 		{
-		    //printf("%s\n",tok); 
+		    //printf("%s\n",tok);
 			inits.push_back(std::stoi(tok));
 		    tok=strtok(NULL," ");
 		}
 	}
 	//std::cout << "Enviroment::initBoard : Step 3\n";
-	unsigned short index = 0;	
+	unsigned short index = 0;
 	//std::cout << "sudokuInit = " << sudokuInit << "\n";
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -715,7 +717,7 @@ void Enviroment::initial()
 	{
 		Single* s = new Single(nextID(),*this,sudokuInit);
 		s->randFill();
-		push_back(s);		
+		push_back(s);
 	}
 	//std::cout << "Enviroment::initial : Step 3\n";
 }

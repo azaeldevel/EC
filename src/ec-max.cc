@@ -2,17 +2,17 @@
 /*
  * main.cc
  * Copyright (C) 2021 Azael Reyes <azael.devel@gmail.com>
- * 
+ *
  * AE is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * AE is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,14 +24,13 @@
 
 
 #include <fstream>
-#include <octetos/core/shell.hh>
 
 #include "max.hh"
 
 
 int main(int argc, const char* argv[])
 {
-	if(argc < 2) 
+	if(argc < 2)
 	{
 		std::cerr << "Indique el parametro necesarion\n";
 		std::cerr << "trans  --directory-logs dir\n";
@@ -39,16 +38,16 @@ int main(int argc, const char* argv[])
 	}
 	//std::cout << "sizeof(unsigned short) = " << sizeof(unsigned short) << "\n";
 	std::string logDir = argv[1];
-	std::string logDirectory;	
+	std::string logDirectory;
 	//bool logFile = not logDir.empty();//
-	
-	/*if(logFile) 
+
+	/*if(logFile)
 	{
 		logDirectory = logDir + "/" + std::to_string(ec::Enviroment::getDayID());
 		oct::core::Shell shell;
 		shell.mkdir(logDirectory,true);
 	}*/
-	
+
 	oct::ec::max::Enviroment* max = new oct::ec::max::Enviroment(argc,argv);
 	max->enableEcho(&std::cout,2);
 	//max->setEchoSteps(true);
