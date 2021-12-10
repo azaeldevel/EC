@@ -106,9 +106,42 @@ namespace oct::core
 namespace oct::ec::sche
 {
 
+
+	void Day::inters(const Day& comp, Day& rest)const
+	{		
+		for(const core::DataTime& tdt : *this)
+		{
+			for(const core::DataTime& cdt : comp)
+			{
+				if(tdt.tm_wday != cdt.tm_wday) throw core::Exception("Los objetos indicado, tiene dias distinto",__FILE__,__LINE__);
+				
+				if(tdt.tm_hour == cdt.tm_hour) rest.push_back(cdt);
+			}
+		}		
+	}
+
+
+
+
+
+	WeekHours::WeekHours()
+	{
+		resize(7);
+	}
+	void WeekHours::inters(const WeekHours& comp, WeekHours& rest)const
+	{		
+		if(size() != comp.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
+		
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			at(i).inters(comp[i],rest[i]);
+		}		
+	}
+
+
 	void Time::granulate(const Configuration* config, Day& out)
 	{
-		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especifficar el mismos dia.");
+		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especifficar el mismos dia.",__FILE__,__LINE__);
 		
 		int hours = config->to_hours(begin.diff(end));	
 		
@@ -244,11 +277,11 @@ namespace oct::ec::sche
 			times[dt.tm_wday].push_back(dt);//el dia de la semana es el indice ene le arreglo
 		}
 	}
-	std::vector<Day>& Target::get_times()
+	WeekHours& Target::get_times()
 	{
 		return times;
 	}
-	const std::vector<Day>& Target::get_times()const
+	const WeekHours& Target::get_times()const
 	{
 		return times;
 	}
@@ -268,7 +301,13 @@ namespace oct::ec::sche
 	{
 		return f.tm_hour < s.tm_hour;
 	}
-	
+	void Target::sort()
+	{
+		for(Day& day : times)
+		{
+			day.sort(cmpHour);
+		}
+	}
 	
 	
 	
@@ -639,7 +678,7 @@ namespace oct::ec::sche
 			out << "\n";
 		}
 	}
-	void Teachers_Subjects::searchTeachers(const std::string& str, std::list<Row*>& l)const
+	void Teachers_Subjects::searchTeachers(const std::string& str, std::list<const Row*>& l)const
 	{
 		typedef std::multimap<std::string, Row*>::const_iterator iterator;
 		std::pair<iterator,iterator> result = teachers_by_name.equal_range(str);
@@ -648,7 +687,7 @@ namespace oct::ec::sche
 			l.push_back(it->second);
 		}
 	}
-	void Teachers_Subjects::searchSubjects(const std::string& str, std::list<Row*>& l)const
+	void Teachers_Subjects::searchSubjects(const std::string& str, std::list<const Row*>& l)const
 	{
 		typedef std::multimap<std::string, Row*>::const_iterator iterator;
 		std::pair<iterator,iterator> result = subjects_by_name.equal_range(str);

@@ -23,20 +23,20 @@ namespace oct::ec::sche
 		/**
 		*\brieff Information by lesson
 		*/
-		struct Lesson
+		/*struct Lesson
 		{
 			const sche::Subject* subject;
 			core::DataTime time;
 			const sche::Teacher teacher;
-		};
+		};*/
 
 		/**
 		*\brieff lessons by day
 		*/
-		struct Day
+		/*struct Day
 		{
 			std::vector<Lesson> lessons;
-		};
+		};*/
 
 		std::vector<Day> days;
 

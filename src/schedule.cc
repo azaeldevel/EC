@@ -15,6 +15,7 @@ namespace oct::ec::sche
 	
 	void Studen::init_rand(const sche::Groups::Group* group)
 	{
+	
 		
 	}
 	
@@ -95,7 +96,20 @@ void Enviroment::initial()
 		Groups::const_iterator it = data.groups.get_list().begin();
 		for(unsigned int j = 0; j < data.groups.get_list().size(); j++,it++)
 		{
-			inits[i][j].init_rand(&*it);
+			for(const Subject* s : *it)
+			{
+				std::list<const Teachers_Subjects::Row*> rows;
+				data.teachers_subjects.searchSubjects(s->get_name(),rows);
+				for(const Teachers_Subjects::Row* ts : rows)
+				{
+					const WeekHours& dispTeacher = ts->teacher->get_times();//disponibilidad de mestros
+					const WeekHours& dispRoom = (*it).room->get_times();//disponibilidad de salon
+					
+					if(dispTeacher.size() != dispRoom.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
+					
+					
+				}
+			}
 		}
 	}
 	

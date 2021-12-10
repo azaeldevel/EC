@@ -43,7 +43,27 @@ namespace oct::ec::sche
 	struct Data;
 	class Configuration;
 	
-	typedef std::list<core::DataTime> Day;
+	//typedef std::list<core::DataTime> Day;
+	class Day : public std::list<core::DataTime>
+	{
+	public:
+		/**
+		*\brief determinar horas en comun
+		**/
+		void inters(const Day& comp, Day& rest)const;
+	};
+	//typedef std::vector<Day> WeekHours;
+	class WeekHours : public std::vector<Day>
+	{
+	public:
+		WeekHours();
+
+		/**
+		*\brief determinar horas en comun
+		**/
+		void inters(const WeekHours& comp, WeekHours& rest)const;
+	};
+
 	struct Time
 	{
 		core::DataTime begin;
@@ -109,8 +129,8 @@ namespace oct::ec::sche
 		void init();
 		const Configuration* operator =(const Configuration*);
 		const Configuration* set(const Configuration*);
-		const std::vector<Day>& get_times()const;	
-		std::vector<Day>& get_times();			
+		const WeekHours& get_times()const;	
+		WeekHours& get_times();			
 		void print(std::ostream&)const;
 		/**
 		*\brief Guarda la lista de horas indicadas en orden segun el dia indicado
@@ -126,7 +146,7 @@ namespace oct::ec::sche
 		static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 	private:
 		const Configuration* config;
-		std::vector<Day> times;//horario de disponibilidad
+		WeekHours times;//horario de disponibilidad
 	};
 
 
@@ -252,8 +272,8 @@ namespace oct::ec::sche
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
 		const std::list<Row>& get_list() const;
-		void searchTeachers(const std::string&, std::list<Row*>& )const;
-		void searchSubjects(const std::string&, std::list<Row*>& )const;
+		void searchTeachers(const std::string&, std::list<const Row*>& )const;
+		void searchSubjects(const std::string&, std::list<const Row*>& )const;
 	private:
 		void indexing();
 	private:
