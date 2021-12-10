@@ -13,7 +13,7 @@ namespace oct::ec::sche
 {
 	
 	
-	void Studen::init_rand(const sche::Groups::Group*)
+	void Studen::init_rand(const sche::Groups::Group* group)
 	{
 		
 	}

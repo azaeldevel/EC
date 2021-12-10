@@ -122,7 +122,7 @@ void testDeveloping()
 	}
 	
 	//std::cout << "\n";
-	const oct::ec::sche::Groups::Group* rowG1 = data.groups.search("1A");
+	const oct::ec::sche::Groups::Group* rowG1 = data.groups.search_name("1A");
 	if(rowG1) 
 	{
 		//rowG1->print(std::cout);
@@ -130,7 +130,7 @@ void testDeveloping()
 	}
 	else 
 	{
-		//std::cout << "No se encontro el maestro indicado\n";
+		std::cout << "No se encontro el grupo '1A'\n";
 		CU_ASSERT(false);		
 	}
 	
@@ -167,9 +167,12 @@ void testDeveloping()
 		std::cout << "day.size() = " << day.size() << "\n";
 		CU_ASSERT(false);		
 	}
-	for(int i = 0; i < day.size(); i++)
+	typedef oct::ec::sche::Day::iterator iterator_day;
+
+	int i = 0;
+	for(iterator_day it = day.begin(); it != day.end(); it++, i++)
 	{
-		if(day[i].tm_hour == i + 8)
+		if((*it).tm_hour == i + 8)
 		{
 			CU_ASSERT(true);
 		}

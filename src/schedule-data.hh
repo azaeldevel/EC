@@ -13,6 +13,7 @@ namespace oct::core
 	{
 	public:
 		DataTime();
+		DataTime(const tm&);
 		const time_t* operator =(const time_t*);
 		const tm& operator =(const tm&);
 		int get_week_day()const;
@@ -42,7 +43,7 @@ namespace oct::ec::sche
 	struct Data;
 	class Configuration;
 	
-	typedef std::vector<core::DataTime> Day;
+	typedef std::list<core::DataTime> Day;
 	struct Time
 	{
 		core::DataTime begin;
@@ -108,18 +109,24 @@ namespace oct::ec::sche
 		void init();
 		const Configuration* operator =(const Configuration*);
 		const Configuration* set(const Configuration*);
-		const std::list<Day>& get_times()const;	
-		std::list<Day>& get_times();			
+		const std::vector<Day>& get_times()const;	
+		std::vector<Day>& get_times();			
 		void print(std::ostream&)const;
 		/**
 		*\brief Guarda la lista de horas indicadas en orden segun el dia indicado
 		**/	
 		void save(const Day&);
 
-	protected:
+		void sort();
+
+	private:
+		/**
+		*\brief Fucion de ordenamiento ascendente
+		**/
+		static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 	private:
 		const Configuration* config;
-		std::list<Day> times;//horario de disponibilidad
+		std::vector<Day> times;//horario de disponibilidad
 	};
 
 
@@ -298,14 +305,16 @@ namespace oct::ec::sche
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
 
-		const Group* search(const std::string&)const;
-		
+		const Group* search_name(const std::string&)const;
+		const Group* search_by_subject(const std::string&)const;
+
 	private:
 		void indexing();
 
 	private:
 		std::list<Group> groups;
 		std::multimap<std::string, Group*> groups_by_name;
+		std::multimap<std::string, Group*> groups_by_subject;
 	};
 	
 	typedef std::vector<core::DataTime> DaysTimes;

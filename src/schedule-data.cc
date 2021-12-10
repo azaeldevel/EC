@@ -72,6 +72,10 @@ namespace oct::core
 	{
 		(tm&)*this = {0};
 	}
+	DataTime::DataTime(const tm& t)
+	{
+		(tm&)*this = t;
+	}
 	const time_t* DataTime::operator =(const time_t* t)
 	{
 		tm* thistm = localtime(t);
@@ -108,15 +112,13 @@ namespace oct::ec::sche
 		
 		int hours = config->to_hours(begin.diff(end));	
 		
-		//std::cout << "pulverizando " << hours << "\n";
 		if(hours < 1) return;
-
-		out.resize(hours);
+		
 		tm tm1 = begin;
 		time_t t = mktime(&tm1);
 		tm* newt = localtime(&t);
 		newt->tm_wday = begin.tm_wday;
-		out[0] = *newt;
+		out.push_back(*newt);
 		//std::cout << "t = " << t << "\n";
 		for(int i = 1; i < hours; i++)
 		{
@@ -124,7 +126,7 @@ namespace oct::ec::sche
 			//std::cout << "t = " << t << "\n";
 			newt = localtime(&t);
 			newt->tm_wday = begin.tm_wday;
-			out[i] = *newt;
+			out.push_back(*newt);
 		}
 	}
 	void Time::set_begin(const Configuration* config,const std::string& str)
@@ -223,11 +225,7 @@ namespace oct::ec::sche
 	}
 	void Target::init()
 	{
-		for(int i = 0; i < 7; i++)
-		{//inicia con registro para los 7 dias pero sin horas asginadas
-			Day newday;
-			times.push_back(newday);
-		}
+		times.resize(7);
 	}
 	const Configuration* Target::operator =(const Configuration* c)
 	{
@@ -243,16 +241,14 @@ namespace oct::ec::sche
 	{
 		for(const core::DataTime& dt : day)
 		{
-			std::list<Day>::iterator it = times.begin();
-			if(dt.tm_wday > 0) std::advance(it,dt.tm_wday);//el dia n se ecuantra desplazandoce en la lista n - 1
-			(*it).push_back(dt);
+			times[dt.tm_wday].push_back(dt);//el dia de la semana es el indice ene le arreglo
 		}
 	}
-	std::list<Day>& Target::get_times()
+	std::vector<Day>& Target::get_times()
 	{
 		return times;
 	}
-	const std::list<Day>& Target::get_times()const
+	const std::vector<Day>& Target::get_times()const
 	{
 		return times;
 	}
@@ -268,8 +264,10 @@ namespace oct::ec::sche
 			out << ",";
 		}
 	}
-	
-	
+	bool Target::cmpHour(const core::DataTime& f,const core::DataTime& s)
+	{
+		return f.tm_hour < s.tm_hour;
+	}
 	
 	
 	
@@ -842,9 +840,16 @@ namespace oct::ec::sche
 			out << "\n";
 		}
 	}
-	const Groups::Group* Groups::search(const std::string& str) const
+	const Groups::Group* Groups::search_name(const std::string& str) const
 	{
 		std::map<std::string, Group*>::const_iterator it = groups_by_name.find(str);
+
+		if(it != groups_by_subject.end()) return it->second;
+		return NULL;		
+	}	
+	const Groups::Group* Groups::search_by_subject(const std::string& str) const
+	{
+		std::map<std::string, Group*>::const_iterator it = groups_by_subject.find(str);
 
 		if(it != groups_by_name.end()) return it->second;
 		return NULL;		
@@ -852,9 +857,14 @@ namespace oct::ec::sche
 	void Groups::indexing()
 	{
 		if(groups_by_name.size() > 0) groups_by_name.clear();
+		if(groups_by_subject.size() > 0) groups_by_subject.clear();
 		for(Group& g : groups)
 		{
 			groups_by_name.insert({g.room->get_name(),&g});
+			for(const Subject* s : g)
+			{
+				groups_by_subject.insert({s->get_name(),&g});
+			}
 		}
 	}
 	
