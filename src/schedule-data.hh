@@ -105,7 +105,7 @@ namespace oct::ec::sche
 	public:
 		Target();
 		Target(const Configuration*);
-
+		void init();
 		const Configuration* operator =(const Configuration*);
 		const Configuration* set(const Configuration*);
 		const std::list<Day>& get_times()const;	
@@ -161,9 +161,6 @@ namespace oct::ec::sche
 		Room(const std::string& name);
 		Room();
 
-		std::list<Time>& get_times();
-		const std::list<Time>& get_times()const;
-
 		const std::string& get_name()const;
 		Room& operator =(const std::string&);
 		void print(std::ostream&) const;
@@ -172,7 +169,6 @@ namespace oct::ec::sche
 
 	private:
 		std::string name;
-		std::list<Time> times;
 	};
 
 	

@@ -76,8 +76,8 @@ void testDeveloping()
 		CU_ASSERT(false);
 	}
 	//std::cout << "\n";
-	const oct::ec::sche::Subject* rowSuject = data.subjects.search("Fisica");
-	if(rowSuject) 
+	const oct::ec::sche::Subject* subject1 = data.subjects.search("Fisica");
+	if(subject1) 
 	{
 		//rowSuject->print(std::cout);
 		CU_ASSERT(true);
@@ -109,8 +109,8 @@ void testDeveloping()
 	
 	//std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
-	const oct::ec::sche::Room* rowR1 = data.rooms.search("1A");
-	if(rowR1) 
+	const oct::ec::sche::Room* room1 = data.rooms.search("1A");
+	if(room1) 
 	{
 		//row->print(std::cout);
 		CU_ASSERT(true);
@@ -121,7 +121,7 @@ void testDeveloping()
 		CU_ASSERT(false);		
 	}
 	
-	std::cout << "\n";
+	//std::cout << "\n";
 	const oct::ec::sche::Groups::Group* rowG1 = data.groups.search("1A");
 	if(rowG1) 
 	{
@@ -234,7 +234,10 @@ void testDeveloping()
 			CU_ASSERT(false);		
 		}
 	}
+	
 	//teacher1->print(std::cout);
+	//subject1->print(std::cout);
+	//room1->print(std::cout);
 }
 int main(int argc, char *argv[])
 {

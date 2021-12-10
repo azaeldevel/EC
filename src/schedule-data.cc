@@ -205,15 +205,29 @@ namespace oct::ec::sche
 				throw core::Exception("Esquema de semana desconocido.",__FILE__,__LINE__);
 		}
 	}
+	Configuration::FormatDT Configuration::get_format_dt()const
+	{
+		return format;
+	}
 
 	
 	
 	
 	Target::Target() : config(NULL)
 	{
+		init();
 	}
 	Target::Target(const Configuration* c) : config(c)
 	{
+		init();
+	}
+	void Target::init()
+	{
+		for(int i = 0; i < 7; i++)
+		{//inicia con registro para los 7 dias pero sin horas asginadas
+			Day newday;
+			times.push_back(newday);
+		}
 	}
 	const Configuration* Target::operator =(const Configuration* c)
 	{
@@ -225,26 +239,14 @@ namespace oct::ec::sche
 		config = c;
 		return c;
 	}
-	Configuration::FormatDT Configuration::get_format_dt()const
-	{
-		return format;
-	}
 	void Target::save(const Day& day)
 	{
-			for(const core::DataTime& dt : day)
-			{		
-				if(times.size() < dt.tm_wday + 1)
-				{//si no hay suficientes dias los agrega
-					for(int i = 0; i < dt.tm_wday + 1; i++)
-					{
-						Day newday;
-						times.push_back(newday);
-					}
-				}
-				std::list<Day>::iterator it = times.begin();
-				std::advance(it,dt.tm_wday);
-				(*it).push_back(dt);
-			}
+		for(const core::DataTime& dt : day)
+		{
+			std::list<Day>::iterator it = times.begin();
+			if(dt.tm_wday > 0) std::advance(it,dt.tm_wday);//el dia n se ecuantra desplazandoce en la lista n - 1
+			(*it).push_back(dt);
+		}
 	}
 	std::list<Day>& Target::get_times()
 	{
@@ -260,9 +262,8 @@ namespace oct::ec::sche
 		{
 			for(const core::DataTime& dt: day)
 			{
-				out << std::put_time(&dt, "%A %H:%M");
+				out << std::put_time(&dt, "%a %H:%M");
 				out << " ";
-				//out << std::put_time(&t.end, "%H:%M");
 			}
 			out << ",";
 		}
@@ -304,15 +305,7 @@ namespace oct::ec::sche
 	{
 		
 	}
-	
-	std::list<Time>& Room::get_times()
-	{
-		return times;
-	}
-	const std::list<Time>& Room::get_times()const
-	{
-		return times;
-	}
+
 	Room& Room::operator =(const std::string& n)
 	{
 		name = n;
@@ -326,13 +319,7 @@ namespace oct::ec::sche
 	void Room::print(std::ostream& out)const
 	{
 		out << get_name() << ",";
-		for(const Time& t : times)
-		{
-			out << std::put_time(&t.begin, "%H:%M");
-			out << "-";
-			out << std::put_time(&t.end, "%H:%M");
-			out << ",";
-		}
+		Target::print(out);
 	}
 	
 	
@@ -428,10 +415,10 @@ namespace oct::ec::sche
 				{
 					std::stringstream ssTime(data);
 					std::getline(ssTime,strH,'-');
-					strH = std::to_string(timeDay) + " " + strH;
+					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 					time.set_begin(strH);
 					std::getline(ssTime,strH,'-');
-					strH = std::to_string(timeDay) + " " + strH;
+					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 					time.set_end(strH);
 					time.granulate(&dataObject->config,day);
 					teacher.save(day);
@@ -519,13 +506,14 @@ namespace oct::ec::sche
 					{
 						std::stringstream ssTime(data);
 						std::getline(ssTime,strH,'-');
-						strH = std::to_string(timeDay) + " " + strH;
+						if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 						time.set_begin(strH);
 						std::getline(ssTime,strH,'-');
-						strH = std::to_string(timeDay) + " " + strH;
+						if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 						time.set_end(strH);
 						time.granulate(&dataObject->config,day);
 						subject.save(day);
+						timeDay++;
 					}
 				}				
 				subjects.push_back(subject);
@@ -718,14 +706,20 @@ namespace oct::ec::sche
 				//std::getline(str,data,',');
 				//row.subject = data;
 				ec::sche::Time time;
+				Day day;
+				int timeDay = dataObject->config.get_begin_day();
 				while(std::getline(str,data,','))
 				{
 					std::stringstream ssTime(data);
 					std::getline(ssTime,strH,'-');
-					strptime(strH.c_str(), "%H:%M",&time.begin);
+					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
+					time.set_begin(strH);
 					std::getline(ssTime,strH,'-');
-					strptime(strH.c_str(), "%H:%M",&time.end);
-					room.get_times().push_back(time);
+					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
+					time.set_end(strH);
+					time.granulate(&dataObject->config,day);
+					room.save(day);
+					timeDay++;
 				}
 				rooms.push_back(room);	
 				//std::cout << "\n";
