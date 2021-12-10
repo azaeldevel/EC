@@ -106,32 +106,7 @@ void Enviroment::initial()
 		push_back(single);
 	}
 }
-void Enviroment::pulverize_hours(const core::DataTime& t1,const core::DataTime& t2,std::vector<core::DataTime>& out)
-{
-	int hours = data.config.to_hours(t1.diff(t2));	
-	
-	//std::cout << "pulverizando " << hours << "\n";
-	if(hours < 1) return;
 
-	out.resize(hours);
-	tm tm1 = t1;
-	time_t t = mktime(&tm1);
-	out[0] = &t;
-	//std::cout << "t = " << t << "\n";
-	for(int i = 1; i < hours; i++)
-	{
-		t += 3600; // 60 segundos por 60 minutos = una hora
-		//std::cout << "t = " << t << "\n";
-		out[i] = &t;
-	}
-}
-
-void Enviroment::pulverize()
-{
-	unsigned int count = 0;
-
-	
-}
 
 
 }

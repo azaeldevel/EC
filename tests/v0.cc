@@ -3,6 +3,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <schedule.hh>
+#include <locale>
+#include <ctime>
+#include <iomanip>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 
 
 static oct::ec::sche::Data data;
@@ -58,8 +64,8 @@ void testDeveloping()
 
 
 	
-	const oct::ec::sche::Teacher* row = data.teachers.search("Leticia Mojica");
-	if(row) 
+	const oct::ec::sche::Teacher* teacher1 = data.teachers.search("Leticia Mojica");
+	if(teacher1) 
 	{
 		//row->print(std::cout);
 		CU_ASSERT(true);
@@ -173,6 +179,62 @@ void testDeveloping()
 			CU_ASSERT(false);
 		}
 	}
+	
+	oct::ec::sche::Time time2;
+	time2.set_begin("2 8:00");
+	if(time2.begin.tm_wday == 2) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time2.begin.tm_wday = " << time2.begin.tm_wday << "\n";
+		CU_ASSERT(false);		
+	}
+	if(time2.begin.tm_hour == 8) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time1.begin.tm_hour = " << time2.begin.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	time2.set_end("2 20:00");
+	if(time2.end.tm_hour == 20) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time2.end.tm_hour = " << time2.end.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	oct::ec::sche::Day day2;
+	time2.granulate(&data.config,day2);
+	if(day2.size() == 12) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "day2.size() = " << day2.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	for(const oct::core::DataTime& dt : day2)
+	{
+		//std::cout << std::put_time(&dt, "%a %H:%M") << "\n";
+		if(dt.tm_wday == 2) 
+		{
+			CU_ASSERT(true);
+		}
+		else 
+		{
+			std::cout << "dt.tm_wday = " << dt.tm_wday << "\n";
+			CU_ASSERT(false);		
+		}
+	}
+	//teacher1->print(std::cout);
 }
 int main(int argc, char *argv[])
 {

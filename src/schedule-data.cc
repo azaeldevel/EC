@@ -78,6 +78,11 @@ namespace oct::core
 		(tm&)*this = *thistm;
 		return t;
 	}
+	const tm& DataTime::operator =(const tm& t)
+	{
+		(tm&)*this = t;
+		return t;
+	}
 	int DataTime::get_week_day()const
 	{
 		return tm_wday;
@@ -99,6 +104,8 @@ namespace oct::ec::sche
 
 	void Time::granulate(const Configuration* config, Day& out)
 	{
+		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especifficar el mismos dia.");
+		
 		int hours = config->to_hours(begin.diff(end));	
 		
 		//std::cout << "pulverizando " << hours << "\n";
@@ -107,13 +114,17 @@ namespace oct::ec::sche
 		out.resize(hours);
 		tm tm1 = begin;
 		time_t t = mktime(&tm1);
-		out[0] = &t;
+		tm* newt = localtime(&t);
+		newt->tm_wday = begin.tm_wday;
+		out[0] = *newt;
 		//std::cout << "t = " << t << "\n";
 		for(int i = 1; i < hours; i++)
 		{
-			t += 3600; // 60 segundos por 60 minutos = una hora
+			t += config->get_time_per_hour() * 60; // 60 segundos por 60 minutos = una hora
 			//std::cout << "t = " << t << "\n";
-			out[i] = &t;
+			newt = localtime(&t);
+			newt->tm_wday = begin.tm_wday;
+			out[i] = *newt;
 		}
 	}
 	void Time::set_begin(const Configuration* config,const std::string& str)
@@ -124,19 +135,26 @@ namespace oct::ec::sche
 	{
 		strptime(str.c_str(), config->get_format_string_datatime().c_str(),&end);
 	}
-
+	void Time::set_begin(const std::string& str)
+	{
+		strptime(str.c_str(), "%w %H:%M",&begin);
+	}
+	void Time::set_end(const std::string& str)
+	{
+		strptime(str.c_str(), "%w %H:%M",&end);
+	}
 
 
 
 
 	std::string Configuration::formats_dt_hour = "%H:%M";	
-	std::string Configuration::formats_dt_day_hour = "%w %H:%M";
+	std::string Configuration::formats_dt_day_hour = "%a %H:%M";
 	
 	Configuration::Configuration()
 	{
 		schema_week = SchemaWeek::MS;
 		time_per_hour = 60;
-		format = FormatDataTime::HOUR;
+		format = FormatDT::HOUR;
 	}
 	
 	unsigned int Configuration::get_time_per_hour() const
@@ -155,11 +173,11 @@ namespace oct::ec::sche
 	{
 		switch(format)
 		{
-			case FormatDataTime::HOUR:
+			case FormatDT::HOUR:
 				return formats_dt_hour;
-			case FormatDataTime::DAY_HOUR:
+			case FormatDT::DAY_HOUR:
 				return formats_dt_day_hour;
-			case FormatDataTime::NONE:
+			case FormatDT::NONE:
 				throw core::Exception("Formato de tiempo no asignado",__FILE__,__LINE__);
 			default:
 				throw core::Exception("Formato de tiempo desconocido",__FILE__,__LINE__);
@@ -175,6 +193,18 @@ namespace oct::ec::sche
 		long hours = mins/time_per_hour;
 		return hours;
 	}
+	int Configuration::get_begin_day() const
+	{
+		switch(schema_week)
+		{
+			case SchemaWeek::MF:
+			case SchemaWeek::MS:
+				return 1;
+				
+			default:
+				throw core::Exception("Esquema de semana desconocido.",__FILE__,__LINE__);
+		}
+	}
 
 	
 	
@@ -182,9 +212,8 @@ namespace oct::ec::sche
 	Target::Target() : config(NULL)
 	{
 	}
-	Target::Target(const Configuration* c)
+	Target::Target(const Configuration* c) : config(c)
 	{
-		config = c;
 	}
 	const Configuration* Target::operator =(const Configuration* c)
 	{
@@ -195,6 +224,48 @@ namespace oct::ec::sche
 	{
 		config = c;
 		return c;
+	}
+	Configuration::FormatDT Configuration::get_format_dt()const
+	{
+		return format;
+	}
+	void Target::save(const Day& day)
+	{
+			for(const core::DataTime& dt : day)
+			{		
+				if(times.size() < dt.tm_wday + 1)
+				{//si no hay suficientes dias los agrega
+					for(int i = 0; i < dt.tm_wday + 1; i++)
+					{
+						Day newday;
+						times.push_back(newday);
+					}
+				}
+				std::list<Day>::iterator it = times.begin();
+				std::advance(it,dt.tm_wday);
+				(*it).push_back(dt);
+			}
+	}
+	std::list<Day>& Target::get_times()
+	{
+		return times;
+	}
+	const std::list<Day>& Target::get_times()const
+	{
+		return times;
+	}
+	void Target::print(std::ostream& out) const
+	{
+		for(const Day& day : times)
+		{
+			for(const core::DataTime& dt: day)
+			{
+				out << std::put_time(&dt, "%A %H:%M");
+				out << " ";
+				//out << std::put_time(&t.end, "%H:%M");
+			}
+			out << ",";
+		}
 	}
 	
 	
@@ -215,29 +286,11 @@ namespace oct::ec::sche
 	{
 		
 	}
-	std::list<Day>& Teacher::get_times()
-	{
-		return times;
-	}
-	const std::list<Day>& Teacher::get_times()const
-	{
-		return times;
-	}
 	void Teacher::print(std::ostream& out) const
 	{
 		out << get_name() << ",";
-		for(const Day& day : times)
-		{
-			for(const core::DataTime& dt: day)
-			{
-				out << std::put_time(&dt, "%w %H:%M");
-				out << " ";
-				//out << std::put_time(&t.end, "%H:%M");
-			}
-			out << ",";
-		}
+		Target::print(out);
 	}
-
 
 
 
@@ -305,14 +358,6 @@ namespace oct::ec::sche
 	unsigned int Subject::get_time()const
 	{
 		return time;
-	}	
-	std::list<Time>& Subject::get_times()
-	{
-		return times;
-	}
-	const std::list<Time>& Subject::get_times()const
-	{
-		return times;
 	}
 	void Subject::print(std::ostream& out) const
 	{
@@ -323,12 +368,11 @@ namespace oct::ec::sche
 	
 	
 	
-	Targets::Targets()
+	Targets::Targets() : dataObject(NULL)
 	{
 	}
-	Targets::Targets(const Data* d)
+	Targets::Targets(const Data* d) : dataObject(d)
 	{
-		dataObject = d;
 	}		
 	const Data* Targets::operator = (const Data* d)
 	{
@@ -362,6 +406,8 @@ namespace oct::ec::sche
 	}
 	void Teachers::loadFile(const std::string& fn)
 	{
+		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
+		
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
@@ -376,16 +422,20 @@ namespace oct::ec::sche
 				teacher = data;
 				ec::sche::Time time;
 				Day day;
-				int timeDay = 0;
+				//Se inicia en lunes
+				int timeDay = dataObject->config.get_begin_day();
 				while(std::getline(str,data,','))
 				{
 					std::stringstream ssTime(data);
 					std::getline(ssTime,strH,'-');
-					time.set_begin(&dataObject->config,strH);
+					strH = std::to_string(timeDay) + " " + strH;
+					time.set_begin(strH);
 					std::getline(ssTime,strH,'-');
-					time.set_end(&dataObject->config,strH);
+					strH = std::to_string(timeDay) + " " + strH;
+					time.set_end(strH);
 					time.granulate(&dataObject->config,day);
-					teacher.get_times().push_back(day);
+					teacher.save(day);
+					timeDay++;
 				}
 				teachers.push_back(teacher);	
 				//std::cout << "\n";
@@ -425,31 +475,21 @@ namespace oct::ec::sche
 
 
 
-
 	
 
 	
-	
-	/*Subjects::Row::Row()
-	{
 		
-	}
-	void Subjects::Row::print(std::ostream& out) const
+	Subjects::Subjects(const std::string& fn, const Data* d) : Targets(d)
 	{
-		out << subject.get_name() << ",";
-		out << subject.get_time();
-	}*/
-	
-	Subjects::Subjects(const std::string& fn, const Data* d)
-	{
-		loadFile(fn,d);
+		loadFile(fn);
 	}
 	Subjects::Subjects()
 	{
-
 	}
-	void Subjects::loadFile(const std::string& fn, const Data* d)
+	void Subjects::loadFile(const std::string& fn)
 	{
+		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
+		
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strH;
 		if(csv.is_open())
@@ -458,6 +498,7 @@ namespace oct::ec::sche
 			{
 				std::stringstream str(line);
 				Subject subject;
+				((Target&)subject) = &dataObject->config;
 				//std::cout << line;
 				//std::cout << data << ",";
 
@@ -468,24 +509,23 @@ namespace oct::ec::sche
 				std::getline(str,data,',');
 				std::string time = data;
 				//std::cout << "\n";
-				subject.set(name,std::stoi(time));				
-				if(d->config.get_schema() == Configuration::Schema::WITH_SUBJECTS_TIMES)
+				subject.set(name,std::stoi(time));	
+				Day day;			
+				if(dataObject->config.get_schema() == Configuration::Schema::WITH_SUBJECTS_TIMES)
 				{
 					ec::sche::Time time;
+					int timeDay = dataObject->config.get_begin_day();
 					while(std::getline(str,data,','))
 					{
 						std::stringstream ssTime(data);
 						std::getline(ssTime,strH,'-');
-						strptime(strH.c_str(), "%H:%M",&time.begin);
+						strH = std::to_string(timeDay) + " " + strH;
+						time.set_begin(strH);
 						std::getline(ssTime,strH,'-');
-						strptime(strH.c_str(), "%H:%M",&time.end);
-						/*
-						std::cout << std::put_time(&time.begin, "%H:%M");
-						std::cout << "-";
-						std::cout << std::put_time(&time.end, "%H:%M");
-						std::cout << ",";
-						*/
-						subject.get_times().push_back(time);
+						strH = std::to_string(timeDay) + " " + strH;
+						time.set_end(strH);
+						time.granulate(&dataObject->config,day);
+						subject.save(day);
 					}
 				}				
 				subjects.push_back(subject);
@@ -538,11 +578,11 @@ namespace oct::ec::sche
 		out << teacher->get_name() << ",";
 		out << subject->get_name();
 	}
-	Teachers_Subjects::Teachers_Subjects(const std::string& fn,const Data* d) : dataObject(d)
+	Teachers_Subjects::Teachers_Subjects(const std::string& fn,const Data* d) : Targets(d)
 	{
-		loadFile(fn,d);
+		loadFile(fn);
 	}
-	Teachers_Subjects::Teachers_Subjects()  : dataObject(NULL)
+	Teachers_Subjects::Teachers_Subjects()
 	{
 
 	}	
@@ -551,8 +591,11 @@ namespace oct::ec::sche
 		return teachers_subjects;
 	}
 	
-	void Teachers_Subjects::loadFile(const std::string& fn,const Data* d)
+	void Teachers_Subjects::loadFile(const std::string& fn)
 	{
+		
+		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
+		
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data;
 		if(csv.is_open())
@@ -563,7 +606,7 @@ namespace oct::ec::sche
 				//std::cout << line;
 				std::getline(str,data,',');
 				Teachers_Subjects::Row row;
-				const Teacher* rt = d->teachers.search(data);
+				const Teacher* rt = dataObject->teachers.search(data);
 				if(rt)
 				{
 					row.teacher = rt;
@@ -578,7 +621,7 @@ namespace oct::ec::sche
 
 				std::getline(str,data,',');
 				//std::cout << data << ",";				
-				const Subject* rs = d->subjects.search(data);
+				const Subject* rs = dataObject->subjects.search(data);
 				if(rs)
 				{
 					row.subject = rs;
@@ -642,23 +685,6 @@ namespace oct::ec::sche
 	}
 	
 	
-	/*Rooms::Row::Row()
-	{
-	}
-	Rooms::Row::Row(int z) : std::vector<ec::sche::Time>(z)
-	{
-	}		
-	void Rooms::Row::print(std::ostream& out)const
-	{
-		out << room.get_name() << ",";
-		for(unsigned int i = 0; i < size(); i++)
-		{
-			out << std::put_time(&at(i).begin, "%H:%M");
-			out << "-";
-			out << std::put_time(&at(i).end, "%H:%M");
-			if(i < size() - 1) out << ",";
-		}
-	}*/
 	
 	Rooms::Rooms(const std::string& fn)
 	{
@@ -675,6 +701,9 @@ namespace oct::ec::sche
 	
 	void Rooms::loadFile(const std::string& fn)
 	{
+		
+		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
+		
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
@@ -696,12 +725,6 @@ namespace oct::ec::sche
 					strptime(strH.c_str(), "%H:%M",&time.begin);
 					std::getline(ssTime,strH,'-');
 					strptime(strH.c_str(), "%H:%M",&time.end);
-					/*
-					std::cout << std::put_time(&time.begin, "%H:%M");
-					std::cout << "-";
-					std::cout << std::put_time(&time.end, "%H:%M");
-					std::cout << ",";
-					*/
 					room.get_times().push_back(time);
 				}
 				rooms.push_back(room);	
@@ -751,11 +774,11 @@ namespace oct::ec::sche
 		//out << teacher.get_name() << ",";
 	}
 	
-	Groups::Groups(const std::string& fn,const Data* d) : dataObjects(d)
+	Groups::Groups(const std::string& fn,const Data* d) : Targets(d)
 	{
-		loadFile(fn,d);
+		loadFile(fn);
 	}
-	Groups::Groups() : dataObjects(NULL)
+	Groups::Groups()
 	{
 		
 	}	
@@ -764,8 +787,11 @@ namespace oct::ec::sche
 		return groups;
 	}
 	
-	void Groups::loadFile(const std::string& fn,const Data* d)
+	void Groups::loadFile(const std::string& fn)
 	{
+		
+		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
+		
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
@@ -776,7 +802,7 @@ namespace oct::ec::sche
 				std::getline(str,data,',');
 				Group row;
 				//std::cout << "room : " << data << " : ";
-				const Room* newr = d->rooms.search(data);
+				const Room* newr = dataObject->rooms.search(data);
 				if(newr) 
 				{
 					row.room = newr;
@@ -791,7 +817,7 @@ namespace oct::ec::sche
 				while(std::getline(str,data,','))
 				{	
 					//std::cout << data << ",";
-					const Subject* news = d->subjects.search(data);	
+					const Subject* news = dataObject->subjects.search(data);	
 					if(news) 
 					{
 						row.push_back(news);
@@ -843,13 +869,17 @@ namespace oct::ec::sche
 	
 	void Data::load(const std::string& dir)
 	{
-		subjects.loadFile(dir + "/subjects.csv",this);
+		((Targets&)subjects) = this;
+		subjects.loadFile(dir + "/subjects.csv");
 		((Targets&)teachers) = this;
 		teachers.loadFile(dir + "/teachers.csv");
+		((Targets&)rooms) = this;
 		rooms.loadFile(dir + "/rooms.csv");
 		//
-		teachers_subjects.loadFile(dir + "/teachers-subjects.csv",this);
-		groups.loadFile(dir + "/groups.csv",this);
+		((Targets&)teachers_subjects) = this;
+		teachers_subjects.loadFile(dir + "/teachers-subjects.csv");
+		((Targets&)groups) = this;
+		groups.loadFile(dir + "/groups.csv");
 	}
 }
 

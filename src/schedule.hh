@@ -96,9 +96,7 @@ namespace oct::ec::sche
 		*/
 		virtual void initial();
 
-		void pulverize_hours(const core::DataTime& t1,const core::DataTime& t2,std::vector<core::DataTime>& out);
-		void pulverize();
-
+		
 		void testing();
 	private:
 		std::string directory;
