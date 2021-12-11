@@ -52,15 +52,14 @@
 					<Add directory="src" />
 				</Compiler>
 				<Linker>
-					<Add library="libgcc_s_seh-1" />
-					<Add library="libstdc++-6" />
 					<Add library="octetos-core" />
 					<Add library="octetos-EC" />
 					<Add directory="bin/Debug" />
 				</Linker>
 				<ExtraCommands>
-					<Add before='cmd /c COPY /Y &quot;C:\Program Files\CodeBlocks\libgcc_s_seh-1.dll&quot; bin\Debug' />
-					<Add before='cmd /c COPY /Y &quot;C:\Program Files\CodeBlocks\libstdc++-6.dll&quot; bin\Debug' />
+					<Add before='cmd /c COPY /Y &quot;C:\Program Files\CodeBlocks\MinGW\bin\libgcc_s_seh-1.dll&quot; bin\Debug' />
+					<Add before='cmd /c COPY /Y &quot;C:\Program Files\CodeBlocks\MinGW\bin\libstdc++-6.dll&quot; bin\Debug' />
+					<Add before='cmd /c COPY /Y &quot;C:\Program Files\CodeBlocks\MinGW\bin\libwinpthread-1.dll&quot; bin\Debug' />
 					<Add before="cmd /c COPY /Y ..\core\bin\Debug\octetos-core.dll bin\Debug" />
 				</ExtraCommands>
 			</Target>
