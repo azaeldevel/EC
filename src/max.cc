@@ -42,7 +42,7 @@ geneUS Chromosome::randGenNumber()
 	geneUS g;
 	caret_2B_16b* gene = reinterpret_cast<caret_2B_16b*>((geneUS*)&g);
 	double randNum = randNumber(0.0,1.0);
-		
+
 	if(randNum < 1.0/16.0)
 	{
 		gene->a = 1;
@@ -106,8 +106,8 @@ geneUS Chromosome::randGenNumber()
 	else
 	{
 		gene->o = 1;
-	}	
-		
+	}
+
 	return g;
 }
 Chromosome::pfnCombine Chromosome::randCombine()
@@ -117,19 +117,19 @@ Chromosome::pfnCombine Chromosome::randCombine()
 	switch(randUS)
 	{
 		case 1:
-			return &Chromosome::combine1;		
+			return &Chromosome::combine1;
 			break;
 		case 2:
-			return &Chromosome::combine2;		
+			return &Chromosome::combine2;
 			break;
 		case 3:
-			return &Chromosome::combine3;		
+			return &Chromosome::combine3;
 			break;
 		case 4:
-			return &Chromosome::combine4;		
+			return &Chromosome::combine4;
 			break;
 	}
-	
+
 	return &Chromosome::combine4;
 }
 geneUS Chromosome::combination(const geneUS& gene)
@@ -139,33 +139,33 @@ geneUS Chromosome::combination(const geneUS& gene)
 geneUS Chromosome::combine1(const geneUS& gene)
 {
 	if(sizeof(caret_2B_half) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
-	
+
 	const caret_2B_half* g1 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gennumber);
 	const caret_2B_half* g2 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gene);
 	caret_2B_half g3;
 	g3.a = g1->a;
 	g3.b = g2->b;
-	
+
 	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
 	return newgen;
 }
 geneUS Chromosome::combine2(const geneUS& gene)
 {
 	if(sizeof(caret_2B_half) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
-	
+
 	const caret_2B_half* g1 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gennumber);
 	const caret_2B_half* g2 = reinterpret_cast<const caret_2B_half*>((const geneUS*)&gene);
 	caret_2B_half g3;
 	g3.a = g1->b;
 	g3.b = g2->a;
-	
+
 	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
 	return newgen;
 }
 geneUS Chromosome::combine3(const geneUS& gene)
 {
 	if(sizeof(caret_2B_16b) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
-	
+
 	const caret_2B_16b* g1 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gennumber);
 	const caret_2B_16b* g2 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gene);
 	caret_2B_16b g3;
@@ -184,14 +184,14 @@ geneUS Chromosome::combine3(const geneUS& gene)
 	g3.m = g1->m;
 	g3.n = g2->n;
 	g3.o = g1->o;
-	
+
 	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
 	return newgen;
 }
 geneUS Chromosome::combine4(const geneUS& gene)
 {
 	if(sizeof(caret_2B_16b) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
-	
+
 	const caret_2B_16b* g1 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gennumber);
 	const caret_2B_16b* g2 = reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gene);
 	caret_2B_16b g3;
@@ -210,17 +210,17 @@ geneUS Chromosome::combine4(const geneUS& gene)
 	g3.m = g2->m;
 	g3.n = g1->n;
 	g3.o = g2->o;
-	
+
 	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
 	return newgen;
 }
 geneUS Chromosome::mutate(const geneUS& g)
 {
 	if(sizeof(caret_2B_16b) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
-	
+
 	caret_2B_16b gene = *reinterpret_cast<const caret_2B_16b*>((const geneUS*)&g);
 	double randNum = randNumber(0.0,1.0);
-	
+
 	if(randNum < 1.0/16.0)
 	{
 		gene.a = not gene.a;
@@ -288,10 +288,10 @@ geneUS Chromosome::mutate(const geneUS& g)
 	else
 	{
 		gene.o = not gene.o;
-	}	
-	
+	}
+
 	geneUS newGen = *reinterpret_cast<geneUS*>(&gene);
-	
+
 	return newGen;
 }
 
@@ -312,7 +312,7 @@ Single::Single(ID id,Enviroment& env) : oct::ec::Single(id,env)
 void Single::eval()
 {
 	//if(true) std::cout << "Single::eval " << USHRT_MAX << " \n";
-	fitness = double(chromo.getNumber()) / double(USHRT_MAX);	
+	fitness = double(chromo.getNumber()) / double(USHRT_MAX);
 }
 void Single::save(std::ofstream& fn)
 {
@@ -341,7 +341,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.3\n";
 		double randAlgSingle = randNumber(0.0,1.0);
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.4\n";
-		if(randAlgSingle < 0.5)	
+		if(randAlgSingle < 0.5)
 		{
 			algCombine = chromo.getCombine();
 		}
@@ -354,9 +354,9 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.6\n";
 		chils.push_back(newSingle);
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.7\n";
-		countNews++;		
+		countNews++;
 	}
-	
+
 	return countNews;
 }
 void Single::print(std::ostream& fn) const
@@ -367,28 +367,12 @@ void Single::print(std::ostream& fn) const
 	fn << ",";
 	fn << chromo.getNumber();
 }
-	
-	
-	
-	
-	
-/*bool Enviroment::run()
-{
-	initial();
-	
-	std::cout << "Lista de numeros : " << "\n";
-	for(ec::Single* s: *this)
-	{
-		((Single*)s)->eval();
-	}
-	sort(comparer);
-	for(ec::Single* s: *this)
-	{
-		((Single*)s)->print(std::cout);
-		std::cout << "\n";
-	}
-	return true;
-}*/
+
+
+
+
+
+
 Enviroment::Enviroment()
 {
 	init();
@@ -428,7 +412,7 @@ void Enviroment::initial()
 }
 Enviroment::~Enviroment()
 {
-	
+
 }
 
 

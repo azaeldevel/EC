@@ -478,23 +478,26 @@ bool Enviroment::run()
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
 
 	actualIteration = 1;
-	if(echoSteps) std::cout << "\tStep 1\n";
+	std::cout << "\tStep 1\n";
 	initial();
-	if(echoSteps) std::cout << "\tStep 2\n";
+	 std::cout << "\tStep 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
-	if(echoSteps) std::cout << "\tStep 3\n";
+	std::cout << "\tStep 3\n";
 	logFile = not logDirectory.empty();
 	if(logFile)
 	{
-		//session = getSession();
-		logSubDirectory = logDirectory +"/" + std::to_string(oct::core::getTimeID());
-		//std::cout << "\t\t" << logSubDirectory << "\n";
-		if(not shell.exists(logSubDirectory)) shell.mkdir(logSubDirectory);
-		std::string strhistory = logSubDirectory + "/historial.csv";
+		if(not shell.exists(logDirectory))
+        {
+            std::string msg = "No esite el directorio de logs '";
+            msg += logDirectory + "'";
+            throw core::Exception(msg,__FILE__,__LINE__);
+        }
+		std::string strhistory = logDirectory + "/historial.csv";
 		history.open(strhistory);
 	}
-	if(echoSteps) std::cout << "\tStep 4\n";
+
+	std::cout << "\tStep 4\n";
 
 	ID oldleaderID = 0;
 	double oldLeaderFitness = 0.0;
@@ -894,7 +897,7 @@ void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file
 
 void Enviroment::commands(int argc, const char* argv[])
 {
-	std::cout << "Enviroment::commands : Step 1.0\n";
+	//std::cout << "Enviroment::commands : Step 1.0\n";
 	for(int i = 1; i < argc; i++)
 	{
 		if(strcmp("--directory-logs",argv[i]) == 0)
@@ -937,6 +940,15 @@ void Enviroment::commands(int argc, const char* argv[])
 		if(strcmp("--mutation-gene",argv[i]) == 0)
 		{
 			pMutableGene = std::stod(argv[++i]);
+		}
+		if(strcmp("--create-session",argv[i]) == 0)
+		{
+			std::string strDay = std::to_string(oct::core::getDayID());
+			logDirectory = logDirectory + "/" + strDay;
+			if(not shell.exists(logDirectory))
+			{
+				shell.mkdir(logDirectory);
+			}
 		}
 	}
 }

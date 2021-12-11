@@ -33,29 +33,15 @@ int main(int argc, const char* argv[])
 	if(argc < 2)
 	{
 		std::cerr << "Indique el parametro necesarion\n";
-		std::cerr << "trans  --directory-logs dir\n";
+		std::cerr << "ec-max  --directory-logs dir\n";
 		return EXIT_SUCCESS;
 	}
-	//std::cout << "sizeof(unsigned short) = " << sizeof(unsigned short) << "\n";
-	std::string logDir = argv[1];
-	std::string logDirectory;
-	//bool logFile = not logDir.empty();//
-
-	/*if(logFile)
-	{
-		logDirectory = logDir + "/" + std::to_string(ec::Enviroment::getDayID());
-		oct::core::Shell shell;
-		shell.mkdir(logDirectory,true);
-	}*/
 
 	oct::ec::max::Enviroment* max = new oct::ec::max::Enviroment(argc,argv);
 	max->enableEcho(&std::cout,2);
-	//max->setEchoSteps(true);
-	//std::cout << "Step 1\n";
+
 	bool ret = max->run();
-	//std::cout << "Step 2\n";
 	delete max;//no es necesario delete en mian ya que se llama automaticamente
-	//std::cout << "Step 3\n";
 	return ret? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
