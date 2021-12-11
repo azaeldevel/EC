@@ -3,16 +3,20 @@
 #include <iostream>
 #include <cstdlib>
 #include <schedule.hh>
+#include <locale>
+#include <ctime>
+#include <iomanip>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 
 
 static oct::ec::sche::Data data;
 
 int init(void)
 {
-	data.subjects.loadFile("../../tests/subjects.csv");
-	data.teachers.loadFile("../../tests/teachers.csv");
-	data.rooms.loadFile("../../tests/rooms.csv");
-	data.teachers_subjects.loadFile("../../tests/teachers-subjects.csv");
+	data.config.set_schema(oct::ec::sche::Configuration::Schema::WITH_SUBJECTS_TIMES);
+	data.load("../../tests");
 
 	return 0;
 }
@@ -31,7 +35,7 @@ void testDeveloping()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.subjects.get_list().size() == 6)
+	if(data.subjects.get_list().size() == 8)
 	{
 		CU_ASSERT(true);
 	}
@@ -39,7 +43,7 @@ void testDeveloping()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.rooms.get_list().size() == 2)
+	if(data.rooms.get_list().size() == 3)
 	{
 		//std::cout << "count : " << data.rooms.get_list().size() << "\n";
 		CU_ASSERT(true);
@@ -60,8 +64,8 @@ void testDeveloping()
 
 
 	
-	const oct::ec::sche::Teachers::Row* row = data.teachers.search("Leticia Mojica");
-	if(row) 
+	const oct::ec::sche::Teacher* teacher1 = data.teachers.search("Leticia Mojica");
+	if(teacher1) 
 	{
 		//row->print(std::cout);
 		CU_ASSERT(true);
@@ -71,9 +75,9 @@ void testDeveloping()
 		//std::cout << "No se encontro el maestro indicado\n";
 		CU_ASSERT(false);
 	}
-	std::cout << "\n";
-	const oct::ec::sche::Subjects::Row* rowSuject = data.subjects.search("Fisica");
-	if(rowSuject) 
+	//std::cout << "\n";
+	const oct::ec::sche::Subject* subject1 = data.subjects.search("Fisica");
+	if(subject1) 
 	{
 		//rowSuject->print(std::cout);
 		CU_ASSERT(true);
@@ -83,7 +87,7 @@ void testDeveloping()
 		//std::cout << "No se encontro el maestro indicado\n";
 		CU_ASSERT(false);		
 	}
-	std::cout << "\n";
+	//std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
 	std::list<oct::ec::sche::Teachers_Subjects::Row*> rowTS;
 	data.teachers_subjects.searchSubjects("Espanol",rowTS);
@@ -103,12 +107,12 @@ void testDeveloping()
 		CU_ASSERT(false);		
 	}
 	
-	std::cout << "\n";
+	//std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
-	const oct::ec::sche::Rooms::Row* rowR1 = data.rooms.search("1A");
-	if(rowR1) 
+	const oct::ec::sche::Room* room1 = data.rooms.search("1A");
+	if(room1) 
 	{
-		row->print(std::cout);
+		//row->print(std::cout);
 		CU_ASSERT(true);
 	}
 	else 
@@ -116,6 +120,127 @@ void testDeveloping()
 		//std::cout << "No se encontro el maestro indicado\n";
 		CU_ASSERT(false);		
 	}
+	
+	//std::cout << "\n";
+	const oct::ec::sche::Groups::Group* rowG1 = data.groups.search_name("1A");
+	if(rowG1) 
+	{
+		//rowG1->print(std::cout);
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "No se encontro el grupo '1A'\n";
+		CU_ASSERT(false);		
+	}
+	
+	
+	oct::ec::sche::Time time1;
+	time1.set_begin(&data.config, "8:00");
+	if(time1.begin.tm_hour == 8) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time1.begin.tm_hour = " << time1.begin.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	time1.set_end(&data.config, "20:00");
+	if(time1.end.tm_hour == 20) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time1.end.tm_hour = " << time1.end.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	oct::ec::sche::Day day;
+	time1.granulate(&data.config,day);
+	if(day.size() == 12) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "day.size() = " << day.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	typedef oct::ec::sche::Day::iterator iterator_day;
+
+	int i = 0;
+	for(iterator_day it = day.begin(); it != day.end(); it++, i++)
+	{
+		if((*it).tm_hour == i + 8)
+		{
+			CU_ASSERT(true);
+		}
+		else
+		{
+			std::cout << "day[i].tm_hour = " << i + 8 << "\n";
+			CU_ASSERT(false);
+		}
+	}
+	
+	oct::ec::sche::Time time2;
+	time2.set_begin("2 8:00");
+	if(time2.begin.tm_wday == 2) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time2.begin.tm_wday = " << time2.begin.tm_wday << "\n";
+		CU_ASSERT(false);		
+	}
+	if(time2.begin.tm_hour == 8) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time1.begin.tm_hour = " << time2.begin.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	time2.set_end("2 20:00");
+	if(time2.end.tm_hour == 20) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time2.end.tm_hour = " << time2.end.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	oct::ec::sche::Day day2;
+	time2.granulate(&data.config,day2);
+	if(day2.size() == 12) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "day2.size() = " << day2.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	for(const oct::core::DataTime& dt : day2)
+	{
+		//std::cout << std::put_time(&dt, "%a %H:%M") << "\n";
+		if(dt.tm_wday == 2) 
+		{
+			CU_ASSERT(true);
+		}
+		else 
+		{
+			std::cout << "dt.tm_wday = " << dt.tm_wday << "\n";
+			CU_ASSERT(false);		
+		}
+	}
+	
+	//teacher1->print(std::cout);
+	//subject1->print(std::cout);
+	//room1->print(std::cout);
 }
 int main(int argc, char *argv[])
 {
