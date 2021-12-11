@@ -489,7 +489,7 @@ bool Enviroment::run()
 	{
 		if(not shell.exists(logDirectory))
         {
-            std::string msg = "No esite el directorio de logs '";
+            std::string msg = "No existe el directorio de logs '";
             msg += logDirectory + "'";
             throw core::Exception(msg,__FILE__,__LINE__);
         }
