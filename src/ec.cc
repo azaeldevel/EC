@@ -478,12 +478,12 @@ bool Enviroment::run()
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
 
 	actualIteration = 1;
-	std::cout << "\tStep 1\n";
+	//std::cout << "\tStep 1\n";
 	initial();
-	 std::cout << "\tStep 2\n";
+    //std::cout << "\tStep 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
-	std::cout << "\tStep 3\n";
+	//std::cout << "\tStep 3\n";
 	logFile = not logDirectory.empty();
 	if(logFile)
 	{
@@ -497,7 +497,7 @@ bool Enviroment::run()
 		history.open(strhistory);
 	}
 
-	std::cout << "\tStep 4\n";
+	//std::cout << "\tStep 4\n";
 
 	ID oldleaderID = 0;
 	double oldLeaderFitness = 0.0;
@@ -920,11 +920,10 @@ void Enviroment::commands(int argc, const char* argv[])
 
 			//serieName = argv[++i];
 			std::string strDay = std::to_string(oct::core::getDayID());
-			std::string logSub = logDirectory + "/" + strDay;
-			if(not shell.exists(logSub))
+			logDirectory = logDirectory + "/" + strDay;
+			if(not shell.exists(logDirectory))
 			{
-				logDirectory = logSub;
-				shell.mkdir(logSub);
+				shell.mkdir(logDirectory);
 			}
 
 			stopperMaxSerie(std::stoi(argv[++i]));
@@ -944,7 +943,8 @@ void Enviroment::commands(int argc, const char* argv[])
 		if(strcmp("--create-session",argv[i]) == 0)
 		{
 			std::string strDay = std::to_string(oct::core::getDayID());
-			logDirectory = logDirectory + "/" + strDay;
+			std::string strTime = std::to_string(oct::core::getTimeID());
+			logDirectory = logDirectory + "/" + strDay + strTime;
 			if(not shell.exists(logDirectory))
 			{
 				shell.mkdir(logDirectory);
