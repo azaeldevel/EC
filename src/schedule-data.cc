@@ -601,7 +601,10 @@ namespace oct::ec::sche
 	void Teachers_Subjects::Row::print(std::ostream& out)const
 	{
 		out << teacher->get_name() << ",";
-		out << subject->get_name();
+		for(const Subject* s : *this)
+		{
+			out << s->get_name();
+		}
 	}
 	Teachers_Subjects::Teachers_Subjects(const std::string& fn,const Data* d) : Targets(d)
 	{
@@ -643,19 +646,20 @@ namespace oct::ec::sche
 					throw core::Exception(msg,__FILE__,__LINE__);
 				}
 				//std::cout << data << ",";
-
-				std::getline(str,data,',');
-				//std::cout << data << ",";				
-				const Subject* rs = dataObject->subjects.search(data);
-				if(rs)
+				while(std::getline(str,data,','))
 				{
-					row.subject = rs;
-				}
-				else 	
-				{
-					std::string msg = "Archivo '";
-					msg += fn + "', la materia '" + data + "', no esta registrada en su correpondiente archivo.";
-					throw core::Exception(msg,__FILE__,__LINE__);
+					//std::cout << data << ",";				
+					const Subject* rs = dataObject->subjects.search(data);
+					if(rs)
+					{
+						row.push_back(rs);
+					}
+					else 	
+					{
+						std::string msg = "Archivo '";
+						msg += fn + "', la materia '" + data + "', no esta registrada en su correpondiente archivo.";
+						throw core::Exception(msg,__FILE__,__LINE__);
+					}
 				}
 								
 				//std::cout << "\n";
@@ -678,14 +682,11 @@ namespace oct::ec::sche
 			out << "\n";
 		}
 	}
-	void Teachers_Subjects::searchTeachers(const std::string& str, std::list<const Row*>& l)const
+	const Teachers_Subjects::Row* Teachers_Subjects::searchTeachers(const std::string& str)const
 	{
-		typedef std::multimap<std::string, Row*>::const_iterator iterator;
-		std::pair<iterator,iterator> result = teachers_by_name.equal_range(str);
-		for(iterator it = result.first; it != result.second; it++)
-		{
-			l.push_back(it->second);
-		}
+	 	auto it = teachers_by_name.find(str);
+	 	if(it != teachers_by_name.end()) return it->second;
+	 	return NULL;
 	}
 	void Teachers_Subjects::searchSubjects(const std::string& str, std::list<const Row*>& l)const
 	{
@@ -703,9 +704,22 @@ namespace oct::ec::sche
 		for(Row& row : teachers_subjects)
 		{
 			if(not row.teacher) throw core::Exception("Valor nulo para puntero de Maestro",__FILE__,__LINE__);
+			
+			auto itTeacher = teachers_by_name.find(row.teacher->get_name());
+
+			if(itTeacher != teachers_by_name.end()) 
+			{
+				std::string msg = "El Maestro '";
+				msg += row.teacher->get_name() + "' ya esta registrado previeamente en el artivo Maestros/Materias.";
+				throw core::Exception(msg,__FILE__,__LINE__);
+			}
 			teachers_by_name.insert({row.teacher->get_name(),&row});
-			if(not row.subject) throw core::Exception("Valor nulo para puntero de Materia",__FILE__,__LINE__);
-			subjects_by_name.insert({row.subject->get_name(),&row});
+			
+			for(const Subject* subject : row)
+			{
+				if(not subject) throw core::Exception("Valor nulo para puntero de Materia",__FILE__,__LINE__);
+				subjects_by_name.insert({subject->get_name(),&row});
+			}
 		}
 	}
 	
@@ -796,10 +810,10 @@ namespace oct::ec::sche
 
 
 
-	Groups::Group::Group()
+	Group::Group()
 	{
 	}		
-	void Groups::Group::print(std::ostream& out)const
+	void Group::print(std::ostream& out)const
 	{
 		out << room->get_name() << ",";
 		//out << teacher.get_name() << ",";
@@ -813,7 +827,7 @@ namespace oct::ec::sche
 	{
 		
 	}	
-	const std::list<Groups::Group>& Groups::get_list() const
+	const std::list<Group>& Groups::get_list() const
 	{
 		return groups;
 	}
@@ -879,14 +893,14 @@ namespace oct::ec::sche
 			out << "\n";
 		}
 	}
-	const Groups::Group* Groups::search_name(const std::string& str) const
+	const Group* Groups::search_name(const std::string& str) const
 	{
 		std::map<std::string, Group*>::const_iterator it = groups_by_name.find(str);
 
 		if(it != groups_by_subject.end()) return it->second;
 		return NULL;		
 	}	
-	const Groups::Group* Groups::search_by_subject(const std::string& str) const
+	const Group* Groups::search_by_subject(const std::string& str) const
 	{
 		std::map<std::string, Group*>::const_iterator it = groups_by_subject.find(str);
 
@@ -923,6 +937,15 @@ namespace oct::ec::sche
 		teachers_subjects.loadFile(dir + "/teachers-subjects.csv");
 		((Targets&)groups) = this;
 		groups.loadFile(dir + "/groups.csv");
+	}
+	
+	
+	
+	
+	void Schedule::init_rand(const sche::Group* group)
+	{
+	
+		
 	}
 }
 

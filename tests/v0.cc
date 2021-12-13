@@ -52,7 +52,7 @@ void testDeveloping()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.teachers_subjects.get_list().size() == 12)
+	if(data.teachers_subjects.get_list().size() == 8)
 	{
 		CU_ASSERT(true);
 	}
@@ -89,7 +89,7 @@ void testDeveloping()
 	}
 	//std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
-	std::list<oct::ec::sche::Teachers_Subjects::Row*> rowTS;
+	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS;
 	data.teachers_subjects.searchSubjects("Espanol",rowTS);
 	if(rowTS.size() == 2) 
 	{
@@ -122,7 +122,7 @@ void testDeveloping()
 	}
 	
 	//std::cout << "\n";
-	const oct::ec::sche::Groups::Group* rowG1 = data.groups.search_name("1A");
+	const oct::ec::sche::Group* rowG1 = data.groups.search_name("1A");
 	if(rowG1) 
 	{
 		//rowG1->print(std::cout);

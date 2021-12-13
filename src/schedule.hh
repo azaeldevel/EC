@@ -12,36 +12,6 @@
 namespace oct::ec::sche
 {	
 	
-
-	struct Schedule_Teacher
-	{
-
-	};
-
-	struct Studen
-	{
-		/**
-		*\brieff Information by lesson
-		*/
-		/*struct Lesson
-		{
-			const sche::Subject* subject;
-			core::DataTime time;
-			const sche::Teacher teacher;
-		};*/
-
-		/**
-		*\brieff lessons by day
-		*/
-		/*struct Day
-		{
-			std::vector<Lesson> lessons;
-		};*/
-
-		std::vector<Day> days;
-
-		void init_rand(const sche::Groups::Group*);
-	};
 	/**
 	*\brief Representa una posible solucion a nuestro problema
 	*/
@@ -51,7 +21,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Constructor que recive el ID del Individuo y el Ambiente
 		*/
-		Single(ID id,Enviroment& env, const std::vector<Studen>&);
+		Single(ID id,Enviroment& env, const Schedule&);
 		
 		/**
 		*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
@@ -70,7 +40,7 @@ namespace oct::ec::sche
 		*/
 		virtual void print(std::ostream&) const;
 	private:
-		std::vector<Studen> students;
+		Schedule shendule;
 	};
 
 	/**
@@ -100,7 +70,6 @@ namespace oct::ec::sche
 		void testing();
 	private:
 		std::string directory;
-		Pile pile;
 		Data data;
 	};
 

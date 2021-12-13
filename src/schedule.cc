@@ -13,15 +13,9 @@ namespace oct::ec::sche
 {
 	
 	
-	void Studen::init_rand(const sche::Groups::Group* group)
-	{
-	
-		
-	}
-	
 
 
-	Single::Single(ID id,Enviroment& env, const std::vector<Studen>&) : ec::Single(id,env)
+	Single::Single(ID id,Enviroment& env, const Schedule&) : ec::Single(id,env)
 	{
 
 	}
@@ -86,35 +80,37 @@ void Enviroment::initial()
 {
 	
 	int count = data.groups.get_list().size();
-	std::vector<std::vector<Studen>> inits;
+	std::vector<Schedule> inits;
 	inits.resize(initPopulation);
 	
 	//
-	for(unsigned int i = 0; i < inits.size(); i++)
+	for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++)
 	{
-		inits[i].resize(data.groups.get_list().size());
-		Groups::const_iterator it = data.groups.get_list().begin();
-		for(unsigned int j = 0; j < data.groups.get_list().size(); j++,it++)
+		for(unsigned int j = 0; j < data.groups.get_list().size(); j++)
 		{
-			for(const Subject* s : *it)
+			for(const Subject* subject : *itGroup)
 			{
 				std::list<const Teachers_Subjects::Row*> rows;
-				data.teachers_subjects.searchSubjects(s->get_name(),rows);
+				data.teachers_subjects.searchSubjects(subject->get_name(),rows);
 				for(const Teachers_Subjects::Row* ts : rows)
 				{
+				
+					
 					const WeekHours& dispTeacher = ts->teacher->get_times();//disponibilidad de mestros
-					const WeekHours& dispRoom = (*it).room->get_times();//disponibilidad de salon
+					const WeekHours& dispRoom = (*itGroup).room->get_times();//disponibilidad de salon
 					
 					if(dispTeacher.size() != dispRoom.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
 					
-					
+					Goal goal;
+					goal.group = &*itGroup;
+					//goal.teacher = 
 				}
 			}
 		}
 	}
 	
 	//creando individuuos
-	for(const std::vector<Studen>& s : inits)
+	for(const Schedule& s : inits)
 	{
 		Single* single = new Single(nextID(),*this,s);
 		push_back(single);
