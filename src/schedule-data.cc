@@ -26,6 +26,8 @@
 #include <stdio.h>
 #include <time.h>
 
+
+
 #include "schedule.hh"
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -591,6 +593,12 @@ namespace oct::ec::sche
 	{
 		return subjects;
 	}
+	
+	
+	
+	
+	
+	
 
 
 
@@ -688,7 +696,7 @@ namespace oct::ec::sche
 	 	if(it != teachers_by_name.end()) return it->second;
 	 	return NULL;
 	}
-	void Teachers_Subjects::searchSubjects(const std::string& str, std::list<const Row*>& l)const
+	void Teachers_Subjects::searchSubjects(const std::string& str, List<const Row*>& l)const
 	{
 		typedef std::multimap<std::string, Row*>::const_iterator iterator;
 		std::pair<iterator,iterator> result = subjects_by_name.equal_range(str);

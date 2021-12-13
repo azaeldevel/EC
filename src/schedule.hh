@@ -60,13 +60,16 @@ namespace oct::ec::sche
 		void init();
 		
 		~Enviroment();
+
+
 	
 		/**
 		*\brief Crea la poblacion inicial
 		*/
 		virtual void initial();
 
-		
+		unsigned int counter()const;
+
 		void testing();
 	private:
 		std::string directory;

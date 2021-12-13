@@ -4,8 +4,10 @@
 #define EC_SCHEDULE_DATA_HH
 
 #include <map>
+#include <random>
 
 #include "GA.hh"
+
 
 namespace oct::core
 {
@@ -265,6 +267,22 @@ namespace oct::ec::sche
 		std::map<std::string, Subject*> subject_by_name;
 	};
 
+	
+	template<typename T> class List : public std::list<T>
+	{
+	public:
+		T rand()
+		{
+			static std::random_device rd;
+			static std::mt19937 gen(rd());
+			std::uniform_int_distribution<> dis(0, std::distance(std::list<T>::begin(),std::list<T>::end()));
+			typename std::list<T>::iterator it = std::list<T>::begin();
+			std::advance(it,dis(gen));
+			if(it != std::list<T>::end()) return *it;
+			return NULL;
+		}
+	};
+
 	class Teachers_Subjects : public Targets
 	{
 	public: 
@@ -283,7 +301,7 @@ namespace oct::ec::sche
 		void print(std::ostream&)const;
 		const std::list<Row>& get_list() const;
 		const Row* searchTeachers(const std::string&)const;
-		void searchSubjects(const std::string&, std::list<const Row*>& )const;
+		void searchSubjects(const std::string&, List<const Row*>& )const;
 	private:
 		void indexing();
 	private:
@@ -385,7 +403,7 @@ namespace oct::ec::sche
 		const Room* room;
 		WeekHours week;
 	};
-	typedef std::vector<Goal> Goals;
+	typedef std::list<Goal> Goals;
 
 	/**
 	*\brief Difine las calses impartidas(por semana)

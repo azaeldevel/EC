@@ -241,6 +241,9 @@ void testDeveloping()
 	//teacher1->print(std::cout);
 	//subject1->print(std::cout);
 	//room1->print(std::cout);
+	
+	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment("../../logs","../../tests");
+	std::cout << "Combinaciones : " << sche->counter() << "\n";
 }
 int main(int argc, char *argv[])
 {
