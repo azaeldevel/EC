@@ -322,7 +322,7 @@ void Single::save(std::ofstream& fn)
 	fn << ",";
 	fn << chromo.getNumber();
 }
-Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
+Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel)
 {
 	if(env->getEchoSteps()) std::cout << "Single::juncting Step 1\n";
 	Population countNews = 0;

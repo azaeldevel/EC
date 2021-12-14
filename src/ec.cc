@@ -93,7 +93,7 @@ Junction::Junction(const Junction& obj): Chromosome("Junction")
 }
 Junction::Junction(): Chromosome("Junction")
 {
-	number = randNumber(1.0,9.0);
+	number = randNumber(1.0,10.0);
 	algorit = randAlgt();
 	type = TypeJuntion::BINARY;//backward compatible
 }
@@ -242,7 +242,7 @@ Enviroment& Single::getEnviroment()const
 
 	return 0;
 }*/
-Population Single::juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel,void*)
+Population Single::juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel)
 {
 	if(getJunction().get_type() != ec::Junction::TypeJuntion::BINARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
 
@@ -812,7 +812,7 @@ void Enviroment::juncting()
 		}*/
 		if(single1 == single2) continue;
 		if(echoSteps) std::cout << "Enviroment::juncting Step 2.2\n";
-		countNew += single1->juncting(newschils,single2,echolevel,NULL);
+		countNew += single1->juncting(newschils,single2,echolevel);
 		if(echoSteps) std::cout << "Enviroment::juncting Step 2.3\n";
 		if(echoSteps) std::cout << "Nuevos Individuos " <<  newschils.size() << "\n";
 	}

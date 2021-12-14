@@ -14,7 +14,7 @@ namespace oct::ec::sche
 	
 	
 
-	Single::Single(ID id,Enviroment& env) : ec::Single(id,env)
+	Single::Single(ID id,Enviroment& env,const Junction& j) : ec::Single(id,env,j)
 	{
 
 	}
@@ -32,9 +32,21 @@ namespace oct::ec::sche
 	}
 	Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
 	{
-		Single* newsingle = new Single(env->nextID(),(Enviroment&)*env);
+		Population count = 0;
 		
-		newsingle->schedule.juncting(&schedule,&((Single*)single)->schedule);
+		for(ec::geneUS i = 0; i < getJunction().get_number(); i++,count++)
+		{
+			double randJ = core::randNumber();
+			const Junction* juntion;
+			if(randJ < 0.5) juntion = &getJunction();
+			else juntion = &single->getJunction();
+			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,*juntion);
+			newsingle->schedule.juncting(&schedule,&((Single*)single)->schedule);
+						
+			chils.push_back(newsingle);
+		}
+					
+		return count++;	
 	}
 	void Single::print(std::ostream&) const
 	{
@@ -73,7 +85,7 @@ Enviroment::~Enviroment()
 }
 void Enviroment::init()
 {
-	initPopulation = 5;
+	initPopulation = 36;
 	maxPopulation = initPopulation;
 	maxProgenitor = initPopulation;
 }
@@ -86,7 +98,7 @@ void Enviroment::initial()
 	inits.resize(initPopulation);
 	
 	if(initPopulation < data.groups.get_list().size() * 2) core::Exception("El tamano de la poblacion inicial es muy bajo",__FILE__,__LINE__);
-	if((initPopulation % data.groups.get_list().size()) != 0 and (initPopulation / data.groups.get_list().size()) ) core::Exception("La poblacion inicial deve ser multiplos de la cantida de grupos.",__FILE__,__LINE__);
+	if((initPopulation % data.groups.get_list().size()) != 0 and (initPopulation / data.groups.get_list().size() ) < 2 ) throw core::Exception("La poblacion inicial deve ser multiplos de la cantida de grupos.",__FILE__,__LINE__);
 	
 	//
 	for(Schedule& sche : inits)
@@ -110,7 +122,7 @@ void Enviroment::initial()
 					throw core::Exception(msg,__FILE__,__LINE__);
 				}
 				
-				sche.push_back(goal);
+				sche.push_back(goal);//todos los individuos deven tener los datos en el mismo orden, es importante para las operacionde apareo
 			}
 		}
 	}

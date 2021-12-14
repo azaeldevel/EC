@@ -17,7 +17,7 @@ namespace oct::ec::sche
 	class Single : public oct::ec::Single
 	{
 	public:
-		Single(ID id,Enviroment& env);
+		Single(ID id,Enviroment& env,const Junction& junction);
 		/**
 		*\brief Constructor que recive el ID del Individuo y el Ambiente
 		*/
