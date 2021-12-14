@@ -64,7 +64,7 @@ public:
 
 	virtual void eval();
 	virtual void randFill(bool favor = false);
-	virtual Population juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel);
+	virtual Population juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single);
 	virtual void save(std::ofstream& fn);
 	//const oct::core::StringMD5& getMD5() const;
 

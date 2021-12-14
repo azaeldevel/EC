@@ -22,15 +22,23 @@ namespace oct::ec::sche
 	{
 
 	}
+	/**
+	** Criterios:
+	** 		El mismo maestro no puede tener clases diferentes a la misma hora : No traslapes de Maestro
+	** 		Dos clases no pueden tener el mismo horario en el mismo salon : No traslape de clase
+	** 		La misma materia no puede tener diferentes maestros para un grupo: Maestro unico por materia
+	** 		Los criterio de disponibilidad para cada objetivo dever ser compidos : disponibilidad
+	** 		Hay criterios adicionales expresados en la configuracion que deve ser cumplidos
+	**/
 	void Single::eval()
 	{
-
+		
 	}
 	void Single::save(std::ofstream& fn)
 	{
 
 	}
-	Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
+	Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{
 		Population count = 0;
 		
@@ -202,7 +210,7 @@ void Enviroment::juncting()
 		if(single2 == NULL) continue;		
 		if(single1 == single2) continue;
 		
-		single1->juncting(newschils,single2,echolevel);
+		single1->juncting(newschils,single2);
 	}
 	while(newschils.size() + size() <= maxPopulation);
 }

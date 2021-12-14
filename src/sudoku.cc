@@ -382,7 +382,7 @@ void Single::randFill(bool favor)
 		}
 	}
 }
-Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel)
+Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 {
 	//std::cout << "\t" << idCount << " puede tener " << getJunction().get_number() << " hijos\n";
 	ID idCount;
@@ -452,7 +452,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 				}
 			}
 			newj.mutate(getEnviroment().getProbabilityMutableGene());
-			if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe detecta mutacion para " << idCount << "\n";
+			if(env->getEchoLevel()  > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe detecta mutacion para " << idCount << "\n";
 		}
 
 		//los datos iniciales no se deven cambiar.
@@ -492,7 +492,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 			}
 		}*/
 		Single* s = new Single(idCount,(Enviroment&)*env,newtabla,intiVals,newj);
-		if(loglevel > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n";
+		if(env->getEchoLevel() > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n";
 		chils.push_back(s);
 	}
 	return countNew;
@@ -656,9 +656,14 @@ void Enviroment::init()
 }
 void Enviroment::initBoard(const std::string& initTable)
 {
-	//std::cout << "Enviroment::initBoard : Step 1\n";
+	//std::cout << "Enviroment::initBoard : Step 1\n";		
 	std::ifstream file(initTable);
-	if(not file.is_open()) throw octetos::core::Exception("No se logro abrier el archivo",__FILE__,__LINE__);
+	if(not file.is_open()) 
+	{
+		std::string msg = "No se logro abrir el archivo '";
+		msg += initTable + "'";
+		throw oct::core::Exception(msg,__FILE__,__LINE__);
+	}
 	std::string strline;
 	std::vector<unsigned short> inits;
 	//std::cout << "Enviroment::initBoard : Step 2\n";

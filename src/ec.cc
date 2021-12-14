@@ -236,18 +236,7 @@ Enviroment& Single::getEnviroment()const
 {
 	return *env;
 }
-/*Population Single::juncting(std::list<Single*>& chils,unsigned short loglevel,void*)
-{
-	if(getJunction().get_type() != ec::Junction::TypeJuntion::UNARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
 
-	return 0;
-}*/
-Population Single::juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel)
-{
-	if(getJunction().get_type() != ec::Junction::TypeJuntion::BINARY) throw octetos::core::Exception("Metodo de reproduccion incorrrecto",__FILE__,__LINE__);
-
-	return 0;
-}
 bool Single::mutation()const
 {
 	double numrand = randNumber(0.0,1.0);
@@ -798,7 +787,7 @@ void Enviroment::juncting()
 		if(single2 == NULL) continue;		
 		if(single1 == single2) continue;
 		
-		single1->juncting(newschils,single2,echolevel);
+		single1->juncting(newschils,single2);
 	}
 	while(newschils.size() + size() <= maxPopulation);
 }

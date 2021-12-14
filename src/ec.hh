@@ -158,7 +158,7 @@ public:
 	/**
 	*\brief Realiza el apareo entre dos individuos
 	*/
-	virtual Population juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel);
+	virtual Population juncting(std::list<Single*>& chils,const Single* single) = 0;
 	/**
 	*\brief Crea un arcivo CSV con los datos relevantes del individuo
 	*/
