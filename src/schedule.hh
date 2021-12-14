@@ -64,6 +64,11 @@ namespace oct::ec::sche
 
 	
 		/**
+		*\brief Inicia el proceso de apareo, sobecragada devido a que deve distigir entre grupo para realizar el apareoa
+		*/
+		virtual void juncting();
+
+		/**
 		*\brief Crea la poblacion inicial
 		*/
 		virtual void initial();

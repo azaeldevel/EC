@@ -788,36 +788,19 @@ void Enviroment::setEchoSteps(bool e)
 }
 void Enviroment::juncting()
 {
-	if(echoSteps) std::cout << "Enviroment::juncting Step 1\n";
 	Single *single1,*single2;
-	Population countNew = 0;
-	if(echoSteps)  std::cout << "Enviroment::juncting Step 2\n";
 	newschils.clear();
 	do
 	{
-		if(echoSteps) std::cout << "Enviroment::juncting Step 2.1\n";
 		ec::Single* single1 = getRandomSingle();
 		if(single1 == NULL) continue;
-		/*while(single1->getJunction().get_type() == Junction::TypeJuntion::UNARY)
-		{
-			countNew += single1->juncting(newschils,echolevel,NULL);
-			if(newschils.size() + size() > maxPopulation) return;
-		}*/
 		ec::Single* single2 = getRandomSingle();
-		if(single2 == NULL) continue;
-		/*while(single2->getJunction().get_type() == Junction::TypeJuntion::UNARY)
-		{
-			countNew += single2->juncting(newschils,echolevel,NULL);
-			if(newschils.size() + size() > maxPopulation) return;
-		}*/
+		if(single2 == NULL) continue;		
 		if(single1 == single2) continue;
-		if(echoSteps) std::cout << "Enviroment::juncting Step 2.2\n";
-		countNew += single1->juncting(newschils,single2,echolevel);
-		if(echoSteps) std::cout << "Enviroment::juncting Step 2.3\n";
-		if(echoSteps) std::cout << "Nuevos Individuos " <<  newschils.size() << "\n";
+		
+		single1->juncting(newschils,single2,echolevel);
 	}
 	while(newschils.size() + size() <= maxPopulation);
-	if(echoSteps) std::cout << "Enviroment::juncting Step 3\n";
 }
 void Enviroment::eval()
 {

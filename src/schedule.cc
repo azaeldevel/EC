@@ -190,6 +190,22 @@ unsigned int Enviroment::counter()const
 	
 	return count;
 }
+void Enviroment::juncting()
+{
+	Single *single1,*single2;
+	std::cout << "Enviroment::juncting()\n";
+	do
+	{
+		ec::Single* single1 = getRandomSingle();
+		if(single1 == NULL) continue;
+		ec::Single* single2 = getRandomSingle();
+		if(single2 == NULL) continue;		
+		if(single1 == single2) continue;
+		
+		single1->juncting(newschils,single2,echolevel);
+	}
+	while(newschils.size() + size() <= maxPopulation);
+}
 
 }
 
