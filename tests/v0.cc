@@ -27,7 +27,7 @@ int clean(void)
 
 void testDeveloping()
 {
-	if(data.teachers.get_list().size() == 8)
+	if(data.teachers.get_list().size() == 16)
 	{
 		CU_ASSERT(true);
 	}
@@ -35,7 +35,7 @@ void testDeveloping()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.subjects.get_list().size() == 8)
+	if(data.subjects.get_list().size() == 16)
 	{
 		CU_ASSERT(true);
 	}
@@ -43,7 +43,7 @@ void testDeveloping()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.rooms.get_list().size() == 3)
+	if(data.rooms.get_list().size() == 6)
 	{
 		//std::cout << "count : " << data.rooms.get_list().size() << "\n";
 		CU_ASSERT(true);
@@ -52,7 +52,7 @@ void testDeveloping()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.teachers_subjects.get_list().size() == 8)
+	if(data.teachers_subjects.get_list().size() == 16)
 	{
 		CU_ASSERT(true);
 	}
@@ -76,7 +76,7 @@ void testDeveloping()
 		CU_ASSERT(false);
 	}
 	//std::cout << "\n";
-	const oct::ec::sche::Subject* subject1 = data.subjects.search("Fisica");
+	const oct::ec::sche::Subject* subject1 = data.subjects.search("Fisica I");
 	if(subject1) 
 	{
 		//rowSuject->print(std::cout);
@@ -89,8 +89,8 @@ void testDeveloping()
 	}
 	//std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
-	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS;
-	data.teachers_subjects.searchSubjects("Espanol",rowTS);
+	oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*> rowTS;
+	data.teachers_subjects.searchSubjects("Espanol I",rowTS);
 	if(rowTS.size() == 2) 
 	{
 		//
