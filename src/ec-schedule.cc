@@ -52,7 +52,6 @@ int main(int argc, const char* argv[])
 	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment(logDirectory,"tests");
 	sche->enableEcho(&std::cout,2);
 	
-	sche->testing();
 	bool ret;
 	//ret = sche->run();
 	//oct::ec::sche::Teachers teachers("tests/teachers.csv");

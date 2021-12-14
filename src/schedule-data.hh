@@ -408,13 +408,7 @@ namespace oct::ec::sche
 	/**
 	*\brief Difine las calses impartidas(por semana)
 	**/
-	struct Schedule
-	{
-		
-		Goals goals;//uno por cada clase que ha de impartirse, depende de la cantidad de materias para el grupo
-
-		void init_rand(const sche::Group*);
-	};
+	typedef Goals Schedule;
 
 	/**
 	*\brief Variasiones del Horario

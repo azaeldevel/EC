@@ -950,10 +950,5 @@ namespace oct::ec::sche
 	
 	
 	
-	void Schedule::init_rand(const sche::Group* group)
-	{
-	
-		
-	}
 }
 

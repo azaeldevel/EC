@@ -97,7 +97,7 @@ void Enviroment::initial()
 				if(r) goal.teacher = r->teacher;
 				else throw core::Exception("No se encontro maestro asociado",__FILE__,__LINE__);
 				
-				sche.goals.push_back(goal);
+				sche.push_back(goal);
 			}
 		}
 	}

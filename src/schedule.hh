@@ -70,7 +70,6 @@ namespace oct::ec::sche
 
 		unsigned int counter()const;
 
-		void testing();
 	private:
 		std::string directory;
 		Data data;
