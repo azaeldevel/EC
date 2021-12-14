@@ -3,7 +3,6 @@
 #ifndef EC_SCHEDULE_HH
 #define EC_SCHEDULE_HH
 
-#include "GA.hh"
 
 #include "schedule-data.hh"
 
@@ -18,6 +17,7 @@ namespace oct::ec::sche
 	class Single : public oct::ec::Single
 	{
 	public:
+		Single(ID id,Enviroment& env);
 		/**
 		*\brief Constructor que recive el ID del Individuo y el Ambiente
 		*/
@@ -40,7 +40,7 @@ namespace oct::ec::sche
 		*/
 		virtual void print(std::ostream&) const;
 	private:
-		Schedule shendule;
+		Schedule schedule;
 	};
 
 	/**

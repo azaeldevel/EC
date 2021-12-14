@@ -230,7 +230,7 @@ public:
 	std::ostream* getFout();
 	const std::string getLogSubDirectory()const;
 	/**
-	*\brief Develbe el siguiento ID paa un nuevo objeto Single
+	*\brief Devuelve el siguiento ID para un nuevo objeto Single
 	*/
 	ID nextID();
 	ID getCountID();

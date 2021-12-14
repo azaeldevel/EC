@@ -15,6 +15,9 @@ static oct::ec::sche::Data data;
 
 int init(void)
 {
+	oct::core::Shell shell;
+	//std::cout << "cwd :" << shell.cwd() << "\n";
+	
 	data.config.set_schema(oct::ec::sche::Configuration::Schema::WITH_SUBJECTS_TIMES);
 	data.load("../../tests");
 
@@ -104,6 +107,46 @@ void testDeveloping()
 	else 
 	{
 		//std::cout << "No se encontro el maestro indicado\n";
+		CU_ASSERT(false);		
+	}
+	
+	
+	oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*> rowTS2;
+	data.teachers_subjects.searchSubjects("Geografia I",rowTS2);
+	if(rowTS2.size() == 1) 
+	{
+		//oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*>::iterator it = rowTS2.begin();
+		//std::cout << "rowTS2->teacher " << (*it)->teacher->get_name()<< "\n";
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "rowTS2.size() " << rowTS2.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	
+	
+	oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*> rowTS3;
+	data.teachers_subjects.searchSubjects("Estadistica I",rowTS3);
+	if(rowTS3.size() == 3) 
+	{
+		//oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*>::iterator it = rowTS3.begin();
+		//std::cout << "rowTS3->teacher " << (*it)->teacher->get_name()<< "\n";
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "rowTS3.size() = " << rowTS3.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	const oct::ec::sche::Teachers_Subjects::Row* rowTS3_Row = rowTS3.rand();
+	if(rowTS3_Row) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "rowTS3_Row = NULL\n";
 		CU_ASSERT(false);		
 	}
 	
@@ -243,7 +286,10 @@ void testDeveloping()
 	//room1->print(std::cout);
 	
 	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment("../../logs","../../tests");
-	std::cout << "Combinaciones : " << sche->counter() << "\n";
+	//std::cout << "Combinaciones : " << sche->counter() << "\n";
+	sche->initial();
+	
+	
 }
 int main(int argc, char *argv[])
 {

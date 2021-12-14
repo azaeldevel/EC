@@ -14,8 +14,11 @@ namespace oct::ec::sche
 	
 	
 
+	Single::Single(ID id,Enviroment& env) : ec::Single(id,env)
+	{
 
-	Single::Single(ID id,Enviroment& env, const Schedule&) : ec::Single(id,env)
+	}
+	Single::Single(ID id,Enviroment& env, const Schedule& s) : ec::Single(id,env), schedule(s)
 	{
 
 	}
@@ -29,7 +32,9 @@ namespace oct::ec::sche
 	}
 	Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
 	{
+		Single* newsingle = new Single(env->nextID(),(Enviroment&)*env);
 		
+		newsingle->schedule.juncting(&schedule,&((Single*)single)->schedule);
 	}
 	void Single::print(std::ostream&) const
 	{
@@ -80,6 +85,9 @@ void Enviroment::initial()
 	Schedules inits;
 	inits.resize(initPopulation);
 	
+	if(initPopulation < data.groups.get_list().size() * 2) core::Exception("El tamano de la poblacion inicial es muy bajo",__FILE__,__LINE__);
+	if((initPopulation % data.groups.get_list().size()) != 0 and (initPopulation / data.groups.get_list().size()) ) core::Exception("La poblacion inicial deve ser multiplos de la cantida de grupos.",__FILE__,__LINE__);
+	
 	//
 	for(Schedule& sche : inits)
 	{
@@ -95,7 +103,12 @@ void Enviroment::initial()
 				goal.subject = subjectGroup;
 				const Teachers_Subjects::Row* r = rows.rand();
 				if(r) goal.teacher = r->teacher;
-				else throw core::Exception("No se encontro maestro asociado",__FILE__,__LINE__);
+				else 
+				{
+					std::string msg = "No se encontro maestro asociado para '";
+					msg += subjectGroup->get_name() + "'";
+					throw core::Exception(msg,__FILE__,__LINE__);
+				}
 				
 				sche.push_back(goal);
 			}

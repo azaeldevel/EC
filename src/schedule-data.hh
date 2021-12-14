@@ -6,7 +6,7 @@
 #include <map>
 #include <random>
 
-#include "GA.hh"
+#include "ec.hh"
 
 
 namespace oct::core
@@ -273,13 +273,24 @@ namespace oct::ec::sche
 	public:
 		T rand()
 		{
-			static std::random_device rd;
-			static std::mt19937 gen(rd());
-			std::uniform_int_distribution<> dis(0, std::distance(std::list<T>::begin(),std::list<T>::end()));
-			typename std::list<T>::iterator it = std::list<T>::begin();
-			std::advance(it,dis(gen));
-			if(it != std::list<T>::end()) return *it;
-			return NULL;
+			if(std::list<T>::size() > 1)
+			{
+				static std::random_device rd;
+				static std::mt19937 gen(rd());
+				std::uniform_int_distribution<> dis(0, std::list<T>::size() - 1);
+				typename std::list<T>::iterator it = std::list<T>::begin();
+				std::advance(it,dis(gen));				
+				if(it != std::list<T>::end()) return *it;
+				return NULL;
+			}
+			else if(std::list<T>::size() == 1)
+			{
+				return *std::list<T>::begin();
+			}
+			else
+			{
+				return NULL;
+			}
 		}
 	};
 
@@ -403,7 +414,12 @@ namespace oct::ec::sche
 		const Room* room;
 		WeekHours week;
 	};
-	typedef std::list<Goal> Goals;
+	//typedef std::list<Goal> Goals;
+	struct Goals : public std::list<Goal>
+	{
+	
+		void juncting(const Goals*,const Goals*);
+	};
 
 	/**
 	*\brief Difine las calses impartidas(por semana)

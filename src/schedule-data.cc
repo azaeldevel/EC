@@ -434,6 +434,10 @@ namespace oct::ec::sche
 	{
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
 		
+		oct::core::Shell shell;
+		//std::cout << "cwd 2:" << shell.cwd() << "\n";
+		//std::cout << "dir 2:" << fn << "\n";
+		
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
@@ -611,7 +615,7 @@ namespace oct::ec::sche
 		out << teacher->get_name() << ",";
 		for(const Subject* s : *this)
 		{
-			out << s->get_name();
+			out << s->get_name() << ",";
 		}
 	}
 	Teachers_Subjects::Teachers_Subjects(const std::string& fn,const Data* d) : Targets(d)
@@ -714,7 +718,6 @@ namespace oct::ec::sche
 			if(not row.teacher) throw core::Exception("Valor nulo para puntero de Maestro",__FILE__,__LINE__);
 			
 			auto itTeacher = teachers_by_name.find(row.teacher->get_name());
-
 			if(itTeacher != teachers_by_name.end()) 
 			{
 				std::string msg = "El Maestro '";
@@ -934,10 +937,10 @@ namespace oct::ec::sche
 	
 	void Data::load(const std::string& dir)
 	{
-		((Targets&)subjects) = this;
-		subjects.loadFile(dir + "/subjects.csv");
 		((Targets&)teachers) = this;
 		teachers.loadFile(dir + "/teachers.csv");
+		((Targets&)subjects) = this;
+		subjects.loadFile(dir + "/subjects.csv");
 		((Targets&)rooms) = this;
 		rooms.loadFile(dir + "/rooms.csv");
 		//
@@ -949,6 +952,31 @@ namespace oct::ec::sche
 	
 	
 	
+	
+	
+	
+	void Goals::juncting(const Goals* g1,const Goals* g2)
+	{
+		if(g1->size() != g2->size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
+		double randN;
+		for(unsigned int i = 0; i < g1->size(); i++)
+		{//selecciona al azar una de las collecciones para elegir agregar dico goal a la collacion actual
+			randN = core::randNumber();
+			std::list<Goal>::const_iterator it;
+			if(randN < 0.5) 
+			{
+				it = g1->begin();
+				std::advance(it,i);
+				push_back(*it);
+			}
+			else 
+			{
+				it = g2->begin();
+				std::advance(it,i);
+				push_back(*it);
+			}
+		}
+	}
 	
 }
 
