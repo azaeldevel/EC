@@ -4,8 +4,10 @@
 #define EC_SCHEDULE_DATA_HH
 
 #include <map>
+#include <random>
 
 #include "GA.hh"
+
 
 namespace oct::core
 {
@@ -42,6 +44,7 @@ namespace oct::ec::sche
 	class Enviroment;
 	struct Data;
 	class Configuration;
+	class Subject;
 	
 	//typedef std::list<core::DataTime> Day;
 	class Day : public std::list<core::DataTime>
@@ -62,6 +65,16 @@ namespace oct::ec::sche
 		*\brief determinar horas en comun
 		**/
 		void inters(const WeekHours& comp, WeekHours& rest)const;
+
+		/**
+		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
+		**/
+		unsigned int combinations(const Subject*)const;
+
+		/**
+		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
+		**/
+		void combinations(const Subject*, std::vector<WeekHours>& combs)const;
 	};
 
 	struct Time
@@ -254,12 +267,27 @@ namespace oct::ec::sche
 		std::map<std::string, Subject*> subject_by_name;
 	};
 
+	
+	template<typename T> class List : public std::list<T>
+	{
+	public:
+		T rand()
+		{
+			static std::random_device rd;
+			static std::mt19937 gen(rd());
+			std::uniform_int_distribution<> dis(0, std::distance(std::list<T>::begin(),std::list<T>::end()));
+			typename std::list<T>::iterator it = std::list<T>::begin();
+			std::advance(it,dis(gen));
+			if(it != std::list<T>::end()) return *it;
+			return NULL;
+		}
+	};
+
 	class Teachers_Subjects : public Targets
 	{
 	public: 
-		struct Row
+		struct Row : public std::list<const Subject*>
 		{
-			const Subject* subject;
 			const Teacher* teacher;
 
 			Row();
@@ -272,13 +300,13 @@ namespace oct::ec::sche
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
 		const std::list<Row>& get_list() const;
-		void searchTeachers(const std::string&, std::list<const Row*>& )const;
-		void searchSubjects(const std::string&, std::list<const Row*>& )const;
+		const Row* searchTeachers(const std::string&)const;
+		void searchSubjects(const std::string&, List<const Row*>& )const;
 	private:
 		void indexing();
 	private:
 		std::list<Row> teachers_subjects;
-		std::multimap<std::string, Row*> teachers_by_name;
+		std::map<std::string, Row*> teachers_by_name;
 		std::multimap<std::string, Row*> subjects_by_name;
 	};
 
@@ -304,16 +332,18 @@ namespace oct::ec::sche
 		std::multimap<std::string, Room*> rooms_by_name;
 	};
 
+
+	struct Group : public std::vector<const Subject*>
+	{
+		const Room* room;
+			
+		Group();	
+		void print(std::ostream&) const;
+	};
+
 	class Groups : public Targets
 	{
 	public:
-		struct Group : public std::vector<const Subject*>
-		{
-			const Room* room;
-			
-			Group();	
-			void print(std::ostream&) const;
-		};
 		typedef std::list<Group>::iterator iterator;
 		typedef std::list<Group>::const_iterator const_iterator;
 
@@ -365,7 +395,51 @@ namespace oct::ec::sche
 		void load(const std::string& dir);
 	};
 	
-	
+	struct Goal
+	{
+		const Group* group;
+		const Teacher* teacher;
+		const Subject* subject;
+		const Room* room;
+		WeekHours week;
+	};
+	typedef std::list<Goal> Goals;
+
+	/**
+	*\brief Difine las calses impartidas(por semana)
+	**/
+	typedef Goals Schedule;
+
+	/**
+	*\brief Variasiones del Horario
+	**/
+	struct Schedules : std::vector<Schedule>
+	{
+
+	};
+
+	/*struct ScheduleStudent : public Schedule
+	{
+
+	private:	
+		
+	};
+	struct ScheduleTeacher : public Schedule
+	{
+
+
+	private:	
+		
+	};
+
+	struct ScheduleStudents : public std::vector<ScheduleStudent>
+	{
+
+	};
+	struct ScheduleTeachers : public std::vector<ScheduleTeacher> 
+	{
+
+	};*/
 
 }
 

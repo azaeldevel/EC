@@ -13,15 +13,9 @@ namespace oct::ec::sche
 {
 	
 	
-	void Studen::init_rand(const sche::Groups::Group* group)
-	{
-	
-		
-	}
-	
 
 
-	Single::Single(ID id,Enviroment& env, const std::vector<Studen>&) : ec::Single(id,env)
+	Single::Single(ID id,Enviroment& env, const Schedule&) : ec::Single(id,env)
 	{
 
 	}
@@ -53,7 +47,8 @@ Enviroment::Enviroment(const std::string& log,const std::string& dir)
 {
 	init();
 	logDirectory = log;
-	directory = dir;
+	directory = dir;	
+	data.load(directory);
 	
 	if(not shell.exists(logDirectory)) 
 	{
@@ -69,52 +64,46 @@ Enviroment::Enviroment(const std::string& log,const std::string& dir)
 
 Enviroment::~Enviroment()
 {
-	
+	init();
 }
 void Enviroment::init()
 {
-	initPopulation = 100;
-	maxPopulation = 100;
-	maxProgenitor = 20;
-	
-	data.load("tests");
+	initPopulation = 5;
+	maxPopulation = initPopulation;
+	maxProgenitor = initPopulation;
 }
 
 
 
 void Enviroment::initial()
 {
-	
-	int count = data.groups.get_list().size();
-	std::vector<std::vector<Studen>> inits;
+	Schedules inits;
 	inits.resize(initPopulation);
 	
 	//
-	for(unsigned int i = 0; i < inits.size(); i++)
+	for(Schedule& sche : inits)
 	{
-		inits[i].resize(data.groups.get_list().size());
-		Groups::const_iterator it = data.groups.get_list().begin();
-		for(unsigned int j = 0; j < data.groups.get_list().size(); j++,it++)
+		Goal goal;
+		for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++)
 		{
-			for(const Subject* s : *it)
+			goal.group = &*itGroup;
+			goal.room = (&*itGroup)->room;		
+			for(const Subject* subjectGroup : *itGroup)
 			{
-				std::list<const Teachers_Subjects::Row*> rows;
-				data.teachers_subjects.searchSubjects(s->get_name(),rows);
-				for(const Teachers_Subjects::Row* ts : rows)
-				{
-					const WeekHours& dispTeacher = ts->teacher->get_times();//disponibilidad de mestros
-					const WeekHours& dispRoom = (*it).room->get_times();//disponibilidad de salon
-					
-					if(dispTeacher.size() != dispRoom.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
-					
-					
-				}
+				List<const Teachers_Subjects::Row*> rows;
+				data.teachers_subjects.searchSubjects(subjectGroup->get_name(),rows);
+				goal.subject = subjectGroup;
+				const Teachers_Subjects::Row* r = rows.rand();
+				if(r) goal.teacher = r->teacher;
+				else throw core::Exception("No se encontro maestro asociado",__FILE__,__LINE__);
+				
+				sche.push_back(goal);
 			}
 		}
 	}
 	
 	//creando individuuos
-	for(const std::vector<Studen>& s : inits)
+	for(const Schedule& s : inits)
 	{
 		Single* single = new Single(nextID(),*this,s);
 		push_back(single);
@@ -122,6 +111,60 @@ void Enviroment::initial()
 }
 
 
+/*
+unsigned int Enviroment::counter()const
+{
+	unsigned int count = 0;
+	for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++)
+	{
+		//goal.group = &*itGroup;
+		//goal.room = (&*itGroup)->room;
+		for(unsigned int j = 0; j < data.groups.get_list().size(); j++)
+		{
+			for(const Subject* subject : *itGroup)
+			{
+				std::list<const Teachers_Subjects::Row*> rows;
+				data.teachers_subjects.searchSubjects(subject->get_name(),rows);
+				for(const Teachers_Subjects::Row* ts : rows)//cada mestro
+				{
+					//goal.teacher = ts->teacher;
+					for(const Subject* subject : *ts)
+					{
+						//goal.subject = subject;
+												
+						//const WeekHours& dispTeacher = ts->teacher->get_times();//disponibilidad de mestros
+						//const WeekHours& dispRoom = (*itGroup).room->get_times();//disponibilidad de salon
+						//const WeekHours& dispSubject = (*itGroup).room->get_times();//disponibilidad de salon
+						//if(dispTeacher.size() != dispRoom.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
+						count++; 
+					}
+				}
+			}
+		}
+	}
+}
+*/
+unsigned int Enviroment::counter()const
+{
+	unsigned int count = 0;
+	for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++)
+	{
+			for(const Subject* subjectGroup : *itGroup)
+			{
+				List<const Teachers_Subjects::Row*> rows;
+				data.teachers_subjects.searchSubjects(subjectGroup->get_name(),rows);
+				for(const Teachers_Subjects::Row* ts : rows)
+				{
+					for(const Subject* subject : *ts)
+					{
+						count++; 
+					}
+				}
+			}
+	}
+	
+	return count;
+}
 
 }
 

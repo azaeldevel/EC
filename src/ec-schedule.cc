@@ -52,7 +52,6 @@ int main(int argc, const char* argv[])
 	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment(logDirectory,"tests");
 	sche->enableEcho(&std::cout,2);
 	
-	sche->testing();
 	bool ret;
 	//ret = sche->run();
 	//oct::ec::sche::Teachers teachers("tests/teachers.csv");
@@ -63,6 +62,7 @@ int main(int argc, const char* argv[])
 	//subjects.print(std::cout);
 	//rooms.print(std::cout);
 	//teachers_subjects.print(std::cout);
+	
 	delete sche;
 	
 	return ret? EXIT_SUCCESS : EXIT_FAILURE;
