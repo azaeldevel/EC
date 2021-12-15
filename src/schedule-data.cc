@@ -108,35 +108,85 @@ namespace oct::core
 namespace oct::ec::sche
 {
 
+	Day::Day()
+	{
+	}
+	Day::Day(const Day& d)
+	{
+		for(const core::DataTime& dt : d)
+		{
+			push_back(dt);
+		}
+		sort();//ordena y genera bloques
+	}
 	Day::Blocks& Day::get_blocks()
 	{
 		return blocks;
 	}
-	void Day::inters(const Day& comp, Day& rest)const
+	Day& Day::inters(const Day& comp1, const Day& comp2)
 	{		
-		for(const core::DataTime& tdt : *this)
+		Block block;
+		
+		for(const core::DataTime& tdt : comp1)
 		{
-			for(const core::DataTime& cdt : comp)
+			for(const core::DataTime& cdt : comp2)
 			{
 				if(tdt.tm_wday != cdt.tm_wday) throw core::Exception("Los objetos indicado, tiene dias distinto",__FILE__,__LINE__);
 				
-				if(tdt.tm_hour == cdt.tm_hour) rest.push_back(cdt);
+				if(tdt.tm_hour == cdt.tm_hour) 
+				{
+					push_back(cdt);
+				}
 			}
-		}		
+		}
+		
+		return *this;		
 	}
 	bool Day::haveDisponible()const
 	{
 		return std::list<core::DataTime>::size() > 0 ? true : false;
 	}
+	
+	std::list<core::DataTime>::iterator Day::sort(std::list<core::DataTime>::iterator b)
+	{
+		iterator itPrev = b;
+		iterator itActual = b;
+		itActual++;
+		Block block;
+		while(itActual != end())
+		{			
+			if((*itActual).tm_wday - 1 == (*itPrev).tm_wday)
+			{
+				block.push_back(&*itActual);
+			}
+			else 
+			{
+				blocks.push_back(block);
+				return itActual;
+			}
+			
+			itActual++;
+			itPrev++;			
+		}
+		if(block.size() > 0) blocks.push_back(block);
+		return itActual;
+	}
 	void Day::sort()
 	{
-		std::list<core::DataTime>::sort(cmpHour);
-		
-		
+		//ordenar los elementos core::DataTime por su valor tm_wday
+		std::list<core::DataTime>::sort(Day::cmpHour);
+				
+		//contruir bloques de horas continuas
+		if(size() <= 1) return;//no hay nada que ordenar si hay 1 o 0 elementos
+		iterator it = begin();
+		while(it != end())
+		{
+			it = sort(it);
+		}
 	}
 	bool Day::cmpHour(const core::DataTime& firts,const core::DataTime& last)
 	{
-		return firts.tm_wday > last.tm_wday;
+		return firts.tm_wday < last.tm_wday;
 	}
 	void Day::add_block(const std::list<core::DataTime>& b)
 	{
@@ -147,6 +197,27 @@ namespace oct::ec::sche
 			newb.push_back(&back());	
 		}
 		blocks.push_back(newb);
+	}	
+	void Day::combns(std::list<Day>& days, unsigned int hours)const
+	{
+		unsigned int countHB = 0;
+		for(const Block& b : blocks)
+		{
+			countHB += b.size();
+		}
+		if(countHB != size()) throw core::Exception("Las horas registradas para el dia, no coinciden con las horas registradas en lso bloques",__FILE__,__LINE__);
+		
+		
+		
+		for(const Block& b : blocks)
+		{
+			if(b.size() == hours)
+			{
+				
+			}
+		}
+		
+		
 	}
 
 
@@ -158,41 +229,30 @@ namespace oct::ec::sche
 	{
 		return disponibles;
 	}
-	void WeekHours::inters(const WeekHours& comp, WeekHours& rest)const
+	WeekHours& WeekHours::inters(const WeekHours& comp1, const WeekHours& comp2)
 	{		
-		if(size() != comp.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
+		if(comp2.size() != comp1.size() and size() == comp1.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
 		
 		for(unsigned int i = 0; i < size(); i++)
 		{
-			at(i).inters(comp[i],rest[i]);
-		}		
+			at(i).inters(comp1[i],comp2[i]);
+		}
+		
+		return *this;	
 	}
-	void WeekHours::combns(const Subject* subject, std::vector<WeekHours>& combs)
+	void WeekHours::combns(const Subject* subject, std::list<WeekHours>& combs) const
 	{
-		disponibles.clear();
 				
-		for(const Day& day : *this)
-		{//cuenta los dias de disponibilidad
-			if(day.haveDisponible()) disponibles.push_back(&day);
-		}
-				
-		unsigned int meanh = subject->get_time() / disponibles.size();
-		unsigned int countTimes;
-		std::list<const Day*>::iterator it;
-		
-		//usando el promedio pimero
-		it = disponibles.begin();
-		countTimes = 0;
-		for(unsigned int i = 0; i <disponibles.size(); i++, it++)
-		{
-			/*if((*it)->get_time().size() <= meanh) countTimes += (*it)->get_time().size()
-			else countTimes += meanh;*/
-		}
-		
-		
 	}
 
 
+	Time::Time()
+	{}
+	Time::Time(const std::string& b,const std::string& e)
+	{
+		set_begin(b);
+		set_end(e);
+	}
 	void Time::granulate(const Configuration* config, Day& out)
 	{
 		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especifficar el mismos dia.",__FILE__,__LINE__);
@@ -361,11 +421,11 @@ namespace oct::ec::sche
 			times[dt.tm_wday].push_back(dt);//el dia de la semana es el indice ene le arreglo
 		}
 	}*/
-	WeekHours& Target::get_times()
+	WeekHours& Target::get_week()
 	{
 		return times;
 	}
-	const WeekHours& Target::get_times()const
+	const WeekHours& Target::get_week()const
 	{
 		return times;
 	}
@@ -546,7 +606,7 @@ namespace oct::ec::sche
 					std::getline(ssTime,strH,'-');
 					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 					time.set_end(strH);
-					time.granulate(&dataObject->config,teacher.get_times());
+					time.granulate(&dataObject->config,teacher.get_week());
 					timeDay++;
 				}	
 				//std::cout << "\n";
@@ -623,7 +683,7 @@ namespace oct::ec::sche
 				std::string time = data;
 				//std::cout << "\n";
 				subject.set(name,std::stoi(time));
-				if(dataObject->config.get_schema() == Configuration::Schema::WITH_SUBJECTS_TIMES)
+				/*if(dataObject->config.get_schema() == Configuration::Schema::WITH_SUBJECTS_TIMES)
 				{
 					ec::sche::Time time;
 					int timeDay = dataObject->config.get_begin_day();
@@ -639,7 +699,7 @@ namespace oct::ec::sche
 						time.granulate(&dataObject->config,subject.get_times());
 						timeDay++;
 					}
-				}				
+				}	*/			
 			}
 			indexing();
 		}
@@ -861,7 +921,7 @@ namespace oct::ec::sche
 					std::getline(ssTime,strH,'-');
 					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 					time.set_end(strH);
-					time.granulate(&dataObject->config,room.get_times());
+					time.granulate(&dataObject->config,room.get_week());
 					timeDay++;
 				}
 				//std::cout << "\n";

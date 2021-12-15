@@ -170,16 +170,15 @@ unsigned int Enviroment::counter()const
 	unsigned int count = 0;
 	for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++)
 	{
+		const Room* room = (*itGroup).room;
 			for(const Subject* subjectGroup : *itGroup)
 			{
 				List<const Teachers_Subjects::Row*> rows;
 				data.teachers_subjects.searchSubjects(subjectGroup->get_name(),rows);
 				for(const Teachers_Subjects::Row* ts : rows)
-				{
-					for(const Subject* subject : *ts)
-					{
-						count++; 
-					}
+				{					
+					//ts->teacher->get_times().inters(room->get_times());
+					count++;
 				}
 			}
 	}

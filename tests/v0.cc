@@ -344,6 +344,61 @@ void testDeveloping()
 			CU_ASSERT(false);		
 		}
 	}
+	
+	oct::ec::sche::Time time4;
+	time4.set_begin(&data.config, "6:00");
+	if(time4.begin.tm_hour == 6) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time4.begin.tm_hour = " << time4.begin.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	time4.set_end(&data.config, "16:00");
+	if(time4.end.tm_hour == 16) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time4.end.tm_hour = " << time4.end.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	oct::ec::sche::Day day4;
+	time4.granulate(&data.config,day4);
+	if(day4.size() == 10) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "day4.size() = " << day4.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	
+	//interseccion de horas
+	oct::ec::sche::Day day5;
+	day5.inters(day,day4);
+	if(day5.size() == 8) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "day5.size() = " << day5.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	
+	std::list<oct::ec::sche::WeekHours> weekCombs;
+	teacher1->get_week().combns(subject1,weekCombs);
+	
+	
+	oct::ec::sche::Time time6;
+	oct::ec::sche::Time time7;
+	oct::ec::sche::Time time8;
+	
 }
 int main(int argc, char *argv[])
 {

@@ -45,6 +45,7 @@ namespace oct::ec::sche
 	struct Data;
 	class Configuration;
 	class Subject;
+	class WeekHours;
 	
 	//typedef std::list<core::DataTime> Day;
 	class Day : public std::list<core::DataTime>
@@ -54,20 +55,25 @@ namespace oct::ec::sche
 		typedef std::list<Block> Blocks;
 		
 	public:
+		Day();
+		Day(const Day&);
 
 		Blocks& get_blocks();
 
 		/**
 		*\brief determinar horas en comun
 		**/
-		void inters(const Day& comp, Day& rest)const;
+		Day& inters(const Day& comp1, const Day& comp2);
 
 		/**
 		*\brief determinar horas en comundeterminar en este dia
 		*/
 		bool haveDisponible()const;
 
-		
+		/**
+		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
+		**/
+		void combns(std::list<Day>&, unsigned int hours)const;
 
 		/**
 		*\brief Ordena y crea los bloques de horas
@@ -77,6 +83,7 @@ namespace oct::ec::sche
 		void add_block(const std::list<core::DataTime>& );
 	private:
 		static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
+		std::list<core::DataTime>::iterator sort(std::list<core::DataTime>::iterator begin);
 
 	private:
 		Blocks blocks;
@@ -93,17 +100,17 @@ namespace oct::ec::sche
 		/**
 		*\brief determinar horas en comun
 		**/
-		void inters(const WeekHours& comp, WeekHours& rest)const;
+		WeekHours& inters(const WeekHours& comp1, const WeekHours& comp2);
 
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
 		**/
-		unsigned int combinations(const Subject*)const;
+		//unsigned int combinations(const Subject*)const;
 
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
 		**/
-		void combns(const Subject*, std::vector<WeekHours>& combs);
+		void combns(const Subject*, std::list<WeekHours>& combs)const;
 
 	private:
 		std::list<const Day*> disponibles;
@@ -114,6 +121,8 @@ namespace oct::ec::sche
 		core::DataTime begin;
 		core::DataTime end;
 
+		Time();
+		Time(const std::string&,const std::string&);
 		/**
 		*\brief Convirte el valor time en elementos de la clase Day
 		**/
@@ -181,8 +190,8 @@ namespace oct::ec::sche
 		void init();
 		const Configuration* operator =(const Configuration*);
 		const Configuration* set(const Configuration*);
-		const WeekHours& get_times()const;	
-		WeekHours& get_times();			
+		const WeekHours& get_week()const;	
+		WeekHours& get_week();			
 		void print(std::ostream&)const;
 		/**
 		*\brief Guarda la lista de horas indicadas en orden segun el dia indicado
