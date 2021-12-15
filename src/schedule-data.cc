@@ -121,14 +121,29 @@ namespace oct::ec::sche
 			}
 		}		
 	}
-
-
-
+	bool Day::haveDisponible()const
+	{
+		return std::list<core::DataTime>::size() > 0 ? true : false;
+	}
+	void Day::sort()
+	{
+		std::list<core::DataTime>::sort(cmpHour);
+		
+		
+	}
+	bool cmpHour(const core::DataTime& firts,const core::DataTime& last)
+	{
+		return firts.tm_wday > last.tm_wday;
+	}
 
 
 	WeekHours::WeekHours()
 	{
 		resize(7);
+	}
+	const std::list<const Day*>& WeekHours::get_disponible()const
+	{
+		return disponibles;
 	}
 	void WeekHours::inters(const WeekHours& comp, WeekHours& rest)const
 	{		
@@ -138,6 +153,30 @@ namespace oct::ec::sche
 		{
 			at(i).inters(comp[i],rest[i]);
 		}		
+	}
+	void WeekHours::combns(const Subject* subject, std::vector<WeekHours>& combs)
+	{
+		disponibles.clear();
+				
+		for(const Day& day : *this)
+		{//cuenta los dias de disponibilidad
+			if(day.haveDisponible()) disponibles.push_back(&day);
+		}
+				
+		unsigned int meanh = subject->get_time() / disponibles.size();
+		unsigned int countTimes;
+		std::list<const Day*>::iterator it;
+		
+		//usando el promedio pimero
+		it = disponibles.begin();
+		countTimes = 0;
+		for(unsigned int i = 0; i <disponibles.size(); i++, it++)
+		{
+			/*if((*it)->get_time().size() <= meanh) countTimes += (*it)->get_time().size()
+			else countTimes += meanh;*/
+		}
+		
+		
 	}
 
 
@@ -299,15 +338,15 @@ namespace oct::ec::sche
 			out << ",";
 		}
 	}
-	bool Target::cmpHour(const core::DataTime& f,const core::DataTime& s)
+	/*bool Target::cmpHour(const core::DataTime& f,const core::DataTime& s)
 	{
 		return f.tm_hour < s.tm_hour;
-	}
+	}*/
 	void Target::sort()
 	{
 		for(Day& day : times)
 		{
-			day.sort(cmpHour);
+			day.sort();
 		}
 	}
 	

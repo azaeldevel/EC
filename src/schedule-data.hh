@@ -50,16 +50,39 @@ namespace oct::ec::sche
 	class Day : public std::list<core::DataTime>
 	{
 	public:
+		typedef std::list<const core::DataTime*> Block;
+		typedef std::list<Block> Blocks;
+		
+	public:
 		/**
 		*\brief determinar horas en comun
 		**/
 		void inters(const Day& comp, Day& rest)const;
+
+		/**
+		*\brief determinar horas en comundeterminar en este dia
+		*/
+		bool haveDisponible()const;
+
+
+		/**
+		*\brief Ordena y crea los bloques de horas
+		*/
+		void sort();
+	private:
+		static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
+
+	private:
+		Blocks blocks;
 	};
+
 	//typedef std::vector<Day> WeekHours;
 	class WeekHours : public std::vector<Day>
 	{
 	public:
 		WeekHours();
+
+		const std::list<const Day*>& get_disponible()const;
 
 		/**
 		*\brief determinar horas en comun
@@ -74,7 +97,10 @@ namespace oct::ec::sche
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
 		**/
-		void combinations(const Subject*, std::vector<WeekHours>& combs)const;
+		void combns(const Subject*, std::vector<WeekHours>& combs);
+
+	private:
+		std::list<const Day*> disponibles;
 	};
 
 	struct Time
@@ -156,7 +182,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Fucion de ordenamiento ascendente
 		**/
-		static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
+		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 	private:
 		const Configuration* config;
 		WeekHours times;//horario de disponibilidad

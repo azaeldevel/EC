@@ -22,18 +22,6 @@ namespace oct::ec::sche
 	{
 
 	}
-	/**
-	** Criterios:
-	** 		El mismo maestro no puede tener clases diferentes a la misma hora : No traslapes de Maestro
-	** 		Dos clases no pueden tener el mismo horario en el mismo salon : No traslape de clase
-	** 		La misma materia no puede tener diferentes maestros para un grupo: Maestro unico por materia
-	** 		Los criterio de disponibilidad para cada objetivo dever ser compidos : disponibilidad
-	** 		Hay criterios adicionales expresados en la configuracion que deve ser cumplidos
-	**/
-	void Single::eval()
-	{
-		
-	}
 	void Single::save(std::ofstream& fn)
 	{
 
