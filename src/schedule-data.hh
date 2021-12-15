@@ -54,6 +54,9 @@ namespace oct::ec::sche
 		typedef std::list<Block> Blocks;
 		
 	public:
+
+		Blocks& get_blocks();
+
 		/**
 		*\brief determinar horas en comun
 		**/
@@ -64,11 +67,14 @@ namespace oct::ec::sche
 		*/
 		bool haveDisponible()const;
 
+		
 
 		/**
 		*\brief Ordena y crea los bloques de horas
 		*/
 		void sort();
+
+		void add_block(const std::list<core::DataTime>& );
 	private:
 		static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 
@@ -108,7 +114,14 @@ namespace oct::ec::sche
 		core::DataTime begin;
 		core::DataTime end;
 
+		/**
+		*\brief Convirte el valor time en elementos de la clase Day
+		**/
 		void granulate(const Configuration*, Day& out);
+		/**
+		*\brief Convirte el valor time en elementos de la clase Day, crea los bloques de tiempo.
+		**/
+		void granulate(const Configuration*, WeekHours& out);
 		void set_begin(const Configuration*,const std::string& str);
 		void set_end(const Configuration*,const std::string& str);
 		void set_begin(const std::string& str);
@@ -174,7 +187,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Guarda la lista de horas indicadas en orden segun el dia indicado
 		**/	
-		void save(const Day&);
+		//void save(const Day&);
 
 		void sort();
 

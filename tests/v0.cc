@@ -290,6 +290,60 @@ void testDeveloping()
 	sche->initial();
 	
 	
+	oct::ec::sche::Time time3;
+	time3.set_begin("2 8:00");
+	if(time3.begin.tm_wday == 2) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time3.begin.tm_wday = " << time3.begin.tm_wday << "\n";
+		CU_ASSERT(false);		
+	}
+	if(time3.begin.tm_hour == 8) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time3.begin.tm_hour = " << time3.begin.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	time3.set_end("2 20:00");
+	if(time3.end.tm_hour == 20) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "time3.end.tm_hour = " << time3.end.tm_hour << "\n";
+		CU_ASSERT(false);		
+	}
+	oct::ec::sche::WeekHours week1;
+	time3.granulate(&data.config,week1);
+	if(week1[2].size() == 12) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "week1[2].size() = " << week1[2].size() << "\n";
+		CU_ASSERT(false);		
+	}
+	for(const oct::core::DataTime& dt : week1[2])
+	{
+		//std::cout << std::put_time(&dt, "%a %H:%M") << "\n";
+		if(dt.tm_wday == 2) 
+		{
+			CU_ASSERT(true);
+		}
+		else 
+		{
+			std::cout << "week1[2].tm_wday = " << dt.tm_wday << "\n";
+			CU_ASSERT(false);		
+		}
+	}
 }
 int main(int argc, char *argv[])
 {
