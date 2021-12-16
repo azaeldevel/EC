@@ -85,7 +85,7 @@ namespace oct::ec::sche
 		void add_block(const std::list<core::DataTime>& );
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
-		std::list<core::DataTime>::iterator sort(std::list<core::DataTime>::iterator begin);
+		std::list<core::DataTime>::iterator blocking(std::list<core::DataTime>::iterator begin);
 
 	private:
 		Blocks blocks;

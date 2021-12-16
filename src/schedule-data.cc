@@ -152,7 +152,7 @@ namespace oct::ec::sche
 		return std::list<core::DataTime>::size() > 0 ? true : false;
 	}
 	
-	std::list<core::DataTime>::iterator Day::sort(std::list<core::DataTime>::iterator b)
+	std::list<core::DataTime>::iterator Day::blocking(std::list<core::DataTime>::iterator b)
 	{
 		iterator itPrev = b;
 		iterator itActual = b;
@@ -160,7 +160,7 @@ namespace oct::ec::sche
 		Block block;
 		while(itActual != end())
 		{			
-			if((*itActual).tm_wday - 1 == (*itPrev).tm_wday)
+			if((*itActual).tm_hour - 1 == (*itPrev).tm_hour)
 			{
 				block.push_back(&*itActual);
 			}
@@ -191,7 +191,7 @@ namespace oct::ec::sche
 		iterator it = begin();
 		while(it != end())
 		{
-			it = sort(it);
+			it = blocking(it);
 		}
 	}
 	void Day::add_block(const std::list<core::DataTime>& b)
