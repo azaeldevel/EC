@@ -179,7 +179,7 @@ void testDeveloping()
 	
 	
 	oct::ec::sche::Time time1;
-	time1.set_begin(&data.config, "8:00");
+	time1.set_begin(&data.config, "1 8:00");
 	if(time1.begin.tm_hour == 8) 
 	{
 		CU_ASSERT(true);
@@ -189,7 +189,7 @@ void testDeveloping()
 		std::cout << "time1.begin.tm_hour = " << time1.begin.tm_hour << "\n";
 		CU_ASSERT(false);		
 	}
-	time1.set_end(&data.config, "20:00");
+	time1.set_end(&data.config, "1 20:00");
 	if(time1.end.tm_hour == 20) 
 	{
 		CU_ASSERT(true);
@@ -346,7 +346,7 @@ void testDeveloping()
 	}
 	
 	oct::ec::sche::Time time4;
-	time4.set_begin(&data.config, "6:00");
+	time4.set_begin(&data.config, "1 6:00");
 	if(time4.begin.tm_hour == 6) 
 	{
 		CU_ASSERT(true);
@@ -356,7 +356,7 @@ void testDeveloping()
 		std::cout << "time4.begin.tm_hour = " << time4.begin.tm_hour << "\n";
 		CU_ASSERT(false);		
 	}
-	time4.set_end(&data.config, "16:00");
+	time4.set_end(&data.config, "1 16:00");
 	if(time4.end.tm_hour == 16) 
 	{
 		CU_ASSERT(true);

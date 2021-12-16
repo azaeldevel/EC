@@ -20,6 +20,8 @@ namespace oct::core
 		const tm& operator =(const tm&);
 		int get_week_day()const;
 		double diff(const DataTime& dt)const;
+
+		void print(std::ostream&, const std::string) const;
 	};
 
 	class Person
@@ -169,8 +171,8 @@ namespace oct::ec::sche
 		SchemaWeek get_schema_week()const;
 		Schema get_schema()const;
 		void set_schema(Schema);
-		const std::string& get_format_string_datatime()const;
-		static const std::string& get_format_string_datatime(FormatDT);
+		//const std::string& get_format_string_datatime()const;
+		//static const std::string& get_format_string_datatime(FormatDT);
 		FormatDT get_format_dt()const;
 		int get_begin_day() const;
 
@@ -179,8 +181,10 @@ namespace oct::ec::sche
 		unsigned int time_per_hour;//en minutes por hora
 		Schema schema;
 		FormatDT format;
-		static std::string formats_dt_hour;
-		static std::string formats_dt_day_hour;
+	public:
+		static const std::string formats_dt_hour;
+		static const std::string formats_dt_day_hour;
+		static const std::string formats_dt_dayn_hour;
 	};
 		
 	class Target
@@ -273,7 +277,7 @@ namespace oct::ec::sche
 		const Data* set(const Data*);
 
 	protected:
-		void fetch(Target&,std::stringstream&,unsigned int ,const std::string& );
+		void fetch_times(Target&,std::stringstream&,unsigned int ,const std::string& );
 	protected:
 		const Data* dataObject;
 	};

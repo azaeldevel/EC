@@ -103,6 +103,11 @@ namespace oct::core
 		tm2 = mktime(&t2);
 		return difftime(tm2, tm1);		
 	}
+	
+	void DataTime::print(std::ostream& out, const std::string format) const
+	{
+		out << std::put_time(this, format.c_str());
+	}
 }
 
 namespace oct::ec::sche
@@ -256,7 +261,8 @@ namespace oct::ec::sche
 	}
 	void Time::granulate(const Configuration* config, Day& out)
 	{
-		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especifficar el mismos dia.",__FILE__,__LINE__);
+		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especificar el mismos dia.",__FILE__,__LINE__);
+		if(begin.tm_hour >= end.tm_hour) throw core::Exception("La hora de inicio deve ser meno que lahora final.",__FILE__,__LINE__);
 		
 		int hours = config->to_hours(begin.diff(end));	
 		
@@ -279,7 +285,8 @@ namespace oct::ec::sche
 	}
 	void Time::granulate(const Configuration* config, WeekHours& out)
 	{
-		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especifficar el mismos dia.",__FILE__,__LINE__);
+		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especificar el mismos dia.",__FILE__,__LINE__);
+		if(begin.tm_hour >= end.tm_hour) throw core::Exception("La hora de inicio deve ser meno que lahora final.",__FILE__,__LINE__);
 		
 		int hours = config->to_hours(begin.diff(end));	
 		
@@ -309,11 +316,11 @@ namespace oct::ec::sche
 	}
 	void Time::set_begin(const Configuration* config,const std::string& str)
 	{
-		strptime(str.c_str(), config->get_format_string_datatime().c_str(),&begin);
+		strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&begin);
 	}
 	void Time::set_end(const Configuration* config,const std::string& str)
 	{
-		strptime(str.c_str(), config->get_format_string_datatime().c_str(),&end);
+		strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&end);
 	}
 	void Time::set_begin(const std::string& str)
 	{
@@ -327,14 +334,15 @@ namespace oct::ec::sche
 
 
 
-	std::string Configuration::formats_dt_hour = "%H:%M";	
-	std::string Configuration::formats_dt_day_hour = "%a %H:%M";
+	const std::string Configuration::formats_dt_hour = "%H:%M";	
+	const std::string Configuration::formats_dt_day_hour = "%a %H:%M";
+	const std::string Configuration::formats_dt_dayn_hour = "%w %H:%M";
 	
 	Configuration::Configuration()
 	{
 		schema_week = SchemaWeek::MS;
 		time_per_hour = 60;
-		format = FormatDT::HOUR;
+		format = FormatDT::DAY_HOUR;
 	}
 	
 	unsigned int Configuration::get_time_per_hour() const
@@ -349,7 +357,7 @@ namespace oct::ec::sche
 	{
 		return schema;
 	}
-	const std::string& Configuration::get_format_string_datatime()const
+	/*const std::string& Configuration::get_format_string_datatime()const
 	{
 		switch(format)
 		{
@@ -376,7 +384,7 @@ namespace oct::ec::sche
 			default:
 				throw core::Exception("Formato de tiempo desconocido",__FILE__,__LINE__);
 		}
-	}
+	}*/
 	void Configuration::set_schema(Schema s)
 	{
 		schema = s;
@@ -567,7 +575,7 @@ namespace oct::ec::sche
 		dataObject = d;
 		return d;
 	}
-	void Targets::fetch(Target& target,std::stringstream& ssline, unsigned int line,const std::string& fn)
+	void Targets::fetch_times(Target& target,std::stringstream& ssline, unsigned int line,const std::string& fn)
 	{
 		ec::sche::Time time;
 		std::string data,strH;
@@ -577,16 +585,37 @@ namespace oct::ec::sche
 			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR and timeDay > 6) 
 			{
 				std::string msg = "El formtato indicado solo permite 7 datos de entrada en ";
-				msg += fn + ":" + std::to_string(line);
+				msg += "'" + fn + "':" + std::to_string(line);
 				throw core::Exception(msg, __FILE__,__LINE__);
 			}
 			std::stringstream ssTime(data);
+			
 			std::getline(ssTime,strH,'-');
+			//std::cout << "strH : '" << strH << "'\n";
 			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 			time.set_begin(strH);
+			//time.begin.print(std::cout,Configuration::formats_dt_day_hour);
+			//std::cout << "\n";
+			
 			std::getline(ssTime,strH,'-');
+			//std::cout << "strH : '" << strH << "'\n";
 			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 			time.set_end(strH);
+			//time.end.print(std::cout,Configuration::formats_dt_day_hour);
+			//std::cout << "\n";
+			
+			if(time.begin.tm_wday != time.end.tm_wday) 
+			{
+				std::string msg = "El intervalode tiempo se deve referir al mimso dia ";
+				msg += "'" + fn + "':" + std::to_string(line);
+				throw core::Exception(msg, __FILE__,__LINE__);
+			}
+			if(time.begin.tm_hour >= time.end.tm_hour) 
+			{
+				std::string msg = "La hora de inicio deve ser menor que la hora final ";
+				msg += "'" + fn + "':" + std::to_string(line);
+				throw core::Exception(msg, __FILE__,__LINE__);
+			}
 			time.granulate(&dataObject->config,target.get_week());
 			timeDay++;
 		}
@@ -633,7 +662,7 @@ namespace oct::ec::sche
 				((Target&)teacher) = &dataObject->config;
 				//std::cout << data << ",";
 				teacher = data;
-				fetch(teacher,str,line_number,fn);
+				fetch_times(teacher,str,line_number,fn);
 				line_number++;
 				//std::cout << "\n";
 			}
@@ -916,8 +945,7 @@ namespace oct::ec::sche
 	}
 	
 	void Rooms::loadFile(const std::string& fn)
-	{
-		
+	{		
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
 		
 		std::fstream csv(fn, std::ios::in);
@@ -936,7 +964,7 @@ namespace oct::ec::sche
 				room = data;
 				//std::getline(str,data,',');
 				//row.subject = data;				
-				fetch(room,str,line_number,fn);
+				fetch_times(room,str,line_number,fn);
 				line_number++;
 				//std::cout << "\n";
 			}
