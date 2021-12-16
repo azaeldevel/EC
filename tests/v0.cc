@@ -399,15 +399,15 @@ void testDeveloping()
 	oct::ec::sche::Time time7("1 12:00", "1 16:00");
 	oct::ec::sche::Time time8("1 17:00", "1 20:00");
 	oct::ec::sche::Day day6;
+	time8.granulate(&data.config,day6);
 	time6.granulate(&data.config,day6);
 	time7.granulate(&data.config,day6);
-	time8.granulate(&data.config,day6);
 	day6.sort();
-	for(const oct::core::DataTime& dt : day6)
+	/*for(const oct::core::DataTime& dt : day6)
 	{
 		dt.print(std::cout,oct::ec::sche::Configuration::formats_dt_day_hour);
 		std::cout << "\n";
-	}
+	}*/
 	if(day6.get_blocks().size() == 3) 
 	{
 		CU_ASSERT(true);
@@ -432,7 +432,7 @@ void testDeveloping()
 	}
 	else 
 	{
-		std::cout << "day6.front().tm_hour = " << day6.back().tm_hour << "\n";
+		std::cout << "day6.back().tm_hour = " << day6.back().tm_hour << "\n";
 		CU_ASSERT(false);		
 	}	
 	if(day6.size() == 13) 

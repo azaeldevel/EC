@@ -178,7 +178,7 @@ namespace oct::ec::sche
 	}
 	bool cmpHour(const core::DataTime& firts,const core::DataTime& second)
 	{
-		return firts.tm_wday < second.tm_wday;
+		return firts.tm_hour < second.tm_hour;
 	}
 	void Day::sort()
 	{
