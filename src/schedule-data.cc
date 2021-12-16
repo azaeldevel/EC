@@ -171,10 +171,14 @@ namespace oct::ec::sche
 		if(block.size() > 0) blocks.push_back(block);
 		return itActual;
 	}
+	bool cmpHour(const core::DataTime& firts,const core::DataTime& second)
+	{
+		return firts.tm_wday < second.tm_wday;
+	}
 	void Day::sort()
 	{
 		//ordenar los elementos core::DataTime por su valor tm_wday
-		std::list<core::DataTime>::sort(Day::cmpHour);
+		std::list<core::DataTime>::sort(cmpHour);
 		
 		//contruir bloques de horas continuas
 		if(size() <= 1) return;//no hay nada que ordenar si hay 1 o 0 elementos
@@ -184,10 +188,6 @@ namespace oct::ec::sche
 		{
 			it = sort(it);
 		}
-	}
-	bool Day::cmpHour(const core::DataTime& firts,const core::DataTime& second)
-	{
-		return firts.tm_wday < second.tm_wday;
 	}
 	void Day::add_block(const std::list<core::DataTime>& b)
 	{
@@ -567,13 +567,36 @@ namespace oct::ec::sche
 		dataObject = d;
 		return d;
 	}
-	
+	void Targets::fetch(Target& target,std::stringstream& ssline, unsigned int line,const std::string& fn)
+	{
+		ec::sche::Time time;
+		std::string data,strH;
+		int timeDay = dataObject->config.get_begin_day();
+		while(std::getline(ssline,data,','))
+		{
+			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR and timeDay > 6) 
+			{
+				std::string msg = "El formtato indicado solo permite 7 datos de entrada en ";
+				msg += fn + ":" + std::to_string(line);
+				throw core::Exception(msg, __FILE__,__LINE__);
+			}
+			std::stringstream ssTime(data);
+			std::getline(ssTime,strH,'-');
+			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
+			time.set_begin(strH);
+			std::getline(ssTime,strH,'-');
+			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
+			time.set_end(strH);
+			time.granulate(&dataObject->config,target.get_week());
+			timeDay++;
+		}
+	}
 	
 	
 	
 	
 
-	
+
 	
 	Teachers::Teachers(const std::string& fn)
 	{
@@ -599,6 +622,7 @@ namespace oct::ec::sche
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
 		{
+			unsigned int line_number = 1;
 			while(std::getline(csv,line))
 			{
 				std::stringstream str(line);
@@ -609,21 +633,8 @@ namespace oct::ec::sche
 				((Target&)teacher) = &dataObject->config;
 				//std::cout << data << ",";
 				teacher = data;
-				ec::sche::Time time;
-				//Se inicia en lunes
-				int timeDay = dataObject->config.get_begin_day();
-				while(std::getline(str,data,','))
-				{
-					std::stringstream ssTime(data);
-					std::getline(ssTime,strH,'-');
-					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
-					time.set_begin(strH);
-					std::getline(ssTime,strH,'-');
-					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
-					time.set_end(strH);
-					time.granulate(&dataObject->config,teacher.get_week());
-					timeDay++;
-				}	
+				fetch(teacher,str,line_number,fn);
+				line_number++;
 				//std::cout << "\n";
 			}
 			indexing();
@@ -913,6 +924,7 @@ namespace oct::ec::sche
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
 		{
+			unsigned int line_number = 1;
 			while(std::getline(csv,line))
 			{
 				std::stringstream str(line);
@@ -923,22 +935,9 @@ namespace oct::ec::sche
 				//std::cout << data << ",";
 				room = data;
 				//std::getline(str,data,',');
-				//row.subject = data;
-				ec::sche::Time time;
-				Day day;
-				int timeDay = dataObject->config.get_begin_day();
-				while(std::getline(str,data,','))
-				{
-					std::stringstream ssTime(data);
-					std::getline(ssTime,strH,'-');
-					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
-					time.set_begin(strH);
-					std::getline(ssTime,strH,'-');
-					if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
-					time.set_end(strH);
-					time.granulate(&dataObject->config,room.get_week());
-					timeDay++;
-				}
+				//row.subject = data;				
+				fetch(room,str,line_number,fn);
+				line_number++;
 				//std::cout << "\n";
 			}
 			indexing();

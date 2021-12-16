@@ -82,7 +82,7 @@ namespace oct::ec::sche
 
 		void add_block(const std::list<core::DataTime>& );
 	private:
-		static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
+		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 		std::list<core::DataTime>::iterator sort(std::list<core::DataTime>::iterator begin);
 
 	private:
@@ -222,6 +222,7 @@ namespace oct::ec::sche
 		void print(std::ostream&)const;
 		
 	protected:	
+		
 	private:
 		std::string name;
 	};
@@ -271,6 +272,8 @@ namespace oct::ec::sche
 		const Data* operator = (const Data*);
 		const Data* set(const Data*);
 
+	protected:
+		void fetch(Target&,std::stringstream&,unsigned int ,const std::string& );
 	protected:
 		const Data* dataObject;
 	};
