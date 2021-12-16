@@ -175,18 +175,19 @@ namespace oct::ec::sche
 	{
 		//ordenar los elementos core::DataTime por su valor tm_wday
 		std::list<core::DataTime>::sort(Day::cmpHour);
-				
+		
 		//contruir bloques de horas continuas
 		if(size() <= 1) return;//no hay nada que ordenar si hay 1 o 0 elementos
+		
 		iterator it = begin();
 		while(it != end())
 		{
 			it = sort(it);
 		}
 	}
-	bool Day::cmpHour(const core::DataTime& firts,const core::DataTime& last)
+	bool Day::cmpHour(const core::DataTime& firts,const core::DataTime& second)
 	{
-		return firts.tm_wday < last.tm_wday;
+		return firts.tm_wday < second.tm_wday;
 	}
 	void Day::add_block(const std::list<core::DataTime>& b)
 	{
@@ -349,6 +350,20 @@ namespace oct::ec::sche
 		return schema;
 	}
 	const std::string& Configuration::get_format_string_datatime()const
+	{
+		switch(format)
+		{
+			case FormatDT::HOUR:
+				return formats_dt_hour;
+			case FormatDT::DAY_HOUR:
+				return formats_dt_day_hour;
+			case FormatDT::NONE:
+				throw core::Exception("Formato de tiempo no asignado",__FILE__,__LINE__);
+			default:
+				throw core::Exception("Formato de tiempo desconocido",__FILE__,__LINE__);
+		}
+	}
+	const std::string& Configuration::get_format_string_datatime(FormatDT format)
 	{
 		switch(format)
 		{

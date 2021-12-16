@@ -395,10 +395,27 @@ void testDeveloping()
 	teacher1->get_week().combns(subject1,weekCombs);
 	
 	
-	oct::ec::sche::Time time6;
-	oct::ec::sche::Time time7;
-	oct::ec::sche::Time time8;
-	
+	oct::ec::sche::Time time8("1 17:00", "1 20:00");
+	oct::ec::sche::Time time7("1 12:00", "1 16:00");
+	oct::ec::sche::Time time6("1 4:00", "1 10:00");
+	oct::ec::sche::Day day6;
+	time8.granulate(&data.config,day6);
+	time7.granulate(&data.config,day6);
+	time6.granulate(&data.config,day6);
+	day6.sort();
+	for(const oct::core::DataTime& dt : day6)
+	{
+		std::cout << std::put_time(&dt, "%a %H:%M") << "\n";
+	}
+	/*if(day6.get_blocks().size() == 3) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "day6.get_blocks().size() = " << day6.get_blocks().size() << "\n";
+		CU_ASSERT(false);		
+	}*/
 }
 int main(int argc, char *argv[])
 {

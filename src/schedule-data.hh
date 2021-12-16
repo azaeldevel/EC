@@ -170,6 +170,7 @@ namespace oct::ec::sche
 		Schema get_schema()const;
 		void set_schema(Schema);
 		const std::string& get_format_string_datatime()const;
+		static const std::string& get_format_string_datatime(FormatDT);
 		FormatDT get_format_dt()const;
 		int get_begin_day() const;
 
