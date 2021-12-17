@@ -287,7 +287,7 @@ public:
 
 protected:
 	std::string logDirectory;
-	//std::string logSubDirectory;
+	std::string basedir;
 	Population initPopulation;
 	Population maxPopulation;
 

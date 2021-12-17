@@ -875,11 +875,10 @@ void Enviroment::commands(int argc, const char* argv[])
 		if(strcmp("--directory-logs",argv[i]) == 0)
 		{
 			logDirectory = argv[++i];
+			basedir = logDirectory;
 			if(not shell.exists(logDirectory))
 			{
-				std::string msg = "El directorio '";
-				msg += logDirectory + "' no existe.";
-				throw oct::core::Exception(msg,__FILE__,__LINE__);
+				shell.mkdir(logDirectory);
 			}
 		}
 		if(strcmp("--iterations",argv[i]) == 0)
