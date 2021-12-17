@@ -11,19 +11,20 @@
 				<Option object_output=".objs/Debug/" />
 				<Option type="3" />
 				<Option compiler="msys2_x86_64_gcc" />
-				<Option createDefFile="1" />
-				<Option createStaticLib="1" />
-				<Option projectCompilerOptionsRelation="-1" />
+				<Option projectCompilerOptionsRelation="1" />
 				<Option projectLinkerOptionsRelation="-1" />
-				<Option projectIncludeDirsRelation="-1" />
-				<Option projectResourceIncludeDirsRelation="-1" />
+				<Option projectIncludeDirsRelation="0" />
 				<Option projectLibDirsRelation="-1" />
 				<Compiler>
 					<Add directory="../core/src" />
 				</Compiler>
 				<Linker>
+					<Add library="octetos-core" />
 					<Add directory="bin/Debug" />
 				</Linker>
+				<ExtraCommands>
+					<Add before="cmd /c copy /y ..\core\bin\Debug\octetos-core.dll bin\Debug\" />
+				</ExtraCommands>
 				<MakeCommands>
 					<Build command="" />
 					<CompileFile command="" />

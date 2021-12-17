@@ -2,23 +2,6 @@
 #ifndef AE_HH
 #define AE_HH
 
-// Check windows
-/*#if _WIN32 || _WIN64
-#if _WIN64
-#define ENVIRONMENT64
-#else
-#error "Plataforma no soportada"
-#endif
-#endif*/
-
-// Check GCC
-/*#if __GNUC__
-#if __x86_64__ || __ppc64__
-#define ENVIRONMENT64
-#else
-#error "Plataforma no soportada"
-#endif
-#endif*/
 
 #include <list>
 #include <string>
@@ -26,10 +9,10 @@
 #include <iostream>
 #include <fstream>
 
-#if defined(__GNUG__) && defined(__linux__)
+#if defined(__GNUC__) && defined(__linux__)
     #include <octetos/core/Error.hh>
     #include <octetos/core/shell.hh>
-#elif defined(__GNUG__) && (defined(_WIN32) || defined(_WIN64))
+#elif defined(__GNUC__) && (defined(_WIN32) || defined(_WIN64))
     #include <Error.hh>
     #include <shell.hh>
 #else
