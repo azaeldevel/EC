@@ -390,11 +390,7 @@ void testDeveloping()
 		std::cout << "day5.size() = " << day5.size() << "\n";
 		CU_ASSERT(false);		
 	}
-	
-	std::list<oct::ec::sche::WeekHours> weekCombs;
-	teacher1->get_week().combns(subject1,weekCombs);
-	
-	
+		
 	oct::ec::sche::Time time6("1 4:00", "1 10:00");
 	oct::ec::sche::Time time7("1 12:00", "1 16:00");
 	oct::ec::sche::Time time8("1 17:00", "1 20:00");
@@ -416,6 +412,54 @@ void testDeveloping()
 	{
 		std::cout << "day6.get_blocks().size() = " << day6.get_blocks().size() << "\n";
 		CU_ASSERT(false);		
+	}
+	
+	unsigned int iBlock = 0; 
+	for(oct::ec::sche::Day::Blocks::iterator itBlock = day6.get_blocks().begin(); itBlock != day6.get_blocks().end(); itBlock++,iBlock++)
+	{
+		/*std::cout << "bloque " << iBlock << "\n";		
+		for(const oct::core::DataTime* dt : *itBlock)
+		{
+			std::cout << "\t";
+			dt->print(std::cout,oct::ec::sche::Configuration::formats_dt_day_hour);
+			std::cout << "\n";
+		}*/
+		if( iBlock == 0)
+		{
+			if((*itBlock).size() == 6) 
+			{
+				CU_ASSERT(true);
+			}
+			else 
+			{
+				std::cout << "(*itBlock).size = " << (*itBlock).size() << "\n";
+				CU_ASSERT(false);		
+			}
+		}
+		else if( iBlock == 1)
+		{
+			if((*itBlock).size() == 4) 
+			{
+				CU_ASSERT(true);
+			}
+			else 
+			{
+				std::cout << "(*itBlock).size = " << (*itBlock).size() << "\n";
+				CU_ASSERT(false);		
+			}
+		}
+		else if( iBlock == 2)
+		{
+			if((*itBlock).size() == 3) 
+			{
+				CU_ASSERT(true);
+			}
+			else 
+			{
+				std::cout << "(*itBlock).size = " << (*itBlock).size() << "\n";
+				CU_ASSERT(false);		
+			}
+		}
 	}
 	if(day6.front().tm_hour == 4) 
 	{
@@ -444,6 +488,19 @@ void testDeveloping()
 		std::cout << "day6.size() = " << day6.size() << "\n";
 		CU_ASSERT(false);		
 	}
+		
+	std::list<oct::ec::sche::Day> combsList;
+	/*day6.combns(combsList,2);
+	if(combsList.size() == 7) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "combsList.size() = " << combsList.size() << "\n";
+		CU_ASSERT(false);		
+	}*/
+	
 }
 int main(int argc, char *argv[])
 {

@@ -158,9 +158,10 @@ namespace oct::ec::sche
 		iterator itActual = b;
 		itActual++;
 		Block block;
+		block.push_back(&*itPrev);
 		while(itActual != end())
 		{			
-			if((*itActual).tm_hour - 1 == (*itPrev).tm_hour)
+			if((*itActual).tm_hour == (*itPrev).tm_hour + 1)
 			{
 				block.push_back(&*itActual);
 			}
@@ -173,7 +174,7 @@ namespace oct::ec::sche
 			itActual++;
 			itPrev++;			
 		}
-		if(block.size() > 0) blocks.push_back(block);
+		blocks.push_back(block);
 		return itActual;
 	}
 	bool cmpHour(const core::DataTime& firts,const core::DataTime& second)
@@ -194,12 +195,12 @@ namespace oct::ec::sche
 			it = blocking(it);
 		}
 	}
-	void Day::add_block(const std::list<core::DataTime>& b)
+	void Day::add(const Block& b)
 	{
 		Block newb;
-		for(const core::DataTime& dt : b)
+		for(const core::DataTime* dt : b)
 		{
-			push_back(dt);
+			push_back(*dt);
 			newb.push_back(&back());	
 		}
 		blocks.push_back(newb);
@@ -211,15 +212,43 @@ namespace oct::ec::sche
 		{
 			countHB += b.size();
 		}
-		if(countHB != size()) throw core::Exception("Las horas registradas para el dia, no coinciden con las horas registradas en lso bloques",__FILE__,__LINE__);
+		if(countHB != size()) 
+		{
+			std::string msg = "Los bloques contiene un total de '";
+			msg += std::to_string(countHB) + ", sin embargo, el dia contiene " + std::to_string(size()) + " horas.";
+			throw core::Exception(msg,__FILE__,__LINE__);
+		}
 		
-		
+		Day d;
+		days.push_back(d);
+		Day& day = days.back();//bloques de combinacion generados
 		
 		for(const Block& b : blocks)
 		{
+			//bloques equivalentes al numero de hoas pedidos
 			if(b.size() == hours)
 			{
-				
+				day.add(b);
+				continue;//estas horas ya ffueron repartidas
+			}
+			
+			//bloques con multiplos de horas pedidos
+			unsigned int mult = b.size() / hours;
+			if(mult > 0)
+			{
+				for(unsigned int i = 0; i < mult; i++)
+				{
+					Block block_mult;
+					for(unsigned int j = 0; j < hours - 1; j++)
+					{
+						Block::const_iterator it_day = b.begin();
+						std::advance(it_day,(i * mult) + j);
+						day.push_back(**it_day);
+						block_mult.push_back(&day.back());
+					}
+					day.add(block_mult);
+				}
+				continue;//estas horas ya ffueron repartidas
 			}
 		}
 		
