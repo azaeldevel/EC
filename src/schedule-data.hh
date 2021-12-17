@@ -84,6 +84,11 @@ namespace oct::ec::sche
 		void sort();
 
 		void add(const Block& );
+
+		void print_day(std::ostream&) const;
+		void print_blocks(std::ostream&) const;
+
+		bool check()const;
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 		std::list<core::DataTime>::iterator blocking(std::list<core::DataTime>::iterator begin);
@@ -119,8 +124,15 @@ namespace oct::ec::sche
 		**/
 		void combns(const Subject*, std::list<WeekHours>& combs)const;
 
+		unsigned int days_disp() const;
+
+		void sort();
+
+		void print(std::ostream&) const;
+
+		bool check()const;
 	private:
-		std::list<const Day*> disponibles;
+		//std::list<const Day*> disponibles;
 	};
 
 	struct Time

@@ -211,6 +211,8 @@ namespace oct::ec::sche
 	}	
 	void Day::combns(std::list<Day>& days, unsigned int hours)const
 	{
+		if(hours < 1) throw core::Exception("No esta permitido bloques de 0",__FILE__,__LINE__);
+		
 		unsigned int countHB = 0;
 		for(const Block& b : blocks)
 		{
@@ -302,18 +304,67 @@ namespace oct::ec::sche
 			}	
 		}*/
 	}
-
+	void Day::print_day(std::ostream& out) const
+	{
+		for(const core::DataTime& dt : *this)
+		{
+			dt.print(out,"%a %H:%M");
+			out << " ";
+		}
+	}	
+	void Day::print_blocks(std::ostream& out) const
+	{		
+		for(const Block& b : blocks)
+		{
+			out << "\t";
+			for(const core::DataTime* dt : b)
+			{
+				dt->print(out,"%a %H:%M");
+				out << " ";
+			}
+			out << "\n";
+		}
+	}
+	bool Day::check() const
+	{
+		//verificar ordenammiento
+		const_iterator itPrev = begin();
+		const_iterator itActual = begin();
+		itActual++;
+		while(itActual != end())
+		{
+			if((*itActual).tm_hour != (*itPrev).tm_hour + 1)
+			{
+				return false;
+			}
+			
+			itActual++;
+			itPrev++;			
+		}
+		
+		unsigned int countHB = 0;
+		for(const Block& b : blocks)
+		{
+			countHB += b.size();
+		}
+		if(countHB != size()) return false;//no coinciden las cantidad de horas
+		
+		
+		return true;
+	}
+	
+	
 
 	WeekHours::WeekHours()
 	{
 		resize(7);
 	}
-	const std::list<const Day*>& WeekHours::get_disponible()const
+	/*const std::list<const Day*>& WeekHours::get_disponible()const
 	{
 		return disponibles;
-	}
+	}*/
 	WeekHours& WeekHours::inters(const WeekHours& comp1, const WeekHours& comp2)
-	{		
+	{
 		if(comp2.size() != comp1.size() and size() == comp1.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
 		
 		for(unsigned int i = 0; i < size(); i++)
@@ -323,11 +374,83 @@ namespace oct::ec::sche
 		
 		return *this;	
 	}
+	unsigned int WeekHours::days_disp() const
+	{
+		unsigned int count = 0;
+		for(unsigned int day = 0; day < size(); day++)
+		{
+			if(at(day).haveDisponible()) count++;
+		}
+		
+		return count;
+	}
+	
+	typedef std::list<oct::ec::sche::Day> Days;
+	typedef std::list<Days> DaysCombs;
 	void WeekHours::combns(const Subject* subject, std::list<WeekHours>& combs) const
 	{
+		unsigned int disp = days_disp();
+		unsigned int mean_hours,diff_hours,botton_hours,floor_hours;
+		mean_hours = subject->get_time() / disp;
+		if(mean_hours == 0) 
+		{
+			mean_hours = 1;
+			diff_hours = 0;
+			botton_hours = 0;
+			floor_hours = 0;
+		}
+		else
+		{
+			diff_hours = subject->get_time() - (mean_hours * disp);
+			botton_hours = mean_hours + diff_hours;
+			floor_hours = mean_hours - diff_hours;
+		}
 				
+		DaysCombs days_combs;		
+		for(unsigned int day = 0; day < size(); day++)
+		{
+			if(at(day).haveDisponible())
+			{
+				Days ds;
+				days_combs.push_back(ds);
+				Days& days = days_combs.back();
+				
+				at(day).combns(days,mean_hours);
+				if(botton_hours > mean_hours) at(day).combns(days,botton_hours);
+				if(floor_hours > 0) at(day).combns(days,floor_hours);
+			}
+		}
 	}
-
+	void WeekHours::sort()
+	{
+		for(Day& day : *this)
+		{
+			day.sort();
+		}
+	}
+	void WeekHours::print(std::ostream& out) const
+	{
+		for(const Day& day : *this)
+		{
+			out << "\n";
+			day.print_day(out);
+			out << "\n";
+			day.print_blocks(out);
+		}
+	}
+	bool WeekHours::check() const
+	{
+		for(const Day& day : *this)
+		{
+			if(not day.check()) return false;
+		}
+		
+		return true;
+	}
+	
+	
+	
+	
 
 	Time::Time()
 	{}

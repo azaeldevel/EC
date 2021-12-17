@@ -547,6 +547,35 @@ void testDeveloping()
 		i_day++;
 	}
 	*/
+	
+	const oct::ec::sche::Teacher* teacher2 = data.teachers.search("Monica Perez Ortencia");
+	if(teacher2) 
+	{
+		//row->print(std::cout);
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "No se encontro el maestro indicado\n";
+		CU_ASSERT(false);
+	}
+	
+	oct::ec::sche::WeekHours week2 = teacher2->get_week();
+	//week2.print(std::cout);
+	std::list<oct::ec::sche::WeekHours> weeks_combs;
+	if(week2.check()) //verificar que este ordenado
+	{
+		CU_ASSERT(false);
+	}
+	else 
+	{
+		CU_ASSERT(true);
+	}
+	//std::cout << "----\n";
+	//week2.print(std::cout);
+	//week2.combns(subject1,weeks_combs);
+	
+	
 }
 int main(int argc, char *argv[])
 {
