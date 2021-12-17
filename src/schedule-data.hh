@@ -6,7 +6,7 @@
 #include <map>
 #include <random>
 
-#include "GA.hh"
+#include "ec.hh"
 
 
 namespace oct::core
@@ -20,6 +20,8 @@ namespace oct::core
 		const tm& operator =(const tm&);
 		int get_week_day()const;
 		double diff(const DataTime& dt)const;
+
+		void print(std::ostream&, const std::string) const;
 	};
 
 	class Person
@@ -45,36 +47,75 @@ namespace oct::ec::sche
 	struct Data;
 	class Configuration;
 	class Subject;
+	class WeekHours;
 	
 	//typedef std::list<core::DataTime> Day;
 	class Day : public std::list<core::DataTime>
 	{
 	public:
+		typedef std::list<const core::DataTime*> Block;
+		typedef std::list<Block> Blocks;
+		
+	public:
+		Day();
+		Day(const Day&);
+
+		Blocks& get_blocks();
+
 		/**
 		*\brief determinar horas en comun
 		**/
-		void inters(const Day& comp, Day& rest)const;
+		Day& inters(const Day& comp1, const Day& comp2);
+
+		/**
+		*\brief determinar horas en comundeterminar en este dia
+		*/
+		bool haveDisponible()const;
+
+		/**
+		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
+		**/
+		void combns(std::list<Day>&, unsigned int hours)const;
+
+		/**
+		*\brief Ordena y crea los bloques de horas
+		*/
+		void sort();
+
+		void add_block(const std::list<core::DataTime>& );
+	private:
+		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
+		std::list<core::DataTime>::iterator blocking(std::list<core::DataTime>::iterator begin);
+
+	private:
+		Blocks blocks;
 	};
+
 	//typedef std::vector<Day> WeekHours;
 	class WeekHours : public std::vector<Day>
 	{
 	public:
 		WeekHours();
 
+		const std::list<const Day*>& get_disponible()const;
+
 		/**
 		*\brief determinar horas en comun
 		**/
-		void inters(const WeekHours& comp, WeekHours& rest)const;
+		WeekHours& inters(const WeekHours& comp1, const WeekHours& comp2);
 
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
 		**/
-		unsigned int combinations(const Subject*)const;
+		//unsigned int combinations(const Subject*)const;
 
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
 		**/
-		void combinations(const Subject*, std::vector<WeekHours>& combs)const;
+		void combns(const Subject*, std::list<WeekHours>& combs)const;
+
+	private:
+		std::list<const Day*> disponibles;
 	};
 
 	struct Time
@@ -82,7 +123,16 @@ namespace oct::ec::sche
 		core::DataTime begin;
 		core::DataTime end;
 
+		Time();
+		Time(const std::string&,const std::string&);
+		/**
+		*\brief Convirte el valor time en elementos de la clase Day
+		**/
 		void granulate(const Configuration*, Day& out);
+		/**
+		*\brief Convirte el valor time en elementos de la clase Day, crea los bloques de tiempo.
+		**/
+		void granulate(const Configuration*, WeekHours& out);
 		void set_begin(const Configuration*,const std::string& str);
 		void set_end(const Configuration*,const std::string& str);
 		void set_begin(const std::string& str);
@@ -121,7 +171,8 @@ namespace oct::ec::sche
 		SchemaWeek get_schema_week()const;
 		Schema get_schema()const;
 		void set_schema(Schema);
-		const std::string& get_format_string_datatime()const;
+		//const std::string& get_format_string_datatime()const;
+		//static const std::string& get_format_string_datatime(FormatDT);
 		FormatDT get_format_dt()const;
 		int get_begin_day() const;
 
@@ -130,8 +181,10 @@ namespace oct::ec::sche
 		unsigned int time_per_hour;//en minutes por hora
 		Schema schema;
 		FormatDT format;
-		static std::string formats_dt_hour;
-		static std::string formats_dt_day_hour;
+	public:
+		static const std::string formats_dt_hour;
+		static const std::string formats_dt_day_hour;
+		static const std::string formats_dt_dayn_hour;
 	};
 		
 	class Target
@@ -142,13 +195,13 @@ namespace oct::ec::sche
 		void init();
 		const Configuration* operator =(const Configuration*);
 		const Configuration* set(const Configuration*);
-		const WeekHours& get_times()const;	
-		WeekHours& get_times();			
+		const WeekHours& get_week()const;	
+		WeekHours& get_week();			
 		void print(std::ostream&)const;
 		/**
 		*\brief Guarda la lista de horas indicadas en orden segun el dia indicado
 		**/	
-		void save(const Day&);
+		//void save(const Day&);
 
 		void sort();
 
@@ -156,7 +209,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Fucion de ordenamiento ascendente
 		**/
-		static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
+		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 	private:
 		const Configuration* config;
 		WeekHours times;//horario de disponibilidad
@@ -173,6 +226,7 @@ namespace oct::ec::sche
 		void print(std::ostream&)const;
 		
 	protected:	
+		
 	private:
 		std::string name;
 	};
@@ -222,6 +276,8 @@ namespace oct::ec::sche
 		const Data* operator = (const Data*);
 		const Data* set(const Data*);
 
+	protected:
+		void fetch_times(Target&,std::stringstream&,unsigned int ,const std::string& );
 	protected:
 		const Data* dataObject;
 	};
@@ -273,13 +329,24 @@ namespace oct::ec::sche
 	public:
 		T rand()
 		{
-			static std::random_device rd;
-			static std::mt19937 gen(rd());
-			std::uniform_int_distribution<> dis(0, std::distance(std::list<T>::begin(),std::list<T>::end()));
-			typename std::list<T>::iterator it = std::list<T>::begin();
-			std::advance(it,dis(gen));
-			if(it != std::list<T>::end()) return *it;
-			return NULL;
+			if(std::list<T>::size() > 1)
+			{
+				static std::random_device rd;
+				static std::mt19937 gen(rd());
+				std::uniform_int_distribution<> dis(0, std::list<T>::size() - 1);
+				typename std::list<T>::iterator it = std::list<T>::begin();
+				std::advance(it,dis(gen));				
+				if(it != std::list<T>::end()) return *it;
+				return NULL;
+			}
+			else if(std::list<T>::size() == 1)
+			{
+				return *std::list<T>::begin();
+			}
+			else
+			{
+				return NULL;
+			}
 		}
 	};
 
@@ -403,7 +470,12 @@ namespace oct::ec::sche
 		const Room* room;
 		WeekHours week;
 	};
-	typedef std::list<Goal> Goals;
+	//typedef std::list<Goal> Goals;
+	struct Goals : public std::list<Goal>
+	{
+	
+		void juncting(const Goals*,const Goals*);
+	};
 
 	/**
 	*\brief Difine las calses impartidas(por semana)

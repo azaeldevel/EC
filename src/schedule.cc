@@ -14,12 +14,11 @@ namespace oct::ec::sche
 	
 	
 
-
-	Single::Single(ID id,Enviroment& env, const Schedule&) : ec::Single(id,env)
+	Single::Single(ID id,Enviroment& env,const Junction& j) : ec::Single(id,env,j)
 	{
 
 	}
-	void Single::eval()
+	Single::Single(ID id,Enviroment& env, const Schedule& s) : ec::Single(id,env), schedule(s)
 	{
 
 	}
@@ -27,9 +26,23 @@ namespace oct::ec::sche
 	{
 
 	}
-	Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single,unsigned short loglevel,void*)
+	Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{
+		Population count = 0;
 		
+		for(ec::geneUS i = 0; i < getJunction().get_number(); i++,count++)
+		{
+			double randJ = core::randNumber();
+			const Junction* juntion;
+			if(randJ < 0.5) juntion = &getJunction();
+			else juntion = &single->getJunction();
+			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,*juntion);
+			newsingle->schedule.juncting(&schedule,&((Single*)single)->schedule);
+						
+			chils.push_back(newsingle);
+		}
+					
+		return count++;	
 	}
 	void Single::print(std::ostream&) const
 	{
@@ -68,7 +81,7 @@ Enviroment::~Enviroment()
 }
 void Enviroment::init()
 {
-	initPopulation = 5;
+	initPopulation = 36;
 	maxPopulation = initPopulation;
 	maxProgenitor = initPopulation;
 }
@@ -79,6 +92,9 @@ void Enviroment::initial()
 {
 	Schedules inits;
 	inits.resize(initPopulation);
+	
+	if(initPopulation < data.groups.get_list().size() * 2) core::Exception("El tamano de la poblacion inicial es muy bajo",__FILE__,__LINE__);
+	if((initPopulation % data.groups.get_list().size()) != 0 and (initPopulation / data.groups.get_list().size() ) < 2 ) throw core::Exception("La poblacion inicial deve ser multiplos de la cantida de grupos.",__FILE__,__LINE__);
 	
 	//
 	for(Schedule& sche : inits)
@@ -95,9 +111,14 @@ void Enviroment::initial()
 				goal.subject = subjectGroup;
 				const Teachers_Subjects::Row* r = rows.rand();
 				if(r) goal.teacher = r->teacher;
-				else throw core::Exception("No se encontro maestro asociado",__FILE__,__LINE__);
+				else 
+				{
+					std::string msg = "No se encontro maestro asociado para '";
+					msg += subjectGroup->get_name() + "'";
+					throw core::Exception(msg,__FILE__,__LINE__);
+				}
 				
-				sche.push_back(goal);
+				sche.push_back(goal);//todos los individuos deven tener los datos en el mismo orden, es importante para las operacionde apareo
 			}
 		}
 	}
@@ -149,21 +170,36 @@ unsigned int Enviroment::counter()const
 	unsigned int count = 0;
 	for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++)
 	{
+		const Room* room = (*itGroup).room;
 			for(const Subject* subjectGroup : *itGroup)
 			{
 				List<const Teachers_Subjects::Row*> rows;
 				data.teachers_subjects.searchSubjects(subjectGroup->get_name(),rows);
 				for(const Teachers_Subjects::Row* ts : rows)
-				{
-					for(const Subject* subject : *ts)
-					{
-						count++; 
-					}
+				{					
+					//ts->teacher->get_times().inters(room->get_times());
+					count++;
 				}
 			}
 	}
 	
 	return count;
+}
+void Enviroment::juncting()
+{
+	Single *single1,*single2;
+	std::cout << "Enviroment::juncting()\n";
+	do
+	{
+		ec::Single* single1 = getRandomSingle();
+		if(single1 == NULL) continue;
+		ec::Single* single2 = getRandomSingle();
+		if(single2 == NULL) continue;		
+		if(single1 == single2) continue;
+		
+		single1->juncting(newschils,single2);
+	}
+	while(newschils.size() + size() <= maxPopulation);
 }
 
 }

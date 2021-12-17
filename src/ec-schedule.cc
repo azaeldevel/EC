@@ -53,7 +53,7 @@ int main(int argc, const char* argv[])
 	sche->enableEcho(&std::cout,2);
 	
 	bool ret;
-	//ret = sche->run();
+	ret = sche->run();
 	//oct::ec::sche::Teachers teachers("tests/teachers.csv");
 	//oct::ec::sche::Subjects subjects("tests/subjects.csv");
 	//oct::ec::sche::Rooms rooms("tests/rooms.csv");

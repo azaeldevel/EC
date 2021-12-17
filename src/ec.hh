@@ -141,7 +141,7 @@ public:
 	/**
 	*\brief Realiza el apareo entre dos individuos
 	*/
-	virtual Population juncting(std::list<Single*>& chils,const Single* single,unsigned short loglevel,void*);
+	virtual Population juncting(std::list<Single*>& chils,const Single* single) = 0;
 	/**
 	*\brief Crea un arcivo CSV con los datos relevantes del individuo
 	*/
@@ -213,7 +213,7 @@ public:
 	std::ostream* getFout();
 	const std::string getLogSubDirectory()const;
 	/**
-	*\brief Develbe el siguiento ID paa un nuevo objeto Single
+	*\brief Devuelve el siguiento ID para un nuevo objeto Single
 	*/
 	ID nextID();
 	ID getCountID();
