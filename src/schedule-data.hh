@@ -61,6 +61,7 @@ namespace oct::ec::sche
 		Day(const Day&);
 
 		Blocks& get_blocks();
+		const Blocks& get_blocks() const;
 
 		/**
 		*\brief determinar horas en comun

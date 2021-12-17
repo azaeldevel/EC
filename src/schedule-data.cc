@@ -128,6 +128,10 @@ namespace oct::ec::sche
 	{
 		return blocks;
 	}
+	const Day::Blocks& Day::get_blocks() const
+	{
+		return blocks;
+	}
 	Day& Day::inters(const Day& comp1, const Day& comp2)
 	{		
 		Block block;
@@ -234,17 +238,19 @@ namespace oct::ec::sche
 			
 			//bloques con multiplos de horas pedidos
 			unsigned int mult = b.size() / hours;
+			//std::cout << "mult : " << mult << "\n";
 			if(mult > 0)
 			{
+				Block::const_iterator it_day = b.begin();
+				Block block_mult;
 				for(unsigned int i = 0; i < mult; i++)
 				{
-					Block block_mult;
-					for(unsigned int j = 0; j < hours - 1; j++)
+					block_mult.clear();
+					for(unsigned int j = 0; j < hours; j++)
 					{
-						Block::const_iterator it_day = b.begin();
-						std::advance(it_day,(i * mult) + j);
 						day.push_back(**it_day);
 						block_mult.push_back(&day.back());
+						it_day++;
 					}
 					day.add(block_mult);
 				}
