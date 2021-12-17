@@ -491,7 +491,7 @@ void testDeveloping()
 		
 	std::list<oct::ec::sche::Day> combsList;
 	day6.combns(combsList,2);
-	if(combsList.front().get_blocks().size() == 6) 
+	if(combsList.front().get_blocks().size() == 8) 
 	{
 		CU_ASSERT(true);
 	}

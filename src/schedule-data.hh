@@ -88,6 +88,10 @@ namespace oct::ec::sche
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 		std::list<core::DataTime>::iterator blocking(std::list<core::DataTime>::iterator begin);
 
+		/**
+		*\brief Determina las combinaciones possibles para cubir la clase indicada con el bloque
+		**/
+		void combns(std::list<Day>&, unsigned int hours, const Block& b,Day&)const;
 	private:
 		Blocks blocks;
 	};

@@ -227,21 +227,21 @@ namespace oct::ec::sche
 		days.push_back(d);
 		Day& day = days.back();//bloques de combinacion generados
 		
-		for(const Block& b : blocks)
+		for(const Block& block : blocks)
 		{
 			//bloques equivalentes al numero de hoas pedidos
-			if(b.size() == hours)
+			if(block.size() == hours)
 			{
-				day.add(b);
+				day.add(block);
 				continue;//estas horas ya ffueron repartidas
 			}
 			
 			//bloques con multiplos de horas pedidos
-			unsigned int mult = b.size() / hours;
+			const unsigned int mult = block.size() / hours;
 			//std::cout << "mult : " << mult << "\n";
 			if(mult > 0)
 			{
-				Block::const_iterator it_day = b.begin();
+				Block::const_iterator it_day = block.begin();
 				Block block_mult;
 				for(unsigned int i = 0; i < mult; i++)
 				{
@@ -254,11 +254,53 @@ namespace oct::ec::sche
 					}
 					day.add(block_mult);
 				}
-				continue;//estas horas ya ffueron repartidas
+				//si no es exacto, se pueden hacer otras combinaciones
+				if(block.size() % hours > 0) combns(days,hours,block,day);
+				continue;//estas horas ya fueron repartidas
 			}
 		}
+	}
+	void Day::combns(std::list<Day>&, unsigned int hours, const Block& block, Day& day)const
+	{
+		unsigned int free = block.size() - ((block.size() / hours) * hours);
+		const unsigned int mult = block.size() / hours;
+		Block::const_iterator it_day = block.begin();
 		
+		Block block_mult;
+		//comenzar enfrente
+		for(unsigned int k = 0; k < free; k++)
+		{
+			it_day++;
+			for(unsigned int i = 0; i < mult; i++)
+			{
+				block_mult.clear();
+				for(unsigned int j = 0; j < hours; j++)
+				{
+					day.push_back(**it_day);
+					block_mult.push_back(&day.back());
+					it_day++;
+				}
+				day.add(block_mult);
+			}	
+		}
 		
+		//comenzar al final
+		it_day = block.end();
+		it_day--;
+		for(unsigned int k = 0; k < free; k++)
+		{
+			for(unsigned int i = 0; i < mult; i++)
+			{
+				block_mult.clear();
+				for(unsigned int j = 0; j < hours; j++)
+				{
+					day.push_back(**it_day);
+					block_mult.push_back(&day.back());
+					it_day--;
+				}
+				day.add(block_mult);
+			}	
+		}
 	}
 
 
