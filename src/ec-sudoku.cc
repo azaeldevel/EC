@@ -37,7 +37,7 @@ int main(int argc, const char* argv[])
 		return EXIT_SUCCESS;
 	}
 			
-	std::cout << "Step 0.0\n";	
+	//std::cout << "Step 0.0\n";	
 	oct::ec::sudoku::Enviroment* sudoku = new oct::ec::sudoku::Enviroment(argc,argv);
 	sudoku->enableEcho(&std::cout,2);
 	bool check = sudoku->run();

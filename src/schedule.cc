@@ -106,10 +106,11 @@ void Enviroment::initial()
 			goal.room = (&*itGroup)->room;		
 			for(const Subject* subjectGroup : *itGroup)
 			{
-				List<const Teachers_Subjects::Row*> rows;
+				std::list<const Teachers_Subjects::Row*> rows;
 				data.teachers_subjects.searchSubjects(subjectGroup->get_name(),rows);
 				goal.subject = subjectGroup;
-				const Teachers_Subjects::Row* r = rows.rand();
+				std::list<const Teachers_Subjects::Row*>::const_iterator itr = random(rows);
+				const Teachers_Subjects::Row* r = itr != rows.end()? *itr : NULL;
 				if(r) goal.teacher = r->teacher;
 				else 
 				{
@@ -173,13 +174,7 @@ unsigned int Enviroment::counter()const
 		const Room* room = (*itGroup).room;
 			for(const Subject* subjectGroup : *itGroup)
 			{
-				List<const Teachers_Subjects::Row*> rows;
-				data.teachers_subjects.searchSubjects(subjectGroup->get_name(),rows);
-				for(const Teachers_Subjects::Row* ts : rows)
-				{					
-					//ts->teacher->get_times().inters(room->get_times());
-					count++;
-				}
+				
 			}
 	}
 	

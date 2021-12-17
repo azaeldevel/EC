@@ -49,6 +49,43 @@ namespace oct::ec::sche
 	class Subject;
 	class WeekHours;
 	
+	template<typename T> typename std::list<T>::const_iterator random(const std::list<T>& ls)
+	{
+		if(ls.size() > 1)
+		{
+			static std::random_device rd;
+			static std::mt19937 gen(rd());
+			std::uniform_int_distribution<> dis(0, ls.size() - 1);
+			typename std::list<T>::const_iterator it = ls.begin();
+			std::advance(it,dis(gen));				
+			return it;
+		}
+		else if(ls.size() == 1)
+		{
+			return ls.begin();
+		}
+		
+		return ls.end();
+	}
+
+	template<typename T> typename std::vector<T>::const_iterator random(const std::vector<T>& ls)
+	{
+		if(ls.size() > 1)
+		{
+			static std::random_device rd;
+			static std::mt19937 gen(rd());
+			std::uniform_int_distribution<> dis(0, ls.size() - 1);
+			typename std::vector<T>::const_iterator it = ls.begin();
+			std::advance(it,dis(gen));				
+			return it;
+		}
+		else if(ls.size() == 1)
+		{
+			return ls.begin();
+		}
+		
+		return ls.end();
+	}
 	//typedef std::list<core::DataTime> Day;
 	class Day : public std::list<core::DataTime>
 	{
@@ -101,7 +138,8 @@ namespace oct::ec::sche
 		Blocks blocks;
 	};
 
-	//typedef std::vector<Day> WeekHours;
+	typedef std::list<oct::ec::sche::Day> DaysCombs;
+	typedef std::vector<DaysCombs> WeekCombs;
 	class WeekHours : public std::vector<Day>
 	{
 	public:
@@ -132,7 +170,8 @@ namespace oct::ec::sche
 
 		bool check()const;
 	private:
-		//std::list<const Day*> disponibles;
+		void combns(std::list<WeekHours>& combs, const WeekCombs&)const;
+		
 	};
 
 	struct Time
@@ -340,32 +379,6 @@ namespace oct::ec::sche
 		std::map<std::string, Subject*> subject_by_name;
 	};
 
-	
-	template<typename T> class List : public std::list<T>
-	{
-	public:
-		T rand()
-		{
-			if(std::list<T>::size() > 1)
-			{
-				static std::random_device rd;
-				static std::mt19937 gen(rd());
-				std::uniform_int_distribution<> dis(0, std::list<T>::size() - 1);
-				typename std::list<T>::iterator it = std::list<T>::begin();
-				std::advance(it,dis(gen));				
-				if(it != std::list<T>::end()) return *it;
-				return NULL;
-			}
-			else if(std::list<T>::size() == 1)
-			{
-				return *std::list<T>::begin();
-			}
-			else
-			{
-				return NULL;
-			}
-		}
-	};
 
 	class Teachers_Subjects : public Targets
 	{
@@ -385,7 +398,7 @@ namespace oct::ec::sche
 		void print(std::ostream&)const;
 		const std::list<Row>& get_list() const;
 		const Row* searchTeachers(const std::string&)const;
-		void searchSubjects(const std::string&, List<const Row*>& )const;
+		void searchSubjects(const std::string&, std::list<const Row*>& )const;
 	private:
 		void indexing();
 	private:

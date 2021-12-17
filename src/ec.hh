@@ -211,7 +211,7 @@ public:
 	//static unsigned long getDayID();
 	//static unsigned long getTimeID();
 	std::ostream* getFout();
-	const std::string getLogSubDirectory()const;
+	//const std::string getLogSubDirectory()const;
 	/**
 	*\brief Devuelve el siguiento ID para un nuevo objeto Single
 	*/
@@ -287,7 +287,7 @@ public:
 
 protected:
 	std::string logDirectory;
-	std::string logSubDirectory;
+	//std::string logSubDirectory;
 	Population initPopulation;
 	Population maxPopulation;
 

@@ -92,7 +92,7 @@ void testDeveloping()
 	}
 	//std::cout << "\n";
 	//data.teachers_subjects.print(std::cout);
-	oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*> rowTS;
+	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS;
 	data.teachers_subjects.searchSubjects("Espanol I",rowTS);
 	if(rowTS.size() == 2) 
 	{
@@ -111,7 +111,7 @@ void testDeveloping()
 	}
 	
 	
-	oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*> rowTS2;
+	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS2;
 	data.teachers_subjects.searchSubjects("Geografia I",rowTS2);
 	if(rowTS2.size() == 1) 
 	{
@@ -126,7 +126,7 @@ void testDeveloping()
 	}
 	
 	
-	oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*> rowTS3;
+	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS3;
 	data.teachers_subjects.searchSubjects("Estadistica I",rowTS3);
 	if(rowTS3.size() == 3) 
 	{
@@ -139,7 +139,9 @@ void testDeveloping()
 		std::cout << "rowTS3.size() = " << rowTS3.size() << "\n";
 		CU_ASSERT(false);		
 	}
-	const oct::ec::sche::Teachers_Subjects::Row* rowTS3_Row = rowTS3.rand();
+	std::list<const oct::ec::sche::Teachers_Subjects::Row*>::const_iterator it_rowTS3_Row;
+	it_rowTS3_Row = oct::ec::sche::random(rowTS3);
+	const oct::ec::sche::Teachers_Subjects::Row* rowTS3_Row = *it_rowTS3_Row;
 	if(rowTS3_Row) 
 	{
 		CU_ASSERT(true);
@@ -559,8 +561,29 @@ void testDeveloping()
 		std::cout << "No se encontro el maestro indicado\n";
 		CU_ASSERT(false);
 	}
-	
-	oct::ec::sche::WeekHours week2 = teacher2->get_week();
+	oct::ec::sche::WeekHours week2 = teacher2->get_week();	
+	if(week2[1].size() > 1)
+	{
+		oct::ec::sche::Day::const_iterator it_day_1 = oct::ec::sche::random(week2[1]);
+		if(it_day_1 != week2[1].end()) 
+		{
+			//(*it_day_1).print(std::cout,"%a %H:%M");
+			CU_ASSERT(true);
+		}
+		else 
+		{
+			CU_ASSERT(false);
+		}		
+	}
+	oct::ec::sche::WeekHours::const_iterator it_week_day = 	oct::ec::sche::random(week2);
+	if(it_week_day != week2.end())
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		CU_ASSERT(false);
+	}
 	//week2.print(std::cout);
 	std::list<oct::ec::sche::WeekHours> weeks_combs;
 	if(week2.check()) //verificar que este ordenado
@@ -573,8 +596,7 @@ void testDeveloping()
 	}
 	//std::cout << "----\n";
 	//week2.print(std::cout);
-	//week2.combns(subject1,weeks_combs);
-	
+	week2.combns(subject1,weeks_combs);
 	
 }
 int main(int argc, char *argv[])

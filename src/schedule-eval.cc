@@ -23,7 +23,7 @@ namespace oct::ec::sche
 	**/
 	void Single::eval()
 	{
-		
+		//TODO:evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
 	}
 	
 	

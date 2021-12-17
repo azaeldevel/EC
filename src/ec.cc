@@ -436,10 +436,10 @@ unsigned short Enviroment::getEchoLevel()const
 {
 	return echolevel;
 }
-const std::string Enviroment::getLogSubDirectory()const
+/*const std::string Enviroment::getLogSubDirectory()const
 {
 	return logSubDirectory;
-}
+}*/
 bool Enviroment::getEchoSteps()const
 {
 	return echoSteps;
@@ -528,7 +528,7 @@ bool Enviroment::run()
 
 		if(logFile)
 		{
-			std::string strfn = logSubDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
+			std::string strfn = logDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fn(strfn);
 			//std::cout << "\t\t" << strfn << "\n";
 			if(not fn.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
@@ -546,7 +546,7 @@ bool Enviroment::run()
 		if(echoSteps) std::cout << "\tStep C6\n";
 		if(logFile)
 		{
-			std::string strSelection = logSubDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
+			std::string strSelection = logDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
 			//std::cout << "\t\t" << strSelection << "\n";
 			std::ofstream fnSelection(strSelection);
 			if(not fnSelection.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
@@ -648,7 +648,7 @@ bool Enviroment::run()
 		if(echoSteps) std::cout << "\tStep C15\n";
 		if(logFile)
 		{
-			std::string strChilds = logSubDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
+			std::string strChilds = logDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fnChilds(strChilds);
 			if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
@@ -802,7 +802,7 @@ void Enviroment::eval()
 }
 void Enviroment::save()
 {
-	std::string strfn = logSubDirectory +  "/solutions-" + std::to_string(actualIteration) + ".csv";
+	std::string strfn = logDirectory +  "/solutions-" + std::to_string(actualIteration) + ".csv";
 	std::ofstream fn(strfn);
 	for(ec::Single* s : *this)
 	{
@@ -856,7 +856,7 @@ void Enviroment::selection()
 
 void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file)
 {
-	std::string strfn = logSubDirectory +  "/" + file;
+	std::string strfn = logDirectory +  "/" + file;
 	std::ofstream fn(strfn);
 	for(ec::Single* s : lst)
 	{

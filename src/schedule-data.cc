@@ -272,12 +272,23 @@ namespace oct::ec::sche
 		//comenzar enfrente
 		for(unsigned int k = 0; k < free; k++)
 		{
-			it_day++;
+			if(it_day != block.end()) 
+			{
+				it_day++;
+			}
+			else
+			{
+				break;
+			}
 			for(unsigned int i = 0; i < mult; i++)
 			{
 				block_mult.clear();
 				for(unsigned int j = 0; j < hours; j++)
 				{
+					if(it_day == block.end())
+					{
+						 break;
+					}
 					day.push_back(**it_day);
 					block_mult.push_back(&day.back());
 					it_day++;
@@ -385,9 +396,11 @@ namespace oct::ec::sche
 		return count;
 	}
 	
-	typedef std::list<oct::ec::sche::Day> Days;
-	typedef std::list<Days> DaysCombs;
-	void WeekHours::combns(const Subject* subject, std::list<WeekHours>& combs) const
+	void WeekHours::combns(std::list<WeekHours>& combs, const WeekCombs& week_combs)const
+	{
+		
+	}
+	void WeekHours::combns(const Subject* subject, std::list<WeekHours>& weeks) const
 	{
 		unsigned int disp = days_disp();
 		unsigned int mean_hours,diff_hours,botton_hours,floor_hours;
@@ -406,20 +419,25 @@ namespace oct::ec::sche
 			floor_hours = mean_hours - diff_hours;
 		}
 				
-		DaysCombs days_combs;		
+		WeekCombs week_combs(7);		
 		for(unsigned int day = 0; day < size(); day++)
 		{
 			if(at(day).haveDisponible())
-			{
-				Days ds;
-				days_combs.push_back(ds);
-				Days& days = days_combs.back();
-				
-				at(day).combns(days,mean_hours);
-				if(botton_hours > mean_hours) at(day).combns(days,botton_hours);
-				if(floor_hours > 0) at(day).combns(days,floor_hours);
+			{				
+				at(day).combns(week_combs[day],mean_hours);
+				if(botton_hours > mean_hours) at(day).combns(week_combs[day],botton_hours);
+				if(floor_hours > 0) at(day).combns(week_combs[day],floor_hours);
 			}
 		}
+		
+		//TODO:Agregar combinacion para 'Menor cantidad de dias'
+		//Dever dar la posibildad de la mayor cantidad de horas posibles al dia
+		
+		//TODO:Hay varias combinaciones posibles desde 1 hasta subject->get_time()
+		
+		if(size() != week_combs.size()) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
+		if(size() != 7) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
+		combns(weeks,week_combs);
 	}
 	void WeekHours::sort()
 	{
@@ -1095,7 +1113,7 @@ namespace oct::ec::sche
 	 	if(it != teachers_by_name.end()) return it->second;
 	 	return NULL;
 	}
-	void Teachers_Subjects::searchSubjects(const std::string& str, List<const Row*>& l)const
+	void Teachers_Subjects::searchSubjects(const std::string& str, std::list<const Row*>& l)const
 	{
 		typedef std::multimap<std::string, Row*>::const_iterator iterator;
 		std::pair<iterator,iterator> result = subjects_by_name.equal_range(str);
