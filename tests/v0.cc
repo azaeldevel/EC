@@ -491,7 +491,7 @@ void testDeveloping()
 		
 	std::list<oct::ec::sche::Day> combsList;
 	day6.combns(combsList,2);
-	if(combsList.front().get_blocks().size() == 8) 
+	if(combsList.front().get_blocks().size() == 7) 
 	{
 		CU_ASSERT(true);
 	}
@@ -517,7 +517,36 @@ void testDeveloping()
 		}
 		i_day++;
 	}*/
-	
+	day6.combns(combsList,3);
+	std::list<oct::ec::sche::Day>::iterator itDay = combsList.begin();
+	itDay++;	
+	if((*itDay).get_blocks().size() == 5) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "(*itDay).get_blocks().size() = " << (*itDay).get_blocks().size() << "\n";
+		CU_ASSERT(false);		
+	}
+	/*
+	unsigned int i_day = 0;
+	for(const oct::ec::sche::Day& day : combsList)
+	{
+		std::cout << "day " << i_day << "\n";
+		for(oct::ec::sche::Day::Blocks::const_iterator itBlock = day.get_blocks().begin(); itBlock != day.get_blocks().end(); itBlock++,iBlock++)
+		{
+			std::cout << "bloque " << iBlock << "\n";		
+			for(const oct::core::DataTime* dt : *itBlock)
+			{
+				std::cout << "\t";
+				dt->print(std::cout,oct::ec::sche::Configuration::formats_dt_day_hour);
+				std::cout << "\n";
+			}
+		}
+		i_day++;
+	}
+	*/
 }
 int main(int argc, char *argv[])
 {

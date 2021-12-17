@@ -285,7 +285,7 @@ namespace oct::ec::sche
 		}
 		
 		//comenzar al final
-		it_day = block.end();
+		/*it_day = block.end();
 		it_day--;
 		for(unsigned int k = 0; k < free; k++)
 		{
@@ -300,7 +300,7 @@ namespace oct::ec::sche
 				}
 				day.add(block_mult);
 			}	
-		}
+		}*/
 	}
 
 
