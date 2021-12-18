@@ -19,7 +19,7 @@ int init(void)
 	//std::cout << "cwd :" << shell.cwd() << "\n";
 	
 	data.config.set_schema(oct::ec::sche::Configuration::Schema::WITH_SUBJECTS_TIMES);
-	data.load("../../tests");
+	data.load("tests");
 
 	return 0;
 }
@@ -287,7 +287,7 @@ void testDeveloping()
 	//subject1->print(std::cout);
 	//room1->print(std::cout);
 	
-	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment("../../logs","../../tests");
+	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment("logs","tests");
 	//std::cout << "Combinaciones : " << sche->counter() << "\n";
 	sche->initial();
 	
