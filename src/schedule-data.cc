@@ -365,7 +365,7 @@ namespace oct::ec::sche
 	}
 	
 	
-
+	const unsigned int WeekHours::WEEK_SIZE = 7;
 	WeekHours::WeekHours()
 	{
 		resize(7);
@@ -396,9 +396,32 @@ namespace oct::ec::sche
 		return count;
 	}
 	
-	void WeekHours::combns(std::list<WeekHours>& combs, const WeekCombs& week_combs)const
+	void WeekHours::combns(std::list<WeekHours>& combs, const WeekCombs& week_combs, unsigned int day,WeekHours* week)const
 	{
-		
+		if(day > 6) throw core::Exception("El dia indicado no pede ser mayor de 6",__FILE__,__LINE__);
+
+		for(unsigned int day_actual = day; day_actual < WEEK_SIZE; day_actual++)
+		{
+			for(const oct::ec::sche::Day& day : week_combs[day_actual])
+			{
+				if(day.haveDisponible())
+				{
+					WeekHours* week_actual;
+					if(week)
+					{
+						week_actual = week;
+					}
+					else
+					{
+						WeekHours newWeek;
+						combs.push_back (newWeek);
+						week_actual = &combs.back();
+					}
+					week_actual->at(day_actual) = day;
+					if(day_actual < WEEK_SIZE - 1) combns(combs,week_combs,day_actual + 1,week_actual);
+				}
+			}
+		}
 	}
 	void WeekHours::combns(const Subject* subject, std::list<WeekHours>& weeks) const
 	{
@@ -437,7 +460,7 @@ namespace oct::ec::sche
 		
 		if(size() != week_combs.size()) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
 		if(size() != 7) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
-		combns(weeks,week_combs);
+		combns(weeks,week_combs,0,NULL);
 	}
 	void WeekHours::sort()
 	{

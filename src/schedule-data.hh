@@ -143,6 +143,9 @@ namespace oct::ec::sche
 	class WeekHours : public std::vector<Day>
 	{
 	public:
+		static const unsigned int WEEK_SIZE;
+
+	public:
 		WeekHours();
 
 		const std::list<const Day*>& get_disponible()const;
@@ -170,7 +173,7 @@ namespace oct::ec::sche
 
 		bool check()const;
 	private:
-		void combns(std::list<WeekHours>& combs, const WeekCombs&)const;
+		void combns(std::list<WeekHours>& combs, const WeekCombs&, unsigned int,WeekHours*)const;
 		
 	};
 
