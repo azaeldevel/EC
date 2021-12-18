@@ -96,6 +96,7 @@ namespace oct::ec::sche
 	public:
 		Day();
 		Day(const Day&);
+		Day& operator =(const Day&);
 
 		Blocks& get_blocks();
 		const Blocks& get_blocks() const;
@@ -125,6 +126,11 @@ namespace oct::ec::sche
 		void print_day(std::ostream&) const;
 		void print_blocks(std::ostream&) const;
 
+
+		/**
+		*\brief Verifica la velides de la informacion
+		*\return true si esta ordenada y los bloques estan formados correctamente
+		*/
 		bool check()const;
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
@@ -173,8 +179,8 @@ namespace oct::ec::sche
 
 		bool check()const;
 	private:
-		void combns(std::list<WeekHours>& combs, const WeekCombs&, unsigned int,WeekHours*)const;
-		
+		void combns(std::list<WeekHours>&,const WeekCombs&)const;
+		void combns(std::list<WeekHours>&,const WeekCombs&,std::vector<DaysCombs::const_iterator> )const;
 	};
 
 	struct Time

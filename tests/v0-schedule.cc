@@ -601,5 +601,11 @@ void schedule_devel()
 		std::cout << "weeks_combs.size() = " << weeks_combs.size() << "\n";
 		CU_ASSERT(false);		
 	}
+	for(const oct::ec::sche::WeekHours& week : weeks_combs)
+	{
+		std::cout << "New Week\n";
+		week.print(std::cout);
+		std::cout << "\n";
+	}
 }
 
