@@ -287,7 +287,7 @@ public:
 
 protected:
 	std::string logDirectory;
-	std::string basedir;
+	std::string uiljbasedir;
 	Population initPopulation;
 	Population maxPopulation;
 
