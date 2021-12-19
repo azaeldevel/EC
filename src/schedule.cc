@@ -81,7 +81,7 @@ Enviroment::~Enviroment()
 }
 void Enviroment::init()
 {
-	initPopulation = 36;
+	initPopulation = 100;
 	maxPopulation = initPopulation;
 	maxProgenitor = initPopulation;
 }
@@ -99,27 +99,52 @@ void Enviroment::initial()
 	//
 	for(Schedule& sche : inits)
 	{
-		Goal goal;
-		for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++)
+		sche.resize(data.groups.get_list().size());
+		unsigned int goal = 0;
+		for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++,goal)
 		{
-			goal.group = &*itGroup;
-			goal.room = (&*itGroup)->room;		
+			sche[goal].group = &*itGroup;
+			sche[goal].room = (&*itGroup)->room;		
 			for(const Subject* subjectGroup : *itGroup)
 			{
 				std::list<const Teachers_Subjects::Row*> rows;
 				data.teachers_subjects.searchSubjects(subjectGroup->get_name(),rows);
-				goal.subject = subjectGroup;
+				sche[goal].subject = subjectGroup;
 				std::list<const Teachers_Subjects::Row*>::const_iterator itr = random(rows);
 				const Teachers_Subjects::Row* r = itr != rows.end()? *itr : NULL;
-				if(r) goal.teacher = r->teacher;
+				if(r) sche[goal].teacher = r->teacher;
 				else 
 				{
 					std::string msg = "No se encontro maestro asociado para '";
 					msg += subjectGroup->get_name() + "'";
 					throw core::Exception(msg,__FILE__,__LINE__);
 				}
-				
-				sche.push_back(goal);//todos los individuos deven tener los datos en el mismo orden, es importante para las operacionde apareo
+								
+				WeekHours week;
+				WeekOptions week_opt;
+				week.inters(sche[goal].room->get_week (),sche[goal].teacher->get_week());
+				check_codes code = week.check();
+				/*switch(code)
+				{
+					case check_codes::BLOCK_CONTENT_SIZE_FAIL:
+						std::cout << "El tamano de los bloques y la cantidad de dias no coinciden\n";
+						return;
+					default:
+						std::cout << "Otros errores\n";
+						return;
+				}
+				for(const Day& day : week)
+				{
+					std::cout << "\n";
+					day.print_day(std::cout);
+				}
+				if(code != check_codes::PASS)
+				{
+					std::string msg 
+					throw core::Exception("No se comple la validacion del horario.",__FILE__,__LINE__);
+				}*/
+				week.combns(*sche[goal].subject,week_opt);
+				week_opt.random(sche[goal].week);
 			}
 		}
 	}
@@ -183,7 +208,6 @@ unsigned int Enviroment::counter()const
 void Enviroment::juncting()
 {
 	Single *single1,*single2;
-	std::cout << "Enviroment::juncting()\n";
 	do
 	{
 		ec::Single* single1 = getRandomSingle();

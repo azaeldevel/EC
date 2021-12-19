@@ -86,7 +86,14 @@ namespace oct::ec::sche
 		
 		return ls.end();
 	}
-	//typedef std::list<core::DataTime> Day;
+	
+
+	enum check_codes
+	{
+		PASS,
+		HOURS_DIFFERENT_DAY,
+		BLOCK_CONTENT_SIZE_FAIL,
+	};
 	class Day : public std::list<core::DataTime>
 	{
 	public:
@@ -131,7 +138,7 @@ namespace oct::ec::sche
 		*\brief Verifica la velides de la informacion
 		*\return true si esta ordenada y los bloques estan formados correctamente, false en otro caso
 		*/
-		bool check()const;
+		check_codes check()const;
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 		std::list<core::DataTime>::iterator blocking(std::list<core::DataTime>::iterator begin);
@@ -144,9 +151,9 @@ namespace oct::ec::sche
 		Blocks blocks;
 	};
 
-	typedef std::list<Day> DaysCombs;
+	typedef std::list<Day> DaysOptions;
 	//typedef std::vector<DaysCombs> WeekCombs;
-	class WeekOptions : public std::vector<DaysCombs>
+	class WeekOptions : public std::vector<DaysOptions>
 	{
 	public:
 		WeekOptions();
@@ -195,7 +202,9 @@ namespace oct::ec::sche
 
 		void print(std::ostream&) const;
 
-		bool check()const;
+		check_codes check()const;
+
+		bool empty()const;
 	private:
 		void combns(std::list<WeekHours>&,const WeekOptions&)const;
 	};
@@ -527,7 +536,7 @@ namespace oct::ec::sche
 		WeekHours week;
 	};
 	//typedef std::list<Goal> Goals;
-	struct Goals : public std::list<Goal>
+	struct Goals : public std::vector<Goal>
 	{
 	
 		void juncting(const Goals*,const Goals*);

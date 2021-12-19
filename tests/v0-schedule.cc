@@ -9,14 +9,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-
+#define DATA_DIR "../../tests"
 using namespace oct::ec::sche;
 
 static Data data;
 
 int schedule_init(void)
 {
-	data.load("../../tests");
+	data.load(DATA_DIR);
 	
 	return 0;
 }
@@ -282,11 +282,7 @@ void schedule_devel()
 	
 	//teacher1->print(std::cout);
 	//subject1->print(std::cout);
-	//room1->print(std::cout);
-	
-	//oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment("logs","tests");
-	//std::cout << "Combinaciones : " << sche->counter() << "\n";
-	//sche->initial();	
+	//room1->print(std::cout);	
 	
 	oct::ec::sche::Time time3;
 	time3.set_begin("2 8:00");
@@ -381,6 +377,15 @@ void schedule_devel()
 	day5.inters(day,day4);
 	if(day5.size() == 8) 
 	{
+		/*std::cout << "day\n";
+		day.print_day(std::cout);
+		std::cout << "\n";
+		std::cout << "day4\n";
+		day5.print_day(std::cout);
+		std::cout << "\n";
+		std::cout << "day5\n";
+		day5.print_day(std::cout);
+		std::cout << "\n";*/
 		CU_ASSERT(true);
 	}
 	else 
@@ -582,7 +587,7 @@ void schedule_devel()
 	}
 	//week2.print(std::cout);
 	//el criterio de revificacion puede cambiar
-	if(week2.check()) //verificar que este ordenado
+	if(week2.check() != check_codes::PASS) //verificar que este ordenado
 	{
 		CU_ASSERT(true);
 	}
@@ -606,7 +611,7 @@ void schedule_devel()
 	}
 	
 	//este valor puede cambiar comforme mejore el algoritmo, esta a que por propositos de desarrollo
-	if(week_opt.count() == 1835008) 
+	if(week_opt.count() == 472392) 
 	{
 		CU_ASSERT(true);
 	}
@@ -616,8 +621,87 @@ void schedule_devel()
 		CU_ASSERT(false);		
 	}
 
+	const oct::ec::sche::Subject* subject2 = data.subjects.search("Estadistica I");
+	if(subject1) 
+	{
+		//rowSuject->print(std::cout);
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		//std::cout << "No se encontro el maestro indicado\n";
+		CU_ASSERT(false);		
+	}
+
 	WeekHours week3;
-	week_opt.random(week3);
-	week3.print(std::cout);
+	WeekOptions week_opt2;
+	week3.inters(room1->get_week (),teacher2->get_week ());
+	check_codes codes1 = week3.check();
+	if(codes1 == check_codes::PASS)
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		switch(codes1)
+		{
+			case check_codes::BLOCK_CONTENT_SIZE_FAIL:
+				std::cout << "El tamano de los bloques y la cantidad de dias no coinciden\n";
+				break;
+			default:
+				std::cout << "Otros errores\n";
+		}
+		for(const Day& day : week3)
+		{
+			std::cout << "\n";
+			day.print_day(std::cout);
+		}
+		CU_ASSERT(false);		
+	}
+	week3.combns(*subject2,week_opt2);
+	/*std::cout << "Week Room \n";
+	room1->get_week ().print(std::cout);
+	std::cout << "\n";
+	std::cout << "Week Teacher \n";
+	teacher2->get_week ().print(std::cout);
+	std::cout << "\n";
+	//std::cout << "Interseccion \n";	
+	//week3.print(std::cout);*/
+	if(week_opt2.count() == 3072) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "week_opt2.count() = " << week_opt2.count() << "\n";
+		CU_ASSERT(false);		
+	}
+	WeekHours week4;
+	week_opt2.random(week4);
+	//std::cout << "Horario \n";	
+	//week4.print(std::cout);
+	if(week4.empty()) 
+	{
+		std::cout << "week4.empty() is empty\n";
+		CU_ASSERT(false);
+	}
+	else 
+	{
+		
+		CU_ASSERT(true);		
+	}
+	//WeekHours week3;
+	//week_opt.random(week3);
+	//week3.print(std::cout);
+
+	Enviroment sche ("logs",DATA_DIR);
+	try
+	{
+		sche.initial();
+	}
+	catch(std::exception& ex)
+	{
+		CU_ASSERT(false);
+	}
 }
 

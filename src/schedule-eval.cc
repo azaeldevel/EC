@@ -24,6 +24,8 @@ namespace oct::ec::sche
 	void Single::eval()
 	{
 		//TODO:evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
+		//TODO:deve dar una mejor califacion al horaio que se acerca mas 
+			//a la hora exacta de clases por semana,deve cubir las hora de materia por semana sin pasarse o flatarle
 	}
 	
 	

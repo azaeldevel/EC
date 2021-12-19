@@ -124,7 +124,8 @@ namespace oct::ec::sche
 			push_back(dt);
 		}
 		//std::cout << "Day::Day(const Day& d) - Step 2.0\n";
-		if(not check()) sort();//ordena y genera bloques
+		//blocks.clear();
+		sort();//ordena y genera bloques
 		//std::cout << "Day::Day(const Day& d) - Step 3.0\n";
 	}
 	Day& Day::operator =(const Day& d)
@@ -135,7 +136,8 @@ namespace oct::ec::sche
 			push_back(dt);
 		}
 		//std::cout << "Day::operator = - Step 2.0\n";
-		if(not check ()) sort();//ordena y genera bloques
+		//blocks.clear();
+		sort();//ordena y genera bloques
 		//std::cout << "Day::operator = - Step 3.0\n";
 		return *this;
 	}
@@ -148,14 +150,12 @@ namespace oct::ec::sche
 		return blocks;
 	}
 	Day& Day::inters(const Day& comp1, const Day& comp2)
-	{		
-		Block block;
-		
+	{
 		for(const core::DataTime& tdt : comp1)
 		{
 			for(const core::DataTime& cdt : comp2)
 			{
-				if(tdt.tm_wday != cdt.tm_wday) throw core::Exception("Los objetos indicado, tiene dias distinto",__FILE__,__LINE__);
+				//if(tdt.tm_wday != cdt.tm_wday) throw core::Exception("Los objetos indicado, tiene dias distinto",__FILE__,__LINE__);
 				
 				if(tdt.tm_hour == cdt.tm_hour) 
 				{
@@ -163,7 +163,8 @@ namespace oct::ec::sche
 				}
 			}
 		}
-		
+		//blocks.clear();
+		sort();
 		return *this;		
 	}
 	bool Day::haveDisponible()const
@@ -173,6 +174,15 @@ namespace oct::ec::sche
 	
 	std::list<core::DataTime>::iterator Day::blocking(std::list<core::DataTime>::iterator b)
 	{
+		if(size() == 1)
+		{
+			Block block;
+			block.push_back(&front());
+			blocks.push_back(block);
+			return end();
+		}
+
+		
 		iterator itPrev = b;
 		iterator itActual = b;
 		itActual++;
@@ -206,7 +216,7 @@ namespace oct::ec::sche
 		std::list<core::DataTime>::sort(cmpHour);
 		
 		//contruir bloques de horas continuas
-		if(size() <= 1) return;//no hay nada que ordenar si hay 1 o 0 elementos
+		if(size() == 0) return;//no hay nada que ordenar si hay 1 o 0 elementos
 		
 		iterator it = begin();
 		while(it != end())
@@ -267,7 +277,6 @@ namespace oct::ec::sche
 					block_mult.clear();
 					for(unsigned int j = 0; j < hours; j++)
 					{
-						//day.push_back(**it_hour);
 						block_mult.push_back(*it_hour);
 						it_hour++;
 					}
@@ -318,31 +327,12 @@ namespace oct::ec::sche
 					{
 						 break;
 					}
-					day.push_back(**it_day);
-					block_mult.push_back(&day.back());
+					block_mult.push_back(*it_day);
 					it_day++;
 				}
 				day.add(block_mult);
 			}	
-		}
-		
-		//comenzar al final
-		/*it_day = block.end();
-		it_day--;
-		for(unsigned int k = 0; k < free; k++)
-		{
-			for(unsigned int i = 0; i < mult; i++)
-			{
-				block_mult.clear();
-				for(unsigned int j = 0; j < hours; j++)
-				{
-					day.push_back(**it_day);
-					block_mult.push_back(&day.back());
-					it_day--;
-				}
-				day.add(block_mult);
-			}	
-		}*/
+		}		
 	}
 	void Day::print_day(std::ostream& out) const
 	{
@@ -365,9 +355,9 @@ namespace oct::ec::sche
 			out << "\n";
 		}
 	}
-	bool Day::check() const
+	check_codes Day::check() const
 	{
-		if(size() == 0 and blocks.size() == 0)  return true;
+		if(size() == 0 and blocks.size() == 0)  return check_codes::PASS;
 		
 		//verificar ordenammiento
 		/*const_iterator itPrev = begin();
@@ -383,16 +373,21 @@ namespace oct::ec::sche
 			itActual++;
 			itPrev++;			
 		}*/
+
+		for(const core::DataTime dt : *this)
+		{
+			if((*begin()).tm_wday != dt.tm_wday) return check_codes::HOURS_DIFFERENT_DAY;
+		}
 		
 		unsigned int countHB = 0;
 		for(const Block& b : blocks)
 		{
 			countHB += b.size();
 		}
-		if(countHB != size()) return false;//no coinciden las cantidad de horas
+		if(countHB != size()) return check_codes::BLOCK_CONTENT_SIZE_FAIL;//no coinciden las cantidad de horas
 		
 		
-		return true;
+		return check_codes::PASS;
 	}
 
 
@@ -400,7 +395,7 @@ namespace oct::ec::sche
 
 
 	
-	WeekOptions::WeekOptions() : std::vector<DaysCombs>(WeekHours::WEEK_SIZE) 
+	WeekOptions::WeekOptions() : std::vector<DaysOptions>(WeekHours::WEEK_SIZE) 
 	{
 		
 	}
@@ -414,7 +409,7 @@ namespace oct::ec::sche
 			if(at(day_actual).size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
 			
 			std::uniform_int_distribution<> distrib(0, at(day_actual).size() - 1);
-			DaysCombs::iterator it = at(day_actual).begin();
+			DaysOptions::iterator it = at(day_actual).begin();
 			std::advance(it,distrib(gen));
 			week[day_actual] = *it;
 		}
@@ -426,10 +421,10 @@ namespace oct::ec::sche
 		std::list<WeekHours>::iterator it_last;
 		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE; day_actual++)
 		{
-			if(size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
+			if(at(day_actual).size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
 
-			if(totals > 0) actual_combs = totals * size();
-			else actual_combs = size();
+			if(totals > 0) actual_combs = totals * at(day_actual).size();
+			else actual_combs = at(day_actual).size();
 
 			totals += actual_combs;
 		}
@@ -474,6 +469,7 @@ namespace oct::ec::sche
 		if(size() != WEEK_SIZE) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
 		
 		
+		/*
 		unsigned int disp = days_disp();
 		unsigned int mean_hours,diff_hours,botton_hours,floor_hours;
 		mean_hours = subject.get_time() / disp;
@@ -498,6 +494,14 @@ namespace oct::ec::sche
 				at(day).combns(week_combs[day],mean_hours);
 				if(botton_hours > mean_hours) at(day).combns(week_combs[day],botton_hours);
 				if(floor_hours > 0) at(day).combns(week_combs[day],floor_hours);
+			}
+		}
+		*/
+		for(unsigned int day = 0; day < size(); day++)
+		{
+			for(unsigned int hours = 1; hours <= subject.get_time(); hours++)
+			{
+				if(at(day).haveDisponible()) at(day).combns(week_combs[day],hours);
 			}
 		}
 		
@@ -527,15 +531,34 @@ namespace oct::ec::sche
 			}
 		}
 	}
-	bool WeekHours::check() const
+	check_codes WeekHours::check() const
 	{
 		for(const Day& day : *this)
 		{
-			if(not day.check()) return false;
+			check_codes code = day.check();
+			if(day.check() != check_codes::PASS) return code;
 		}
 		
+		return check_codes::PASS;
+	}
+	bool WeekHours::empty()const
+	{
+		for(const Day& day : *this)
+		{
+			if(day.size() > 0) return false;
+		}
+
 		return true;
 	}
+
+
+
+
+
+
+
+
+	
 	
 	
 	
@@ -1433,7 +1456,7 @@ namespace oct::ec::sche
 		for(unsigned int i = 0; i < g1->size(); i++)
 		{//selecciona al azar una de las collecciones para elegir agregar dico goal a la collacion actual
 			randN = core::randNumber();
-			std::list<Goal>::const_iterator it;
+			std::vector<Goal>::const_iterator it;
 			if(randN < 0.5) 
 			{
 				it = g1->begin();
