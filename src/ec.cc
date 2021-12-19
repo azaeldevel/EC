@@ -469,6 +469,10 @@ bool Enviroment::run()
 	actualIteration = 1;
 	//std::cout << "\tStep 1\n";
 	initial();
+	for(ec::Single* single : *this)
+	{
+		single->eval();
+	}
     //std::cout << "\tStep 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
@@ -516,9 +520,6 @@ bool Enviroment::run()
 		media = 0.0;
 		sigma = 0.0;
 
-		if(echoSteps) std::cout << "\tStep C3\n";
-		eval();//TODO:solo se deve realizar la evaluacion 1 vez, cuando se crea la poblacion inicial y al crear el hijo.
-		if(echoSteps) std::cout << "\tStep C4\n";
 		if(not comparer)
 		{
 			throw oct::core::Exception("No se a asignado el creterio de coparacion.",__FILE__,__LINE__);
@@ -654,6 +655,7 @@ bool Enviroment::run()
 			for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 			{
 				s->save(fnChilds);
+				s->eval();
 				fnChilds << "\n";
 			}
 			fnChilds.flush();
@@ -751,25 +753,15 @@ Single* Enviroment::getRandomSingleTop() const
 
 	return NULL;
 }
-Single* Enviroment::getRandomSingle() const
+Single* Enviroment::getRandomSingle()
 {
 	float maxp = std::distance(begin(),end());
 	const_iterator it = begin();
 
-	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::lognormal_distribution<double> d(0.0,1.0);
-
-	double unit = 1.0/double(size());
-	double randN = d(gen);
-	unsigned int index = randN/unit;
-	//std::cout << "randN : " << randN << "\n";
-	//std::cout << "unit : " << unit << "\n";
-	//std::cout << "index : " << index << "\n";
-	std::advance(it,index);
-	if(it != end()) return *it;
-
-	return NULL;
+    std::chi_squared_distribution<float> distrib(3);	
+	std::advance(it,distrib(gen));
+	return *it;
 }
 void Enviroment::setEchoSteps(bool e)
 {
@@ -791,6 +783,7 @@ void Enviroment::juncting()
 	}
 	while(newschils.size() + size() <= maxPopulation);
 }
+/*
 void Enviroment::eval()
 {
 	Single* single;
@@ -800,6 +793,7 @@ void Enviroment::eval()
 		single->eval();
 	}
 }
+*/
 void Enviroment::save()
 {
 	std::string strfn = logDirectory +  "/solutions-" + std::to_string(actualIteration) + ".csv";

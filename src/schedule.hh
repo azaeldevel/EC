@@ -47,7 +47,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Retorna suma de la diferacia de horas entre los horasio asignados para cada materia y las horas de cada materia
 		*/
-		unsigned int diff_hour()const
+		unsigned int diff_hour()const;
 	private:
 		Schedule schedule;
 		const Data& data;

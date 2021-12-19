@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <random>
 
 #if defined(__GNUC__) && defined(__linux__)
     #include <octetos/core/Error.hh>
@@ -221,7 +222,6 @@ public:
 	bool getEchoSteps()const;
 	void setEchoSteps(bool);
 	Single* getRandomSingleTop() const;
-	Single* getRandomSingle() const;
 
 
 	void compress(const std::string& in, const std::string& out);
@@ -247,7 +247,7 @@ public:
 	/**
 	*\brief Inicia el proceso de veluacion
 	*/
-	virtual void eval();
+	//virtual void eval();
 	/**
 	*\brief Inicia el proceso de apareo
 	*/
@@ -284,10 +284,13 @@ public:
 	*\brief Libera la memoria ocupada por la actual poblacion y vacia la lista
 	*/
 	virtual void free();
+private:
+	
+	Single* getRandomSingle();
 
 protected:
 	std::string logDirectory;
-	std::string uiljbasedir;
+	std::string basedir;
 	Population initPopulation;
 	Population maxPopulation;
 
@@ -391,7 +394,7 @@ private:
 	//std::string serieName;
 
 	unsigned short maxChilds;
-
+	std::random_device rd;
 };
 
 }
