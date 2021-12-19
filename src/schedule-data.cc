@@ -118,20 +118,25 @@ namespace oct::ec::sche
 	}
 	Day::Day(const Day& d)
 	{
+		//std::cout << "Day::Day(const Day& d) - Step 1.0\n";
 		for(const core::DataTime& dt : d)
 		{
 			push_back(dt);
 		}
-		sort();//ordena y genera bloques
+		//std::cout << "Day::Day(const Day& d) - Step 2.0\n";
+		if(not check()) sort();//ordena y genera bloques
+		//std::cout << "Day::Day(const Day& d) - Step 3.0\n";
 	}
 	Day& Day::operator =(const Day& d)
 	{
+		//std::cout << "Day::operator = - Step 1.0\n";
 		for(const core::DataTime& dt : d)
 		{
 			push_back(dt);
 		}
-		sort();//ordena y genera bloques
-
+		//std::cout << "Day::operator = - Step 2.0\n";
+		if(not check ()) sort();//ordena y genera bloques
+		//std::cout << "Day::operator = - Step 3.0\n";
 		return *this;
 	}
 	Day::Blocks& Day::get_blocks()
@@ -222,7 +227,7 @@ namespace oct::ec::sche
 	void Day::combns(std::list<Day>& days, unsigned int hours)const
 	{
 		if(hours < 1) throw core::Exception("No esta permitido bloques de 0",__FILE__,__LINE__);
-		
+		//std::cout << "Day::combns - Step 1\n";
 		unsigned int countHB = 0;
 		for(const Block& b : blocks)
 		{
@@ -234,11 +239,13 @@ namespace oct::ec::sche
 			msg += std::to_string(countHB) + ", sin embargo, el dia contiene " + std::to_string(size()) + " horas.";
 			throw core::Exception(msg,__FILE__,__LINE__);
 		}
-		
+		//std::cout << "Day::combns - Step 2.0\n";
 		Day d;
-		days.push_back(d);
+		//std::cout << "Day::combns - Step 2.1\n";
+		days.push_back(d);//<--segment faul
+		//std::cout << "Day::combns - Step 2.2\n";
 		Day& day = days.back();//bloques de combinacion generados
-		
+		//std::cout << "Day::combns - Step 3\n";
 		for(const Block& block : blocks)
 		{
 			//bloques equivalentes al numero de hoas pedidos
@@ -271,6 +278,7 @@ namespace oct::ec::sche
 				continue;//estas horas ya fueron repartidas
 			}
 		}
+		//std::cout << "Day::combns - Step 4\n";
 	}
 	void Day::combns(std::list<Day>&, unsigned int hours, const Block& block, Day& day)const
 	{
@@ -348,6 +356,8 @@ namespace oct::ec::sche
 	}
 	bool Day::check() const
 	{
+		if(size() == 0 and blocks.size() == 0)  return true;
+		
 		//verificar ordenammiento
 		const_iterator itPrev = begin();
 		const_iterator itActual = begin();
@@ -406,20 +416,59 @@ namespace oct::ec::sche
 		return count;
 	}
 
-	void WeekHours::combns(std::list<WeekHours>& weeks,const WeekCombs& week_combns,std::vector<DaysCombs::const_iterator> day_opt)const
+	/*void WeekHours::combns(std::list<WeekHours>& weeks,const WeekCombs& week_combns,std::vector<DaysCombs::const_iterator> day_opt)const
 	{		
 		
+	}*/
+	
+	/*void WeekHours::combns(std::list<WeekHours>& weeks,const WeekCombs& week_combns)const
+	{
+		unsigned int totals = 0;
+		unsigned int actual_combs;
+		std::list<WeekHours>::iterator it_last;
+		for(unsigned int day_actual = 0; day_actual < WEEK_SIZE; day_actual++)
+		{
+			if(week_combns[day_actual].size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
+
+			if(weeks.size() > 0) actual_combs = weeks.size() * week_combns[day_actual].size();
+			else actual_combs = week_combns[day_actual].size();
+						
+			if(weeks.size() == 1) it_last = weeks.begin();//ultimo elemeto valido
+			else if(weeks.size() > 1) it_last = weeks.end()--;//ultimo elemeto valido
+			else it_last = weeks.end();
+			
+			for(unsigned int newcombs = 0; newcombs < actual_combs; actual_combs++)
+			{
+				//WeekHours newweek;
+				//weeks.push_back(newweek);	
+				totals++;
+			}
+						
+		}
+		std::cout << "Totals : " << totals << "\n";
+	}*/
+
+	WeekCombs::WeekCombs() : std::vector<DaysCombs>(WeekHours::WEEK_SIZE)
+	{
+
 	}
 	
-	void WeekHours::combns(std::list<WeekHours>& weeks,const WeekCombs& week_combns)const
+	void WeekCombs::random(WeekHours& week)
 	{
 		
 	}
-	void WeekHours::combns(const Subject* subject, std::list<WeekHours>& weeks)const
+
+	
+	void WeekHours::combns(const Subject& subject, WeekCombs& week_combs)const
 	{
+		if(week_combs.size() != WEEK_SIZE)  throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
+		if(size() != week_combs.size()) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
+		if(size() != WEEK_SIZE) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
+		
+		
 		unsigned int disp = days_disp();
 		unsigned int mean_hours,diff_hours,botton_hours,floor_hours;
-		mean_hours = subject->get_time() / disp;
+		mean_hours = subject.get_time() / disp;
 		if(mean_hours == 0) 
 		{
 			mean_hours = 1;
@@ -429,19 +478,18 @@ namespace oct::ec::sche
 		}
 		else
 		{
-			diff_hours = subject->get_time() - (mean_hours * disp);
+			diff_hours = subject.get_time() - (mean_hours * disp);
 			botton_hours = mean_hours + diff_hours;
 			floor_hours = mean_hours - diff_hours;
 		}
 				
-		WeekCombs week_combs(WEEK_SIZE);		
 		for(unsigned int day = 0; day < size(); day++)
 		{
 			if(at(day).haveDisponible())
 			{				
 				at(day).combns(week_combs[day],mean_hours);
-				if(botton_hours > mean_hours) at(day).combns(week_combs[day],botton_hours);
-				if(floor_hours > 0) at(day).combns(week_combs[day],floor_hours);
+				//if(botton_hours > mean_hours) at(day).combns(week_combs[day],botton_hours);
+				//if(floor_hours > 0) at(day).combns(week_combs[day],floor_hours);
 			}
 		}
 		
@@ -450,9 +498,6 @@ namespace oct::ec::sche
 		
 		//TODO:Hay varias combinaciones posibles desde 1 hasta subject->get_time()
 		
-		if(size() != week_combs.size()) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
-		if(size() != WEEK_SIZE) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
-		combns(weeks,week_combs);//generando combinacion de horarios
 	}
 	void WeekHours::sort()
 	{

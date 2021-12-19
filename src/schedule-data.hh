@@ -129,13 +129,13 @@ namespace oct::ec::sche
 
 		/**
 		*\brief Verifica la velides de la informacion
-		*\return true si esta ordenada y los bloques estan formados correctamente
+		*\return true si esta ordenada y los bloques estan formados correctamente, false en otro caso
 		*/
 		bool check()const;
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 		std::list<core::DataTime>::iterator blocking(std::list<core::DataTime>::iterator begin);
-
+		
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el bloque
 		**/
@@ -144,8 +144,18 @@ namespace oct::ec::sche
 		Blocks blocks;
 	};
 
-	typedef std::list<oct::ec::sche::Day> DaysCombs;
-	typedef std::vector<DaysCombs> WeekCombs;
+	typedef std::list<Day> DaysCombs;
+	//typedef std::vector<DaysCombs> WeekCombs;
+	class WeekCombs : public std::vector<DaysCombs>
+	{
+	public:
+		WeekCombs();
+		
+		/**
+		*\brief Genera una semana al azar en base las opciones disponibles en el objeto
+		**/
+		void random(WeekHours&);
+	};
 	class WeekHours : public std::vector<Day>
 	{
 	public:
@@ -169,7 +179,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
 		**/
-		void combns(const Subject*, std::list<WeekHours>& combs)const;
+		void combns(const Subject& ,WeekCombs& )const;
 
 		unsigned int days_disp() const;
 
@@ -180,7 +190,6 @@ namespace oct::ec::sche
 		bool check()const;
 	private:
 		void combns(std::list<WeekHours>&,const WeekCombs&)const;
-		void combns(std::list<WeekHours>&,const WeekCombs&,std::vector<DaysCombs::const_iterator> )const;
 	};
 
 	struct Time

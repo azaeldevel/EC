@@ -590,22 +590,18 @@ void schedule_devel()
 	}
 	//std::cout << "----\n";
 	//week2.print(std::cout);
-	std::list<oct::ec::sche::WeekHours> weeks_combs;
-	week2.combns(subject1,weeks_combs);
-	if(weeks_combs.size() == 11) 
+	//std::list<oct::ec::sche::WeekHours> weeks_combs;
+	oct::ec::sche::WeekCombs week_opt;
+	week2.combns(*subject1,week_opt);
+	if(week_opt.size() == 7) 
 	{
 		CU_ASSERT(true);
 	}
 	else 
 	{
-		std::cout << "weeks_combs.size() = " << weeks_combs.size() << "\n";
+		std::cout << "week_opt.size() = " << week_opt.size() << "\n";
 		CU_ASSERT(false);		
 	}
-	for(const oct::ec::sche::WeekHours& week : weeks_combs)
-	{
-		std::cout << "New Week\n";
-		week.print(std::cout);
-		std::cout << "\n";
-	}
+	
 }
 

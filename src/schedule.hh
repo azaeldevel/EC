@@ -9,7 +9,7 @@
 
 
 namespace oct::ec::sche
-{	
+{
 	
 	/**
 	*\brief Representa una posible solucion a nuestro problema
