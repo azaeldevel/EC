@@ -442,18 +442,17 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 			throw octetos::core::Exception("Algoritmo desconocido",__FILE__,__LINE__);
 		}
 
-		if(mutation())
+		/*if(mutation())
 		{
 			for(unsigned short i = 0; i < 3; i++)
 			{
 				for(unsigned short j = 0; j < 3; j++)
 				{
-					newtabla[i][j].mutate(getEnviroment().getProbabilityMutableGene());
+					newtabla[i][j].mutate(0.02);
 				}
 			}
-			newj.mutate(getEnviroment().getProbabilityMutableGene());
 			if(env->getEchoLevel()  > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe detecta mutacion para " << idCount << "\n";
-		}
+		}*/
 
 		//los datos iniciales no se deven cambiar.
 		for(unsigned short i = 0; i < 3; i++)
@@ -569,7 +568,14 @@ void Single::printInit(std::ostream& out) const
 		}
 	}
 }
-
+void Single::mutate()
+{
+	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+    std::normal_distribution<float> distribIndex(0, 2);
+    std::normal_distribution<float> distribNumber(1, 9);
+    
+    tabla[(unsigned short)distribIndex(gen)][(unsigned short)distribIndex(gen)].setNumber((unsigned short)distribIndex(gen),(unsigned short)distribIndex(gen),(unsigned short)distribNumber(gen)); 
+}
 
 
 
@@ -644,8 +650,8 @@ void Enviroment::init()
 	//maxIteration = 1000;
 	newIteration = true;
 	stopperMinSolutions(1);
-	if(pMutationEvent < 0.0) pMutationEvent = 0.002;
-	if(pMutableGene < 0.0) pMutableGene = 0.80;
+	//pMutationEvent = 0.002;
+	//if(pMutableGene < 0.0) pMutableGene = 0.80;
 	gamma = 1.0/(81.0 * 4.0);
 	epsilon = gamma;
 	//fnBoard = initB;

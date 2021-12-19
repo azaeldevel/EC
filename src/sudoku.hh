@@ -67,6 +67,7 @@ public:
 	virtual Population juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single);
 	virtual void save(std::ofstream& fn);
 	//const oct::core::StringMD5& getMD5() const;
+	virtual void mutate();
 
 	void print(std::ostream&) const;
 	void printInit(std::ostream&) const;

@@ -334,10 +334,10 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.2\n";
 		geneUS genN = chromo.combination(((Single*)single)->chromo.getNumber());
 		double randMutate = randNumber(0.0,1.0);
-		if(env->getProbabilityMutationEvent() < randMutate)
+		/*if(env->getProbabilityMutationEvent() < randMutate)
 		{
 			genN = Chromosome::mutate(genN);
-		}
+		}*/
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.3\n";
 		double randAlgSingle = randNumber(0.0,1.0);
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.4\n";
@@ -367,7 +367,10 @@ void Single::print(std::ostream& fn) const
 	fn << ",";
 	fn << chromo.getNumber();
 }
+void Single::mutate()
+{
 
+}
 
 
 

@@ -129,7 +129,7 @@ public:
 	void deltaAge();
 	//void deltaStrength();
 	float efficiency()const;
-	bool mutation()const;
+	//bool mutation()const;
 	void init();
 
 	/**
@@ -152,6 +152,10 @@ public:
 	*/
 	virtual void print(std::ostream&) const = 0;
 
+	/**
+	*\brief Crea una mutacion
+	*/
+	virtual void mutate() = 0;
 protected:
 	/**
 	*\brief numero entre 0 y 1 que determina la cercania al valor esperado(tiende a 1)
@@ -159,6 +163,7 @@ protected:
 	double fitness;
 
 	Enviroment* env;
+	std::random_device rd;
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
@@ -205,8 +210,8 @@ public:
 	//double getSigmaReduction() const;
 	double getMedia() const;
 	double getEpsilon() const;
-	double getProbabilityMutableGene()const;
-	double getProbabilityMutationEvent()const;
+	//double getProbabilityMutableGene()const;
+	//double getMutableProbability()const;
 	//void remove(ae::Single*);
 	unsigned long getSession()const;
 	//static unsigned long getDayID();
@@ -312,11 +317,11 @@ protected:
 	/**
 	*\brief numero entre 0 y 1 que determina la probabilidad de cada gen de ser mutado.
 	*/
-	double pMutableGene;
+	//double pMutableGene;
 	/**
 	*\brief numero entre 0 y 1 que determina la probabilidad de cada el evento de mutacion ocurrar.
 	*/
-	double pMutationEvent;
+	double mutableProb;
 
 	std::ostream* fout;
 

@@ -31,10 +31,13 @@ namespace oct::ec::sche
 	}
 	unsigned int Single::overlap_by_teacher()const
 	{
+		unsigned int count = 0;
 		for(const Goal& goal : schedule)
 		{
 			
 		}
+		
+		return 0;
 	}
 	
 	

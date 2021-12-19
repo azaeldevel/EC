@@ -46,10 +46,12 @@ namespace oct::ec::sche
 	}
 	void Single::print(std::ostream&) const
 	{
+	}
+	void Single::mutate()
+	{
 
 	}
-	
-	
+		
 	
 	
 	

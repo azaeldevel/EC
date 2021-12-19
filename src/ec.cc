@@ -237,12 +237,12 @@ Enviroment& Single::getEnviroment()const
 	return *env;
 }
 
-bool Single::mutation()const
+/*bool Single::mutation()const
 {
 	double numrand = randNumber(0.0,1.0);
 	if(numrand <= env->getProbabilityMutationEvent()) return true;
 	else return false;
-}
+}*/
 void Single::deltaAge()
 {
 	age++;
@@ -269,8 +269,8 @@ void Enviroment::init()
 	logFile = false;
 	//sigmaReduction = 1.0;
 	minSolutions = 0;
-	pMutationEvent = -1.0;
-	pMutableGene = -1.0;
+	mutableProb = 0.002;
+	//pMutableGene = -1.0;
 	fout = NULL;
 	stopMaxIterations=false;
 	stopMinSolutions = false;
@@ -378,14 +378,14 @@ double Enviroment::getEpsilon() const
 {
 	return epsilon;
 }
-double Enviroment::getProbabilityMutableGene()const
+/*double Enviroment::getProbabilityMutableGene()const
 {
 	return pMutableGene;
-}
-double Enviroment::getProbabilityMutationEvent()const
+}*/
+/*double Enviroment::getMutableProbability()const
 {
-	return pMutationEvent;
-}
+	return mutableProb;
+}*/
 /*
 unsigned long Enviroment::getSession()const
 {
@@ -632,9 +632,9 @@ bool Enviroment::run()
 				history  << ",";
 				history  << sigma;
 				history  << ",";
-				history  << pMutationEvent;
-				history  << ",";
-				history  << pMutableGene;
+				history  << mutableProb;
+				//history  << ",";
+				//history  << pMutableGene;
 				history  << "\n";
 				history .flush();
 			}
@@ -897,14 +897,14 @@ void Enviroment::commands(int argc, const char* argv[])
 		if(strcmp("--max-treat",argv[i]) == 0)
 		{
 		}
-		if(strcmp("--mutation-event",argv[i]) == 0)
+		if(strcmp("--mutation-probability",argv[i]) == 0)
 		{
-			pMutationEvent = std::stod(argv[++i]);
+			mutableProb = std::stod(argv[++i]);
 		}
-		if(strcmp("--mutation-gene",argv[i]) == 0)
+		/*if(strcmp("--mutation-gene",argv[i]) == 0)
 		{
 			pMutableGene = std::stod(argv[++i]);
-		}
+		}*/
 		if(strcmp("--create-session",argv[i]) == 0)
 		{
 			std::string strDay = std::to_string(oct::core::getDayID());

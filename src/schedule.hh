@@ -39,6 +39,8 @@ namespace oct::ec::sche
 		*\brief Imprime los datos relevantes del individuo
 		*/
 		virtual void print(std::ostream&) const;
+
+		virtual void mutate();
 	private:
 		/**
 		*\brief Retorna la cantiad de traslapes que tiene los maestros

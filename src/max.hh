@@ -72,6 +72,8 @@ namespace oct::ec::max
 		*/
 		virtual void print(std::ostream&) const;
 
+		virtual void mutate();
+
 	private:
 		Chromosome chromo;
 	};
