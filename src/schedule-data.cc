@@ -242,40 +242,51 @@ namespace oct::ec::sche
 		//std::cout << "Day::combns - Step 2.0\n";
 		Day d;
 		//std::cout << "Day::combns - Step 2.1\n";
-		days.push_back(d);//<--segment faul
+		days.push_back(d);
 		//std::cout << "Day::combns - Step 2.2\n";
 		Day& day = days.back();//bloques de combinacion generados
 		//std::cout << "Day::combns - Step 3\n";
 		for(const Block& block : blocks)
 		{
-			//bloques equivalentes al numero de hoas pedidos
+			//bloques equivalentes al numero de horas pedidos
 			if(block.size() == hours)
 			{
 				day.add(block);
-				continue;//estas horas ya ffueron repartidas
+				continue;//estas horas ya fueron repartidas
 			}
 			
 			//bloques con multiplos de horas pedidos
 			const unsigned int mult = block.size() / hours;
-			//std::cout << "mult : " << mult << "\n";
+			//unsigned int count_blocks = 0;
 			if(mult > 0)
 			{
-				Block::const_iterator it_day = block.begin();
+				Block::const_iterator it_hour = block.begin();
 				Block block_mult;
 				for(unsigned int i = 0; i < mult; i++)
 				{
 					block_mult.clear();
 					for(unsigned int j = 0; j < hours; j++)
 					{
-						day.push_back(**it_day);
-						block_mult.push_back(&day.back());
-						it_day++;
+						//day.push_back(**it_hour);
+						block_mult.push_back(*it_hour);
+						it_hour++;
 					}
+					//count_blocks++;
 					day.add(block_mult);
 				}
+				/*if(day.get_blocks().size() != count_blocks)		
+				{
+					std::string msg = "Hay '";
+					msg += std::to_string(count_blocks) + "' bloques creados, sin embargo, se agregaron " + std::to_string(day.get_blocks().size());
+					throw core::Exception(msg,__FILE__,__LINE__);
+				}*/
 				//si no es exacto, se pueden hacer otras combinaciones
 				if(block.size() % hours > 0) combns(days,hours,block,day);
 				continue;//estas horas ya fueron repartidas
+			}
+			else
+			{
+				
 			}
 		}
 		//std::cout << "Day::combns - Step 4\n";
@@ -359,7 +370,7 @@ namespace oct::ec::sche
 		if(size() == 0 and blocks.size() == 0)  return true;
 		
 		//verificar ordenammiento
-		const_iterator itPrev = begin();
+		/*const_iterator itPrev = begin();
 		const_iterator itActual = begin();
 		itActual++;
 		while(itActual != end())
@@ -371,7 +382,7 @@ namespace oct::ec::sche
 			
 			itActual++;
 			itPrev++;			
-		}
+		}*/
 		
 		unsigned int countHB = 0;
 		for(const Block& b : blocks)
@@ -383,6 +394,50 @@ namespace oct::ec::sche
 		
 		return true;
 	}
+
+
+
+
+
+	
+	WeekOptions::WeekOptions() : std::vector<DaysCombs>(WeekHours::WEEK_SIZE) 
+	{
+		
+	}
+	
+	void WeekOptions::random(WeekHours& week)
+	{
+		std::mt19937 gen(rd());
+    			
+		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE; day_actual++)
+		{
+			if(at(day_actual).size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
+			
+			std::uniform_int_distribution<> distrib(0, at(day_actual).size() - 1);
+			DaysCombs::iterator it = at(day_actual).begin();
+			std::advance(it,distrib(gen));
+			week[day_actual] = *it;
+		}
+	}
+	unsigned int WeekOptions::count()const
+	{
+		unsigned int totals = 0;
+		unsigned int actual_combs;
+		std::list<WeekHours>::iterator it_last;
+		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE; day_actual++)
+		{
+			if(size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
+
+			if(totals > 0) actual_combs = totals * size();
+			else actual_combs = size();
+
+			totals += actual_combs;
+		}
+
+		return totals;
+	}
+
+	
 	
 	
 	const unsigned int WeekHours::WEEK_SIZE = 7;
@@ -390,10 +445,6 @@ namespace oct::ec::sche
 	{
 		resize(7);
 	}
-	/*const std::list<const Day*>& WeekHours::get_disponible()const
-	{
-		return disponibles;
-	}*/
 	WeekHours& WeekHours::inters(const WeekHours& comp1, const WeekHours& comp2)
 	{
 		if(comp2.size() != comp1.size() and size() == comp1.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
@@ -415,51 +466,8 @@ namespace oct::ec::sche
 		
 		return count;
 	}
-
-	/*void WeekHours::combns(std::list<WeekHours>& weeks,const WeekCombs& week_combns,std::vector<DaysCombs::const_iterator> day_opt)const
-	{		
-		
-	}*/
 	
-	/*void WeekHours::combns(std::list<WeekHours>& weeks,const WeekCombs& week_combns)const
-	{
-		unsigned int totals = 0;
-		unsigned int actual_combs;
-		std::list<WeekHours>::iterator it_last;
-		for(unsigned int day_actual = 0; day_actual < WEEK_SIZE; day_actual++)
-		{
-			if(week_combns[day_actual].size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
-
-			if(weeks.size() > 0) actual_combs = weeks.size() * week_combns[day_actual].size();
-			else actual_combs = week_combns[day_actual].size();
-						
-			if(weeks.size() == 1) it_last = weeks.begin();//ultimo elemeto valido
-			else if(weeks.size() > 1) it_last = weeks.end()--;//ultimo elemeto valido
-			else it_last = weeks.end();
-			
-			for(unsigned int newcombs = 0; newcombs < actual_combs; actual_combs++)
-			{
-				//WeekHours newweek;
-				//weeks.push_back(newweek);	
-				totals++;
-			}
-						
-		}
-		std::cout << "Totals : " << totals << "\n";
-	}*/
-
-	WeekCombs::WeekCombs() : std::vector<DaysCombs>(WeekHours::WEEK_SIZE)
-	{
-
-	}
-	
-	void WeekCombs::random(WeekHours& week)
-	{
-		
-	}
-
-	
-	void WeekHours::combns(const Subject& subject, WeekCombs& week_combs)const
+	void WeekHours::combns(const Subject& subject, WeekOptions& week_combs)const
 	{
 		if(week_combs.size() != WEEK_SIZE)  throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
 		if(size() != week_combs.size()) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
@@ -488,8 +496,8 @@ namespace oct::ec::sche
 			if(at(day).haveDisponible())
 			{				
 				at(day).combns(week_combs[day],mean_hours);
-				//if(botton_hours > mean_hours) at(day).combns(week_combs[day],botton_hours);
-				//if(floor_hours > 0) at(day).combns(week_combs[day],floor_hours);
+				if(botton_hours > mean_hours) at(day).combns(week_combs[day],botton_hours);
+				if(floor_hours > 0) at(day).combns(week_combs[day],floor_hours);
 			}
 		}
 		

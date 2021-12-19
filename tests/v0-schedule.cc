@@ -10,8 +10,9 @@
 #include <stdio.h>
 #include <time.h>
 
+using namespace oct::ec::sche;
 
-static oct::ec::sche::Data data;
+static Data data;
 
 int schedule_init(void)
 {
@@ -580,9 +581,10 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}
 	//week2.print(std::cout);
+	//el criterio de revificacion puede cambiar
 	if(week2.check()) //verificar que este ordenado
 	{
-		CU_ASSERT(false);
+		CU_ASSERT(true);
 	}
 	else 
 	{
@@ -591,7 +593,7 @@ void schedule_devel()
 	//std::cout << "----\n";
 	//week2.print(std::cout);
 	//std::list<oct::ec::sche::WeekHours> weeks_combs;
-	oct::ec::sche::WeekCombs week_opt;
+	oct::ec::sche::WeekOptions week_opt;
 	week2.combns(*subject1,week_opt);
 	if(week_opt.size() == 7) 
 	{
@@ -603,5 +605,19 @@ void schedule_devel()
 		CU_ASSERT(false);		
 	}
 	
+	//este valor puede cambiar comforme mejore el algoritmo, esta a que por propositos de desarrollo
+	if(week_opt.count() == 1835008) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "week_opt.count() = " << week_opt.count() << "\n";
+		CU_ASSERT(false);		
+	}
+
+	WeekHours week3;
+	week_opt.random(week3);
+	week3.print(std::cout);
 }
 

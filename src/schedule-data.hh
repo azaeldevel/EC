@@ -146,15 +146,23 @@ namespace oct::ec::sche
 
 	typedef std::list<Day> DaysCombs;
 	//typedef std::vector<DaysCombs> WeekCombs;
-	class WeekCombs : public std::vector<DaysCombs>
+	class WeekOptions : public std::vector<DaysCombs>
 	{
 	public:
-		WeekCombs();
+		WeekOptions();
 		
 		/**
 		*\brief Genera una semana al azar en base las opciones disponibles en el objeto
 		**/
 		void random(WeekHours&);
+
+
+		/**
+		*\brief Genera una semana al azar en base las opciones disponibles en el objeto
+		**/
+		unsigned int count()const;
+	private:
+		std::random_device rd;
 	};
 	class WeekHours : public std::vector<Day>
 	{
@@ -179,7 +187,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
 		**/
-		void combns(const Subject& ,WeekCombs& )const;
+		void combns(const Subject& ,WeekOptions& )const;
 
 		unsigned int days_disp() const;
 
@@ -189,7 +197,7 @@ namespace oct::ec::sche
 
 		bool check()const;
 	private:
-		void combns(std::list<WeekHours>&,const WeekCombs&)const;
+		void combns(std::list<WeekHours>&,const WeekOptions&)const;
 	};
 
 	struct Time
