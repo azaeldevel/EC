@@ -1446,28 +1446,49 @@ namespace oct::ec::sche
 	
 	
 	
-	
-	
-	
-	void Goals::juncting(const Goals* g1,const Goals* g2)
+	Goals::Goals()
 	{
-		if(g1->size() != g2->size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
-		double randN;
-		for(unsigned int i = 0; i < g1->size(); i++)
+
+	}
+	Goals::Goals(unsigned int z) : std::vector<Goal>(z)
+	{
+		
+	}
+	Goals::Goals(const Goals& g)
+	{
+		resize(g.size());
+
+		for(unsigned int i = 0; i < g.size(); i++)
+		{
+			at(i) = g[i];
+		}
+	}
+	Goals& Goals::operator =(const Goals& g)
+	{
+		resize(g.size());
+		
+		for(unsigned int i = 0; i < g.size(); i++)
+		{
+			at(i) = g[i];
+		}
+
+		return *this;
+	}
+	void Goals::juncting(const Goals& g1,const Goals& g2)
+	{
+		if(g1.size() != g2.size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
+
+		std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+    	std::uniform_int_distribution<> distrib(1, 100);
+		for(unsigned int i = 0; i < g1.size(); i++)
 		{//selecciona al azar una de las collecciones para elegir agregar dico goal a la collacion actual
-			randN = core::randNumber();
-			std::vector<Goal>::const_iterator it;
-			if(randN < 0.5) 
+			if(distrib(gen) < 50 ) 
 			{
-				it = g1->begin();
-				std::advance(it,i);
-				push_back(*it);
+				at(i) = g1.at(i);
 			}
 			else 
 			{
-				it = g2->begin();
-				std::advance(it,i);
-				push_back(*it);
+				at(i) = g2.at(i);
 			}
 		}
 	}

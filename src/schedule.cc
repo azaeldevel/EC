@@ -14,11 +14,11 @@ namespace oct::ec::sche
 	
 	
 
-	Single::Single(ID id,Enviroment& env,const Junction& j) : ec::Single(id,env,j)
+	Single::Single(ID id,Enviroment& env,const Junction& j,const Data& d) : ec::Single(id,env,j), data(d)
 	{
 
 	}
-	Single::Single(ID id,Enviroment& env, const Schedule& s) : ec::Single(id,env), schedule(s)
+	Single::Single(ID id,Enviroment& env, const Schedule& s,const Data& d) : ec::Single(id,env), schedule(s),data(d)
 	{
 
 	}
@@ -36,8 +36,8 @@ namespace oct::ec::sche
 			const Junction* juntion;
 			if(randJ < 0.5) juntion = &getJunction();
 			else juntion = &single->getJunction();
-			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,*juntion);
-			newsingle->schedule.juncting(&schedule,&((Single*)single)->schedule);
+			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,*juntion,data);
+			newsingle->schedule.juncting(schedule,((Single*)single)->schedule);
 						
 			chils.push_back(newsingle);
 		}
@@ -100,8 +100,10 @@ void Enviroment::initial()
 	for(Schedule& sche : inits)
 	{
 		sche.resize(data.groups.get_list().size());
-		unsigned int goal = 0;
-		for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++,goal)
+		//unsigned int goal = 0;
+		//for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++,goal)
+		Groups::const_iterator itGroup = data.groups.get_list().begin();
+		for(unsigned int goal = 0; goal < sche.size(); goal++,itGroup++)
 		{
 			sche[goal].group = &*itGroup;
 			sche[goal].room = (&*itGroup)->room;		
@@ -124,25 +126,6 @@ void Enviroment::initial()
 				WeekOptions week_opt;
 				week.inters(sche[goal].room->get_week (),sche[goal].teacher->get_week());
 				check_codes code = week.check();
-				/*switch(code)
-				{
-					case check_codes::BLOCK_CONTENT_SIZE_FAIL:
-						std::cout << "El tamano de los bloques y la cantidad de dias no coinciden\n";
-						return;
-					default:
-						std::cout << "Otros errores\n";
-						return;
-				}
-				for(const Day& day : week)
-				{
-					std::cout << "\n";
-					day.print_day(std::cout);
-				}
-				if(code != check_codes::PASS)
-				{
-					std::string msg 
-					throw core::Exception("No se comple la validacion del horario.",__FILE__,__LINE__);
-				}*/
 				week.combns(*sche[goal].subject,week_opt);
 				week_opt.random(sche[goal].week);
 			}
@@ -152,7 +135,7 @@ void Enviroment::initial()
 	//creando individuuos
 	for(const Schedule& s : inits)
 	{
-		Single* single = new Single(nextID(),*this,s);
+		Single* single = new Single(nextID(),*this,s,data);
 		push_back(single);
 	}
 }
@@ -191,21 +174,8 @@ unsigned int Enviroment::counter()const
 	}
 }
 */
-unsigned int Enviroment::counter()const
-{
-	unsigned int count = 0;
-	for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++)
-	{
-		const Room* room = (*itGroup).room;
-			for(const Subject* subjectGroup : *itGroup)
-			{
-				
-			}
-	}
-	
-	return count;
-}
-void Enviroment::juncting()
+
+/*void Enviroment::juncting()
 {
 	Single *single1,*single2;
 	do
@@ -219,7 +189,7 @@ void Enviroment::juncting()
 		single1->juncting(newschils,single2);
 	}
 	while(newschils.size() + size() <= maxPopulation);
-}
+}*/
 
 }
 

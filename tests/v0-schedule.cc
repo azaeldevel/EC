@@ -701,6 +701,7 @@ void schedule_devel()
 	}
 	catch(std::exception& ex)
 	{
+		std::cout << ex.what() << "\n";
 		CU_ASSERT(false);
 	}
 }

@@ -17,11 +17,11 @@ namespace oct::ec::sche
 	class Single : public oct::ec::Single
 	{
 	public:
-		Single(ID id,Enviroment& env,const Junction& junction);
+		Single(ID id,Enviroment& env,const Junction& junction,const Data& );
 		/**
 		*\brief Constructor que recive el ID del Individuo y el Ambiente
 		*/
-		Single(ID id,Enviroment& env, const Schedule&);
+		Single(ID id,Enviroment& env, const Schedule&,const Data& );
 		
 		/**
 		*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
@@ -40,7 +40,17 @@ namespace oct::ec::sche
 		*/
 		virtual void print(std::ostream&) const;
 	private:
+		/**
+		*\brief Retorna la cantiad de traslapes que tiene los maestros
+		*/
+		unsigned int overlap_by_teacher()const;
+		/**
+		*\brief Retorna suma de la diferacia de horas entre los horasio asignados para cada materia y las horas de cada materia
+		*/
+		unsigned int diff_hour()const
+	private:
 		Schedule schedule;
+		const Data& data;
 	};
 
 	/**
@@ -66,7 +76,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Inicia el proceso de apareo, sobecragada devido a que deve distigir entre grupo para realizar el apareoa
 		*/
-		virtual void juncting();
+		//virtual void juncting();
 
 		/**
 		*\brief Crea la poblacion inicial

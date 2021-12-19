@@ -517,7 +517,7 @@ bool Enviroment::run()
 		sigma = 0.0;
 
 		if(echoSteps) std::cout << "\tStep C3\n";
-		eval();
+		eval();//TODO:solo se deve realizar la evaluacion 1 vez, cuando se crea la poblacion inicial y al crear el hijo.
 		if(echoSteps) std::cout << "\tStep C4\n";
 		if(not comparer)
 		{

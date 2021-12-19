@@ -536,10 +536,18 @@ namespace oct::ec::sche
 		WeekHours week;
 	};
 	//typedef std::list<Goal> Goals;
-	struct Goals : public std::vector<Goal>
+	class Goals : public std::vector<Goal>
 	{
-	
-		void juncting(const Goals*,const Goals*);
+	public:
+		Goals();
+		Goals(unsigned int);
+		Goals(const Goals&);
+
+		Goals& operator =(const Goals&);
+		
+		void juncting(const Goals&,const Goals&);
+	private:
+		std::random_device rd;
 	};
 
 	/**
