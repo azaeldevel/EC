@@ -54,8 +54,8 @@ public:
 	const Chromosome& operator = (const Chromosome&);
 
 protected:
-	//unsigned int mutated;
 	static std::random_device rd;
+	static std::mt19937 gen;
 private:
 	std::string name;
 };
@@ -165,6 +165,7 @@ protected:
 
 	Enviroment* env;
 	static std::random_device rd;
+	static std::mt19937 gen;
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
@@ -362,6 +363,8 @@ protected:
 
 	//
 	oct::core::Shell shell;
+	static std::random_device rd;
+	static std::mt19937 gen;
 
 private:
 	/**
@@ -401,7 +404,6 @@ private:
 	//std::string serieName;
 
 	unsigned short maxChilds;
-	std::random_device rd;
 };
 
 }

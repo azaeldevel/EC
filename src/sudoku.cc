@@ -66,8 +66,8 @@ void Chromosome::setNumber(unsigned short i,unsigned short j,geneUS g)
 
 void Chromosome::combine(const ec::Chromosome& P1,const ec::Chromosome& P2)
 {
-	std::random_device rd;
-	std::mt19937 gen(rd());
+	//std::random_device rd;
+	//std::mt19937 gen(rd());
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -107,7 +107,7 @@ void Chromosome::copy(const ec::Chromosome& P)
 }*/
 void Chromosome::randFill()
 {
-	std::mt19937 gen(rd());
+	//std::mt19937 gen(rd());
     std::uniform_int_distribution<int> distrib(1,9);
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -479,7 +479,7 @@ void Single::printInit(std::ostream& out) const
 }
 void Single::mutate()
 {
-	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+	//std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
     std::uniform_int_distribution<int> distribIndex(0, 2);
     std::uniform_int_distribution<int> distribNumber(1, 9);
     unsigned short i,j,k,l,N;
@@ -553,9 +553,9 @@ Enviroment::~Enviroment()
 }
 void Enviroment::init()
 {
-	maxPopulation = 810;//81*a
-	initPopulation = maxPopulation;
-	maxProgenitor = 162;//9*a
+	maxPopulation = 36 * 81;//81*a
+	initPopulation = 9 * 81;
+	maxProgenitor = 18 * 81;//9*a
 	idCount = 1;
 
 	echolevel = 0;

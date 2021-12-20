@@ -30,7 +30,7 @@
 
 int main(int argc, const char* argv[])
 {
-	if(argc < 4) 
+	if(argc < 3) 
 	{
 		std::cerr << "Indique lo cuatro parametros necesarion\n";
 		std::cerr << "ec-sudoku  --directory-logs '..' --board '..' --iterations '..' --serie 'nombre cantidad'\n";

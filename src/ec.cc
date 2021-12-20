@@ -59,6 +59,7 @@ double randNumber(double min,double max)
 
 
 std::random_device Chromosome::rd;
+std::mt19937 Chromosome::gen(rd());
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
@@ -193,6 +194,7 @@ void Junction::randFill(TypeJuntion t)
 
 
 std::random_device Single::rd;
+std::mt19937 Single::gen(rd());
 Single::Single(const Single& obj)
 {
 	env = obj.env;
@@ -259,6 +261,8 @@ void Single::init()
 
 
 
+std::random_device Enviroment::rd;
+std::mt19937 Enviroment::gen(rd());
 
 void Enviroment::init()
 {
@@ -269,7 +273,7 @@ void Enviroment::init()
 	logFile = false;
 	//sigmaReduction = 1.0;
 	minSolutions = 0;
-	mutableProb = 0.00005;
+	mutableProb = 0.001;
 	//pMutableGene = -1.0;
 	fout = NULL;
 	stopMaxIterations=false;
@@ -496,10 +500,10 @@ bool Enviroment::run()
 	double oldLeaderFitness = 0.0;
 	Iteration countOldLeader = 0;
 	Iteration countOldLeaderFitness = 0;
-	std::uniform_real_distribution<double> random_mutation(0.0,1.0);
+	//std::mt19937 gen(rd());
 	//Iteration maxRepeat = 10 + minSolutions;
-	bool triggerRepeatEnable = true;
-	double triggerRepeatMin = double(maxPopulation) * 1.0e-10;	
+	//bool triggerRepeatEnable = true;
+	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;	
 	//double triggerJam2 = 1.0e-20;	
 	
 	while(true)
@@ -594,35 +598,29 @@ bool Enviroment::run()
 			(*fout) << "\tmedia : " << media << "\n";
 			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
-			(*fout) << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "\tAtasco(Repeticiones)\n" : "\tNo Atasco(Repeticiones)\n");
+			//(*fout) << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "\tAtasco(Repeticiones)\n" : "\tNo Atasco(Repeticiones)\n");
 		}
-		if(echoSteps) std::cout << "\tStep C11\n";
-		/*if(stopNotDiference and actualIteration > 1)
+		
+		solutions.clear();
+		for(iterator it = begin(); it != end(); it++)
 		{
-			if(sigma < notDiferenceCota)
-			{
-				std::cout << "\tFinalizando por no diferencia\n";
-				history.close();
-				return false;
-			}
-		}*/
-		if(stopMinSolutions)
-		{
-			solutions.clear();
-			for(Single* s : *this)
-			{
-				if(1.0 - s->getFitness() < epsilon) solutions.push_back(s);
-
-				if(solutions.size() >= minSolutions)
-				{
-					if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
-					if(logFile) save(solutions,"solution.cvs");
-					history.close();
-					return true;
-				}
-			}
+			if( 1.0 - (*it)->getFitness() < epsilon) solutions.push_back(*it);
+			else break;//si no fuen solucio las siguientes tampoco
 		}
-		if(echoSteps) std::cout << "\tStep C12\n";
+		if(solutions.size() >= minSolutions and stopMinSolutions)//se definion una cantidad minima de soluciones
+		{
+			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
+			if(logFile) save(solutions,"solutions.cvs");
+			history.close();
+			return true;
+		}
+		else if (solutions.size() == maxPopulation)//si toda la poblacion es una solucion
+		{
+			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
+			if(logFile) save(solutions,"solutions.cvs");
+			history.close();
+			return true;		
+		}
 
 		if(logFile)
 		{
@@ -639,8 +637,8 @@ bool Enviroment::run()
 				history  << mutableProb;
 				history  << ",";
 				history  << mutableProb;
-				history  << ",";
-				history  << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "Atasco(Repeticiones)" : "No Atasco(Repeticiones)");
+				//history  << ",";
+				//history  << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "Atasco(Repeticiones)" : "No Atasco(Repeticiones)");
 				history  << "\n";
 				history .flush();
 			}
@@ -658,17 +656,17 @@ bool Enviroment::run()
 			std::string strChilds = logDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
 			fnChilds.open(strChilds);
 		}
-		double randN;	
+		
+		std::bernoulli_distribution random_mutation(mutableProb);
 		if(logFile) if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
-			randN = random_mutation(rd);
-			if(randN < mutableProb) s->mutate();
-			if(triggerRepeatEnable and triggerRepeatMin > sigma) s->mutate();
+			if(random_mutation(rd)) s->mutate();
+			//if(triggerRepeatEnable and triggerRepeatMin > sigma) s->mutate();
 			s->eval();
 			if(logFile)
 			{
-				s->save(fnChilds);				
+				s->save(fnChilds);
 				fnChilds << "\n";
 			}
 		}
@@ -754,7 +752,7 @@ ec::Single* Enviroment::getProxSolution()
 
 Single* Enviroment::getRandomSingle() 
 {
-	std::mt19937 gen(rd());
+	//std::mt19937 gen(rd());
 	std::bernoulli_distribution distrib(0.8);
 	if(distrib(gen))
 	{
@@ -769,7 +767,7 @@ Single* Enviroment::getRandomSingleAny()
 {
 	const_iterator it = begin();
 
-	std::mt19937 gen(rd());
+	//std::mt19937 gen(rd());
     std::uniform_int_distribution<int> distrib(0, size() - 1);
 	std::advance(it,distrib(gen));
 	return *it;
@@ -778,7 +776,7 @@ Single* Enviroment::getRandomSingleTop()
 {
 	const_iterator it = begin();
 
-	std::mt19937 gen(rd());
+	//std::mt19937 gen(rd());
     std::lognormal_distribution<double> distrib(0.0,1.0);
     unsigned int offset = std::abs(distrib(gen));    
     while(offset >= size())
@@ -937,6 +935,10 @@ void Enviroment::commands(int argc, const char* argv[])
 			{
 				shell.mkdir(logDirectory);
 			}
+		}
+		if(strcmp("--solutions",argv[i]) == 0)
+		{
+			minSolutions = std::stoi(argv[++i]);
 		}
 	}
 }
