@@ -226,7 +226,6 @@ public:
 	//bool getJam()const;
 	bool getEchoSteps()const;
 	void setEchoSteps(bool);
-	Single* getRandomSingleTop() const;
 
 
 	void compress(const std::string& in, const std::string& out);
@@ -292,6 +291,8 @@ public:
 private:
 	
 	Single* getRandomSingle();
+	Single* getRandomSingleTop();
+	Single* getRandomSingleAny();
 
 protected:
 	std::string logDirectory;

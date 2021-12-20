@@ -571,10 +571,17 @@ void Single::printInit(std::ostream& out) const
 void Single::mutate()
 {
 	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    std::normal_distribution<float> distribIndex(0, 2);
-    std::normal_distribution<float> distribNumber(1, 9);
-    
-    tabla[(unsigned short)distribIndex(gen)][(unsigned short)distribIndex(gen)].setNumber((unsigned short)distribIndex(gen),(unsigned short)distribIndex(gen),(unsigned short)distribNumber(gen)); 
+    std::uniform_int_distribution<int> distribIndex(0, 2);
+    std::uniform_int_distribution<int> distribNumber(1, 9);
+    unsigned short i,j,k,l,N;
+    //std::cout << distribIndex(gen) << "," << distribIndex(gen) << "," << distribIndex(gen) << "," << distribIndex(gen) << "\n";
+    i = distribIndex(gen);
+    j = distribIndex(gen);
+    k = distribIndex(gen);
+    l = distribIndex(gen);
+    N = distribNumber(gen);
+    //std::cout << i << "," << j << "," << k << "," << l << "," << N << "\n";
+    tabla[i][j].setNumber(k,l,N);
 }
 
 

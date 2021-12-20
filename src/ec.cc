@@ -269,7 +269,7 @@ void Enviroment::init()
 	logFile = false;
 	//sigmaReduction = 1.0;
 	minSolutions = 0;
-	mutableProb = 0.002;
+	mutableProb = 0.00005;
 	//pMutableGene = -1.0;
 	fout = NULL;
 	stopMaxIterations=false;
@@ -496,10 +496,11 @@ bool Enviroment::run()
 	double oldLeaderFitness = 0.0;
 	Iteration countOldLeader = 0;
 	Iteration countOldLeaderFitness = 0;
-	if(echoSteps) std::cout << "\tStep 5\n";
+	std::uniform_real_distribution<double> random_mutation(0.0,1.0);
+	
 	while(true)
 	{
-		if(echoSteps) std::cout << "\tStep C1\n";
+		
 		if(stopMaxIterations)
 		{
 			if(actualIteration > maxIteration)
@@ -639,23 +640,26 @@ bool Enviroment::run()
 				history .flush();
 			}
 		}
-		if(echoSteps) std::cout << "\tStep C13\n";
+		
 		juncting();
-		if(echoSteps) std::cout << "\tStep C14\n";
+		
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 			push_front(s);
 		}
-		if(echoSteps) std::cout << "\tStep C15\n";
+		
 		if(logFile)
 		{
 			std::string strChilds = logDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fnChilds(strChilds);
+			double randN;	
 			if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 			{
-				s->save(fnChilds);
+				randN = random_mutation(rd);
+				if(randN < mutableProb) s->mutate();
 				s->eval();
+				s->save(fnChilds);				
 				fnChilds << "\n";
 			}
 			fnChilds.flush();
@@ -736,36 +740,41 @@ ec::Single* Enviroment::getProxSolution()
 	return *begin();
 }
 
-Single* Enviroment::getRandomSingleTop() const
+Single* Enviroment::getRandomSingle() 
 {
-	float maxp = std::distance(begin(),end());
-	const_iterator it = begin();
-
-	double rndnum = randNumber(0.0,1.0);
-	if(rndnum < 0.30)
+	std::mt19937 gen(rd());
+	std::bernoulli_distribution distrib(0.8);
+	if(distrib(gen))
 	{
-		return *begin();
+		return getRandomSingleTop();
 	}
-	else if(rndnum < 0.60)
+	else
 	{
-		return *begin()++;
+		return getRandomSingleAny();
 	}
-
-	return NULL;
 }
-Single* Enviroment::getRandomSingle()
+Single* Enviroment::getRandomSingleAny()
 {
-	float maxp = std::distance(begin(),end());
 	const_iterator it = begin();
 
 	std::mt19937 gen(rd());
-    std::chi_squared_distribution<float> distrib(3);	
+    std::uniform_int_distribution<int> distrib(0, size() - 1);
 	std::advance(it,distrib(gen));
 	return *it;
 }
-void Enviroment::setEchoSteps(bool e)
+Single* Enviroment::getRandomSingleTop()
 {
-	echoSteps = e;
+	const_iterator it = begin();
+
+	std::mt19937 gen(rd());
+    std::lognormal_distribution<double> distrib(0.0,1.0);
+    unsigned int offset = std::abs(distrib(gen));    
+    while(offset >= size())
+    {
+    	offset = std::abs(distrib(gen));
+    }    
+	std::advance(it,offset);
+	return *it;
 }
 void Enviroment::juncting()
 {
@@ -774,14 +783,16 @@ void Enviroment::juncting()
 	do
 	{
 		ec::Single* single1 = getRandomSingle();
-		if(single1 == NULL) continue;
-		ec::Single* single2 = getRandomSingle();
-		if(single2 == NULL) continue;		
+		ec::Single* single2 = getRandomSingle();	
 		if(single1 == single2) continue;
 		
 		single1->juncting(newschils,single2);
 	}
 	while(newschils.size() + size() <= maxPopulation);
+}
+void Enviroment::setEchoSteps(bool e)
+{
+	echoSteps = e;
 }
 /*
 void Enviroment::eval()
