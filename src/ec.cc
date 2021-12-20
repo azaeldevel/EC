@@ -497,6 +497,10 @@ bool Enviroment::run()
 	Iteration countOldLeader = 0;
 	Iteration countOldLeaderFitness = 0;
 	std::uniform_real_distribution<double> random_mutation(0.0,1.0);
+	//Iteration maxRepeat = 10 + minSolutions;
+	bool triggerRepeatEnable = true;
+	double triggerRepeatMin = double(maxPopulation) * 1.0e-10;	
+	//double triggerJam2 = 1.0e-20;	
 	
 	while(true)
 	{
@@ -516,18 +520,29 @@ bool Enviroment::run()
 			if(maxIteration > 0) (*fout) << "Iteracion : " << actualIteration << "/" << maxIteration << "\n";
 			else (*fout) << "Iteracion : " << actualIteration << "\n";
 		}
-		if(echoSteps) std::cout << "\tStep C2\n";
-
-		media = 0.0;
-		sigma = 0.0;
-
+		
 		if(not comparer)
 		{
 			throw oct::core::Exception("No se a asignado el creterio de coparacion.",__FILE__,__LINE__);
 		}
 		sort(comparer);
-		if(echoSteps) std::cout << "\tStep C5\n";
-
+		
+		media = 0.0;
+		sigma = 0.0;
+		for(ec::Single* s : *this)
+		{
+			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
+			media += s->getFitness();
+			s->deltaAge();
+		}
+		media /= size();
+		for(ec::Single* s : *this)
+		{
+			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
+			sigma += pow(s->getFitness() - media,2);
+		}		
+		sigma /= double(size());
+		
 		if(logFile)
 		{
 			std::string strfn = logDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
@@ -570,20 +585,7 @@ bool Enviroment::run()
 		}
 		if(echoSteps) std::cout << "\tStep C8\n";
 
-		for(ec::Single* s : *this)
-		{
-			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
-			media += s->getFitness();
-			s->deltaAge();
-		}
-		if(echoSteps) std::cout << "\tStep C9\n";
-		media /= size();
-		for(ec::Single* s : *this)
-		{
-			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
-			sigma += pow(s->getFitness() - media,2);
-		}
-		sigma /= size();
+		
 		//std::cout << "\tStep C10\n";
 		ec::Single* leader = *begin();
 		if(echolevel > 1 and fout != NULL)
@@ -592,6 +594,7 @@ bool Enviroment::run()
 			(*fout) << "\tmedia : " << media << "\n";
 			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
+			(*fout) << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "\tAtasco(Repeticiones)\n" : "\tNo Atasco(Repeticiones)\n");
 		}
 		if(echoSteps) std::cout << "\tStep C11\n";
 		/*if(stopNotDiference and actualIteration > 1)
@@ -634,13 +637,14 @@ bool Enviroment::run()
 				history  << sigma;
 				history  << ",";
 				history  << mutableProb;
-				//history  << ",";
-				//history  << pMutableGene;
+				history  << ",";
+				history  << mutableProb;
+				history  << ",";
+				history  << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "Atasco(Repeticiones)" : "No Atasco(Repeticiones)");
 				history  << "\n";
 				history .flush();
 			}
 		}
-		
 		juncting();
 		
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
@@ -648,20 +652,28 @@ bool Enviroment::run()
 			push_front(s);
 		}
 		
+		std::ofstream fnChilds;
 		if(logFile)
 		{
 			std::string strChilds = logDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
-			std::ofstream fnChilds(strChilds);
-			double randN;	
-			if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
-			for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
+			fnChilds.open(strChilds);
+		}
+		double randN;	
+		if(logFile) if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
+		{
+			randN = random_mutation(rd);
+			if(randN < mutableProb) s->mutate();
+			if(triggerRepeatEnable and triggerRepeatMin > sigma) s->mutate();
+			s->eval();
+			if(logFile)
 			{
-				randN = random_mutation(rd);
-				if(randN < mutableProb) s->mutate();
-				s->eval();
 				s->save(fnChilds);				
 				fnChilds << "\n";
 			}
+		}
+		if(logFile)
+		{
 			fnChilds.flush();
 			fnChilds.close();
 		}
