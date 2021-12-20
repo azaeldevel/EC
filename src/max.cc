@@ -322,11 +322,8 @@ void Single::save(std::ofstream& fn)
 	fn << ",";
 	fn << chromo.getNumber();
 }
-Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
+void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 {
-	if(env->getEchoSteps()) std::cout << "Single::juncting Step 1\n";
-	Population countNews = 0;
-	if(env->getEchoSteps()) std::cout << "Single::juncting Step 2\n";
 	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.1\n";
@@ -354,10 +351,7 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.6\n";
 		chils.push_back(newSingle);
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.7\n";
-		countNews++;
 	}
-
-	return countNews;
 }
 void Single::print(std::ostream& fn) const
 {

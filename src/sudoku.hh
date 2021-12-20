@@ -34,8 +34,8 @@ public:
 
 	virtual void combine(const ec::Chromosome& P1,const ec::Chromosome& P2);
 	virtual void copy(const ec::Chromosome& P1);
-	virtual void mutate(double p);
-	virtual void randFill(bool favor = false);
+	//virtual void mutate(double p);
+	virtual void randFill();
 
 	/*
 	*\brief Busca un numero que no halla sido asignado.
@@ -63,8 +63,8 @@ public:
 	const Chromosome& getTalba(unsigned short i,unsigned short j)const;
 
 	virtual void eval();
-	virtual void randFill(bool favor = false);
-	virtual Population juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single);
+	virtual void randFill();
+	virtual void juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single);
 	virtual void save(std::ofstream& fn);
 	//const oct::core::StringMD5& getMD5() const;
 	virtual void mutate();

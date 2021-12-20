@@ -58,7 +58,7 @@ double randNumber(double min,double max)
 
 
 
-
+std::random_device Chromosome::rd;
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
@@ -192,7 +192,7 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-
+std::random_device Single::rd;
 Single::Single(const Single& obj)
 {
 	env = obj.env;

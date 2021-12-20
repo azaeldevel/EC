@@ -26,11 +26,9 @@ namespace oct::ec::sche
 	{
 
 	}
-	Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
+	void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{
-		Population count = 0;
-		
-		for(ec::geneUS i = 0; i < getJunction().get_number(); i++,count++)
+		for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 		{
 			double randJ = core::randNumber();
 			const Junction* juntion;
@@ -41,8 +39,6 @@ namespace oct::ec::sche
 						
 			chils.push_back(newsingle);
 		}
-					
-		return count++;	
 	}
 	void Single::print(std::ostream&) const
 	{

@@ -55,6 +55,7 @@ public:
 
 protected:
 	//unsigned int mutated;
+	static std::random_device rd;
 private:
 	std::string name;
 };
@@ -142,7 +143,7 @@ public:
 	/**
 	*\brief Realiza el apareo entre dos individuos
 	*/
-	virtual Population juncting(std::list<Single*>& chils,const Single* single) = 0;
+	virtual void juncting(std::list<Single*>& chils,const Single* single) = 0;
 	/**
 	*\brief Crea un arcivo CSV con los datos relevantes del individuo
 	*/
@@ -163,7 +164,7 @@ protected:
 	double fitness;
 
 	Enviroment* env;
-	std::random_device rd;
+	static std::random_device rd;
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;

@@ -66,12 +66,14 @@ void Chromosome::setNumber(unsigned short i,unsigned short j,geneUS g)
 
 void Chromosome::combine(const ec::Chromosome& P1,const ec::Chromosome& P2)
 {
+	std::random_device rd;
+	std::mt19937 gen(rd());
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
 		{
-			double numrd = randNumber(0.0,1.0);
-			if(numrd < 0.5)
+			std::bernoulli_distribution distrib(0.5);
+			if(distrib(gen))
 			{
 				numbers[i][j] = ((const Chromosome&)P1).numbers[i][j];
 			}
@@ -92,7 +94,7 @@ void Chromosome::copy(const ec::Chromosome& P)
 		}
 	}
 }
-void Chromosome::mutate(double p)
+/*void Chromosome::mutate(double p)
 {
 	for(unsigned short i = 0; i < 3; i++)
 	{
@@ -102,27 +104,16 @@ void Chromosome::mutate(double p)
 			if(numrd <= p) numbers[i][j] = randNumber(1.0,9.1);
 		}
 	}
-}
-void Chromosome::randFill(bool favor)
+}*/
+void Chromosome::randFill()
 {
-	if(favor)
+	std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> distrib(1,9);
+	for(unsigned short i = 0; i < 3; i++)
 	{
-		for(unsigned short i = 0; i < 3; i++)
+		for(unsigned short j = 0; j < 3; j++)
 		{
-			for(unsigned short j = 0; j < 3; j++)
-			{
-				if(numbers[i][j] == 0) numbers[i][j] = freeNumber();
-			}
-		}
-	}
-	else
-	{
-		for(unsigned short i = 0; i < 3; i++)
-		{
-			for(unsigned short j = 0; j < 3; j++)
-			{
-				if(numbers[i][j] == 0) numbers[i][j] = randNumber(1.0,9.1);
-			}
+			if(numbers[i][j] == 0) numbers[i][j] = distrib(gen);
 		}
 	}
 }
@@ -358,36 +349,22 @@ const Chromosome& Single::getTalba(unsigned short i,unsigned short j)const
 	return tabla[i][j];
 }
 
-void Single::randFill(bool favor)
+void Single::randFill()
 {
-	if(favor)
+	for(unsigned short i = 0; i < 3; i++)
 	{
-		for(unsigned short i = 0; i < 3; i++)
+		for(unsigned short j = 0; j < 3; j++)
 		{
-			for(unsigned short j = 0; j < 3; j++)
-			{
-				tabla[i][j].resetCollision();
-				tabla[i][j].randFill(favor);
-			}
-		}
-	}
-	else
-	{
-		for(unsigned short i = 0; i < 3; i++)
-		{
-			for(unsigned short j = 0; j < 3; j++)
-			{
-				tabla[i][j].randFill();
-			}
+			tabla[i][j].randFill();
+			tabla[i][j].resetCollision();
 		}
 	}
 }
-Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
+void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 {
 	//std::cout << "\t" << idCount << " puede tener " << getJunction().get_number() << " hijos\n";
 	ID idCount;
-	Population countNew = 0;
-	for(ec::geneUS i = 0; i < getJunction().get_number(); i++,countNew++)
+	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 	{
 		idCount = getEnviroment().nextID();
 
@@ -396,63 +373,14 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 		{
 			newtabla[i] = new Chromosome[3];
 		}
-		ec::Junction newj;
-		switch(getJunction().get_algorit())
+		
+		for(unsigned short i = 0; i < 3; i++)
 		{
-		case ec::Junction::AlgCode::COMBINE:
-			for(unsigned short i = 0; i < 3; i++)
+			for(unsigned short j = 0; j < 3; j++)
 			{
-				for(unsigned short j = 0; j < 3; j++)
-				{
-					double rnnum = randNumber();
-					if(rnnum < 0.5) newtabla[i][j].combine(tabla[i][j],((Single*)single)->tabla[i][j]);
-					else newtabla[i][j].combine(((Single*)single)->tabla[i][j],tabla[i][j]);
-				}
+				newtabla[i][j].combine(tabla[i][j],((Single*)single)->tabla[i][j]);
 			}
-			newj.combine(getJunction(),single->getJunction());
-			break;
-		case ec::Junction::AlgCode::COPY:
-			{
-				double numrd = randNumber();
-				for(unsigned short i = 0; i < 3; i++)
-				{
-					for(unsigned short j = 0; j < 3; j++)
-					{
-						if(numrd < 0.5)
-						{
-							newtabla[i][j].copy(tabla[i][j]);
-						}
-						else
-						{
-							newtabla[i][j].copy(((Single*)single)->tabla[i][j]);
-						}
-					}
-				}
-				if(numrd < 0.5)
-				{
-					newj.copy(getJunction());
-				}
-				else
-				{
-					newj.copy(single->getJunction());
-				}
-				break;
-			}
-		default:
-			throw octetos::core::Exception("Algoritmo desconocido",__FILE__,__LINE__);
 		}
-
-		/*if(mutation())
-		{
-			for(unsigned short i = 0; i < 3; i++)
-			{
-				for(unsigned short j = 0; j < 3; j++)
-				{
-					newtabla[i][j].mutate(0.02);
-				}
-			}
-			if(env->getEchoLevel()  > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe detecta mutacion para " << idCount << "\n";
-		}*/
 
 		//los datos iniciales no se deven cambiar.
 		for(unsigned short i = 0; i < 3; i++)
@@ -472,29 +400,10 @@ Population Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Si
 			}
 		}
 
-		//tratar de desatascar
-		/*if(getEnviroment().getJam())
-		{
-			for(unsigned short i = 0; i < 3; i++)
-			{
-				for(unsigned short j = 0; j < 3; j++)
-				{
-					newtabla[i][j].resetCollision();
-				}
-			}
-			for(unsigned short i = 0; i < 3; i++)
-			{
-				for(unsigned short j = 0; j < 3; j++)
-				{
-					newtabla[i][j].randFill(true);
-				}
-			}
-		}*/
-		Single* s = new Single(idCount,(Enviroment&)*env,newtabla,intiVals,newj);
-		if(env->getEchoLevel() > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n";
+		Single* s = new Single(idCount,(Enviroment&)*env,newtabla,intiVals,getJunction());
 		chils.push_back(s);
+		if(env->getEchoLevel() > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n";
 	}
-	return countNew;
 }
 void Single::save(std::ofstream& fn)
 {

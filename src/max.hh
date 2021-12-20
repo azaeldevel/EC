@@ -66,7 +66,7 @@ namespace oct::ec::max
 		/**
 		*\brief Realiza el apareo entre dos individuos
 		*/
-		virtual Population juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single);
+		virtual void juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single);
 		/**
 		*\brief Imprime los datos relevantes del individuo
 		*/
