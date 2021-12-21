@@ -553,9 +553,9 @@ Enviroment::~Enviroment()
 }
 void Enviroment::init()
 {
-	maxPopulation = 36 * 81;//81*a
-	initPopulation = 9 * 81;
-	maxProgenitor = 18 * 81;//9*a
+	maxPopulation = 9 * 6 * 81;//81*a
+	initPopulation = 9 * 6 * 81;
+	maxProgenitor = 9 * 3 * 81;//9*a
 	idCount = 1;
 
 	echolevel = 0;
