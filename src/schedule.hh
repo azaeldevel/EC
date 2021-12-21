@@ -14,8 +14,9 @@ namespace oct::ec::sche
 	/**
 	*\brief Representa una posible solucion a nuestro problema
 	*/
-	class Single : public oct::ec::Single
+	class Single : public oct::ec::Single, public Schedule
 	{
+
 	public:
 		Single(ID id,Enviroment& env,const Junction& junction,const Data& );
 		/**
@@ -51,7 +52,7 @@ namespace oct::ec::sche
 		*/
 		unsigned int diff_hour()const;
 	private:
-		Schedule schedule;
+		//Schedule schedule;
 		const Data& data;
 	};
 
@@ -72,9 +73,7 @@ namespace oct::ec::sche
 		void init();
 		
 		~Enviroment();
-
-
-	
+		
 		/**
 		*\brief Inicia el proceso de apareo, sobecragada devido a que deve distigir entre grupo para realizar el apareoa
 		*/

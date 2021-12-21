@@ -53,8 +53,6 @@ namespace oct::ec::sche
 	{
 		if(ls.size() > 1)
 		{
-			static std::random_device rd;
-			static std::mt19937 gen(rd());
 			std::uniform_int_distribution<> dis(0, ls.size() - 1);
 			typename std::list<T>::const_iterator it = ls.begin();
 			std::advance(it,dis(gen));				
@@ -72,8 +70,6 @@ namespace oct::ec::sche
 	{
 		if(ls.size() > 1)
 		{
-			static std::random_device rd;
-			static std::mt19937 gen(rd());
 			std::uniform_int_distribution<> dis(0, ls.size() - 1);
 			typename std::vector<T>::const_iterator it = ls.begin();
 			std::advance(it,dis(gen));				
@@ -495,7 +491,7 @@ namespace oct::ec::sche
 
 	private:
 		std::list<Group> groups;
-		std::multimap<std::string, Group*> groups_by_name;
+		std::map<std::string, Group*> groups_by_name;
 		std::multimap<std::string, Group*> groups_by_subject;
 	};
 	
@@ -527,7 +523,7 @@ namespace oct::ec::sche
 		void load(const std::string& dir);
 	};
 	
-	struct Goal
+	struct Lesson
 	{
 		const Group* group;
 		const Subject* subject;
@@ -535,25 +531,47 @@ namespace oct::ec::sche
 		const Room* room;
 		WeekHours week;
 	};
-	//typedef std::list<Goal> Goals;
-	class Goals : public std::vector<Goal>
+	
+	/**
+	*\brief Clases impartidas aun gurpo
+	**/
+	class Lessons : public std::vector<Lesson>
 	{
 	public:
-		Goals();
-		Goals(unsigned int);
-		Goals(const Goals&);
+		Lessons();
+		Lessons(unsigned int);
+		Lessons(const Lessons&);
 
-		Goals& operator =(const Goals&);
+		Lessons& operator =(const Lessons&);
 		
-		void juncting(const Goals&,const Goals&);
+		void juncting(const Lessons&,const Lessons&);
+
 	private:
-		std::random_device rd;
+	private:
 	};
 
 	/**
-	*\brief Difine las calses impartidas(por semana)
+	*\brief 
 	**/
-	typedef Goals Schedule;
+	class Schedule : public std::vector<Lessons>
+	{
+	public:
+		Schedule();
+		Schedule(unsigned int);
+		Schedule(const Schedule&);
+		
+		Schedule& operator =(const Schedule&);
+
+		void search_teachers(const std::string&, std::vector<const Lesson*>&)const;
+		
+		void indexing();
+
+	private:
+
+	private:
+		std::multimap<std::string, const Lesson*> lesson_by_teacher;
+		
+	};
 
 	/**
 	*\brief Variasiones del Horario

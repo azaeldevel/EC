@@ -704,5 +704,40 @@ void schedule_devel()
 		std::cout << ex.what() << "\n";
 		CU_ASSERT(false);
 	}
+	if(sche.getInitPopulation() == sche.size()) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "sche.getInitPopulation() = " << sche.getInitPopulation() << "\n";
+		CU_ASSERT(false);		
+	}
+	Enviroment::iterator it_sche = sche.begin();
+	const Single& single_shce = (const Single&)**it_sche;
+	if(single_shce.size() == data.groups.get_list().size()) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "single_shce.size() = " << single_shce.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	std::vector<const Lesson*> sche_teachers;
+	single_shce.search_teachers("Monica Perez Ortencia",sche_teachers);
+	if(not sche_teachers.empty()) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "not sche_teachers.empty() = " << not sche_teachers.empty() << "\n";
+		CU_ASSERT(false);		
+	}
+	/*for(const Lesson* lesson : sche_teachers)
+	{
+		std::cout << lesson->teacher->get_name() << " - " << lesson->room->get_name() << "\n";
+	}*/
 }
 

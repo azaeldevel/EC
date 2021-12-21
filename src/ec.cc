@@ -59,8 +59,8 @@ double randNumber(double min,double max)
 
 
 
-std::random_device Chromosome::rd;
-std::mt19937 Chromosome::gen(rd());
+//std::random_device Chromosome::rd;
+//std::mt19937 Chromosome::gen(rd());
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
@@ -194,8 +194,8 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-std::random_device Single::rd;
-std::mt19937 Single::gen(rd());
+//std::random_device Single::rd;
+//std::mt19937 Single::gen(rd());
 Single::Single(const Single& obj)
 {
 	env = obj.env;
@@ -262,8 +262,8 @@ void Single::init()
 
 
 
-std::random_device Enviroment::rd;
-std::mt19937 Enviroment::gen(rd());
+//std::random_device Enviroment::rd;
+//std::mt19937 Enviroment::gen(rd());
 
 void Enviroment::init()
 {

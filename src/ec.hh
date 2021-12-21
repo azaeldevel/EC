@@ -43,6 +43,10 @@ double randNumber();
 double randNumber(double max);
 double randNumber(double min, double max);
 
+
+static std::random_device rd;
+static std::mt19937 gen;
+
 /**
 *\brief Representa nuestro conjunto de variables
 */
@@ -55,8 +59,8 @@ public:
 	const Chromosome& operator = (const Chromosome&);
 
 protected:
-	static std::random_device rd;
-	static std::mt19937 gen;
+	//static std::random_device rd;
+	//static std::mt19937 gen;
 private:
 	std::string name;
 };
@@ -165,8 +169,9 @@ protected:
 	double fitness;
 
 	Enviroment* env;
-	static std::random_device rd;
-	static std::mt19937 gen;
+
+	//static std::random_device rd;
+	//static std::mt19937 gen;
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
@@ -364,9 +369,10 @@ protected:
 
 	//
 	oct::core::Shell shell;
-	static std::random_device rd;
-	static std::mt19937 gen;
-
+	
+	//static std::random_device rd;
+	//static std::mt19937 gen;
+	
 	/**
 	*\brief valor estadistico de cada variable.
 	*/

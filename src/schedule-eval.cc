@@ -2,8 +2,7 @@
 
 #include "schedule.hh"
 
-#include <octetos/core/MD5sum.hh>
-
+//#include <octetos/core/MD5sum.hh>
 
 namespace oct::ec::sche
 {
@@ -32,7 +31,7 @@ namespace oct::ec::sche
 	unsigned int Single::overlap_by_teacher()const
 	{
 		unsigned int count = 0;
-		for(const Goal& goal : schedule)
+		for(const Lessons& lessons : *this)
 		{
 			
 		}

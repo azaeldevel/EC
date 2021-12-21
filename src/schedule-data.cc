@@ -1351,7 +1351,7 @@ namespace oct::ec::sche
 				std::stringstream str(line);
 				std::getline(str,data,',');
 				Group row;
-				//std::cout << "room : " << data << " : ";
+				//std::cout << "room : " << data << "\n";
 				const Room* newr = dataObject->rooms.search(data);
 				if(newr) 
 				{
@@ -1416,8 +1416,18 @@ namespace oct::ec::sche
 	{
 		if(groups_by_name.size() > 0) groups_by_name.clear();
 		if(groups_by_subject.size() > 0) groups_by_subject.clear();
+		std::map<std::string, Group*>::const_iterator it;
 		for(Group& g : groups)
 		{
+			it = groups_by_name.find(g.room->get_name());
+			//std::cout << "Indexing : " << g.room->get_name() << "\n";
+			//std::cout << "Size : " << groups_by_name.size() << "\n";
+			if(it != groups_by_name.end())
+			{
+				std::string msg;
+				msg = "Se esta repitiendo el gruopo '" + g.room->get_name() + "'";
+				throw core::Exception(msg,__FILE__,__LINE__);
+			}
 			groups_by_name.insert({g.room->get_name(),&g});
 			for(const Subject* s : g)
 			{
@@ -1446,15 +1456,15 @@ namespace oct::ec::sche
 	
 	
 	
-	Goals::Goals()
+	Lessons::Lessons()
 	{
 
 	}
-	Goals::Goals(unsigned int z) : std::vector<Goal>(z)
+	Lessons::Lessons(unsigned int z) : std::vector<Lesson>(z)
 	{
 		
 	}
-	Goals::Goals(const Goals& g)
+	Lessons::Lessons(const Lessons& g)
 	{
 		resize(g.size());
 
@@ -1463,7 +1473,7 @@ namespace oct::ec::sche
 			at(i) = g[i];
 		}
 	}
-	Goals& Goals::operator =(const Goals& g)
+	Lessons& Lessons::operator =(const Lessons& g)
 	{
 		resize(g.size());
 		
@@ -1474,7 +1484,7 @@ namespace oct::ec::sche
 
 		return *this;
 	}
-	void Goals::juncting(const Goals& g1,const Goals& g2)
+	void Lessons::juncting(const Lessons& g1,const Lessons& g2)
 	{
 		if(g1.size() != g2.size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
 
@@ -1490,6 +1500,59 @@ namespace oct::ec::sche
 			{
 				at(i) = g2.at(i);
 			}
+		}
+	}
+	
+	
+	Schedule::Schedule()
+	{
+
+	}
+	Schedule::Schedule(unsigned int z) : std::vector<Lessons>(z)
+	{
+		
+	}
+	Schedule::Schedule(const Schedule& g)
+	{
+		resize(g.size());
+
+		for(unsigned int i = 0; i < g.size(); i++)
+		{
+			at(i) = g[i];
+		}
+		indexing();
+	}
+	Schedule& Schedule::operator =(const Schedule& g)
+	{
+		resize(g.size());
+		
+		for(unsigned int i = 0; i < g.size(); i++)
+		{
+			at(i) = g[i];
+		}
+		indexing();
+
+		return *this;
+	}
+	void Schedule::indexing()
+	{
+		if(lesson_by_teacher.size() > 0) lesson_by_teacher.clear();
+		for(const Lessons& lessons : *this)
+		{
+			for(const Lesson& g : lessons)
+			{
+				lesson_by_teacher.insert({g.teacher->get_name(),&g});
+				//std::cout << "Indexing : " << g.teacher->get_name() << "\n";
+			}
+		}
+	}
+	void Schedule::search_teachers(const std::string& str, std::vector<const Lesson*>& result)const
+	{
+		typedef std::multimap<std::string, const Lesson*>::const_iterator iterator;
+		std::pair<iterator,iterator> r = lesson_by_teacher.equal_range(str);
+		for(iterator it = r.first; it != r.second; it++)
+		{
+			result.push_back(it->second);
 		}
 	}
 	

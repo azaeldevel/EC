@@ -18,13 +18,13 @@ namespace oct::ec::sche
 	{
 
 	}
-	Single::Single(ID id,Enviroment& env, const Schedule& s,const Data& d) : ec::Single(id,env), schedule(s),data(d)
+	Single::Single(ID id,Enviroment& env, const Schedule& s,const Data& d) : ec::Single(id,env), Schedule(s),data(d)
 	{
 
 	}
 	void Single::save(std::ofstream& fn)
 	{
-
+		
 	}
 	void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{
@@ -35,7 +35,7 @@ namespace oct::ec::sche
 			if(randJ < 0.5) juntion = &getJunction();
 			else juntion = &single->getJunction();
 			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,*juntion,data);
-			newsingle->schedule.juncting(schedule,((Single*)single)->schedule);
+			//((Schedule*)newsingle)->juncting(*this,((const Single&)*single));
 						
 			chils.push_back(newsingle);
 		}
@@ -57,6 +57,10 @@ namespace oct::ec::sche
 Enviroment::Enviroment(const std::string& log,const std::string& dir)
 {
 	init();
+	
+	unsigned int gamma_criterial = 2;
+	gamma = 0;
+	
 	logDirectory = log;
 	directory = dir;	
 	data.load(directory);
@@ -72,7 +76,6 @@ Enviroment::Enviroment(const std::string& log,const std::string& dir)
 		}
 	}
 }
-
 Enviroment::~Enviroment()
 {
 	init();
@@ -83,8 +86,6 @@ void Enviroment::init()
 	maxPopulation = initPopulation;
 	maxProgenitor = initPopulation;
 }
-
-
 
 void Enviroment::initial()
 {
@@ -98,36 +99,50 @@ void Enviroment::initial()
 	for(Schedule& sche : inits)
 	{
 		sche.resize(data.groups.get_list().size());
-		//unsigned int goal = 0;
-		//for(Groups::const_iterator itGroup = data.groups.get_list().begin(); itGroup != data.groups.get_list().end(); itGroup++,goal)
 		Groups::const_iterator itGroup = data.groups.get_list().begin();
-		for(unsigned int goal = 0; goal < sche.size(); goal++,itGroup++)
+		for(Lessons& lessons : sche)
 		{
-			sche[goal].group = &*itGroup;
-			sche[goal].room = (&*itGroup)->room;		
+			lessons.resize((*itGroup).size());
+			std::vector<const Subject*>::const_iterator it_subject = (*itGroup).begin();
+			unsigned int subject = 0;
+			//std::cout << (&*itGroup)->room->get_name() << " : ";
 			for(const Subject* subjectGroup : *itGroup)
 			{
-				std::list<const Teachers_Subjects::Row*> rows;
-				data.teachers_subjects.searchSubjects(subjectGroup->get_name(),rows);
-				sche[goal].subject = subjectGroup;
-				std::list<const Teachers_Subjects::Row*>::const_iterator itr = random(rows);
-				const Teachers_Subjects::Row* r = itr != rows.end()? *itr : NULL;
-				if(r) sche[goal].teacher = r->teacher;
-				else 
+				lessons[subject].group = &*itGroup;
+				lessons[subject].room = (&*itGroup)->room;
 				{
-					std::string msg = "No se encontro maestro asociado para '";
-					msg += subjectGroup->get_name() + "'";
-					throw core::Exception(msg,__FILE__,__LINE__);
+					lessons[subject].subject = subjectGroup;
+					std::list<const Teachers_Subjects::Row*> rows;
+					data.teachers_subjects.searchSubjects(subjectGroup->get_name(),rows);
+					//std::cout << lessons[subject].subject->get_name();
+					std::list<const Teachers_Subjects::Row*>::const_iterator itr = random(rows);
+					const Teachers_Subjects::Row* r = (itr != rows.end()) ? *itr : NULL;
+					if(r)
+					{
+						lessons[subject].teacher = r->teacher;
+						//std::cout << "(" << r->teacher->get_name() << "),";
+					}
+					else 
+					{
+						std::string msg = "No se encontro maestro asociado para '";
+						msg += subjectGroup->get_name() + "'";
+						throw core::Exception(msg,__FILE__,__LINE__);
+					}
+										
+					WeekHours week;
+					WeekOptions week_opt;
+					week.inters(lessons[subject].room->get_week (),lessons[subject].teacher->get_week());
+					check_codes code = week.check();
+					week.combns(*lessons[subject].subject,week_opt);
+					week_opt.random(lessons[subject].week);
+					subject++;
 				}
-								
-				WeekHours week;
-				WeekOptions week_opt;
-				week.inters(sche[goal].room->get_week (),sche[goal].teacher->get_week());
-				check_codes code = week.check();
-				week.combns(*sche[goal].subject,week_opt);
-				week_opt.random(sche[goal].week);
+				it_subject++;
 			}
+			//std::cout << "\n";
+			itGroup++;
 		}
+		sche.indexing();
 	}
 	
 	//creando individuuos
@@ -137,8 +152,6 @@ void Enviroment::initial()
 		push_back(single);
 	}
 }
-
-
 /*
 unsigned int Enviroment::counter()const
 {
