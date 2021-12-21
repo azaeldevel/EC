@@ -530,8 +530,8 @@ namespace oct::ec::sche
 	struct Goal
 	{
 		const Group* group;
-		const Teacher* teacher;
 		const Subject* subject;
+		const Teacher* teacher;
 		const Room* room;
 		WeekHours week;
 	};

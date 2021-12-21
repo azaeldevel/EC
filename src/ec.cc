@@ -1,4 +1,5 @@
 
+#include <cfloat>
 #include <random>
 #include <iostream>
 #include <algorithm>
@@ -284,6 +285,7 @@ void Enviroment::init()
 	echoSteps = false;
 	maxSerie = 0;
 	epsilon = 1.0e-28;
+	gamma = 0.0;
 	maxPopulation = 0;
 	maxProgenitor = 0;
 	initPopulation = 0;
@@ -469,6 +471,7 @@ bool Enviroment::run()
 	if(initPopulation == 0) throw oct::core::Exception("La poblacion inicial deve ser mayor que 0",__FILE__,__LINE__);
 	if(maxProgenitor > maxPopulation) throw oct::core::Exception("La catidad de progenitores deve ser menor que la popblacion",__FILE__,__LINE__);
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
+	if(gamma < FLT_MIN) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
 
 	actualIteration = 1;
 	//std::cout << "\tStep 1\n";

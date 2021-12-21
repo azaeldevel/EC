@@ -37,6 +37,7 @@ typedef void* genFC;
 typedef unsigned long ID;
 typedef ID Population;
 typedef unsigned int Iteration;
+typedef double real;
 
 double randNumber();
 double randNumber(double max);
@@ -365,6 +366,11 @@ protected:
 	oct::core::Shell shell;
 	static std::random_device rd;
 	static std::mt19937 gen;
+
+	/**
+	*\brief valor estadistico de cada variable.
+	*/
+	double gamma;
 
 private:
 	/**

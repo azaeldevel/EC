@@ -107,10 +107,6 @@ public:
 
 private:
 
-	/**
-	*\brief valor estadistico de cada variable.
-	*/
-	double gamma;
 	Chromosome sudokuInit[3][3];
 	std::string fnBoard;
 
