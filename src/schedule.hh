@@ -18,11 +18,12 @@ namespace oct::ec::sche
 	{
 
 	public:
-		Single(ID id,Enviroment& env,const Junction& junction,const Data& );
+		Single(ID id,Enviroment& env,const Junction& junction);
 		/**
 		*\brief Constructor que recive el ID del Individuo y el Ambiente
 		*/
-		Single(ID id,Enviroment& env, const Schedule&,const Data& );
+		Single(ID id,Enviroment& env, const Schedule&);
+		Single(ID id,Enviroment& env);
 		
 		/**
 		*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
@@ -53,7 +54,7 @@ namespace oct::ec::sche
 		unsigned int diff_hour()const;
 	private:
 		//Schedule schedule;
-		const Data& data;
+		//const Data& data;
 	};
 
 	/**

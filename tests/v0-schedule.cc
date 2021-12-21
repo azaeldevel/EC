@@ -726,7 +726,7 @@ void schedule_devel()
 	}
 	std::vector<const Lesson*> sche_teachers;
 	single_shce.search_teachers("Monica Perez Ortencia",sche_teachers);
-	if(not sche_teachers.empty()) 
+	if(sche_teachers.size() == 3) 
 	{
 		CU_ASSERT(true);
 	}
