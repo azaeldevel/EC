@@ -1400,6 +1400,11 @@ namespace oct::ec::sche
 				groups.push_back(row);
 			}
 			indexing();
+			max_lessons = (*groups.begin()).size();
+			for(std::list<Group>::iterator it = groups.begin(); it != groups.end(); it++)
+			{
+				if((*it).size()> max_lessons) max_lessons = (*it).size();
+			}
 		}	
 		else
 		{
@@ -1452,6 +1457,10 @@ namespace oct::ec::sche
 				groups_by_subject.insert({s->get_name(),&g});
 			}
 		}
+	}
+	unsigned int Groups::get_max_lessons()const
+	{
+		return max_lessons;
 	}
 	
 	

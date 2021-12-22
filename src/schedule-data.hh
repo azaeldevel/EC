@@ -483,6 +483,7 @@ namespace oct::ec::sche
 		Groups();
 		Groups(const std::string& fn,const Data* data);
 		const std::list<Group>& get_list() const;
+		unsigned int get_max_lessons()const;
 
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
@@ -497,6 +498,7 @@ namespace oct::ec::sche
 		std::list<Group> groups;
 		std::map<std::string, Group*> groups_by_name;
 		std::multimap<std::string, Group*> groups_by_subject;
+		unsigned int max_lessons;
 	};
 	
 	typedef std::vector<core::DataTime> DaysTimes;

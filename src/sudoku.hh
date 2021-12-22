@@ -103,8 +103,15 @@ public:
 
 	//virtual void selection();
 	virtual void initial();
+	
+	double getGamma() const;
 
 private:
+	
+	/**
+	*\brief valor estadistico de cada variable.
+	*/
+	double gamma;
 
 	Chromosome sudokuInit[3][3];
 	std::string fnBoard;

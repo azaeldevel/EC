@@ -31,67 +31,91 @@ namespace oct::ec::sche
 
 		cover();
 		
+		not_empty();//un horarion con 0 horas no es util.
 		//std::cout << "\tfiteness = " << fitness << "\n";
-		//Evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
+		
+		
+		//TODO:Evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
 	}
 	
 	//
+	/*unsigned int Single::match(unsigned int countGroup,const Lessons& classroom)
+	{
+		unsigned int diff = ((Enviroment*)env)->get_data().groups.get_max_lessons() - classroom.size();
+		if(diff > 0 and countGroup > 0)	return countGroup + (diff * WEEK_HOURS);
+		return 0;
+	}*/
+	void Single::convertGamma(unsigned int count)
+	{
+		unsigned int gamma = std::pow(count,2);
+		fitness += ((Enviroment*)env)->getGammaPortion() - (real(gamma) * ((Enviroment*)env)->getGamma());
+	}
 	void Single::overlap_by_teacher()
 	{
 		unsigned int count = 0;
 		WeekHours week_actual;
-		for(const Lessons& lessons : *this)
+		for(const Lessons& classroom : *this)
 		{
-			for(unsigned int i = 0; i < lessons.size(); i++)
+			count = 0;
+			for(unsigned int i = 0; i < classroom.size(); i++)
 			{
-				if(lessons[i].week.count_hours() == 0) 
+				if(classroom[i].week.count_hours() == 0) 
 				{
-					count += WEEK_HOURS;
 					continue;
 				}				
-				for(unsigned int j = i + 1; j < lessons.size(); j++)
+				for(unsigned int j = i + 1; j < classroom.size(); j++)
 				{
-					if(lessons[i].week.count_hours() == 0) 
+					if(classroom[i].week.count_hours() == 0) 
 					{
-						count += WEEK_HOURS;
+						continue;
 					}
 					else
 					{
-						week_actual.inters(lessons[i].week,lessons[j].week);
+						week_actual.inters(classroom[i].week,classroom[j].week);
 						count += week_actual.count_hours();
 						week_actual.clear();
 					}
 				}
-			}
+			}					
 		}
-		unsigned int gamma = size() * WEEK_HOURS2;
-		gamma = gamma - std::pow(count,2);
-		fitness += real(gamma) * env->getGamma();
+		convertGamma(count);
 	}
 			
 	//Deve dar una mejor califacion al horaio que se acerca mas 
 	//a la hora exacta de clases por semana,deve cubir las hora de materia por semana sin pasarse o flatarle
 	void Single::cover()
-	{
+	{		
 		unsigned int count = 0;
-		for(const Lessons& lessons : *this)
+		for(const Lessons& classroom : *this)
 		{
-			for(unsigned int i = 0; i < lessons.size(); i++)
+			for(unsigned int i = 0; i < classroom.size(); i++)
 			{
-				for(const Day day : lessons[i].week)
+				for(const Day day : classroom[i].week)
 				{
 					//la diferencia entre las horas disponibles y las necesesrias
 					if(day.size() > 0) 
 					{
-						count += std::abs((int)lessons[i].subject->get_time() - (int)day.size());			
+						count += std::abs((int)classroom[i].subject->get_time() - (int)day.size());			
 					}
 				}
 			}
 		}
-		unsigned int gamma = size() * WEEK_HOURS2;
-		gamma = gamma - std::pow(count,2);
-		fitness += real(gamma) * env->getGamma();
+		convertGamma(count);
 	}
-	
+	void Single::not_empty()
+	{
+		unsigned int count = 0;
+		for(const Lessons& classroom : *this)
+		{
+			for(unsigned int i = 0; i < classroom.size(); i++)
+			{
+				if(classroom[i].week.count_hours() == 0)
+				{
+					count += WEEK_HOURS;
+				}
+			}
+		}
+		convertGamma(count);
+	}
 }
 

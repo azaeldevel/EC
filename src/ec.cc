@@ -274,19 +274,17 @@ void Enviroment::init()
 	logFile = false;
 	//sigmaReduction = 1.0;
 	minSolutions = 0;
+	stopMinSolutions = false;
 	mutableProb = 0.001;
 	//pMutableGene = -1.0;
 	fout = NULL;
 	stopMaxIterations=false;
-	stopMinSolutions = false;
 	stopMaxSerie = false;
 	//percen_at_iteration = 0.4;//%
 	comparer = &cmpStrength;
 	echoSteps = false;
 	maxSerie = 0;
-	epsilon = 1.0e-28;
-	gamma = 0.0;
-	gammaCriterion = 0;
+	epsilon = 1.0e-38;//para float y double
 	maxPopulation = 0;
 	maxProgenitor = 0;
 	initPopulation = 0;
@@ -451,18 +449,7 @@ bool Enviroment::getEchoSteps()const
 {
 	return echoSteps;
 }
-double Enviroment::getGamma() const
-{
-	return gamma;
-}
-unsigned int Enviroment::getGammaCriterion() const
-{
-	return gammaCriterion;
-}
-real Enviroment::getGammaPortion() const
-{
-	return gammaPortion;
-}
+
 
 ID Enviroment::nextID()
 {
@@ -483,7 +470,7 @@ bool Enviroment::run()
 	if(initPopulation == 0) throw oct::core::Exception("La poblacion inicial deve ser mayor que 0",__FILE__,__LINE__);
 	if(maxProgenitor > maxPopulation) throw oct::core::Exception("La catidad de progenitores deve ser menor que la popblacion",__FILE__,__LINE__);
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
-	if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
+	//if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
 
 	actualIteration = 1;
 	//std::cout << "\tEnviroment::run : Step 1\n";
@@ -551,7 +538,10 @@ bool Enviroment::run()
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
-			media += s->getFitness();
+			real f = s->getFitness();
+			if(f > 1.0) oct::core::Exception("Un individuo a superado el valor maximo de 1",__FILE__,__LINE__);
+			if(f < 0.0) oct::core::Exception("Un individuo no puede tener un fitnes menor a 0.",__FILE__,__LINE__);
+			else media += s->getFitness();
 			s->deltaAge();
 		}
 		media /= size();
@@ -622,16 +612,16 @@ bool Enviroment::run()
 			if( 1.0 - (*it)->getFitness() < epsilon) solutions.push_back(*it);
 			else break;//si no fuen solucio las siguientes tampoco
 		}
-		if(solutions.size() >= minSolutions and stopMinSolutions)//se definion una cantidad minima de soluciones
+		if(stopMinSolutions and solutions.size() >= minSolutions)//se definion una cantidad minima de soluciones
 		{
-			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
+			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
 			if(logFile) save(solutions,"solutions.cvs");
 			history.close();
 			return true;
 		}
 		else if (solutions.size() == maxPopulation)//si toda la poblacion es una solucion
 		{
-			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo\n";
+			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tLa cantidad de solucione es igual a la poblacion.\n";
 			if(logFile) save(solutions,"solutions.cvs");
 			history.close();
 			return true;		

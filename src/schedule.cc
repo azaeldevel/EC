@@ -75,11 +75,15 @@ Enviroment::Enviroment(const std::string& log,const std::string& dir)
 		}
 	}
 	
-	unsigned int gamma_factors = gammaCriterion * data.groups.get_list().size() * Single::WEEK_HOURS2;
+	gammaCriterion = 3;
+	unsigned int gamma_factors = data.groups.get_list().size() * data.groups.get_max_lessons() * gammaCriterion * Single::WEEK_HOURS2;
 	//std::cout << "\tgamma_factors = " << gamma_factors << "\n";
-	gamma = 1.0/real(gammaCriterion * data.groups.get_list().size() * Single::WEEK_HOURS2);
+	//std::cout << "\tdata.groups.get_list().size() = " << data.groups.get_list().size() << "\n";
+	//std::cout << "\tdata.groups.get_max_lessons() = " << data.groups.get_max_lessons() << "\n";
+	gamma = 1.0/real(gamma_factors);
 	//std::cout << "\tgamma = " << gamma << "\n";
 	gammaPortion = 1.0/gammaCriterion;
+	if(gamma < epsilon) throw oct::core::Exception("gamma < epsilon",__FILE__,__LINE__);
 }
 Enviroment::~Enviroment()
 {
@@ -90,7 +94,6 @@ void Enviroment::init()
 	initPopulation = 100;
 	maxPopulation = initPopulation;
 	maxProgenitor = initPopulation;
-	gammaCriterion = 2;
 }
 
 void Enviroment::initial()
@@ -149,6 +152,22 @@ void Enviroment::initial()
 		sche->indexing();
 		push_back(sche);
 	}
+}
+double Enviroment::getGamma() const
+{
+	return gamma;
+}
+unsigned int Enviroment::getGammaCriterion() const
+{
+	return gammaCriterion;
+}
+real Enviroment::getGammaPortion() const
+{
+	return gammaPortion;
+}
+const Data& Enviroment::get_data()const
+{
+	return data;
 }
 /*
 unsigned int Enviroment::counter()const

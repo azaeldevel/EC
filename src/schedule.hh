@@ -51,6 +51,16 @@ namespace oct::ec::sche
 
 	private:
 		/**
+		*\brief Convierte la hotras incorrcta en el valor fitness
+		*\param failHours es la cantidad de horas fallidas
+		*/
+		void convertGamma(unsigned int failHours);
+		/**
+		*\brief En los grupos cuya cantidad de horas varia repecto al maximo, retorma
+		*/
+		unsigned int match(unsigned int,const Lessons&);
+		
+		/**
 		*\brief Retorna la cantiad de traslapes que tiene los maestros
 		*/
 		void overlap_by_teacher();
@@ -58,6 +68,8 @@ namespace oct::ec::sche
 		*\brief Retorna suma de la diferacia de horas entre los horasio asignados para cada materia y las horas de cada materia
 		*/
 		void cover();
+
+		void not_empty();
 	private:
 		//Schedule schedule;
 		//const Data& data;
@@ -81,6 +93,12 @@ namespace oct::ec::sche
 		
 		~Enviroment();
 		
+		double getGamma() const;
+		unsigned int getGammaCriterion()const;
+		double getGammaPortion() const;
+
+		const Data& get_data()const;
+
 		/**
 		*\brief Inicia el proceso de apareo, sobecragada devido a que deve distigir entre grupo para realizar el apareoa
 		*/
@@ -95,7 +113,16 @@ namespace oct::ec::sche
 
 	private:
 		std::string directory;
-		Data data;
+		Data data;	
+		
+		/**
+		*\brief valor estadistico de cada variable.
+		*/
+		double gamma;
+
+		unsigned int gammaCriterion;
+
+		real gammaPortion;
 	};
 
 }
