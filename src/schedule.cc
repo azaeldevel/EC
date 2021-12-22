@@ -36,6 +36,7 @@ namespace oct::ec::sche
 		for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 		{
 			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,getJunction());
+			newsingle->resize(size());
 			((Schedule*)newsingle)->juncting(*this,((const Single&)*single));					
 			chils.push_back(newsingle);
 		}
@@ -73,8 +74,11 @@ Enviroment::Enviroment(const std::string& log,const std::string& dir)
 			throw oct::core::Exception(msg,__FILE__,__LINE__);
 		}
 	}
-			
+	
+	unsigned int gamma_factors = gammaCriterion * data.groups.get_list().size() * Single::WEEK_HOURS2;
+	//std::cout << "\tgamma_factors = " << gamma_factors << "\n";
 	gamma = 1.0/real(gammaCriterion * data.groups.get_list().size() * Single::WEEK_HOURS2);
+	//std::cout << "\tgamma = " << gamma << "\n";
 	gammaPortion = 1.0/gammaCriterion;
 }
 Enviroment::~Enviroment()
@@ -86,6 +90,7 @@ void Enviroment::init()
 	initPopulation = 100;
 	maxPopulation = initPopulation;
 	maxProgenitor = initPopulation;
+	gammaCriterion = 2;
 }
 
 void Enviroment::initial()

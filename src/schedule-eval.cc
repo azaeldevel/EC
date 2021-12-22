@@ -24,10 +24,14 @@ namespace oct::ec::sche
 	{
 		fitness = 0;
 		
+		//std::cout << "\tSingle::eval : Step 1\n";
+		//std::cout << "\tgamma = " << env->getGamma() << "\n";
+		
 		overlap_by_teacher();
 
 		cover();
 		
+		//std::cout << "\tfiteness = " << fitness << "\n";
 		//Evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
 	}
 	
@@ -62,7 +66,7 @@ namespace oct::ec::sche
 		}
 		unsigned int gamma = size() * WEEK_HOURS2;
 		gamma = gamma - std::pow(count,2);
-		fitness += env->getGammaPortion() - (real(gamma) * env->getGamma());
+		fitness += real(gamma) * env->getGamma();
 	}
 			
 	//Deve dar una mejor califacion al horaio que se acerca mas 
@@ -86,7 +90,7 @@ namespace oct::ec::sche
 		}
 		unsigned int gamma = size() * WEEK_HOURS2;
 		gamma = gamma - std::pow(count,2);
-		fitness += env->getGammaPortion() - (real(gamma) * env->getGamma());
+		fitness += real(gamma) * env->getGamma();
 	}
 	
 }

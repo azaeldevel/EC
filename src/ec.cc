@@ -486,16 +486,16 @@ bool Enviroment::run()
 	if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
 
 	actualIteration = 1;
-	//std::cout << "\tStep 1\n";
+	//std::cout << "\tEnviroment::run : Step 1\n";
 	initial();
 	for(ec::Single* single : *this)
 	{
 		single->eval();
 	}
-    //std::cout << "\tStep 2\n";
+    //std::cout << "\tEnviroment::run : Step 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
-	//std::cout << "\tStep 3\n";
+	//std::cout << "\tEnviroment::run : Step 3\n";
 	logFile = not logDirectory.empty();
 	if(logFile)
 	{

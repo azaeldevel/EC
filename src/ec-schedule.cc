@@ -24,33 +24,20 @@
 
 #include "schedule.hh"
 
-
-
-
-
-
 int main(int argc, const char* argv[])
 {
-	if(argc < 2) 
+	/*if(argc < 2) 
 	{
 		std::cerr << "Indique el parametro necesario\n";
 		std::cerr << "trans  dirlog\n";
 		return EXIT_SUCCESS;
-	}
+	}*/
 	
-	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment(logDirectory,"tests");
+	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment("logs","tests");
 	sche->enableEcho(&std::cout,2);
 	
 	bool ret;
 	ret = sche->run();
-	//oct::ec::sche::Teachers teachers("tests/teachers.csv");
-	//oct::ec::sche::Subjects subjects("tests/subjects.csv");
-	//oct::ec::sche::Rooms rooms("tests/rooms.csv");
-	//oct::ec::sche::Teachers_Subjects teachers_subjects("tests/teachers-subjects.csv");
-	//teachers.print(std::cout);
-	//subjects.print(std::cout);
-	//rooms.print(std::cout);
-	//teachers_subjects.print(std::cout);
 	
 	delete sche;
 	

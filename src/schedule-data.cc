@@ -1506,8 +1506,10 @@ namespace oct::ec::sche
 	void Lessons::juncting(const Lessons& g1,const Lessons& g2)
 	{
 		if(g1.size() != g2.size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
-		if(g1.size() != size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
-
+		if(g1.size() == 0) throw core::Exception("No hay lecciones",__FILE__,__LINE__);
+		if(g2.size() == 0) throw core::Exception("No hay lecciones",__FILE__,__LINE__);
+		
+		resize(g1.size());
 		std::bernoulli_distribution distrib(0.6);
 		for(unsigned int i = 0; i < g1.size(); i++)
 		{//selecciona al azar una de las collecciones para elegir agregar dico goal a la collacion actual
@@ -1623,8 +1625,11 @@ namespace oct::ec::sche
 	}
 	void Schedule::juncting(const Schedule& s1,const Schedule& s2)
 	{
+		//std::cout << "Size 1 = " << s1.size() << "\n";
+		//std::cout << "Size 2 = " << s2.size() << "\n";
 		if(s1.size() != s2.size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
-		if(s1.size() != size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
+		if(s1.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+		if(s2.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
 		
 		for(unsigned int i = 0; i < size(); i++)
 		{
