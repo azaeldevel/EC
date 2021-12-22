@@ -46,6 +46,8 @@ namespace oct::ec::sche
 	}
 	void Single::mutate()
 	{
+		if(size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+		
 		std::uniform_int_distribution<int> distrib(0, size() - 1);
 		at(distrib(gen)).mutate();
 	}
@@ -136,6 +138,7 @@ void Enviroment::initial()
 					msg += subjectGroup->get_name() + "'";
 					throw core::Exception(msg,__FILE__,__LINE__);
 				}
+				lessons[subject].data =&data;
 										
 				WeekHours week;
 				WeekOptions week_opt;

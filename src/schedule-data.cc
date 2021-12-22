@@ -1484,6 +1484,16 @@ namespace oct::ec::sche
 	
 	
 	
+	Lesson::Lesson()
+	{
+		group = NULL;
+		subject = NULL;
+		teacher = NULL;
+		room = NULL;
+		data = NULL;
+	}
+	
+	
 	Lessons::Lessons()
 	{
 
@@ -1534,27 +1544,41 @@ namespace oct::ec::sche
 	}	
 	void Lessons::mutate()
 	{
+		if(size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+		//std::cout << "\tLessons::mutate Step 1\n";
+		
 		std::uniform_int_distribution<int> distrib(0, size() - 1);
 		std::bernoulli_distribution random_mutation(0.5);
+		//std::cout << "\tLessons::mutate Step 2.0.0\n";
 		if(random_mutation(gen))
 		{
+			//std::cout << "\tLessons::mutate Step 2.0.1\n";
 			Lesson* lesson = &at(distrib(gen));
+			if(not lesson->data)
+			{
+				throw core::Exception("No se asigno el objeto de datos",__FILE__,__LINE__);
+			}
+			//std::cout << "\tLessons::mutate Step 2.0.2\n";
 			std::list<const Teachers_Subjects::Row*> rows;
+			//std::cout << "\tMateria : " << lesson->subject->get_name() <<  " \n";
 			lesson->data->teachers_subjects.searchSubjects(lesson->subject->get_name(),rows);
-			//std::cout << lessons[subject].subject->get_name();
-			std::list<const Teachers_Subjects::Row*>::const_iterator itr = random(rows);
 			if(rows.empty())
 			{
-				std::string msg = "No se encontro maestro asociado para '";
+				std::string msg = "No hay opciones en la busqueda de '";
 				msg += lesson->subject->get_name() + "'";
 				throw core::Exception(msg,__FILE__,__LINE__);
 			}
-			if(itr != rows.end())
+			//std::cout << "\tLessons::mutate Step 2.0.3\n";
+			//std::cout << lessons[subject].subject->get_name();
+			std::list<const Teachers_Subjects::Row*>::const_iterator itr = random(rows);
+			//std::cout << "\tLessons::mutate Step 2.0.4\n";
+			if(itr == rows.end())
 			{
 				std::string msg = "No se encontro maestro asociado para '";
 				msg += lesson->subject->get_name() + "'";
 				throw core::Exception(msg,__FILE__,__LINE__);
 			}
+			//std::cout << "\tLessons::mutate Step 2.0.5\n";
 			lesson->teacher = (*itr)->teacher;
 			
 			WeekHours week;
@@ -1565,6 +1589,7 @@ namespace oct::ec::sche
 		}
 		else
 		{		
+			//std::cout << "\tLessons::mutate Step 2.0.2\n";
 			Lesson* lesson = &at(distrib(gen));
 				
 			WeekHours week;
@@ -1647,6 +1672,7 @@ namespace oct::ec::sche
 	}
 	void Schedule::mutate()
 	{
+		if(size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
 		std::uniform_int_distribution<int> distrib(0, size() - 1);
 		at(distrib(gen)).mutate();
 	}

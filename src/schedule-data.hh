@@ -537,6 +537,8 @@ namespace oct::ec::sche
 		const Room* room;
 		const Data* data;
 		WeekHours week;
+
+		Lesson();
 	};
 	
 	/**

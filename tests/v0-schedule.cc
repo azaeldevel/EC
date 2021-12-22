@@ -108,7 +108,7 @@ void schedule_devel()
 	}
 	
 	
-	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS2;
+	std::list<const Teachers_Subjects::Row*> rowTS2;
 	data.teachers_subjects.searchSubjects("Geografia I",rowTS2);
 	if(rowTS2.size() == 1) 
 	{
@@ -136,9 +136,18 @@ void schedule_devel()
 		std::cout << "rowTS3.size() = " << rowTS3.size() << "\n";
 		CU_ASSERT(false);		
 	}
-	std::list<const oct::ec::sche::Teachers_Subjects::Row*>::const_iterator it_rowTS3_Row;
-	it_rowTS3_Row = oct::ec::sche::random(rowTS3);
-	const oct::ec::sche::Teachers_Subjects::Row* rowTS3_Row = *it_rowTS3_Row;
+	data.teachers_subjects.searchSubjects("Fisca I",rowTS3);
+	std::list<const Teachers_Subjects::Row*>::const_iterator it_rowTS3_Row = oct::ec::sche::random(rowTS3);
+	if(rowTS3.size() >= 1) 
+	{
+		CU_ASSERT(true);
+	}
+	else 
+	{
+		std::cout << "rowTS3_Row.size() = " << rowTS3.size() << "\n";
+		CU_ASSERT(false);		
+	}
+	const Teachers_Subjects::Row* rowTS3_Row = *it_rowTS3_Row;
 	if(rowTS3_Row) 
 	{
 		CU_ASSERT(true);

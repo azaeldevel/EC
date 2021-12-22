@@ -510,7 +510,7 @@ bool Enviroment::run()
 	
 	while(true)
 	{
-		
+		//std::cout << "\tEnviroment::run - while Step 1\n";
 		if(stopMaxIterations)
 		{
 			if(actualIteration > maxIteration)
@@ -527,6 +527,7 @@ bool Enviroment::run()
 			else (*fout) << "Iteracion : " << actualIteration << "\n";
 		}
 		
+		//std::cout << "\tEnviroment::run - while Step 2\n";
 		if(not comparer)
 		{
 			throw oct::core::Exception("No se a asignado el creterio de coparacion.",__FILE__,__LINE__);
@@ -552,6 +553,7 @@ bool Enviroment::run()
 		}		
 		sigma /= double(size());
 		
+		//std::cout << "\tEnviroment::run - while Step 3\n";
 		if(logFile)
 		{
 			std::string strfn = logDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
@@ -569,7 +571,7 @@ bool Enviroment::run()
 
 		ec::ID countBefore = size();
 		selection();
-		if(echoSteps) std::cout << "\tStep C6\n";
+		//std::cout << "\tEnviroment::run - while Step 4\n";
 		if(logFile)
 		{
 			std::string strSelection = logDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
@@ -584,7 +586,7 @@ bool Enviroment::run()
 			fnSelection.flush();
 			fnSelection.close();
 		}
-		if(echoSteps) std::cout << "\tStep C7\n";
+		//std::cout << "\tEnviroment::run - while Step 5\n";
 		unsigned short removes = countBefore - size();
 		//deletes == 0 ? counUndelete++ : counUndelete = 0;
 		if(echolevel > 1 and fout != NULL)
@@ -592,7 +594,7 @@ bool Enviroment::run()
 			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
 			(*fout) << "\tEliminados : " << removes << "\n";
 		}
-		if(echoSteps) std::cout << "\tStep C8\n";
+		//std::cout << "\tEnviroment::run - while Step 6\n";
 
 		
 		//std::cout << "\tStep C10\n";
@@ -606,6 +608,7 @@ bool Enviroment::run()
 			//(*fout) << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "\tAtasco(Repeticiones)\n" : "\tNo Atasco(Repeticiones)\n");
 		}
 		
+		//std::cout << "\tEnviroment::run - while Step 7\n";
 		solutions.clear();
 		for(iterator it = begin(); it != end(); it++)
 		{
@@ -627,6 +630,7 @@ bool Enviroment::run()
 			return true;		
 		}
 
+		//std::cout << "\tEnviroment::run - while Step 8\n";
 		if(logFile)
 		{
 			if(history.is_open())
@@ -648,19 +652,16 @@ bool Enviroment::run()
 				history .flush();
 			}
 		}
-		juncting();
 		
-		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
-		{
-			push_front(s);
-		}
-		
+		//std::cout << "\tEnviroment::run - while Step 9\n";
+		juncting();				
 		std::ofstream fnChilds;
 		if(logFile)
 		{
 			std::string strChilds = logDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
 			fnChilds.open(strChilds);
 		}
+		//std::cout << "\tEnviroment::run - while Step 10\n";
 		
 		std::bernoulli_distribution random_mutation(mutableProb);
 		if(logFile) if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
@@ -674,6 +675,7 @@ bool Enviroment::run()
 				s->save(fnChilds);
 				fnChilds << "\n";
 			}
+			push_front(s);
 		}
 		if(logFile)
 		{
@@ -685,9 +687,10 @@ bool Enviroment::run()
 			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
 		}
 		newschils.clear();
+		//std::cout << "\tEnviroment::run - while Step 11\n";
 
 		actualIteration++;
-		if(echoSteps) std::cout << "\tStep C16\n";
+		//std::cout << "\tEnviroment::run - while Step 12\n";
 	}
 
 	return false;
