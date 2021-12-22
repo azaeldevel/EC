@@ -39,12 +39,12 @@ namespace oct::ec::sche
 	}
 	
 	//
-	/*unsigned int Single::match(unsigned int countGroup,const Lessons& classroom)
+	unsigned int Single::match(unsigned int countGroup,const Lessons& classroom)
 	{
 		unsigned int diff = ((Enviroment*)env)->get_data().groups.get_max_lessons() - classroom.size();
 		if(diff > 0 and countGroup > 0)	return countGroup + (diff * WEEK_HOURS);
 		return 0;
-	}*/
+	}
 	void Single::convertGamma(unsigned int count)
 	{
 		unsigned int gamma = std::pow(count,2);
@@ -53,11 +53,12 @@ namespace oct::ec::sche
 	void Single::overlap_by_teacher()
 	{
 		unsigned int count = 0;
+		unsigned int countClass = 0;
 		WeekHours week_actual;
 		for(const Lessons& classroom : *this)
 		{
 			count = 0;
-			for(unsigned int i = 0; i < classroom.size(); i++)
+			for(unsigned int i = 0; i < classroom.size() - 1; i++)
 			{
 				if(classroom[i].week.count_hours() == 0) 
 				{
@@ -76,9 +77,10 @@ namespace oct::ec::sche
 						week_actual.clear();
 					}
 				}
-			}					
+			}
+			countClass += match(count,classroom) + count;
 		}
-		convertGamma(count);
+		convertGamma(countClass);
 	}
 			
 	//Deve dar una mejor califacion al horaio que se acerca mas 
@@ -86,6 +88,7 @@ namespace oct::ec::sche
 	void Single::cover()
 	{		
 		unsigned int count = 0;
+		unsigned int countClass = 0;
 		for(const Lessons& classroom : *this)
 		{
 			for(unsigned int i = 0; i < classroom.size(); i++)
@@ -99,8 +102,9 @@ namespace oct::ec::sche
 					}
 				}
 			}
+			countClass += match(count,classroom) + count;
 		}
-		convertGamma(count);
+		convertGamma(countClass);
 	}
 	void Single::not_empty()
 	{

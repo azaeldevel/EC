@@ -93,9 +93,9 @@ Enviroment::~Enviroment()
 }
 void Enviroment::init()
 {
-	initPopulation = 100;
+	initPopulation = 1000;
 	maxPopulation = initPopulation;
-	maxProgenitor = initPopulation;
+	maxProgenitor = 100;
 }
 
 void Enviroment::initial()
