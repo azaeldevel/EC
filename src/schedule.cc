@@ -34,14 +34,9 @@ namespace oct::ec::sche
 	{
 		for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
 		{
-			double randJ = core::randNumber();
-			const Junction* juntion;
-			if(randJ < 0.5) juntion = &getJunction();
-			else juntion = &single->getJunction();
-			//Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,*juntion);
-			//((Schedule*)newsingle)->juncting(*this,((const Single&)*single));
-						
-			//chils.push_back(newsingle);
+			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,getJunction());
+			((Schedule*)newsingle)->juncting(*this,((const Single&)*single));					
+			chils.push_back(newsingle);
 		}
 	}
 	void Single::print(std::ostream&) const
@@ -49,7 +44,8 @@ namespace oct::ec::sche
 	}
 	void Single::mutate()
 	{
-
+		std::uniform_int_distribution<int> distrib(0, size() - 1);
+		at(distrib(gen)).mutate();
 	}
 		
 	

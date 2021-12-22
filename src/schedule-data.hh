@@ -529,6 +529,7 @@ namespace oct::ec::sche
 		const Subject* subject;
 		const Teacher* teacher;
 		const Room* room;
+		const Data* data;
 		WeekHours week;
 	};
 	
@@ -545,6 +546,8 @@ namespace oct::ec::sche
 		Lessons& operator =(const Lessons&);
 		
 		void juncting(const Lessons&,const Lessons&);
+
+		void mutate();
 
 	private:
 	private:
@@ -565,6 +568,10 @@ namespace oct::ec::sche
 		void search_teachers(const std::string&, std::vector<const Lesson*>&)const;
 		
 		void indexing();
+
+		void juncting(const Schedule&,const Schedule&);
+
+		void mutate();
 
 	private:
 

@@ -1487,12 +1487,12 @@ namespace oct::ec::sche
 	void Lessons::juncting(const Lessons& g1,const Lessons& g2)
 	{
 		if(g1.size() != g2.size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
+		if(g1.size() != size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
 
-		std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    	std::uniform_int_distribution<> distrib(1, 100);
+		std::bernoulli_distribution distrib(0.6);
 		for(unsigned int i = 0; i < g1.size(); i++)
 		{//selecciona al azar una de las collecciones para elegir agregar dico goal a la collacion actual
-			if(distrib(gen) < 50 ) 
+			if(distrib(gen)) 
 			{
 				at(i) = g1.at(i);
 			}
@@ -1501,7 +1501,54 @@ namespace oct::ec::sche
 				at(i) = g2.at(i);
 			}
 		}
+	}	
+	void Lessons::mutate()
+	{
+		std::uniform_int_distribution<int> distrib(0, size() - 1);
+		std::bernoulli_distribution random_mutation(0.5);
+		if(random_mutation(gen))
+		{
+			Lesson* lesson = &at(distrib(gen));
+			std::list<const Teachers_Subjects::Row*> rows;
+			lesson->data->teachers_subjects.searchSubjects(lesson->subject->get_name(),rows);
+			//std::cout << lessons[subject].subject->get_name();
+			std::list<const Teachers_Subjects::Row*>::const_iterator itr = random(rows);
+			if(rows.empty())
+			{
+				std::string msg = "No se encontro maestro asociado para '";
+				msg += lesson->subject->get_name() + "'";
+				throw core::Exception(msg,__FILE__,__LINE__);
+			}
+			if(itr != rows.end())
+			{
+				std::string msg = "No se encontro maestro asociado para '";
+				msg += lesson->subject->get_name() + "'";
+				throw core::Exception(msg,__FILE__,__LINE__);
+			}
+			lesson->teacher = (*itr)->teacher;
+			
+			WeekHours week;
+			WeekOptions week_opt;
+			week.inters(lesson->room->get_week (),lesson->teacher->get_week());
+			week.combns(*lesson->subject,week_opt);
+			week_opt.random(lesson->week);
+		}
+		else
+		{		
+			Lesson* lesson = &at(distrib(gen));
+				
+			WeekHours week;
+			WeekOptions week_opt;
+			week.inters(lesson->room->get_week(),lesson->teacher->get_week());
+			week.combns(*lesson->subject,week_opt);
+			week_opt.random(lesson->week);
+		}
 	}
+	
+	
+	
+	
+	
 	
 	
 	Schedule::Schedule()
@@ -1554,6 +1601,21 @@ namespace oct::ec::sche
 		{
 			result.push_back(it->second);
 		}
+	}
+	void Schedule::juncting(const Schedule& s1,const Schedule& s2)
+	{
+		if(s1.size() != s2.size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
+		if(s1.size() != size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
+		
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			at(i).juncting(s1[i],s2[i]);
+		}
+	}
+	void Schedule::mutate()
+	{
+		std::uniform_int_distribution<int> distrib(0, size() - 1);
+		at(distrib(gen)).mutate();
 	}
 	
 }
