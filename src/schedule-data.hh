@@ -201,6 +201,10 @@ namespace oct::ec::sche
 		check_codes check()const;
 
 		bool empty()const;
+		/**
+		*\brief Cuenta las horas que hay en esta semana
+		**/
+		unsigned int count_hours()const;
 	private:
 		void combns(std::list<WeekHours>&,const WeekOptions&)const;
 	};

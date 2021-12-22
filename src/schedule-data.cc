@@ -119,6 +119,8 @@ namespace oct::ec::sche
 	Day::Day(const Day& d)
 	{
 		//std::cout << "Day::Day(const Day& d) - Step 1.0\n";
+		if(size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		
 		for(const core::DataTime& dt : d)
 		{
 			push_back(dt);
@@ -131,6 +133,8 @@ namespace oct::ec::sche
 	Day& Day::operator =(const Day& d)
 	{
 		//std::cout << "Day::operator = - Step 1.0\n";
+		if(size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		
 		for(const core::DataTime& dt : d)
 		{
 			push_back(dt);
@@ -151,6 +155,9 @@ namespace oct::ec::sche
 	}
 	Day& Day::inters(const Day& comp1, const Day& comp2)
 	{
+		if(comp1.size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(comp2.size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		
 		for(const core::DataTime& tdt : comp1)
 		{
 			for(const core::DataTime& cdt : comp2)
@@ -236,7 +243,9 @@ namespace oct::ec::sche
 	}	
 	void Day::combns(std::list<Day>& days, unsigned int hours)const
 	{
-		if(hours < 1) throw core::Exception("No esta permitido bloques de 0",__FILE__,__LINE__);
+		if(hours < 1) throw core::Exception("No esta permitido bloques de 0",__FILE__,__LINE__);		
+		if(size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		
 		//std::cout << "Day::combns - Step 1\n";
 		unsigned int countHB = 0;
 		for(const Block& b : blocks)
@@ -550,7 +559,16 @@ namespace oct::ec::sche
 
 		return true;
 	}
-
+	unsigned int WeekHours::count_hours()const
+	{
+		unsigned int count = 0;
+		for(const Day& day : *this)
+		{
+			count += day.size();
+		}
+		
+		return count;
+	}
 
 
 
@@ -1441,6 +1459,7 @@ namespace oct::ec::sche
 	
 	void Data::load(const std::string& dir)
 	{
+		//TODO:validacion estricta delas entredas
 		((Targets&)teachers) = this;
 		teachers.loadFile(dir + "/teachers.csv");
 		((Targets&)subjects) = this;

@@ -12,7 +12,8 @@ namespace oct::core
 namespace oct::ec::sche
 {
 	
-	
+	const unsigned int Single::WEEK_HOURS = 168;
+	const unsigned int Single::WEEK_HOURS2 = std::pow(Single::WEEK_HOURS,2);
 
 	Single::Single(ID id,Enviroment& env,const Junction& j) : ec::Single(id,env,j)
 	{
@@ -57,10 +58,7 @@ namespace oct::ec::sche
 Enviroment::Enviroment(const std::string& log,const std::string& dir)
 {
 	init();
-	
-	unsigned int gamma_criterial = 2;
-	gamma = 0;
-	
+		
 	logDirectory = log;
 	directory = dir;	
 	data.load(directory);
@@ -75,6 +73,9 @@ Enviroment::Enviroment(const std::string& log,const std::string& dir)
 			throw oct::core::Exception(msg,__FILE__,__LINE__);
 		}
 	}
+			
+	gamma = 1.0/real(gammaCriterion * data.groups.get_list().size() * Single::WEEK_HOURS2);
+	gammaPortion = 1.0/gammaCriterion;
 }
 Enviroment::~Enviroment()
 {

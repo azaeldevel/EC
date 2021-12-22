@@ -37,17 +37,6 @@ int main(int argc, const char* argv[])
 		std::cerr << "trans  dirlog\n";
 		return EXIT_SUCCESS;
 	}
-			
-	std::string logDir = argv[1];
-	std::string logDirectory;	
-	bool logFile = not logDir.empty();
-	
-	if(logFile) 
-	{
-		logDirectory = logDir + "/" + std::to_string(oct::core::getDayID());
-		oct::core::Shell shell;
-		shell.mkdir(logDirectory,true);
-	}
 	
 	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment(logDirectory,"tests");
 	sche->enableEcho(&std::cout,2);

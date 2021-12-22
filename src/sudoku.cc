@@ -623,10 +623,7 @@ unsigned short Enviroment::getFaltantes() const
 {
 	return (1.0 - media) * (1.0/gamma);
 }
-double Enviroment::getGamma() const
-{
-	return gamma;
-}
+
 
 
 

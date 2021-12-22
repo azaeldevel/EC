@@ -43,15 +43,21 @@ namespace oct::ec::sche
 		virtual void print(std::ostream&) const;
 
 		virtual void mutate();
+
+	public:
+
+		static const unsigned int WEEK_HOURS;
+		static const unsigned int WEEK_HOURS2;
+
 	private:
 		/**
 		*\brief Retorna la cantiad de traslapes que tiene los maestros
 		*/
-		unsigned int overlap_by_teacher()const;
+		void overlap_by_teacher();
 		/**
 		*\brief Retorna suma de la diferacia de horas entre los horasio asignados para cada materia y las horas de cada materia
 		*/
-		unsigned int diff_hour()const;
+		void cover();
 	private:
 		//Schedule schedule;
 		//const Data& data;
@@ -85,7 +91,7 @@ namespace oct::ec::sche
 		*/
 		virtual void initial();
 
-		unsigned int counter()const;
+		//unsigned int counter()const;
 
 	private:
 		std::string directory;

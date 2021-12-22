@@ -226,6 +226,11 @@ public:
 	//static unsigned long getTimeID();
 	std::ostream* getFout();
 	//const std::string getLogSubDirectory()const;
+
+	double getGamma() const;
+	unsigned int getGammaCriterion()const;
+	double getGammaPortion() const;
+
 	/**
 	*\brief Devuelve el siguiento ID para un nuevo objeto Single
 	*/
@@ -377,6 +382,10 @@ protected:
 	*\brief valor estadistico de cada variable.
 	*/
 	double gamma;
+	
+	unsigned int gammaCriterion;
+
+	real gammaPortion;
 
 private:
 	/**

@@ -286,6 +286,7 @@ void Enviroment::init()
 	maxSerie = 0;
 	epsilon = 1.0e-28;
 	gamma = 0.0;
+	gammaCriterion = 0;
 	maxPopulation = 0;
 	maxProgenitor = 0;
 	initPopulation = 0;
@@ -450,7 +451,18 @@ bool Enviroment::getEchoSteps()const
 {
 	return echoSteps;
 }
-
+double Enviroment::getGamma() const
+{
+	return gamma;
+}
+unsigned int Enviroment::getGammaCriterion() const
+{
+	return gammaCriterion;
+}
+real Enviroment::getGammaPortion() const
+{
+	return gammaPortion;
+}
 
 ID Enviroment::nextID()
 {
@@ -471,7 +483,7 @@ bool Enviroment::run()
 	if(initPopulation == 0) throw oct::core::Exception("La poblacion inicial deve ser mayor que 0",__FILE__,__LINE__);
 	if(maxProgenitor > maxPopulation) throw oct::core::Exception("La catidad de progenitores deve ser menor que la popblacion",__FILE__,__LINE__);
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
-	if(gamma < FLT_MIN) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
+	if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
 
 	actualIteration = 1;
 	//std::cout << "\tStep 1\n";

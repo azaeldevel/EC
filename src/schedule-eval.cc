@@ -22,23 +22,72 @@ namespace oct::ec::sche
 	**/
 	void Single::eval()
 	{
-		//TODO:evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
+		fitness = 0;
 		
+		overlap_by_teacher();
+
+		cover();
 		
-		//TODO:deve dar una mejor califacion al horaio que se acerca mas 
-			//a la hora exacta de clases por semana,deve cubir las hora de materia por semana sin pasarse o flatarle
+		//Evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
 	}
-	unsigned int Single::overlap_by_teacher()const
+	
+	//
+	void Single::overlap_by_teacher()
+	{
+		unsigned int count = 0;
+		WeekHours week_actual;
+		for(const Lessons& lessons : *this)
+		{
+			for(unsigned int i = 0; i < lessons.size(); i++)
+			{
+				if(lessons[i].week.count_hours() == 0) 
+				{
+					count += WEEK_HOURS;
+					continue;
+				}				
+				for(unsigned int j = i + 1; j < lessons.size(); j++)
+				{
+					if(lessons[i].week.count_hours() == 0) 
+					{
+						count += WEEK_HOURS;
+					}
+					else
+					{
+						week_actual.inters(lessons[i].week,lessons[j].week);
+						count += week_actual.count_hours();
+						week_actual.clear();
+					}
+				}
+			}
+		}
+		unsigned int gamma = size() * WEEK_HOURS2;
+		gamma = gamma - std::pow(count,2);
+		fitness += env->getGammaPortion() - (real(gamma) * env->getGamma());
+	}
+			
+	//Deve dar una mejor califacion al horaio que se acerca mas 
+	//a la hora exacta de clases por semana,deve cubir las hora de materia por semana sin pasarse o flatarle
+	void Single::cover()
 	{
 		unsigned int count = 0;
 		for(const Lessons& lessons : *this)
 		{
-			
+			for(unsigned int i = 0; i < lessons.size(); i++)
+			{
+				for(const Day day : lessons[i].week)
+				{
+					//la diferencia entre las horas disponibles y las necesesrias
+					if(day.size() > 0) 
+					{
+						count += std::abs((int)lessons[i].subject->get_time() - (int)day.size());			
+					}
+				}
+			}
 		}
-		
-		return 0;
+		unsigned int gamma = size() * WEEK_HOURS2;
+		gamma = gamma - std::pow(count,2);
+		fitness += env->getGammaPortion() - (real(gamma) * env->getGamma());
 	}
-	
 	
 }
 

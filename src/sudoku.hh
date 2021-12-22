@@ -99,7 +99,6 @@ public:
 	void initBoard(const std::string& initTable);
 
 	unsigned short getFaltantes() const;
-	double getGamma() const;
 	void saveSolutions(std::ofstream& f)const;
 
 	//virtual void selection();
