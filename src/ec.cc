@@ -275,7 +275,7 @@ void Enviroment::init()
 	//sigmaReduction = 1.0;
 	minSolutions = 0;
 	stopMinSolutions = false;
-	mutableProb = 0.001;
+	mutableProb = 0.002;
 	//pMutableGene = -1.0;
 	fout = NULL;
 	stopMaxIterations=false;
