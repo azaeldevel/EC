@@ -27,12 +27,13 @@ int schedule_clean(void)
 
 void schedule_devel()
 {
-	if(data.teachers.get_list().size() == 16)
+	if(data.teachers.get_list().size() == 25)
 	{
 		CU_ASSERT(true);
 	}
 	else 
 	{
+		std::cout << "data.teachers.get_list().size() : " << data.teachers.get_list().size() << "\n";
 		CU_ASSERT(false);
 	}
 	if(data.subjects.get_list().size() == 16)
@@ -40,7 +41,7 @@ void schedule_devel()
 		CU_ASSERT(true);
 	}
 	else 
-	{
+	{ 
 		CU_ASSERT(false);
 	}
 	if(data.rooms.get_list().size() == 6)
@@ -52,12 +53,13 @@ void schedule_devel()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.teachers_subjects.get_list().size() == 16)
+	if(data.teachers_subjects.get_list().size() == 25)
 	{
 		CU_ASSERT(true);
 	}
 	else 
 	{
+		std::cout << "data.teachers_subjects.get_list().size() : " << data.teachers_subjects.get_list().size() << "\n";
 		CU_ASSERT(false);
 	}
 
@@ -91,7 +93,7 @@ void schedule_devel()
 	//data.teachers_subjects.print(std::cout);
 	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS;
 	data.teachers_subjects.searchSubjects("Espanol I",rowTS);
-	if(rowTS.size() == 2) 
+	if(rowTS.size() == 5) 
 	{
 		//
 		/*for(oct::ec::sche::Teachers_Subjects::Row* row : rowTS)
@@ -103,14 +105,14 @@ void schedule_devel()
 	}
 	else 
 	{
-		//std::cout << "No se encontro el maestro indicado\n";
+		std::cout << "rowTS.size() = " << rowTS.size() << "\n";;
 		CU_ASSERT(false);		
 	}
 	
 	
 	std::list<const Teachers_Subjects::Row*> rowTS2;
 	data.teachers_subjects.searchSubjects("Geografia I",rowTS2);
-	if(rowTS2.size() == 1) 
+	if(rowTS2.size() == 3) 
 	{
 		//oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*>::iterator it = rowTS2.begin();
 		//std::cout << "rowTS2->teacher " << (*it)->teacher->get_name()<< "\n";
@@ -118,14 +120,14 @@ void schedule_devel()
 	}
 	else 
 	{
-		std::cout << "rowTS2.size() " << rowTS2.size() << "\n";
+		std::cout << "rowTS2.size() = " << rowTS2.size() << "\n";
 		CU_ASSERT(false);		
 	}
 	
 	
 	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS3;
 	data.teachers_subjects.searchSubjects("Estadistica I",rowTS3);
-	if(rowTS3.size() == 3) 
+	if(rowTS3.size() == 5) 
 	{
 		//oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*>::iterator it = rowTS3.begin();
 		//std::cout << "rowTS3->teacher " << (*it)->teacher->get_name()<< "\n";
@@ -735,7 +737,7 @@ void schedule_devel()
 	}
 	std::vector<const Lesson*> sche_teachers;
 	single_shce.search_teachers("Monica Perez Ortencia",sche_teachers);
-	if(sche_teachers.size() == 3) 
+	if(sche_teachers.size() == 1) 
 	{
 		CU_ASSERT(true);
 	}
@@ -748,5 +750,14 @@ void schedule_devel()
 	{
 		std::cout << lesson->teacher->get_name() << " - " << lesson->room->get_name() << "\n";
 	}*/
+	
+	
+	const std::map<std::string, Teachers_Subjects::HBS>& ts1_list = data.teachers_subjects.get_hbs();
+	for(auto const& hbs : ts1_list)
+	{
+		std::cout << hbs.first << "," << hbs.second.req_hours << "," << hbs.second.disp_hours;
+		
+		std::cout << "\n";
+	}
 }
 

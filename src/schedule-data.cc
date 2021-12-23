@@ -1155,7 +1155,10 @@ namespace oct::ec::sche
 	{
 		return teachers_subjects;
 	}
-	
+	const std::map<std::string, Teachers_Subjects::HBS>& Teachers_Subjects::get_hbs()const
+	{
+		return hbs_by_subject;
+	}
 	void Teachers_Subjects::loadFile(const std::string& fn)
 	{
 		
@@ -1254,11 +1257,43 @@ namespace oct::ec::sche
 			for(const Subject* subject : row)
 			{
 				if(not subject) throw core::Exception("Valor nulo para puntero de Materia",__FILE__,__LINE__);
-				subjects_by_name.insert({subject->get_name(),&row});
+				subjects_by_name.insert({subject->get_name(),&row});				
+				
+				std::map<std::string, HBS>::iterator it = hbs_by_subject.find(subject->get_name());
+				if(it == hbs_by_subject.end())
+				{		
+					HBS hbs;
+					hbs.subject = subject;
+					hbs.row = &row;
+					hbs.req_hours = subject->get_time();
+					hbs.disp_hours = row.teacher->get_week().count_hours();
+					hbs_by_subject.insert({subject->get_name(),hbs});					
+				}
+				else
+				{
+					HBS& hbs = (*it).second;
+					hbs.disp_hours += row.teacher->get_week().count_hours();
+				}
+				
 			}
 		}
 	}
-	
+	void Teachers_Subjects::hour_by_subjects_csv(std::ofstream& fn)
+	{
+		std::map<std::string, HBS> hbs_list;
+		HBS hbs;
+		std::list<const Row*> rows;		
+		for(const Subject& subject : dataObject->subjects.get_list())
+		{
+			searchSubjects(subject.get_name(), rows);
+			for(const Row* row : rows)
+			{
+				//hbs_list.find();
+			}
+			
+			rows.clear();
+		}
+	}
 	
 	
 	Rooms::Rooms(const std::string& fn)

@@ -415,6 +415,7 @@ namespace oct::ec::sche
 	};
 
 
+	
 	class Teachers_Subjects : public Targets
 	{
 	public: 
@@ -425,21 +426,33 @@ namespace oct::ec::sche
 			Row();
 			void print(std::ostream&)const;
 		};
-		
+		struct HBS
+		{
+			const Subject* subject;			
+			const Row* row;
+			unsigned int req_hours;
+			unsigned int disp_hours;
+		};
 	public: 
 		Teachers_Subjects();
 		Teachers_Subjects(const std::string& fn,const Data* data);
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
+
 		const std::list<Row>& get_list() const;
+		const std::map<std::string, HBS>& get_hbs()const;
+
 		const Row* searchTeachers(const std::string&)const;
 		void searchSubjects(const std::string&, std::list<const Row*>& )const;
+		void hour_by_subjects_csv(std::ofstream& fn);
+		
 	private:
 		void indexing();
 	private:
 		std::list<Row> teachers_subjects;
 		std::map<std::string, Row*> teachers_by_name;
 		std::multimap<std::string, Row*> subjects_by_name;
+		std::map<std::string, HBS> hbs_by_subject;
 	};
 
 	class Rooms : public Targets
