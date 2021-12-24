@@ -752,12 +752,20 @@ void schedule_devel()
 	}*/
 	
 	
-	const std::map<std::string, Teachers_Subjects::HBS>& ts1_list = data.teachers_subjects.get_hbs();
+	/*const std::map<std::string, Teachers_Subjects::HBS>& ts1_list = data.teachers_subjects.get_hbs();
 	for(auto const& hbs : ts1_list)
 	{
-		std::cout << hbs.first << "," << hbs.second.req_hours << "," << hbs.second.disp_hours;
-		
-		std::cout << "\n";
+		std::cout << hbs.first << "," << hbs.second.req_hours << "," << hbs.second.disp_hours << "\n";		
+	}*/
+	
+	/*for(const Group& group : data.groups.get_list())
+	{
+		std::cout << group.room->get_name() << "\n";
+	}*/
+	const std::map<Groups::key_hbs, Groups::HBRS>& hbrs_list = data.groups.get_hbrs();
+	for(auto const& hbrs : hbrs_list)
+	{
+		std::cout << hbrs.second.room->get_name() << " - " << hbrs.second.subject->get_name() << " : " << hbrs.second.disp_hours << "\n";
 	}
 }
 

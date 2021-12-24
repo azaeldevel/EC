@@ -111,7 +111,7 @@ void Enviroment::initial()
 		Single* sche = new Single(nextID(),*this);
 		sche->resize(data.groups.get_list().size());
 		Groups::const_iterator itGroup = data.groups.get_list().begin();
-		for(Lessons& lessons : *sche)
+		for(ClassRoom& lessons : *sche)
 		{
 			lessons.resize((*itGroup).size());
 			std::vector<const Subject*>::const_iterator it_subject = (*itGroup).begin();

@@ -58,7 +58,7 @@ namespace oct::ec::sche
 		/**
 		*\brief En los grupos cuya cantidad de horas varia repecto al maximo, retorma
 		*/
-		unsigned int match(unsigned int,const Lessons&);
+		unsigned int match(unsigned int,const ClassRoom&);
 		
 		/**
 		*\brief Retorna la cantiad de traslapes que tiene los maestros

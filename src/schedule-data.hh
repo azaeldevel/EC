@@ -21,6 +21,8 @@ namespace oct::core
 		int get_week_day()const;
 		double diff(const DataTime& dt)const;
 
+		void addSeconds(time_t);
+
 		void print(std::ostream&, const std::string) const;
 	};
 
@@ -128,6 +130,7 @@ namespace oct::ec::sche
 
 		void print_day(std::ostream&) const;
 		void print_blocks(std::ostream&) const;
+		void print_intevals_csv(std::ostream&,const Data& data) const;
 
 
 		/**
@@ -197,6 +200,8 @@ namespace oct::ec::sche
 		void sort();
 
 		void print(std::ostream&) const;
+
+		void print_intevals_csv(std::ostream&,const Data& data) const;
 
 		check_codes check()const;
 
@@ -480,6 +485,7 @@ namespace oct::ec::sche
 
 	struct Group : public std::vector<const Subject*>
 	{
+		std::string name;//TODO:soporte para gruopos en distintos salon
 		const Room* room;
 			
 		Group();	
@@ -491,12 +497,28 @@ namespace oct::ec::sche
 	public:
 		typedef std::list<Group>::iterator iterator;
 		typedef std::list<Group>::const_iterator const_iterator;
+		struct key_hbs
+		{
+			const Room* room;
+			const Subject* subject;
 
+			bool operator < (const key_hbs&) const;
+		};
+
+		struct HBRS
+		{
+			const Room* room;
+			const Subject* subject;
+			const Group* group;	
+			//unsigned int req_hours;
+			unsigned int disp_hours;
+		};
 	public:
 		Groups();
 		Groups(const std::string& fn,const Data* data);
 		const std::list<Group>& get_list() const;
 		unsigned int get_max_lessons()const;
+		const std::map<key_hbs, HBRS>& get_hbrs()const;
 
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
@@ -512,6 +534,7 @@ namespace oct::ec::sche
 		std::map<std::string, Group*> groups_by_name;
 		std::multimap<std::string, Group*> groups_by_subject;
 		unsigned int max_lessons;
+		std::map<key_hbs, HBRS> hbrs_list;//horas disponible por materia y salon
 	};
 	
 	typedef std::vector<core::DataTime> DaysTimes;
@@ -557,16 +580,16 @@ namespace oct::ec::sche
 	/**
 	*\brief Clases impartidas aun gurpo
 	**/
-	class Lessons : public std::vector<Lesson>
+	class ClassRoom : public std::vector<Lesson>
 	{
 	public:
-		Lessons();
-		Lessons(unsigned int);
-		Lessons(const Lessons&);
+		ClassRoom();
+		ClassRoom(unsigned int);
+		ClassRoom(const ClassRoom&);
 
-		Lessons& operator =(const Lessons&);
+		ClassRoom& operator =(const ClassRoom&);
 		
-		void juncting(const Lessons&,const Lessons&);
+		void juncting(const ClassRoom&,const ClassRoom&);
 
 		void mutate();
 
@@ -577,7 +600,7 @@ namespace oct::ec::sche
 	/**
 	*\brief 
 	**/
-	class Schedule : public std::vector<Lessons>
+	class Schedule : public std::vector<ClassRoom>
 	{
 	public:
 		Schedule();
@@ -631,6 +654,48 @@ namespace oct::ec::sche
 	{
 
 	};*/
+
+	namespace output
+	{
+		class Schedules
+		{
+
+		};
+
+		class Teacher
+		{
+
+		};
+
+		struct Day
+		{
+			const sche::Subject* subject;
+			const sche::Teacher* teacher;
+			const sche::Room* room;
+			WeekHours week;
+		};
+
+		class Student : public std::vector<Day>
+		{
+		public:
+			
+		public:
+			Student();
+			Student(const ClassRoom& );
+			Student& operator =(const ClassRoom& );
+			void print_csv(std::ostream&,const Data&) const;
+		private:
+			const sche::Group* group;
+		};
+
+		class Students : public std::vector<Student>
+		{
+		public:
+			
+		public:
+			Students(const sche::Schedule& );
+		};
+	}
 
 }
 

@@ -39,7 +39,7 @@ namespace oct::ec::sche
 	}
 	
 	//
-	unsigned int Single::match(unsigned int countGroup,const Lessons& classroom)
+	unsigned int Single::match(unsigned int countGroup,const ClassRoom& classroom)
 	{
 		unsigned int diff = ((Enviroment*)env)->get_data().groups.get_max_lessons() - classroom.size();
 		if(diff > 0 and countGroup > 0)	return countGroup + (diff * WEEK_HOURS);
@@ -50,12 +50,12 @@ namespace oct::ec::sche
 		unsigned int gamma = std::pow(count,2);
 		fitness += ((Enviroment*)env)->getGammaPortion() - (real(gamma) * ((Enviroment*)env)->getGamma());
 	}
-	void Single::overlap_by_teacher()
+	/*void Single::overlap_by_teacher()
 	{
 		unsigned int count = 0;
 		unsigned int countClass = 0;
 		WeekHours week_actual;
-		for(const Lessons& classroom : *this)
+		for(const ClassRoom& classroom : *this)
 		{
 			count = 0;
 			for(unsigned int i = 0; i < classroom.size() - 1; i++)
@@ -66,7 +66,7 @@ namespace oct::ec::sche
 				}				
 				for(unsigned int j = i + 1; j < classroom.size(); j++)
 				{
-					if(classroom[i].week.count_hours() == 0) 
+					if(classroom[j].week.count_hours() == 0) 
 					{
 						continue;
 					}
@@ -78,9 +78,31 @@ namespace oct::ec::sche
 					}
 				}
 			}
-			countClass += match(count,classroom) + count;
+			countClass += match(count,classroom);
 		}
+		
 		convertGamma(countClass);
+	}*/
+	void Single::overlap_by_teacher()
+	{
+		unsigned int count = 0;
+		WeekHours week_actual;
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			for(unsigned int j = 0; j < at(i).size() - 1; j++)
+			{			
+				for(unsigned int k = 1; k < size(); k++)
+				{
+					for(unsigned int l = 0; l < at(k).size(); l++)
+					{
+						week_actual.inters(at(i)[j].week,at(k)[l].week);
+						count += week_actual.count_hours();
+						week_actual.clear();
+					}
+				}
+			}
+		}
+		convertGamma(count);
 	}
 			
 	//Deve dar una mejor califacion al horaio que se acerca mas 
@@ -89,7 +111,7 @@ namespace oct::ec::sche
 	{		
 		unsigned int count = 0;
 		unsigned int countClass = 0;
-		for(const Lessons& classroom : *this)
+		for(const ClassRoom& classroom : *this)
 		{
 			for(unsigned int i = 0; i < classroom.size(); i++)
 			{
@@ -109,7 +131,7 @@ namespace oct::ec::sche
 	void Single::not_empty()
 	{
 		unsigned int count = 0;
-		for(const Lessons& classroom : *this)
+		for(const ClassRoom& classroom : *this)
 		{
 			for(unsigned int i = 0; i < classroom.size(); i++)
 			{

@@ -108,6 +108,13 @@ namespace oct::core
 	{
 		out << std::put_time(this, format.c_str());
 	}
+	void DataTime::addSeconds(time_t s)
+	{
+		time_t t = mktime(this);
+		t += s;
+		tm* newt = localtime(&t);
+		operator =(*newt);
+	}
 }
 
 namespace oct::ec::sche
@@ -363,6 +370,23 @@ namespace oct::ec::sche
 			}
 			out << "\n";
 		}
+	}	
+	void Day::print_intevals_csv(std::ostream& out, const Data& data) const
+	{
+		if(not check()) throw core::Exception("El dia no es valido",__FILE__,__LINE__);
+		
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			if(size() == 1)
+			{
+				
+			}
+			else
+			{
+			
+			}
+			if(i < size() - 1) out << ",";
+		}
 	}
 	check_codes Day::check() const
 	{
@@ -569,7 +593,13 @@ namespace oct::ec::sche
 		
 		return count;
 	}
-
+	void WeekHours::print_intevals_csv(std::ostream& out, const Data& data) const
+	{
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			at(i).print_intevals_csv(out,data);
+		}
+	}
 
 
 
@@ -1273,8 +1303,7 @@ namespace oct::ec::sche
 				{
 					HBS& hbs = (*it).second;
 					hbs.disp_hours += row.teacher->get_week().count_hours();
-				}
-				
+				}				
 			}
 		}
 	}
@@ -1389,6 +1418,10 @@ namespace oct::ec::sche
 	{
 		return groups;
 	}
+	const std::map<Groups::key_hbs, Groups::HBRS>& Groups::get_hbrs()const
+	{
+		return hbrs_list;
+	}
 	
 	void Groups::loadFile(const std::string& fn)
 	{
@@ -1478,7 +1511,7 @@ namespace oct::ec::sche
 		for(Group& g : groups)
 		{
 			it = groups_by_name.find(g.room->get_name());
-			//std::cout << "Indexing : " << g.room->get_name() << "\n";
+			//std::cout << "Grupo : " << g.room->get_name() << "\n";
 			//std::cout << "Size : " << groups_by_name.size() << "\n";
 			if(it != groups_by_name.end())
 			{
@@ -1490,6 +1523,53 @@ namespace oct::ec::sche
 			for(const Subject* s : g)
 			{
 				groups_by_subject.insert({s->get_name(),&g});
+				
+				//std::cout << "Subject : " << s->get_name() << "\n";
+				key_hbs key;
+				key.room = g.room;
+				key.subject = s;
+				//std::cout << "find  " << s->get_name() << " - " << g.room->get_name() << ".\n";
+				std::map<key_hbs, HBRS>::iterator it = hbrs_list.find(key);
+				if(it == hbrs_list.end())
+				{		
+					//std::cout << "prev " << s->get_name() << " - " << g.room->get_name() << ".\n";
+					HBRS hbrs;
+					hbrs.disp_hours = 0;
+					hbrs.subject = s;
+					hbrs.room = g.room;
+					hbrs.group = &g;
+					WeekHours week;
+					std::list<const Teachers_Subjects::Row*> rows;
+					dataObject->teachers_subjects.searchSubjects(s->get_name(),rows);
+					if(rows.empty()) 
+					{
+						std::string msg;
+						msg = "No se encontro la amateria '" + s->get_name() + "' para el salon '" + g.room->get_name() + "'\n";;
+						throw core::Exception(msg,__FILE__,__LINE__);
+					}
+					for(const Teachers_Subjects::Row* row : rows)
+					{
+						//std::cout << "comparando horaio " << s->get_name() << " - " << g.room->get_name() << " horaios\n";
+						week.inters(g.room->get_week(),row->teacher->get_week());
+						hbrs.disp_hours += week.count_hours();
+						week.clear();
+					}
+					//std::cout << "inserting  " << s->get_name() << " - " << g.room->get_name() << ".\n";
+					hbrs_list.insert({key,hbrs});				
+				}
+				else
+				{
+					HBRS& hbrs = (*it).second;
+					WeekHours week;
+					std::list<const Teachers_Subjects::Row*> rows;
+					dataObject->teachers_subjects.searchSubjects(s->get_name(),rows);
+					for(const Teachers_Subjects::Row* row : rows)
+					{
+						week.inters(g.room->get_week(),row->teacher->get_week());
+						hbrs.disp_hours += week.count_hours();
+						week.clear();
+					}
+				}
 			}
 		}
 	}
@@ -1497,7 +1577,12 @@ namespace oct::ec::sche
 	{
 		return max_lessons;
 	}
-	
+	bool Groups::key_hbs::operator < (const key_hbs& o) const
+	{
+		if(room->get_name() < o.room->get_name()) return true;
+		else if(subject->get_name() < o.subject->get_name()) return true;
+		return false;
+	}
 	
 	
 	
@@ -1529,15 +1614,15 @@ namespace oct::ec::sche
 	}
 	
 	
-	Lessons::Lessons()
+	ClassRoom::ClassRoom()
 	{
 
 	}
-	Lessons::Lessons(unsigned int z) : std::vector<Lesson>(z)
+	ClassRoom::ClassRoom(unsigned int z) : std::vector<Lesson>(z)
 	{
 		
 	}
-	Lessons::Lessons(const Lessons& g)
+	ClassRoom::ClassRoom(const ClassRoom& g)
 	{
 		resize(g.size());
 
@@ -1546,7 +1631,7 @@ namespace oct::ec::sche
 			at(i) = g[i];
 		}
 	}
-	Lessons& Lessons::operator =(const Lessons& g)
+	ClassRoom& ClassRoom::operator =(const ClassRoom& g)
 	{
 		resize(g.size());
 		
@@ -1557,7 +1642,7 @@ namespace oct::ec::sche
 
 		return *this;
 	}
-	void Lessons::juncting(const Lessons& g1,const Lessons& g2)
+	void ClassRoom::juncting(const ClassRoom& g1,const ClassRoom& g2)
 	{
 		if(g1.size() != g2.size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
 		if(g1.size() == 0) throw core::Exception("No hay lecciones",__FILE__,__LINE__);
@@ -1577,7 +1662,7 @@ namespace oct::ec::sche
 			}
 		}
 	}	
-	void Lessons::mutate()
+	void ClassRoom::mutate()
 	{
 		if(size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
 		//std::cout << "\tLessons::mutate Step 1\n";
@@ -1645,7 +1730,7 @@ namespace oct::ec::sche
 	{
 
 	}
-	Schedule::Schedule(unsigned int z) : std::vector<Lessons>(z)
+	Schedule::Schedule(unsigned int z) : std::vector<ClassRoom>(z)
 	{
 		
 	}
@@ -1674,7 +1759,7 @@ namespace oct::ec::sche
 	void Schedule::indexing()
 	{
 		if(lesson_by_teacher.size() > 0) lesson_by_teacher.clear();
-		for(const Lessons& lessons : *this)
+		for(const ClassRoom& lessons : *this)
 		{
 			for(const Lesson& g : lessons)
 			{
@@ -1711,6 +1796,6 @@ namespace oct::ec::sche
 		std::uniform_int_distribution<int> distrib(0, size() - 1);
 		at(distrib(gen)).mutate();
 	}
-	
+		
 }
 
