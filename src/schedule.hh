@@ -103,6 +103,7 @@ namespace oct::ec::sche
 		unsigned long get_cover_max2() const;
 		unsigned int get_empty_max() const;
 		unsigned int get_sigma_hours_max() const;
+		unsigned int get_sigma_hours_max2() const;
 		unsigned int get_sigma_hours_limit() const;
 
 		//real get_gamma() const;
@@ -139,6 +140,7 @@ namespace oct::ec::sche
 		unsigned int SCHEDULE_EMPTY_MAX;
 		//real SCHEDULE_ERROR;
 		real schedule_sigma_hours_max;
+		real schedule_sigma_hours_max2;
 		real schedule_sigma_hours_limit;
 	};
 

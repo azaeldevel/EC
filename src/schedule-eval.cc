@@ -158,7 +158,7 @@ namespace oct::ec::sche
 		}
 		else
 		{
-			f = (((Enviroment&)*env).get_sigma_hours_max() - f) / ((Enviroment&)*env).get_sigma_hours_max();
+			f = (((Enviroment&)*env).get_sigma_hours_max2() - f) / ((Enviroment&)*env).get_sigma_hours_max2();
 			f /= ((Enviroment&)*env).get_criterion();
 			fitness += f;
 			//std::cout << "\tf = " << f << "\n";

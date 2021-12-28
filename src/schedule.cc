@@ -100,6 +100,7 @@ void Enviroment::init(const std::string& dirproy)
 	real sigma = ((3.0 * std::pow(24.0 - mean,2.0)) + (4.0 * std::pow(mean,2.0)));
 	sigma /= 7.0;
 	schedule_sigma_hours_max = sigma;
+	schedule_sigma_hours_max2 = std::pow(schedule_sigma_hours_max,2.0);
 	
 	/*for(unsigned int i = 0; i < CRITERION; i++)
 	{
@@ -204,6 +205,10 @@ unsigned int Enviroment::get_empty_max() const
 unsigned int Enviroment::get_sigma_hours_max() const
 {
 	return schedule_sigma_hours_max;
+}
+unsigned int Enviroment::get_sigma_hours_max2() const
+{
+	return schedule_sigma_hours_max2;
 }
 unsigned int Enviroment::get_sigma_hours_limit() const
 {
