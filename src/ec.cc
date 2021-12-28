@@ -10,7 +10,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <iomanip>
-
+//#include <ctime>
 
 #include <fstream>
 
@@ -588,6 +588,11 @@ bool Enviroment::run()
 		{
 			if(history.is_open())
 			{
+				auto t = std::time(nullptr);
+				auto tm = *std::localtime(&t);
+				
+				history  << std::put_time(&tm,"%d/%m/%Y %H:%M:%S");
+				history  << ",";
 				history  << actualIteration;
 				history  << ",";
 				history  << maxPopulation;

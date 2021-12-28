@@ -79,14 +79,12 @@ void Enviroment::init(const std::string& dirproy)
 		directory = dirproy;	
 		data.load(directory);
 		initPopulation = std::pow(data.groups.get_list().size(),2);
-		maxProgenitor = data.groups.get_list().size() * data.groups.get_max_lessons();
+		maxProgenitor = data.groups.get_list().size() * std::pow(data.groups.get_max_lessons(),2);
 		maxPopulation = std::pow(data.groups.get_list().size() * data.groups.get_max_lessons(),2);
 	}
 	else
 	{
-		initPopulation = 50;
-		maxPopulation = 500;
-		maxProgenitor = 100;
+		throw oct::core::Exception("Deve asignar el archivo de proyecto.",__FILE__,__LINE__);
 	}
 	
 	CRITERION = 4;
