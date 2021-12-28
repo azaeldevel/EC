@@ -100,7 +100,7 @@ namespace oct::ec::sche
 		unsigned int get_overlap_max() const;
 		unsigned long get_overlap_max2() const;
 		unsigned int get_cover_max() const;
-		unsigned int get_cover_max2() const;
+		unsigned long get_cover_max2() const;
 		unsigned int get_empty_max() const;
 		unsigned int get_sigma_hours_max() const;
 		unsigned int get_sigma_hours_limit() const;
@@ -135,7 +135,7 @@ namespace oct::ec::sche
 		unsigned int schedule_overlap_max;
 		unsigned long schedule_overlap_max2;
 		unsigned int schedule_cover_max;
-		unsigned int schedule_cover_max2;
+		unsigned long schedule_cover_max2;
 		unsigned int SCHEDULE_EMPTY_MAX;
 		//real SCHEDULE_ERROR;
 		real schedule_sigma_hours_max;

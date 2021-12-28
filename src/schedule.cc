@@ -195,9 +195,9 @@ unsigned int Enviroment::get_cover_max() const
 {
 	return schedule_cover_max;
 }
-unsigned int Enviroment::get_cover_max2() const
+unsigned long Enviroment::get_cover_max2() const
 {
-	return schedule_cover_max;
+	return schedule_cover_max2;
 }
 unsigned int Enviroment::get_empty_max() const
 {

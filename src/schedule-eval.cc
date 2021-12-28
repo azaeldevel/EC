@@ -37,9 +37,9 @@ namespace oct::ec::sche
 		//std::cout << "\tfiteness = " << fitness << "\n";
 		not_empty();//un horarion con 0 horas no es util.
 		//std::cout << "\tfiteness = " << fitness << "\n";
-		//std::cout << "\tfiteness = " << fitness << "\n";
 		
 		signam_hours();
+		//std::cout << "\tfiteness = " << fitness << "\n";
 		
 		//TODO:Evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
 	}
@@ -64,7 +64,7 @@ namespace oct::ec::sche
 				}
 			}
 		}
-		//unsigned long max = 0;
+		
 		if(count >  ((Enviroment&)*env).get_overlap_max()) throw oct::core::Exception("El conteo de horas no deve exceder WEEK_OVERLAP_MAX",__FILE__,__LINE__);
 		//if(count > ((Enviroment&)*env).get_schedule_max_hours()) throw oct::core::Exception("El conteo de horas errones execdio el maximo esperado",__FILE__,__LINE__);
 		if(count == 0) 
@@ -74,14 +74,8 @@ namespace oct::ec::sche
 		}
 		else
 		{			
-			//max = std::pow(((Enviroment&)*env).get_overlap_max(),2);
-			//std::cout << "\toverlap_by_teacher max = " << max << "\n";
-			//std::cout << "\toverlap_by_teacher ((Enviroment&)*env).get_overlap_max() = " << ((Enviroment&)*env).get_overlap_max() << "\n";
-			//std::cout << "\toverlap_by_teacher count 1 = " << count << "\n";
 			count = std::pow(((Enviroment&)*env).get_overlap_max() - count,2);
-			//std::cout << "\toverlap_by_teacher count 2 = " << count << "\n";
 			real f = real(count)/ real(((Enviroment&)*env).get_criterion() * ((Enviroment&)*env).get_overlap_max2());
-			//std::cout << "\toverlap_by_teacher f = " << f << "\n";
 			fitness += f;
 		}
 	}
