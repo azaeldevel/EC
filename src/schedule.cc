@@ -78,9 +78,9 @@ void Enviroment::init(const std::string& dirproy)
 	{
 		directory = dirproy;	
 		data.load(directory);
-		initPopulation = data.groups.get_list().size();
-		maxProgenitor = data.groups.get_list().size() * 3;
-		maxPopulation = data.groups.get_list().size() * data.groups.get_max_lessons() * 3;
+		initPopulation = std::pow(data.groups.get_list().size(),2);
+		maxProgenitor = data.groups.get_list().size() * data.groups.get_max_lessons();
+		maxPopulation = std::pow(data.groups.get_list().size() * data.groups.get_max_lessons(),2);
 	}
 	else
 	{

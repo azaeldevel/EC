@@ -315,8 +315,8 @@ protected:
 
 	unsigned short echolevel;
 	unsigned int echoPrecision;
-	bool logFile;
-	bool logFileHistory;
+	bool logDirectoryFlag;
+	bool logDirectoryHistoryFlag;
 	double sigma;
 	double media;
 

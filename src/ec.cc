@@ -274,7 +274,7 @@ void Enviroment::init()
 	maxIteration = 0;
 	echolevel = 0;
 	echoPrecision = 20;
-	logFile = false;
+	logDirectoryFlag = false;
 	//sigmaReduction = 1.0;
 	minSolutions = 0;
 	stopMinSolutions = false;
@@ -292,7 +292,6 @@ void Enviroment::init()
 	maxProgenitor = 0;
 	initPopulation = 0;
 	echolevel = 0;
-	logFile = false;
 	sigma = 0;
 	media = 0;
 	actualSerie = 0;
@@ -486,8 +485,8 @@ bool Enviroment::run()
 	unsigned short counUndelete = 0;
 	std::ofstream history;
 	//std::cout << "\tEnviroment::run : Step 3\n";
-	logFile = not logDirectory.empty();
-	if(logFile)
+	logDirectoryFlag = not logDirectory.empty();
+	if(logDirectoryFlag)
 	{
 		if(not shell.exists(logDirectory))
         {
@@ -500,8 +499,8 @@ bool Enviroment::run()
 	}
 	else
 	{
-		logFileHistory = not logDirectoryHistory.empty();
-		if(logFileHistory)
+		logDirectoryHistoryFlag = not logDirectoryHistory.empty();
+		if(logDirectoryHistoryFlag)
 		{
 			if(not shell.exists(logDirectoryHistory))
 		    {
@@ -571,7 +570,7 @@ bool Enviroment::run()
 		sigma /= real(size());
 		
 		//std::cout << "\tEnviroment::run - while Step 3\n";
-		if(logFile)
+		if(logDirectoryFlag)
 		{
 			std::string strfn = logDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fn(strfn);
@@ -585,11 +584,33 @@ bool Enviroment::run()
 			fn.flush();
 			fn.close();
 		}
-
+		if(logDirectoryFlag or logDirectoryHistoryFlag)
+		{
+			if(history.is_open())
+			{
+				history  << actualIteration;
+				history  << ",";
+				history  << maxPopulation;
+				history  << ",";
+				history  << maxProgenitor;
+				history  << ",";
+				history  << media;
+				history  << ",";
+				history  << sigma;
+				history  << ",";
+				history  << (size() > 0 ? (*front()).getFitness() : 0);//fitness lider
+				history  << ",";
+				history  << mutableProb;
+				history  << "\n";
+				
+				history.flush();
+			}
+		}
+		
 		ec::ID countBefore = size();
 		selection();
 		//std::cout << "\tEnviroment::run - while Step 4\n";
-		if(logFile)
+		if(logDirectoryFlag)
 		{
 			std::string strSelection = logDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
 			//std::cout << "\t\t" << strSelection << "\n";
@@ -635,46 +656,24 @@ bool Enviroment::run()
 		if(stopMinSolutions and solutions.size() >= minSolutions)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			if(logFile) save(solutions,"solutions.cvs");
+			if(logDirectoryFlag) save(solutions,"solutions.cvs");
 			history.close();
 			return true;
 		}
 		else if (solutions.size() == maxPopulation)//si toda la poblacion es una solucion
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tLa cantidad de solucione es igual a la poblacion.\n";
-			if(logFile) save(solutions,"solutions.cvs");
+			if(logDirectoryFlag) save(solutions,"solutions.cvs");
 			history.close();
 			return true;		
 		}
 
 		//std::cout << "\tEnviroment::run - while Step 8\n";
-		if(logFile or logFileHistory)
-		{
-			if(history.is_open())
-			{
-				history  << actualIteration;
-				history  << ",";
-				history  << maxPopulation;
-				history  << ",";
-				history  << maxProgenitor;
-				history  << ",";
-				history  << media;
-				history  << ",";
-				history  << sigma;
-				history  << ",";
-				history  << (size() > 0 ? (*front()).getFitness() : 0);//fitness lider
-				history  << ",";
-				history  << mutableProb;
-				history  << "\n";
-				
-				history.flush();
-			}
-		}
 		
 		//std::cout << "\tEnviroment::run - while Step 9\n";
 		juncting();				
 		std::ofstream fnChilds;
-		if(logFile)
+		if(logDirectoryFlag)
 		{
 			std::string strChilds = logDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
 			fnChilds.open(strChilds);
@@ -682,20 +681,20 @@ bool Enviroment::run()
 		//std::cout << "\tEnviroment::run - while Step 10\n";
 		
 		std::bernoulli_distribution random_mutation(mutableProb);
-		if(logFile) if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+		if(logDirectoryFlag) if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 			if(random_mutation(rd)) s->mutate();
 			//if(triggerRepeatEnable and triggerRepeatMin > sigma) s->mutate();
 			s->eval();
-			if(logFile)
+			if(logDirectoryFlag)
 			{
 				s->save(fnChilds);
 				fnChilds << "\n";
 			}
 			push_front(s);
 		}
-		if(logFile)
+		if(logDirectoryFlag)
 		{
 			fnChilds.flush();
 			fnChilds.close();
