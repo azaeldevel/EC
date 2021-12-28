@@ -523,7 +523,6 @@ bool Enviroment::run()
 	//bool triggerRepeatEnable = true;
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;	
 	//double triggerJam2 = 1.0e-20;	
-	std::setprecision(echoPrecision);
 	
 	while(true)
 	{
@@ -591,6 +590,7 @@ bool Enviroment::run()
 				auto t = std::time(nullptr);
 				auto tm = *std::localtime(&t);
 				
+				history  << std::setprecision(echoPrecision);
 				history  << std::put_time(&tm,"%d/%m/%Y %H:%M:%S");
 				history  << ",";
 				history  << actualIteration;
