@@ -313,6 +313,7 @@ protected:
 	Population maxProgenitor;
 
 	unsigned short echolevel;
+	unsigned int echoPrecision;
 	bool logFile;
 	double sigma;
 	double media;

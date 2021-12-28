@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
+#include <iomanip>
+
 
 #include <fstream>
 
@@ -29,24 +31,24 @@ bool cmpStrength1(const Single* f,const Single* s)
 }
 double randNumber()
 {
-	std::random_device rd;
-	std::mt19937 gen(rd());
+	//std::random_device rd;
+	//std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> distr(0.0, 1.0);
 
 	return distr(gen);
 }
 double randNumber(double max)
 {
-	std::random_device rd;
-	std::mt19937 gen(rd());
+	//std::random_device rd;
+	//std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> distr(0.0, max);
 
 	return distr(gen);
 }
 double randNumber(double min,double max)
 {
-	std::random_device rd;
-	std::mt19937 gen(rd());
+	//std::random_device rd;
+	//std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> distr(min, max);
 
 	return distr(gen);
@@ -271,6 +273,7 @@ void Enviroment::init()
 	actualIteration = 0;
 	maxIteration = 0;
 	echolevel = 0;
+	echoPrecision = 20;
 	logFile = false;
 	//sigmaReduction = 1.0;
 	minSolutions = 0;
@@ -538,20 +541,19 @@ bool Enviroment::run()
 		sigma = 0.0;
 		for(ec::Single* s : *this)
 		{
-			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
-			real f = s->getFitness();
-			if(f > 1.0) oct::core::Exception("Un individuo a superado el valor maximo de 1",__FILE__,__LINE__);
-			if(f < 0.0) oct::core::Exception("Un individuo no puede tener un fitnes menor a 0.",__FILE__,__LINE__);
-			else media += s->getFitness();
+			//std::cout << "\t" << s->getID() << " Adaptabilidad : " << s->getFitness() << "\n";
+			real fitness = s->getFitness();
+			if(fitness > 1 or fitness < 0) throw oct::core::Exception("El fitness de cada individio deve estar en el intervalo [0,1]",__FILE__,__LINE__);
+			media += s->getFitness();
 			s->deltaAge();
 		}
-		media /= size();
+		media /= real(size());
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
 			sigma += pow(s->getFitness() - media,2);
 		}		
-		sigma /= double(size());
+		sigma /= real(size());
 		
 		//std::cout << "\tEnviroment::run - while Step 3\n";
 		if(logFile)
@@ -601,9 +603,9 @@ bool Enviroment::run()
 		ec::Single* leader = *begin();
 		if(echolevel > 1 and fout != NULL)
 		{
-			std::cout << "\tLider : " << leader->getFitness() << "\n";
-			(*fout) << "\tmedia : " << media << "\n";
-			(*fout) << "\tDesviacion estandar : " << sigma << "\n";
+			std::cout <<std::setprecision(20)<< "\tLider : " << leader->getFitness() << "\n";
+			(*fout) <<std::setprecision(echoPrecision) << "\tmedia : " << media << "\n";
+			(*fout) <<std::setprecision(echoPrecision) << "\tDesviacion estandar : " << sigma << "\n";
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 			//(*fout) << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "\tAtasco(Repeticiones)\n" : "\tNo Atasco(Repeticiones)\n");
 		}

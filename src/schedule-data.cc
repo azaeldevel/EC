@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-
+#include <algorithm>
 
 
 #include "schedule.hh"
@@ -78,6 +78,11 @@ namespace oct::core
 	{
 		(tm&)*this = t;
 	}
+	DataTime::DataTime(const DataTime& dt)
+	{
+		(tm&)*this = (tm&)dt;
+	}
+	
 	const time_t* DataTime::operator =(const time_t* t)
 	{
 		tm* thistm = localtime(t);
@@ -89,11 +94,22 @@ namespace oct::core
 		(tm&)*this = t;
 		return t;
 	}
+	bool DataTime::operator ==(const DataTime& o)const
+	{
+		if(tm_sec != o.tm_sec) return false;
+		else if(tm_min != o.tm_min) return false;
+		else if(tm_hour != o.tm_hour) return false;
+		else if(tm_mday != o.tm_mday) return false;
+		else if(tm_mon != o.tm_mon) return false;
+		else if(tm_year != o.tm_year) return false;
+		
+		return true;
+	}
+	
 	int DataTime::get_week_day()const
 	{
 		return tm_wday;
 	}
-
 	double DataTime::diff(const DataTime& dt)const
 	{
 		time_t tm1,tm2;
@@ -104,7 +120,7 @@ namespace oct::core
 		return difftime(tm2, tm1);		
 	}
 	
-	void DataTime::print(std::ostream& out, const std::string format) const
+	void DataTime::print(std::ostream& out, const std::string& format) const
 	{
 		out << std::put_time(this, format.c_str());
 	}
@@ -114,6 +130,11 @@ namespace oct::core
 		t += s;
 		tm* newt = localtime(&t);
 		operator =(*newt);
+	}
+	
+	void DataTime::read(const std::string& time, const std::string& format)
+	{
+		strptime(time.c_str(),format.c_str(),this);
 	}
 }
 
@@ -422,10 +443,50 @@ namespace oct::ec::sche
 		
 		return check_codes::PASS;
 	}
+	const Day::Block* Day::random_block() const
+	{
+		if(blocks.size() == 0) return NULL;
+		else if(blocks.size() == 1) return &blocks.front();
+				
+		std::uniform_int_distribution<> distrib(0, blocks.size());		
+		Blocks::const_iterator it = blocks.begin();
+		std::advance(it,distrib(gen));
+		if(it != blocks.end()) &*it;
 
-
-
-
+		return NULL;
+	}
+	void Day::get_hours_around(const core::DataTime& hour, unsigned int count,Day::Block& block)const
+	{
+		if(count == 0) return;
+		else if(count == 1) 
+		{
+			get_hours_around(hour,block);
+			return;
+		}
+		
+		const_iterator it = std::find(begin(),end(),hour);
+		if(it == end()) return;
+		for(unsigned int i = 0; i < count; i++)
+		{
+			
+		}
+	}
+	void Day::get_hours_around(const core::DataTime& hour,Day::Block& block)const
+	{
+		const_iterator it = std::find(begin(),end(),hour);
+		if(it != end())
+		{
+			block.push_back(&*it);
+		}
+		else
+		{
+			return;
+		}
+	}
+	bool Day::is_continue(const core::DataTime& first, const core::DataTime& second, const Data&)const
+	{
+		
+	}
 
 	
 	WeekOptions::WeekOptions() : std::vector<DaysOptions>(WeekHours::WEEK_SIZE) 
@@ -435,8 +496,6 @@ namespace oct::ec::sche
 	
 	void WeekOptions::random(WeekHours& week)
 	{
-		std::mt19937 gen(rd());
-    			
 		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE; day_actual++)
 		{
 			if(at(day_actual).size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
@@ -464,7 +523,10 @@ namespace oct::ec::sche
 
 		return totals;
 	}
-
+	/*void WeekOptions::get_day(unsigned int day,unsigned int hours,const core::DataTime&,Day& d)const
+	{
+		
+	}*/
 	
 	
 	
@@ -487,9 +549,9 @@ namespace oct::ec::sche
 	unsigned int WeekHours::days_disp() const
 	{
 		unsigned int count = 0;
-		for(unsigned int day = 0; day < size(); day++)
+		for(const Day& day : *this)
 		{
-			if(at(day).haveDisponible()) count++;
+			if(day.size() > 0) count++;
 		}
 		
 		return count;
@@ -600,10 +662,52 @@ namespace oct::ec::sche
 			at(i).print_intevals_csv(out,data);
 		}
 	}
-
-
-
-
+	void WeekHours::clear_days()
+	{
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			at(i).clear();
+		}
+	}
+	/*void WeekHours::cover(const Subject& subject, WeekHours& week)const
+	{
+		const Day* day = random_day_disp();
+		if(day == NULL) return; //No hay dias disponibles
+		
+		const Day::Block* block = day->random_block();
+		if(block == NULL) return;//No hay horas disponibles
+		
+		const core::DataTime* hour = *random(*block);
+				
+		unsigned int disp = days_disp();
+		unsigned int hours_per_day = subject.get_time() / disp;
+		unsigned int hours_hat = subject.get_time() - (hours_per_day * disp);
+				
+		for(unsigned int i = 0; i < disp; i++)
+		{
+			if(at(i).size() > 0)
+			{
+				Day::Block block;
+				day->get_hours_around(*hour,hours_per_day,block);
+				if(block.size() > 0) week[i].add(block);
+				block.clear();
+			}
+		}					
+	}*/
+	const Day* WeekHours::random_day_disp()const
+	{
+		if(days_disp() == 0) return NULL;
+		
+		const Day* day = NULL;
+		std::uniform_int_distribution<> distrib(0, 6);
+		do
+		{
+			day = &at(distrib(gen));
+		}
+		while(day->size() > 0);
+		
+		return day;
+	}
 
 
 	
@@ -771,7 +875,20 @@ namespace oct::ec::sche
 	{
 		return format;
 	}
-
+	void Configuration::add(const core::DataTime& dt, unsigned int hours, core::DataTime& result)
+	{
+		tm tm_dt = dt;
+		time_t dt_t = mktime(&tm_dt);
+		dt_t += hours * get_time_per_hour() * 60;
+		result = *localtime(&dt_t);
+	}
+	void Configuration::rest(const core::DataTime& dt, unsigned int hours, core::DataTime& result)
+	{
+		tm tm_dt = dt;
+		time_t dt_t = mktime(&tm_dt);
+		dt_t -= hours * get_time_per_hour() * 60;
+		result = *localtime(&dt_t);
+	}
 	
 	
 	
@@ -1552,7 +1669,7 @@ namespace oct::ec::sche
 						//std::cout << "comparando horaio " << s->get_name() << " - " << g.room->get_name() << " horaios\n";
 						week.inters(g.room->get_week(),row->teacher->get_week());
 						hbrs.disp_hours += week.count_hours();
-						week.clear();
+						week.clear_days();
 					}
 					//std::cout << "inserting  " << s->get_name() << " - " << g.room->get_name() << ".\n";
 					hbrs_list.insert({key,hbrs});				
@@ -1567,7 +1684,7 @@ namespace oct::ec::sche
 					{
 						week.inters(g.room->get_week(),row->teacher->get_week());
 						hbrs.disp_hours += week.count_hours();
-						week.clear();
+						week.clear_days();
 					}
 				}
 			}

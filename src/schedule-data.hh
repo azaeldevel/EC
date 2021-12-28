@@ -16,14 +16,20 @@ namespace oct::core
 	public:
 		DataTime();
 		DataTime(const tm&);
+		DataTime(const DataTime&);
+
 		const time_t* operator =(const time_t*);
 		const tm& operator =(const tm&);
+		bool operator ==(const DataTime&)const;
+
 		int get_week_day()const;
 		double diff(const DataTime& dt)const;
 
 		void addSeconds(time_t);
 
-		void print(std::ostream&, const std::string) const;
+		void print(std::ostream&, const std::string&) const;
+
+		void read(const std::string& time, const std::string& format);
 	};
 
 	class Person
@@ -55,9 +61,9 @@ namespace oct::ec::sche
 	{
 		if(ls.size() > 1)
 		{
-			std::uniform_int_distribution<> dis(0, ls.size() - 1);
+			std::uniform_int_distribution<> distrib(0, ls.size() - 1);
 			typename std::list<T>::const_iterator it = ls.begin();
-			std::advance(it,dis(gen));				
+			std::advance(it,distrib(gen));				
 			return it;
 		}
 		else if(ls.size() == 1)
@@ -72,9 +78,9 @@ namespace oct::ec::sche
 	{
 		if(ls.size() > 1)
 		{
-			std::uniform_int_distribution<> dis(0, ls.size() - 1);
+			std::uniform_int_distribution<> distrib(0, ls.size() - 1);
 			typename std::vector<T>::const_iterator it = ls.begin();
-			std::advance(it,dis(gen));				
+			std::advance(it,distrib(gen));				
 			return it;
 		}
 		else if(ls.size() == 1)
@@ -138,6 +144,20 @@ namespace oct::ec::sche
 		*\return true si esta ordenada y los bloques estan formados correctamente, false en otro caso
 		*/
 		check_codes check()const;
+
+		const Block* random_block() const;
+
+		/**
+		*\brief Agrega al bloques las horas solicitas, lo mas cercanas possibles a la hora indicada
+		*/
+		void get_hours_around(const core::DataTime&, unsigned int count,Block& )const;
+		/**
+		*\brief Agrega al bloques 1 hora, lo mas cercanas possibles a la hora indicada
+		*/
+		void get_hours_around(const core::DataTime&,Block& )const;
+
+		bool is_continue(const core::DataTime& first, const core::DataTime& second, const Data&)const;
+
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 		std::list<core::DataTime>::iterator blocking(std::list<core::DataTime>::iterator begin);
@@ -167,8 +187,9 @@ namespace oct::ec::sche
 		*\brief Genera una semana al azar en base las opciones disponibles en el objeto
 		**/
 		unsigned int count()const;
+		void get_day(unsigned int day,unsigned int hours,const core::DataTime& at,Day& result)const;
 	private:
-		std::random_device rd;
+		//std::random_device rd;
 	};
 	class WeekHours : public std::vector<Day>
 	{
@@ -206,10 +227,24 @@ namespace oct::ec::sche
 		check_codes check()const;
 
 		bool empty()const;
+		
 		/**
 		*\brief Cuenta las horas que hay en esta semana
 		**/
 		unsigned int count_hours()const;
+
+		void clear_days();
+
+		/**
+		*\brief Genera un horario aleatorio para cubir la materia indicada, con el horario disponible actaul
+		**/
+		void cover(const Subject&, WeekHours&)const;
+
+		/**
+		*\brief Seleciona un dia al azar
+		**/
+		const Day* random_day_disp()const;
+
 	private:
 		void combns(std::list<WeekHours>&,const WeekOptions&)const;
 	};
@@ -272,6 +307,21 @@ namespace oct::ec::sche
 		FormatDT get_format_dt()const;
 		int get_begin_day() const;
 
+		/**
+		*\brief Agrega a la hora indicada, la cantidad de horas indicas y coloca el resultado el variable de retorno
+		*\param dt hora a base, operando para sumar
+		*\param hours cantiad de horas a agregar a dt
+		*\param result variable de retorno, donde se coloca el resultado de la operacion
+		*/
+		void add(const core::DataTime& dt, unsigned int hours, core::DataTime& result);
+
+		/**
+		*\brief Resta a la hora indicada, la cantidad de horas indicas y coloca el resultado el variable de retorno
+		*\param dt hora a base, operando para restar
+		*\param hours cantiad de horas a restar a dt
+		*\param result variable de retorno, donde se coloca el resultado de la operacion
+		*/
+		void rest(const core::DataTime& dt, unsigned int hours, core::DataTime& result);
 	private:
 		SchemaWeek schema_week;
 		unsigned int time_per_hour;//en minutes por hora

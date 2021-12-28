@@ -28,7 +28,12 @@ namespace oct::ec::sche
 		/**
 		*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
 		*/
-		virtual void eval();		
+		virtual void eval();
+
+		real eval(const ClassRoom&);
+
+		real eval(const Lesson&);
+		
 		/**
 		*\brief Crea un arcivo CSV con los datos relevantes del individuo
 		*/
@@ -48,17 +53,9 @@ namespace oct::ec::sche
 
 		static const unsigned int WEEK_HOURS;
 		static const unsigned int WEEK_HOURS2;
+		static const unsigned int WEEK_HOURS3;
 
 	private:
-		/**
-		*\brief Convierte la hotras incorrcta en el valor fitness
-		*\param failHours es la cantidad de horas fallidas
-		*/
-		void convertGamma(unsigned int failHours);
-		/**
-		*\brief En los grupos cuya cantidad de horas varia repecto al maximo, retorma
-		*/
-		unsigned int match(unsigned int,const ClassRoom&);
 		
 		/**
 		*\brief Retorna la cantiad de traslapes que tiene los maestros
@@ -70,9 +67,10 @@ namespace oct::ec::sche
 		void cover();
 
 		void not_empty();
+
 	private:
-		//Schedule schedule;
-		//const Data& data;
+
+
 	};
 
 	/**
@@ -93,11 +91,17 @@ namespace oct::ec::sche
 		
 		~Enviroment();
 		
-		double getGamma() const;
-		unsigned int getGammaCriterion()const;
-		double getGammaPortion() const;
-
 		const Data& get_data()const;
+
+		unsigned int get_criterion()const;
+		unsigned int get_overlap_max() const;
+		unsigned int get_cover_max() const;
+		unsigned int get_empty_max() const;
+
+		real get_gamma() const;
+		double get_portion() const;
+		unsigned int get_schedule_max_hours() const;
+		
 
 		/**
 		*\brief Inicia el proceso de apareo, sobecragada devido a que deve distigir entre grupo para realizar el apareoa
@@ -109,20 +113,22 @@ namespace oct::ec::sche
 		*/
 		virtual void initial();
 
+		void select_times(Lesson&,const WeekOptions&);
+
 		//unsigned int counter()const;
 
 	private:
 		std::string directory;
 		Data data;	
 		
-		/**
-		*\brief valor estadistico de cada variable.
-		*/
-		double gamma;
-
-		unsigned int gammaCriterion;
-
-		real gammaPortion;
+		unsigned int CRITERION;
+		real PORTION;
+		real GAMMA;
+		unsigned int SCHEDULE_MAX_HOURS;
+		unsigned int SCHEDULE_OVERLAP_MAX;
+		unsigned int SCHEDULE_COVER_MAX;
+		unsigned int SCHEDULE_EMPTY_MAX;
+		real SCHEDULE_ERROR;
 	};
 
 }

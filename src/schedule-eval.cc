@@ -7,6 +7,11 @@
 namespace oct::ec::sche
 {
 	
+	const unsigned int Single::WEEK_HOURS = 168;
+	const unsigned int Single::WEEK_HOURS2 = std::pow(Single::WEEK_HOURS,2);
+	const unsigned int Single::WEEK_HOURS3 = std::pow(Single::WEEK_HOURS,3);
+
+	
 	/**
 	** Criterios:
 	** 		El mismo maestro no puede tener materias diferentes a la misma hora :
@@ -25,64 +30,20 @@ namespace oct::ec::sche
 		fitness = 0;
 		
 		//std::cout << "\tSingle::eval : Step 1\n";
-		//std::cout << "\tgamma = " << env->getGamma() << "\n";
-		
+		//std::cout << "\tgamma = " << env->getGamma() << "\n";		
 		overlap_by_teacher();
-
-		cover();
-		
+		//std::cout << "\tfiteness = " << fitness << "\n";
+		cover();		
+		//std::cout << "\tfiteness = " << fitness << "\n";
 		not_empty();//un horarion con 0 horas no es util.
+		//std::cout << "\tfiteness = " << fitness << "\n";
 		//std::cout << "\tfiteness = " << fitness << "\n";
 		
 		
 		//TODO:Evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
 	}
-	
-	//
-	unsigned int Single::match(unsigned int countGroup,const ClassRoom& classroom)
-	{
-		unsigned int diff = ((Enviroment*)env)->get_data().groups.get_max_lessons() - classroom.size();
-		if(diff > 0 and countGroup > 0)	return countGroup + (diff * WEEK_HOURS);
-		return 0;
-	}
-	void Single::convertGamma(unsigned int count)
-	{
-		unsigned int gamma = std::pow(count,2);
-		fitness += ((Enviroment*)env)->getGammaPortion() - (real(gamma) * ((Enviroment*)env)->getGamma());
-	}
-	/*void Single::overlap_by_teacher()
-	{
-		unsigned int count = 0;
-		unsigned int countClass = 0;
-		WeekHours week_actual;
-		for(const ClassRoom& classroom : *this)
-		{
-			count = 0;
-			for(unsigned int i = 0; i < classroom.size() - 1; i++)
-			{
-				if(classroom[i].week.count_hours() == 0) 
-				{
-					continue;
-				}				
-				for(unsigned int j = i + 1; j < classroom.size(); j++)
-				{
-					if(classroom[j].week.count_hours() == 0) 
-					{
-						continue;
-					}
-					else
-					{
-						week_actual.inters(classroom[i].week,classroom[j].week);
-						count += week_actual.count_hours();
-						week_actual.clear();
-					}
-				}
-			}
-			countClass += match(count,classroom);
-		}
-		
-		convertGamma(countClass);
-	}*/
+
+	//se puede interseta un maximo de WEEK_HOURS/2
 	void Single::overlap_by_teacher()
 	{
 		unsigned int count = 0;
@@ -97,12 +58,23 @@ namespace oct::ec::sche
 					{
 						week_actual.inters(at(i)[j].week,at(k)[l].week);
 						count += week_actual.count_hours();
-						week_actual.clear();
+						week_actual.clear_days();
 					}
 				}
 			}
 		}
-		convertGamma(count);
+		if(count >  ((Enviroment&)*env).get_overlap_max()) throw oct::core::Exception("El conteo de horas no deve exceder WEEK_OVERLAP_MAX",__FILE__,__LINE__);
+		//if(count > ((Enviroment&)*env).get_schedule_max_hours()) throw oct::core::Exception("El conteo de horas errones execdio el maximo esperado",__FILE__,__LINE__);
+		if(count == 0) 
+		{
+			std::cout << "\toverlap_by_teacher count = " << count << "\n";
+			fitness += 1.0/((Enviroment&)*env).get_criterion();
+		}
+		else
+		{
+			count =  ((Enviroment&)*env).get_overlap_max() - count;
+			fitness += real(count)/ real(((Enviroment&)*env).get_criterion() * ((Enviroment&)*env).get_overlap_max());
+		}
 	}
 			
 	//Deve dar una mejor califacion al horaio que se acerca mas 
@@ -124,9 +96,19 @@ namespace oct::ec::sche
 					}
 				}
 			}
-			countClass += match(count,classroom) + count;
 		}
-		convertGamma(countClass);
+		
+		if(count >  ((Enviroment&)*env).get_cover_max()) throw oct::core::Exception("El conteo de horas no deve exceder SCHEDULE_COVER_MAX",__FILE__,__LINE__);
+		if(count == 0)
+		{
+			std::cout << "\tcover count = " << count << "\n";
+			fitness += 1.0/((Enviroment&)*env).get_criterion();
+		}
+		else
+		{
+			count =  ((Enviroment&)*env).get_cover_max() - count;
+			fitness += real(count)/ real(((Enviroment&)*env).get_criterion() * ((Enviroment&)*env).get_cover_max());
+		}
 	}
 	void Single::not_empty()
 	{
@@ -141,7 +123,20 @@ namespace oct::ec::sche
 				}
 			}
 		}
-		convertGamma(count);
+		
+		//
+		if(count >  ((Enviroment&)*env).get_empty_max()) throw oct::core::Exception("El conteo de horas no deve exceder SCHEDULE_EMPTY_MAX",__FILE__,__LINE__);
+		if(count == 0) 
+		{
+			std::cout << "\tnot empty count = " << count << "\n";
+			fitness += 1.0/((Enviroment&)*env).get_criterion();
+		}
+		else
+		{
+			count =  ((Enviroment&)*env).get_empty_max() - count;
+			fitness += real(count)/ real(((Enviroment&)*env).get_criterion() * ((Enviroment&)*env).get_empty_max());
+		}
 	}
+
 }
 

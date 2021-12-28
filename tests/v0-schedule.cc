@@ -746,26 +746,79 @@ void schedule_devel()
 		std::cout << "not sche_teachers.empty() = " << not sche_teachers.empty() << "\n";
 		CU_ASSERT(false);		
 	}
-	/*for(const Lesson* lesson : sche_teachers)
+	/*
+	for(const Lesson* lesson : sche_teachers)
 	{
 		std::cout << lesson->teacher->get_name() << " - " << lesson->room->get_name() << "\n";
-	}*/
-	
-	
+	}
+	*/
 	/*const std::map<std::string, Teachers_Subjects::HBS>& ts1_list = data.teachers_subjects.get_hbs();
 	for(auto const& hbs : ts1_list)
 	{
 		std::cout << hbs.first << "," << hbs.second.req_hours << "," << hbs.second.disp_hours << "\n";		
-	}*/
-	
-	/*for(const Group& group : data.groups.get_list())
+	}
+	*/	
+	/*
+	for(const Group& group : data.groups.get_list())
 	{
 		std::cout << group.room->get_name() << "\n";
-	}*/
+	}
+	*/
 	const std::map<Groups::key_hbs, Groups::HBRS>& hbrs_list = data.groups.get_hbrs();
 	for(auto const& hbrs : hbrs_list)
 	{
-		std::cout << hbrs.second.room->get_name() << " - " << hbrs.second.subject->get_name() << " : " << hbrs.second.disp_hours << "\n";
+		//std::cout << hbrs.second.room->get_name() << " - " << hbrs.second.subject->get_name() << " : " << hbrs.second.disp_hours << "\n";
+	}
+	
+	oct::core::DataTime dt1[10];
+	for(unsigned int i = 0; i < 10; i++)
+	{
+		std::string str_time = "Tue ";
+		str_time += std::to_string(i + 5) + ":00";
+		dt1[i].read(str_time,"%a %H:%M");
+	}
+	/*for(unsigned int i = 0; i < 10; i++)
+	{
+		std::cout << "Hora : ";
+		dt1[i].print(std::cout,"%a %H:%M"); 
+		std::cout << "\n ";
+	}*/
+	for(unsigned int i = 0; i < 10; i++)
+	{
+		if(dt1[i].tm_hour == i + 5) 
+		{
+			CU_ASSERT(true);
+		}
+		else 
+		{
+			std::cout << "dt1[i].tm_hour = " << dt1[i].tm_hour << "\n";
+			CU_ASSERT(false);		
+		}
+	}
+	
+	oct::core::DataTime dt2[10];
+	dt2[0].read("Tue 6:35","%a %H:%M");
+	for(unsigned int i = 0; i < 10; i++)
+	{
+		data.config.add(dt2[0],i,dt2[i]);
+	}
+	/*for(unsigned int i = 0; i < 10; i++)
+	{
+		std::cout << "Hora : ";
+		dt2[i].print(std::cout,"%a %H:%M"); 
+		std::cout << "\n ";
+	}*/
+	for(unsigned int i = 0; i < 10; i++)
+	{
+		if(dt2[i].tm_hour == i + 6 and dt2[i].tm_min == 35) 
+		{
+			CU_ASSERT(true);
+		}
+		else 
+		{
+			std::cout << "dt1[i].tm_hour = " << dt1[i].tm_hour << "\n";
+			CU_ASSERT(false);		
+		}
 	}
 }
 
