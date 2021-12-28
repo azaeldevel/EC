@@ -30,9 +30,6 @@ namespace oct::ec::sche
 		*/
 		virtual void eval();
 
-		real eval(const ClassRoom&);
-
-		real eval(const Lesson&);
 		
 		/**
 		*\brief Crea un arcivo CSV con los datos relevantes del individuo
@@ -68,6 +65,12 @@ namespace oct::ec::sche
 
 		void not_empty();
 
+		/**
+		*\brief Asegura que las horas selecionas este dentro de un rango de desviacion esandar asignado
+		*/
+		void signam_hours();
+		real signam_hours(const ClassRoom&);
+		real signam_hours(const Lesson&);
 	private:
 
 
@@ -87,7 +90,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Inicia las variables
 		*/
-		void init();
+		void init(const std::string&);
 		
 		~Enviroment();
 		
@@ -95,12 +98,16 @@ namespace oct::ec::sche
 
 		unsigned int get_criterion()const;
 		unsigned int get_overlap_max() const;
+		unsigned long get_overlap_max2() const;
 		unsigned int get_cover_max() const;
+		unsigned int get_cover_max2() const;
 		unsigned int get_empty_max() const;
+		unsigned int get_sigma_hours_max() const;
+		unsigned int get_sigma_hours_limit() const;
 
-		real get_gamma() const;
-		double get_portion() const;
-		unsigned int get_schedule_max_hours() const;
+		//real get_gamma() const;
+		//double get_portion() const;
+		//unsigned int get_schedule_max_hours() const;
 		
 
 		/**
@@ -122,13 +129,17 @@ namespace oct::ec::sche
 		Data data;	
 		
 		unsigned int CRITERION;
-		real PORTION;
-		real GAMMA;
-		unsigned int SCHEDULE_MAX_HOURS;
-		unsigned int SCHEDULE_OVERLAP_MAX;
-		unsigned int SCHEDULE_COVER_MAX;
+		//real PORTION;
+		//real GAMMA;
+		//unsigned int schedule_max_hours;
+		unsigned int schedule_overlap_max;
+		unsigned long schedule_overlap_max2;
+		unsigned int schedule_cover_max;
+		unsigned int schedule_cover_max2;
 		unsigned int SCHEDULE_EMPTY_MAX;
-		real SCHEDULE_ERROR;
+		//real SCHEDULE_ERROR;
+		real schedule_sigma_hours_max;
+		real schedule_sigma_hours_limit;
 	};
 
 }

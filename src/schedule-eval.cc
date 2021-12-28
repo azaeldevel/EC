@@ -39,6 +39,7 @@ namespace oct::ec::sche
 		//std::cout << "\tfiteness = " << fitness << "\n";
 		//std::cout << "\tfiteness = " << fitness << "\n";
 		
+		signam_hours();
 		
 		//TODO:Evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
 	}
@@ -63,6 +64,7 @@ namespace oct::ec::sche
 				}
 			}
 		}
+		//unsigned long max = 0;
 		if(count >  ((Enviroment&)*env).get_overlap_max()) throw oct::core::Exception("El conteo de horas no deve exceder WEEK_OVERLAP_MAX",__FILE__,__LINE__);
 		//if(count > ((Enviroment&)*env).get_schedule_max_hours()) throw oct::core::Exception("El conteo de horas errones execdio el maximo esperado",__FILE__,__LINE__);
 		if(count == 0) 
@@ -71,9 +73,16 @@ namespace oct::ec::sche
 			fitness += 1.0/((Enviroment&)*env).get_criterion();
 		}
 		else
-		{
-			count =  ((Enviroment&)*env).get_overlap_max() - count;
-			fitness += real(count)/ real(((Enviroment&)*env).get_criterion() * ((Enviroment&)*env).get_overlap_max());
+		{			
+			//max = std::pow(((Enviroment&)*env).get_overlap_max(),2);
+			//std::cout << "\toverlap_by_teacher max = " << max << "\n";
+			//std::cout << "\toverlap_by_teacher ((Enviroment&)*env).get_overlap_max() = " << ((Enviroment&)*env).get_overlap_max() << "\n";
+			//std::cout << "\toverlap_by_teacher count 1 = " << count << "\n";
+			count = std::pow(((Enviroment&)*env).get_overlap_max() - count,2);
+			//std::cout << "\toverlap_by_teacher count 2 = " << count << "\n";
+			real f = real(count)/ real(((Enviroment&)*env).get_criterion() * ((Enviroment&)*env).get_overlap_max2());
+			//std::cout << "\toverlap_by_teacher f = " << f << "\n";
+			fitness += f;
 		}
 	}
 			
@@ -106,8 +115,8 @@ namespace oct::ec::sche
 		}
 		else
 		{
-			count =  ((Enviroment&)*env).get_cover_max() - count;
-			fitness += real(count)/ real(((Enviroment&)*env).get_criterion() * ((Enviroment&)*env).get_cover_max());
+			count =  std::pow(((Enviroment&)*env).get_cover_max() - count,2);
+			fitness += real(count)/ real(((Enviroment&)*env).get_criterion() * ((Enviroment&)*env).get_cover_max2());
 		}
 	}
 	void Single::not_empty()
@@ -128,7 +137,7 @@ namespace oct::ec::sche
 		if(count >  ((Enviroment&)*env).get_empty_max()) throw oct::core::Exception("El conteo de horas no deve exceder SCHEDULE_EMPTY_MAX",__FILE__,__LINE__);
 		if(count == 0) 
 		{
-			std::cout << "\tnot empty count = " << count << "\n";
+			//std::cout << "\tnot empty count = " << count << "\n";
 			fitness += 1.0/((Enviroment&)*env).get_criterion();
 		}
 		else
@@ -137,6 +146,70 @@ namespace oct::ec::sche
 			fitness += real(count)/ real(((Enviroment&)*env).get_criterion() * ((Enviroment&)*env).get_empty_max());
 		}
 	}
-
+	
+	void Single::signam_hours()
+	{
+		real f = 0;
+		for(ClassRoom cr : *this)
+		{
+			f += signam_hours(cr);
+		}
+		f /= real(size());
+		//std::cout << "\tsignam_hours = " << f << "\n";
+		if(((Enviroment&)*env).get_sigma_hours_limit() > f)
+		{
+			std::cout << "\tsignam_hours = " << f << "\n";
+			fitness += 1.0/((Enviroment&)*env).get_criterion();
+			return;
+		}
+		else
+		{
+			f = (((Enviroment&)*env).get_sigma_hours_max() - f) / ((Enviroment&)*env).get_sigma_hours_max();
+			f /= ((Enviroment&)*env).get_criterion();
+			fitness += f;
+			//std::cout << "\tf = " << f << "\n";
+			return;
+		}
+	}
+	real Single::signam_hours(const ClassRoom& cr)
+	{
+		real f = 0;
+		for(Lesson l : cr)
+		{
+			f += signam_hours(l);
+		}		
+		f /= real(cr.size());
+		//std::cout << "\t\tsignam_hours classroom " << f << "\n";
+		return f;
+	}
+	real Single::signam_hours(const Lesson& l)
+	{
+		real mean = 0;
+		unsigned int count = 0;
+		for(const Day& day : l.week)
+		{
+			for(const tm& t: day)
+			{
+				mean += real(t.tm_hour);
+				count++;
+			}
+		}
+		if(count == 0) return 0.0;
+		mean /= real(count);
+		//std::cout << "\t\tsignam_hours mean " << mean << "\n";
+		
+		real sigma = 0;
+		for(const Day& day : l.week)
+		{
+			for(const tm& t: day)
+			{
+				sigma += std::pow(mean - real(t.tm_hour),2.0);
+			}
+		}
+		sigma /= real(count);
+		
+		//std::cout << "\t\tsignam_hours lesson " << sigma << "\n";
+		return sigma;
+	}
 }
 

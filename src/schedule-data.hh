@@ -156,7 +156,7 @@ namespace oct::ec::sche
 		*/
 		void get_hours_around(const core::DataTime&,Block& )const;
 
-		bool is_continue(const core::DataTime& first, const core::DataTime& second, const Data&)const;
+		static bool is_continue(const core::DataTime& first, const core::DataTime& second, const Data&);
 
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
@@ -187,7 +187,10 @@ namespace oct::ec::sche
 		*\brief Genera una semana al azar en base las opciones disponibles en el objeto
 		**/
 		unsigned int count()const;
-		void get_day(unsigned int day,unsigned int hours,const core::DataTime& at,Day& result)const;
+		/**
+		*\brief Optiene para el dia numero 'day' la canitad de 'hours' en la hora 'base' si encuentra coloca el resultado en 'result' y retorna true
+		**/
+		bool get_day(unsigned int day,unsigned int hours,const core::DataTime& at,Day& result)const;
 	private:
 		//std::random_device rd;
 	};

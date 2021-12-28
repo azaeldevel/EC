@@ -498,7 +498,21 @@ bool Enviroment::run()
 		std::string strhistory = logDirectory + "/historial.csv";
 		history.open(strhistory);
 	}
-
+	else
+	{
+		logFileHistory = not logDirectoryHistory.empty();
+		if(logFileHistory)
+		{
+			if(not shell.exists(logDirectoryHistory))
+		    {
+		        std::string msg = "No existe el directorio de logs '";
+		        msg += logDirectory + "'";
+		        throw core::Exception(msg,__FILE__,__LINE__);
+		    }
+			std::string strhistory = logDirectoryHistory + "/historial.csv";
+			history.open(strhistory);
+		}
+	}
 	//std::cout << "\tStep 4\n";
 
 	ID oldleaderID = 0;
@@ -510,6 +524,7 @@ bool Enviroment::run()
 	//bool triggerRepeatEnable = true;
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;	
 	//double triggerJam2 = 1.0e-20;	
+	std::setprecision(echoPrecision);
 	
 	while(true)
 	{
@@ -633,25 +648,26 @@ bool Enviroment::run()
 		}
 
 		//std::cout << "\tEnviroment::run - while Step 8\n";
-		if(logFile)
+		if(logFile or logFileHistory)
 		{
 			if(history.is_open())
 			{
 				history  << actualIteration;
 				history  << ",";
-				history  << size();
+				history  << maxPopulation;
+				history  << ",";
+				history  << maxProgenitor;
 				history  << ",";
 				history  << media;
 				history  << ",";
 				history  << sigma;
 				history  << ",";
-				history  << mutableProb;
+				history  << (size() > 0 ? (*front()).getFitness() : 0);//fitness lider
 				history  << ",";
 				history  << mutableProb;
-				//history  << ",";
-				//history  << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "Atasco(Repeticiones)" : "No Atasco(Repeticiones)");
 				history  << "\n";
-				history .flush();
+				
+				history.flush();
 			}
 		}
 		

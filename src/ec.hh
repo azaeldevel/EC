@@ -305,6 +305,7 @@ private:
 
 protected:
 	std::string logDirectory;
+	std::string logDirectoryHistory;
 	std::string basedir;
 	Population initPopulation;
 	Population maxPopulation;
@@ -315,6 +316,7 @@ protected:
 	unsigned short echolevel;
 	unsigned int echoPrecision;
 	bool logFile;
+	bool logFileHistory;
 	double sigma;
 	double media;
 

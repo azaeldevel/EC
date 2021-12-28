@@ -60,53 +60,58 @@ namespace oct::ec::sche
 	
 
 
-Enviroment::Enviroment(const std::string& log,const std::string& dir)
+Enviroment::Enviroment(const std::string& log,const std::string& dirproy)
 {
-	init();
-		
-	logDirectory = log;
-	directory = dir;	
-	data.load(directory);
+	init(dirproy);
 	
-	if(not shell.exists(logDirectory)) 
-	{
-		shell.mkdir(logDirectory);
-		if(not shell.exists(logDirectory))
-		{
-			std::string msg = "El directorio '";
-			msg += logDirectory + "' no existe.";
-			throw oct::core::Exception(msg,__FILE__,__LINE__);
-		}
-	}
-	
-	//std::cout << "\tgamma_factors = " << gamma_factors << "\n";
-	//std::cout << "\tdata.groups.get_list().size() = " << data.groups.get_list().size() << "\n";
-	//std::cout << "\tgamma = " << gamma << "\n";
-	//if(GAMMA < epsilon) throw oct::core::Exception("gamma < epsilon",__FILE__,__LINE__);
-	CRITERION = 3;
-	SCHEDULE_ERROR = 0;
-	SCHEDULE_OVERLAP_MAX = data.groups.get_list().size() * data.groups.get_max_lessons() * std::pow(Single::WEEK_HOURS/2,2);
-	SCHEDULE_COVER_MAX = data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS - 7);
-	SCHEDULE_EMPTY_MAX = data.groups.get_list().size() * data.groups.get_max_lessons() * Single::WEEK_HOURS;
-	for(unsigned int i = 0; i < CRITERION; i++)
-	{
-		SCHEDULE_ERROR += 1.0/real(CRITERION);
-	}
-	SCHEDULE_ERROR = 1.0 - SCHEDULE_ERROR;
-	PORTION = 1.0/real(CRITERION);
-	SCHEDULE_MAX_HOURS = data.groups.get_list().size() * data.groups.get_max_lessons() * Single::WEEK_HOURS2;
-	GAMMA = 1.0/real(SCHEDULE_MAX_HOURS * CRITERION);
-	//std::cout << "\tSCHEDULE_ERROR = " <<std::setprecision(echoPrecision) << SCHEDULE_ERROR << "\n";
+	logDirectoryHistory = log;	
 }
 Enviroment::~Enviroment()
 {
-	init();
+	init("");
 }
-void Enviroment::init()
+void Enviroment::init(const std::string& dirproy)
 {
-	initPopulation = 1000;
-	maxPopulation = initPopulation;
-	maxProgenitor = 100;
+	mutableProb = 0.05;
+	
+	if(not dirproy.empty())
+	{
+		directory = dirproy;	
+		data.load(directory);
+		initPopulation = data.groups.get_list().size();
+		maxProgenitor = data.groups.get_list().size() * 3;
+		maxPopulation = data.groups.get_list().size() * data.groups.get_max_lessons() * 3;
+	}
+	else
+	{
+		initPopulation = 50;
+		maxPopulation = 500;
+		maxProgenitor = 100;
+	}
+	
+	CRITERION = 4;
+	//SCHEDULE_ERROR = 0;
+	schedule_overlap_max = data.groups.get_list().size() * data.groups.get_max_lessons() * std::pow(Single::WEEK_HOURS/2,2);
+	schedule_overlap_max2 = std::pow(schedule_overlap_max,2);
+	schedule_cover_max = data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS - 7);
+	schedule_cover_max2 = std::pow(schedule_cover_max,2);
+	SCHEDULE_EMPTY_MAX = data.groups.get_list().size() * data.groups.get_max_lessons() * Single::WEEK_HOURS;
+	schedule_sigma_hours_limit = 0.01;
+	//Se asumen 4 horas en 0 y 3 en 24
+	real mean = real(24 * 3) / real(7);
+	real sigma = ((3.0 * std::pow(24.0 - mean,2.0)) + (4.0 * std::pow(mean,2.0)));
+	sigma /= 7.0;
+	schedule_sigma_hours_max = sigma;
+	
+	/*for(unsigned int i = 0; i < CRITERION; i++)
+	{
+		SCHEDULE_ERROR += 1.0/real(CRITERION);
+	}*/
+	//SCHEDULE_ERROR = 1.0 - SCHEDULE_ERROR;
+	//PORTION = 1.0/real(CRITERION);
+	//schedule_max_hours = std::min((unsigned int)data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS/2), Single::WEEK_HOURS2) ;
+	//GAMMA = 1.0/real(SCHEDULE_MAX_HOURS * CRITERION);
+	
 }
 
 void Enviroment::initial()
@@ -180,29 +185,46 @@ unsigned int Enviroment::get_criterion() const
 }
 unsigned int Enviroment::get_overlap_max() const
 {
-	return SCHEDULE_OVERLAP_MAX;
+	return schedule_overlap_max;
+}
+unsigned long Enviroment::get_overlap_max2() const
+{
+	return schedule_overlap_max2;
 }
 unsigned int Enviroment::get_cover_max() const
 {
-	return SCHEDULE_COVER_MAX;
+	return schedule_cover_max;
+}
+unsigned int Enviroment::get_cover_max2() const
+{
+	return schedule_cover_max;
 }
 unsigned int Enviroment::get_empty_max() const
 {
 	return SCHEDULE_EMPTY_MAX;
 }
+unsigned int Enviroment::get_sigma_hours_max() const
+{
+	return schedule_sigma_hours_max;
+}
+unsigned int Enviroment::get_sigma_hours_limit() const
+{
+	return schedule_sigma_hours_limit;
+}
+/*unsigned int Enviroment::get_schedule_max_hours() const
+{
+	return schedule_max_hours;
+}*/
 
-double Enviroment::get_gamma() const
+
+/*double Enviroment::get_gamma() const
 {
 	return GAMMA;
-}
-unsigned int Enviroment::get_schedule_max_hours() const
-{
-	return SCHEDULE_MAX_HOURS;
-}
-real Enviroment::get_portion() const
+}*/
+/*real Enviroment::get_portion() const
 {
 	return PORTION;
-}
+}*/
 
 void Enviroment::select_times(Lesson& lesson,const WeekOptions& week_opt)
 {

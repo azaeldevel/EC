@@ -483,10 +483,14 @@ namespace oct::ec::sche
 			return;
 		}
 	}
-	bool Day::is_continue(const core::DataTime& first, const core::DataTime& second, const Data&)const
+	/*bool Day::is_continue(const core::DataTime& first, const core::DataTime& second, const Data& data)
 	{
+		core::DataTime newdt;
+		data.config.add(first,1,newdt);
+		if(second == newdt) return true;
 		
-	}
+		return false;
+	}*/
 
 	
 	WeekOptions::WeekOptions() : std::vector<DaysOptions>(WeekHours::WEEK_SIZE) 
@@ -523,9 +527,13 @@ namespace oct::ec::sche
 
 		return totals;
 	}
-	/*void WeekOptions::get_day(unsigned int day,unsigned int hours,const core::DataTime&,Day& d)const
+	/*bool WeekOptions::get_day(unsigned int day,unsigned int hours,const core::DataTime& base,Day& d)const
 	{
-		
+		DaysOptions ops;
+		for(unsigned int i = 0; i < at(day).size(); i++)
+		{
+			
+		}
 	}*/
 	
 	
