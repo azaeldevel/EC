@@ -611,6 +611,26 @@ bool Enviroment::run()
 				history.flush();
 			}
 		}
+		solutions.clear();
+		for(iterator it = begin(); it != end(); it++)
+		{
+			if( 1.0 - (*it)->getFitness() < epsilon) solutions.push_back(*it);
+			else break;//si no fuen solucio las siguientes tampoco
+		}
+		if(stopMinSolutions and solutions.size() >= minSolutions)//se definion una cantidad minima de soluciones
+		{
+			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
+			if(logDirectoryFlag) save(solutions,"solutions.cvs");
+			history.close();
+			return true;
+		}
+		else if (solutions.size() == maxPopulation)//si toda la poblacion es una solucion
+		{
+			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tLa cantidad de solucione es igual a la poblacion.\n";
+			if(logDirectoryFlag) save(solutions,"solutions.cvs");
+			history.close();
+			return true;		
+		}
 		
 		ec::ID countBefore = size();
 		selection();
@@ -652,26 +672,7 @@ bool Enviroment::run()
 		}
 		
 		//std::cout << "\tEnviroment::run - while Step 7\n";
-		solutions.clear();
-		for(iterator it = begin(); it != end(); it++)
-		{
-			if( 1.0 - (*it)->getFitness() < epsilon) solutions.push_back(*it);
-			else break;//si no fuen solucio las siguientes tampoco
-		}
-		if(stopMinSolutions and solutions.size() >= minSolutions)//se definion una cantidad minima de soluciones
-		{
-			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			if(logDirectoryFlag) save(solutions,"solutions.cvs");
-			history.close();
-			return true;
-		}
-		else if (solutions.size() == maxPopulation)//si toda la poblacion es una solucion
-		{
-			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tLa cantidad de solucione es igual a la poblacion.\n";
-			if(logDirectoryFlag) save(solutions,"solutions.cvs");
-			history.close();
-			return true;		
-		}
+
 
 		//std::cout << "\tEnviroment::run - while Step 8\n";
 		
