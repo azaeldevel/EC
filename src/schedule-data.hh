@@ -4,22 +4,23 @@
 #define EC_SCHEDULE_DATA_HH
 
 #include <map>
-
+#include <ctime>
 
 #include "ec.hh"
 
 
 namespace oct::core
 {
-	class Time : public tm
+	class Time : public std::tm
 	{
 	public:
 		Time();
 		Time(const tm&);
 		Time(const Time&);
 
-		const time_t* operator =(const time_t*);
+		const std::time_t* operator =(const std::time_t*);
 		const tm& operator =(const tm&);
+		const Time& operator =(const Time&);
 		bool operator ==(const Time&)const;
 		bool operator <(const Time&)const;
 		bool operator >(const Time&)const;
@@ -27,7 +28,7 @@ namespace oct::core
 		int get_week_day()const;
 		double diff(const Time& dt)const;
 
-		void addSeconds(time_t);
+		void addSeconds(std::time_t);
 
 		void print(std::ostream&, const std::string&) const;
 

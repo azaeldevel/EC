@@ -111,9 +111,9 @@ namespace oct::core
 		tm_isdst = t.tm_isdst;
 	}
 	
-	const time_t* Time::operator =(const time_t* t)
+	const std::time_t* Time::operator =(const std::time_t* t)
 	{
-		*this = *localtime(t);
+		*this = *std::localtime(t);
 		return t;
 	}
 	const tm& Time::operator =(const tm& t)
@@ -130,13 +130,27 @@ namespace oct::core
 		
 		return t;
 	}
+	const Time& Time::operator =(const Time& t)
+	{
+		tm_sec = t.tm_sec;
+		tm_min = t.tm_min;
+		tm_hour = t.tm_hour;
+		tm_mday = t.tm_mday;
+		tm_mon = t.tm_mon;
+		tm_year = t.tm_year;
+		tm_wday = t.tm_wday;
+		tm_yday = t.tm_yday;
+		tm_isdst = t.tm_isdst;
+		
+		return t;
+	}
 	bool Time::operator ==(const Time& o)const
 	{
-		tm tm_this = *this;
-		time_t t_this = mktime(&tm_this);
+		std::tm tm_this = *this;
+		std::time_t t_this = std::mktime(&tm_this);
 		
-		tm tm_o = o;
-		time_t t_o = mktime(&tm_o);
+		std::tm tm_o = o;
+		std::time_t t_o = std::mktime(&tm_o);
 		
 		if(t_this == t_o) return true;		
 		return false;
@@ -146,31 +160,33 @@ namespace oct::core
 	{
 		return tm_wday;
 	}
-	double Time::diff(const Time& dt)const
+	double Time::diff(const Time& o)const
 	{
-		time_t tm1,tm2;
-		tm t1 = *this;
-		tm t2 = dt;
-		tm1 = mktime(&t1);
-		tm2 = mktime(&t2);
-		return difftime(tm2, tm1);		
+		std::tm tm_this = *this;
+		std::time_t t_this = std::mktime(&tm_this);
+		
+		std::tm tm_o = o;
+		std::time_t t_o = std::mktime(&tm_o);
+		
+		return difftime(t_o, t_this);		
 	}
 	
 	void Time::print(std::ostream& out, const std::string& format) const
 	{
 		out << std::put_time(this, format.c_str());
 	}
-	void Time::addSeconds(time_t s)
+	void Time::addSeconds(std::time_t s)
 	{
-		time_t t = mktime(this);
-		t += s;
-		tm* newt = localtime(&t);
-		operator =(*newt);
+		std::tm tm_this = *this;
+		std::time_t t_this = std::mktime(&tm_this);
+		
+		t_this += s;
+		*this = *std::localtime(&t_this);
 	}
 	
 	void Time::read(const std::string& time, const std::string& format)
 	{
-		strptime(time.c_str(),format.c_str(),this);
+		if(strptime(time.c_str(),format.c_str(),this) == NULL) throw core::Exception("fallo la lectura del string para Time",__FILE__,__LINE__);
 	}
 }
 
