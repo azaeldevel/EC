@@ -254,13 +254,13 @@ namespace oct::ec::sche
 		void combns(std::list<WeekHours>&,const WeekOptions&)const;
 	};
 
-	struct Time
+	struct IntervalTime
 	{
 		core::DataTime begin;
 		core::DataTime end;
 
-		Time();
-		Time(const std::string&,const std::string&);
+		IntervalTime();
+		IntervalTime(const std::string&,const std::string&);
 		/**
 		*\brief Convirte el valor time en elementos de la clase Day
 		**/

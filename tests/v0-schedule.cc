@@ -188,7 +188,7 @@ void schedule_devel()
 	}
 	
 	
-	oct::ec::sche::Time time1;
+	IntervalTime time1;
 	time1.set_begin(&data.config, "1 8:00");
 	if(time1.begin.tm_hour == 8) 
 	{
@@ -236,7 +236,7 @@ void schedule_devel()
 		}
 	}
 	
-	oct::ec::sche::Time time2;
+	IntervalTime time2;
 	time2.set_begin("2 8:00");
 	if(time2.begin.tm_wday == 2) 
 	{
@@ -295,7 +295,7 @@ void schedule_devel()
 	//subject1->print(std::cout);
 	//room1->print(std::cout);	
 	
-	oct::ec::sche::Time time3;
+	IntervalTime time3;
 	time3.set_begin("2 8:00");
 	if(time3.begin.tm_wday == 2) 
 	{
@@ -350,7 +350,7 @@ void schedule_devel()
 		}
 	}
 	
-	oct::ec::sche::Time time4;
+	IntervalTime time4;
 	time4.set_begin(&data.config, "1 6:00");
 	if(time4.begin.tm_hour == 6) 
 	{
@@ -405,9 +405,9 @@ void schedule_devel()
 		CU_ASSERT(false);		
 	}
 		
-	oct::ec::sche::Time time6("1 4:00", "1 10:00");
-	oct::ec::sche::Time time7("1 12:00", "1 16:00");
-	oct::ec::sche::Time time8("1 17:00", "1 20:00");
+	IntervalTime time6("1 4:00", "1 10:00");
+	IntervalTime time7("1 12:00", "1 16:00");
+	IntervalTime time8("1 17:00", "1 20:00");
 	oct::ec::sche::Day day6;
 	time8.granulate(&data.config,day6);
 	time6.granulate(&data.config,day6);

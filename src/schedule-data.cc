@@ -760,14 +760,14 @@ namespace oct::ec::sche
 	
 	
 
-	Time::Time()
+	IntervalTime::IntervalTime()
 	{}
-	Time::Time(const std::string& b,const std::string& e)
+	IntervalTime::IntervalTime(const std::string& b,const std::string& e)
 	{
 		set_begin(b);
 		set_end(e);
 	}
-	void Time::granulate(const Configuration* config, Day& out)
+	void IntervalTime::granulate(const Configuration* config, Day& out)
 	{
 		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especificar el mismos dia.",__FILE__,__LINE__);
 		if(begin.tm_hour >= end.tm_hour) throw core::Exception("La hora de inicio deve ser meno que lahora final.",__FILE__,__LINE__);
@@ -791,7 +791,7 @@ namespace oct::ec::sche
 			out.push_back(*newt);
 		}
 	}
-	void Time::granulate(const Configuration* config, WeekHours& out)
+	void IntervalTime::granulate(const Configuration* config, WeekHours& out)
 	{
 		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especificar el mismos dia.",__FILE__,__LINE__);
 		if(begin.tm_hour >= end.tm_hour) throw core::Exception("La hora de inicio deve ser meno que lahora final.",__FILE__,__LINE__);
@@ -822,19 +822,19 @@ namespace oct::ec::sche
 			block.push_back(&day.back());
 		}
 	}
-	void Time::set_begin(const Configuration* config,const std::string& str)
+	void IntervalTime::set_begin(const Configuration* config,const std::string& str)
 	{
 		strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&begin);
 	}
-	void Time::set_end(const Configuration* config,const std::string& str)
+	void IntervalTime::set_end(const Configuration* config,const std::string& str)
 	{
 		strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&end);
 	}
-	void Time::set_begin(const std::string& str)
+	void IntervalTime::set_begin(const std::string& str)
 	{
 		strptime(str.c_str(), "%w %H:%M",&begin);
 	}
-	void Time::set_end(const std::string& str)
+	void IntervalTime::set_end(const std::string& str)
 	{
 		strptime(str.c_str(), "%w %H:%M",&end);
 	}
@@ -1103,7 +1103,7 @@ namespace oct::ec::sche
 	}
 	void Targets::fetch_times(Target& target,std::stringstream& ssline, unsigned int line,const std::string& fn)
 	{
-		ec::sche::Time time;
+		ec::sche::IntervalTime time;
 		std::string data,strH;
 		int timeDay = dataObject->config.get_begin_day();
 		while(std::getline(ssline,data,','))
