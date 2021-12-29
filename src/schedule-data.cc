@@ -76,38 +76,70 @@ namespace oct::core
 
 	DataTime::DataTime()
 	{
-		(tm&)*this = {0};
+		tm_sec = 0;
+		tm_min = 0;
+		tm_hour = 0;
+		tm_mday = 0;
+		tm_mon = 0;
+		tm_year = 0;
+		tm_wday = 0;
+		tm_yday = 0;
+		tm_isdst = 0;
 	}
 	DataTime::DataTime(const tm& t)
-	{
-		(tm&)*this = t;
+	{		
+		tm_sec = t.tm_sec;
+		tm_min = t.tm_min;
+		tm_hour = t.tm_hour;
+		tm_mday = t.tm_mday;
+		tm_mon = t.tm_mon;
+		tm_year = t.tm_year;
+		tm_wday = t.tm_wday;
+		tm_yday = t.tm_yday;
+		tm_isdst = t.tm_isdst;
 	}
-	DataTime::DataTime(const DataTime& dt)
-	{
-		(tm&)*this = (tm&)dt;
+	DataTime::DataTime(const DataTime& t)
+	{		
+		tm_sec = t.tm_sec;
+		tm_min = t.tm_min;
+		tm_hour = t.tm_hour;
+		tm_mday = t.tm_mday;
+		tm_mon = t.tm_mon;
+		tm_year = t.tm_year;
+		tm_wday = t.tm_wday;
+		tm_yday = t.tm_yday;
+		tm_isdst = t.tm_isdst;
 	}
 	
 	const time_t* DataTime::operator =(const time_t* t)
 	{
-		tm* thistm = localtime(t);
-		(tm&)*this = *thistm;
+		*this = *localtime(t);
 		return t;
 	}
 	const tm& DataTime::operator =(const tm& t)
 	{
-		(tm&)*this = t;
+		tm_sec = t.tm_sec;
+		tm_min = t.tm_min;
+		tm_hour = t.tm_hour;
+		tm_mday = t.tm_mday;
+		tm_mon = t.tm_mon;
+		tm_year = t.tm_year;
+		tm_wday = t.tm_wday;
+		tm_yday = t.tm_yday;
+		tm_isdst = t.tm_isdst;
+		
 		return t;
 	}
 	bool DataTime::operator ==(const DataTime& o)const
 	{
-		if(tm_sec != o.tm_sec) return false;
-		else if(tm_min != o.tm_min) return false;
-		else if(tm_hour != o.tm_hour) return false;
-		else if(tm_mday != o.tm_mday) return false;
-		else if(tm_mon != o.tm_mon) return false;
-		else if(tm_year != o.tm_year) return false;
+		tm tm_this = *this;
+		time_t t_this = mktime(&tm_this);
 		
-		return true;
+		tm tm_o = o;
+		time_t t_o = mktime(&tm_o);
+		
+		if(t_this == t_o) return true;		
+		return false;
 	}
 	
 	int DataTime::get_week_day()const

@@ -21,6 +21,8 @@ namespace oct::core
 		const time_t* operator =(const time_t*);
 		const tm& operator =(const tm&);
 		bool operator ==(const DataTime&)const;
+		bool operator <(const DataTime&)const;
+		bool operator >(const DataTime&)const;
 
 		int get_week_day()const;
 		double diff(const DataTime& dt)const;
