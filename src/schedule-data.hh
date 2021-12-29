@@ -309,6 +309,7 @@ namespace oct::ec::sche
 		//static const std::string& get_format_string_datatime(FormatDT);
 		FormatDT get_format_dt()const;
 		int get_begin_day() const;
+		real get_hours_sigma()const;
 
 		/**
 		*\brief Agrega a la hora indicada, la cantidad de horas indicas y coloca el resultado el variable de retorno
@@ -330,6 +331,7 @@ namespace oct::ec::sche
 		unsigned int time_per_hour;//en minutes por hora
 		Schema schema;
 		FormatDT format;
+		real hours_sigma;
 	public:
 		static const std::string formats_dt_hour;
 		static const std::string formats_dt_day_hour;

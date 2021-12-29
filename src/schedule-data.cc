@@ -70,6 +70,10 @@ namespace oct::core
 		return name;
 	}
 
+
+
+
+
 	DataTime::DataTime()
 	{
 		(tm&)*this = {0};
@@ -815,6 +819,7 @@ namespace oct::ec::sche
 		schema_week = SchemaWeek::MS;
 		time_per_hour = 60;
 		format = FormatDT::DAY_HOUR;
+		hours_sigma = 0.085;
 	}
 	
 	unsigned int Configuration::get_time_per_hour() const
@@ -828,6 +833,10 @@ namespace oct::ec::sche
 	Configuration::Schema Configuration::get_schema()const
 	{
 		return schema;
+	}
+	real Configuration::get_hours_sigma()const
+	{
+		return hours_sigma;
 	}
 	/*const std::string& Configuration::get_format_string_datatime()const
 	{

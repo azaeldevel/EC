@@ -68,7 +68,7 @@ Enviroment::Enviroment(const std::string& log,const std::string& dirproy)
 }
 Enviroment::~Enviroment()
 {
-	init("");
+	
 }
 void Enviroment::init(const std::string& dirproy)
 {
@@ -94,7 +94,7 @@ void Enviroment::init(const std::string& dirproy)
 	schedule_cover_max = data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS - 7);
 	schedule_cover_max2 = std::pow(schedule_cover_max,2);
 	SCHEDULE_EMPTY_MAX = data.groups.get_list().size() * data.groups.get_max_lessons() * Single::WEEK_HOURS;
-	schedule_sigma_hours_limit = 0.01;
+	schedule_sigma_hours_limit = data.config.get_hours_sigma();
 	//Se asumen 4 horas en 0 y 3 en 24
 	real mean = real(24 * 3) / real(7);
 	real sigma = ((3.0 * std::pow(24.0 - mean,2.0)) + (4.0 * std::pow(mean,2.0)));
