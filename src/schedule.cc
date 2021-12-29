@@ -160,9 +160,9 @@ void Enviroment::initial()
 				WeekOptions week_opt;
 				week.inters(lessons[subject].room->get_week (),lessons[subject].teacher->get_week());
 				check_codes code = week.check();
-				week.combns(*lessons[subject].subject,week_opt);
-				week_opt.random(lessons[subject].week);				
+				week.combns(*lessons[subject].subject,week_opt);		
 				//select_times(lessons[subject],week_opt);
+				week_opt.random(lessons[subject].week);		
 				subject++;
 				it_subject++;
 			}

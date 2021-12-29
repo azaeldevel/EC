@@ -116,6 +116,11 @@ namespace oct::core
 		*this = *std::localtime(t);
 		return t;
 	}
+	const std::time_t& Time::operator =(const std::time_t& t)
+	{
+		*this = *std::localtime(&t);
+		return t;
+	}
 	const tm& Time::operator =(const tm& t)
 	{
 		tm_sec = t.tm_sec;
@@ -153,6 +158,15 @@ namespace oct::core
 		std::time_t t_o = std::mktime(&tm_o);
 		
 		if(t_this == t_o) return true;		
+		return false;
+	}	
+	bool Time::operator ==(const std::time_t& o)const
+	{
+		std::tm tm_this = *this;
+		std::time_t t_this = std::mktime(&tm_this);
+		
+		
+		if(t_this == o) return true;		
 		return false;
 	}
 	
@@ -193,6 +207,48 @@ namespace oct::core
 namespace oct::ec::sche
 {
 
+
+	bool is_post_hour(const core::Time& first,const core::Time& second, const Configuration& config)
+	{
+		core::Time tm_first = first;
+		std::time_t t_first = std::mktime(&tm_first);
+		t_first += config.get_seconds_per_hour();
+		core::Time tm_next = *std::localtime(&t_first);
+		
+		if(tm_next == second) return true;
+		return false;
+	}
+	bool is_prev_hour(const core::Time& first,const core::Time& second, const Configuration& config)
+	{
+		core::Time tm_second= second;
+		std::time_t t_second = std::mktime(&tm_second);
+		t_second -= config.get_seconds_per_hour();
+		core::Time tm_prev = *std::localtime(&t_second);
+		
+		if(tm_prev == first) return true;
+		return false;
+	}
+	void add_hours(core::Time& first,unsigned int hours, const Configuration& config)
+	{
+		core::Time tm_first = first;
+		std::time_t t_first = std::mktime(&tm_first);
+		t_first += config.get_seconds_per_hour() * hours;
+		
+		first = t_first;
+	}
+	void rest_hours(core::Time& first,unsigned int hours, const Configuration& config)
+	{
+		core::Time tm_first = first;
+		std::time_t t_first = std::mktime(&tm_first);
+		t_first -= config.get_seconds_per_hour() * hours;
+		
+		first = t_first;
+	}
+	
+	
+	
+	
+	
 	Day::Day()
 	{
 	}
@@ -579,14 +635,64 @@ namespace oct::ec::sche
 
 		return totals;
 	}
-	/*bool WeekOptions::get_day(unsigned int day,unsigned int hours,const core::Time& base,Day& d)const
+	bool WeekOptions::get_day(unsigned int day_num,unsigned int hours,const core::Time& base,const Configuration& config,Day& day)const
 	{
+		if(hours == 0) return false;
+		
 		DaysOptions ops;
-		for(unsigned int i = 0; i < at(day).size(); i++)
+		unsigned int count_post;
+		Day::const_iterator it_prev;
+		
+		//buscar si algun dia coinside con la cantidad de horas necesitadas
+		for(const DaysOptions& days_ops : *this)
 		{
-			
+			for(const Day& day_op : days_ops)
+			{
+				if(day_op.size() < hours) continue;
+				count_post = 0;
+				for(Day::const_iterator it = day_op.begin()++; it != day_op.end(); it++)
+				{
+					it_prev = it;
+					it_prev--;
+					if(is_post_hour(*it_prev,*it,config)) count_post++;
+				}
+				//TODO:Verificar que las horas esta cerca de base
+				if(count_post == hours) ops.push_back(day_op);
+			}
 		}
-	}*/
+		if(ops.size() > 1)
+		{
+			day = *sche::random(ops);			
+			return true;
+		}
+		
+		//
+		for(const DaysOptions& days_ops : *this)
+		{
+			for(const Day& day_op : days_ops)
+			{
+				if(day_op.size() < hours) continue;
+				count_post = 0;
+				for(Day::const_iterator it = day_op.begin()++; it != day_op.end(); it++)
+				{
+					it_prev = it;
+					it_prev--;
+					if(is_post_hour(*it_prev,*it,config)) count_post++;
+				}
+				if(count_post > hours)
+				{
+					day_op.combns(ops,hours);					
+				}
+			}
+		}
+		if(ops.size() > 1)
+		{
+			day = *sche::random(ops);			
+			return true;
+		}
+		
+		return false;
+	}
 	
 	
 	
@@ -800,7 +906,7 @@ namespace oct::ec::sche
 		//std::cout << "t = " << t << "\n";
 		for(int i = 1; i < hours; i++)
 		{
-			t += config->get_time_per_hour() * 60; // 60 segundos por 60 minutos = una hora
+			t += config->get_seconds_per_hour(); // 60 segundos por 60 minutos = una hora
 			//std::cout << "t = " << t << "\n";
 			newt = localtime(&t);
 			newt->tm_wday = begin.tm_wday;
@@ -830,7 +936,7 @@ namespace oct::ec::sche
 		//std::cout << "t = " << t << "\n";
 		for(int i = 1; i < hours; i++)
 		{
-			t += config->get_time_per_hour() * 60; // 60 segundos por 60 minutos = una hora
+			t += config->get_seconds_per_hour(); // 60 segundos por 60 minutos = una hora
 			//std::cout << "t = " << t << "\n";
 			newt = localtime(&t);
 			newt->tm_wday = begin.tm_wday;
@@ -865,14 +971,18 @@ namespace oct::ec::sche
 	Configuration::Configuration()
 	{
 		schema_week = SchemaWeek::MS;
-		time_per_hour = 60;
+		seconds_per_hour = 60 * 60;
 		format = FormatDT::DAY_HOUR;
 		hours_sigma = 0.085;
 	}
 	
-	unsigned int Configuration::get_time_per_hour() const
+	/*unsigned int Configuration::get_time_per_hour() const
 	{
 		return time_per_hour;
+	}*/
+	unsigned int Configuration::get_seconds_per_hour() const
+	{
+		return seconds_per_hour;
 	}
 	Configuration::SchemaWeek Configuration::get_schema_week()const
 	{
@@ -918,11 +1028,9 @@ namespace oct::ec::sche
 	{
 		schema = s;
 	}
-	long Configuration::to_hours(double t)const
+	unsigned int Configuration::to_hours(double t)const
 	{
-		long mins = t/60.0;
-		long hours = mins/time_per_hour;
-		return hours;
+		return t/seconds_per_hour;
 	}
 	int Configuration::get_begin_day() const
 	{
@@ -940,20 +1048,20 @@ namespace oct::ec::sche
 	{
 		return format;
 	}
-	void Configuration::add(const core::Time& dt, unsigned int hours, core::Time& result)
+	/*void Configuration::add(const core::Time& dt, unsigned int hours, core::Time& result)
 	{
 		tm tm_dt = dt;
 		time_t dt_t = mktime(&tm_dt);
-		dt_t += hours * get_time_per_hour() * 60;
+		dt_t += hours * get_seconds_per_hour();
 		result = *localtime(&dt_t);
-	}
-	void Configuration::rest(const core::Time& dt, unsigned int hours, core::Time& result)
+	}*/
+	/*void Configuration::rest(const core::Time& dt, unsigned int hours, core::Time& result)
 	{
 		tm tm_dt = dt;
 		time_t dt_t = mktime(&tm_dt);
 		dt_t -= hours * get_time_per_hour() * 60;
 		result = *localtime(&dt_t);
-	}
+	}*/
 	
 	
 	

@@ -19,9 +19,11 @@ namespace oct::core
 		Time(const Time&);
 
 		const std::time_t* operator =(const std::time_t*);
+		const std::time_t& operator =(const std::time_t&);
 		const tm& operator =(const tm&);
 		const Time& operator =(const Time&);
 		bool operator ==(const Time&)const;
+		bool operator ==(const std::time_t&)const;
 		bool operator <(const Time&)const;
 		bool operator >(const Time&)const;
 
@@ -93,7 +95,23 @@ namespace oct::ec::sche
 		
 		return ls.end();
 	}
-	
+
+
+
+
+	/**
+	*\brief Tomando como referencia el valor second, verifica se sucede a first
+	*\return true en caso de que la relacion se cumpla, falso en caso de que no
+	*/
+	bool is_post_hour(const core::Time& first,const core::Time& second, const Configuration&);
+	/**
+	*\brief Tomando como referencia el valor second, verifica si a first antesede
+	*\return true en caso de que la relacion se cumpla, falso en caso de que no
+	*/
+	bool is_prev_hour(const core::Time& first,const core::Time& second, const Configuration&);
+	void add_hours(core::Time& first,unsigned int hours, const Configuration& config);
+	void rest_hours(core::Time& first,unsigned int hours, const Configuration& config);
+
 
 	enum check_codes
 	{
@@ -193,7 +211,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Optiene para el dia numero 'day' la canitad de 'hours' en la hora 'base' si encuentra coloca el resultado en 'result' y retorna true
 		**/
-		bool get_day(unsigned int day,unsigned int hours,const core::Time& at,Day& result)const;
+		bool get_day(unsigned int day,unsigned int hours,const core::Time& at,const Configuration& ,Day& result)const;
 	private:
 		//std::random_device rd;
 	};
@@ -303,8 +321,9 @@ namespace oct::ec::sche
 	public:
 		Configuration();
 		Configuration(const std::string& name);
-		long to_hours(double )const;
-		unsigned int get_time_per_hour() const;
+		unsigned int to_hours(double )const;
+		//unsigned int get_time_per_hour() const;
+		unsigned int get_seconds_per_hour() const;
 		SchemaWeek get_schema_week()const;
 		Schema get_schema()const;
 		void set_schema(Schema);
@@ -331,7 +350,7 @@ namespace oct::ec::sche
 		void rest(const core::Time& dt, unsigned int hours, core::Time& result);
 	private:
 		SchemaWeek schema_week;
-		unsigned int time_per_hour;//en minutes por hora
+		unsigned int seconds_per_hour;//en minutes por hora
 		Schema schema;
 		FormatDT format;
 		real hours_sigma;

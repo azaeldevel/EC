@@ -796,11 +796,10 @@ void schedule_devel()
 		}
 	}
 	
-	oct::core::Time dt2[10];
-	dt2[0].read("Tue 6:35","%a %H:%M");
-	for(unsigned int i = 0; i < 10; i++)
+	oct::core::Time dt2[10];	
+	for(oct::core::Time& time : dt2)
 	{
-		data.config.add(dt2[0],i,dt2[i]);
+		time.read("Tue 6:35","%a %H:%M");
 	}
 	/*for(unsigned int i = 0; i < 10; i++)
 	{
@@ -810,15 +809,50 @@ void schedule_devel()
 	}*/
 	for(unsigned int i = 0; i < 10; i++)
 	{
+		add_hours(dt2[i],i,data.config);
+	}
+	for(unsigned int i = 0; i < 10; i++)
+	{
 		if(dt2[i].tm_hour == i + 6 and dt2[i].tm_min == 35) 
 		{
 			CU_ASSERT(true);
 		}
 		else 
 		{
-			std::cout << "dt1[i].tm_hour = " << dt1[i].tm_hour << "\n";
+			std::cout << "dt2[i].tm_hour = " << dt2
+			[i].tm_hour << "\n";
 			CU_ASSERT(false);		
 		}
 	}
+	bool ret_dt2;
+	for(unsigned int i = 1; i < 10; i++)
+	{
+		ret_dt2 = is_post_hour(dt2[i-1],dt2[i],data.config);
+		if(ret_dt2) 
+		{
+			CU_ASSERT(true);
+		}
+		else 
+		{
+			std::cout << "is_post_hour(dt2[i-1],dt2[i],data.config) is " << ret_dt2 << "\n";
+			CU_ASSERT(false);		
+		}
+	}
+	for(unsigned int i = 9; i > 0; i--)
+	{
+		ret_dt2 = is_prev_hour(dt2[i-1],dt2[i],data.config);
+		if(ret_dt2) 
+		{
+			CU_ASSERT(true);
+		}
+		else 
+		{
+			std::cout << "is_prev_hour(dt2[i-1],dt2[i],data.config) is " << ret_dt2 << "\n";
+			CU_ASSERT(false);		
+		}
+	}
+	
+	
+	
 }
 
