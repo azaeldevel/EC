@@ -11,21 +11,21 @@
 
 namespace oct::core
 {
-	class DataTime : public tm
+	class Time : public tm
 	{
 	public:
-		DataTime();
-		DataTime(const tm&);
-		DataTime(const DataTime&);
+		Time();
+		Time(const tm&);
+		Time(const Time&);
 
 		const time_t* operator =(const time_t*);
 		const tm& operator =(const tm&);
-		bool operator ==(const DataTime&)const;
-		bool operator <(const DataTime&)const;
-		bool operator >(const DataTime&)const;
+		bool operator ==(const Time&)const;
+		bool operator <(const Time&)const;
+		bool operator >(const Time&)const;
 
 		int get_week_day()const;
-		double diff(const DataTime& dt)const;
+		double diff(const Time& dt)const;
 
 		void addSeconds(time_t);
 
@@ -100,10 +100,10 @@ namespace oct::ec::sche
 		HOURS_DIFFERENT_DAY,
 		BLOCK_CONTENT_SIZE_FAIL,
 	};
-	class Day : public std::list<core::DataTime>
+	class Day : public std::list<core::Time>
 	{
 	public:
-		typedef std::list<const core::DataTime*> Block;
+		typedef std::list<const core::Time*> Block;
 		typedef std::list<Block> Blocks;
 		
 	public:
@@ -152,17 +152,17 @@ namespace oct::ec::sche
 		/**
 		*\brief Agrega al bloques las horas solicitas, lo mas cercanas possibles a la hora indicada
 		*/
-		void get_hours_around(const core::DataTime&, unsigned int count,Block& )const;
+		void get_hours_around(const core::Time&, unsigned int count,Block& )const;
 		/**
 		*\brief Agrega al bloques 1 hora, lo mas cercanas possibles a la hora indicada
 		*/
-		void get_hours_around(const core::DataTime&,Block& )const;
+		void get_hours_around(const core::Time&,Block& )const;
 
-		static bool is_continue(const core::DataTime& first, const core::DataTime& second, const Data&);
+		static bool is_continue(const core::Time& first, const core::Time& second, const Data&);
 
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
-		std::list<core::DataTime>::iterator blocking(std::list<core::DataTime>::iterator begin);
+		std::list<core::Time>::iterator blocking(std::list<core::Time>::iterator begin);
 		
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el bloque
@@ -192,7 +192,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Optiene para el dia numero 'day' la canitad de 'hours' en la hora 'base' si encuentra coloca el resultado en 'result' y retorna true
 		**/
-		bool get_day(unsigned int day,unsigned int hours,const core::DataTime& at,Day& result)const;
+		bool get_day(unsigned int day,unsigned int hours,const core::Time& at,Day& result)const;
 	private:
 		//std::random_device rd;
 	};
@@ -256,8 +256,8 @@ namespace oct::ec::sche
 
 	struct IntervalTime
 	{
-		core::DataTime begin;
-		core::DataTime end;
+		core::Time begin;
+		core::Time end;
 
 		IntervalTime();
 		IntervalTime(const std::string&,const std::string&);
@@ -319,7 +319,7 @@ namespace oct::ec::sche
 		*\param hours cantiad de horas a agregar a dt
 		*\param result variable de retorno, donde se coloca el resultado de la operacion
 		*/
-		void add(const core::DataTime& dt, unsigned int hours, core::DataTime& result);
+		void add(const core::Time& dt, unsigned int hours, core::Time& result);
 
 		/**
 		*\brief Resta a la hora indicada, la cantidad de horas indicas y coloca el resultado el variable de retorno
@@ -327,7 +327,7 @@ namespace oct::ec::sche
 		*\param hours cantiad de horas a restar a dt
 		*\param result variable de retorno, donde se coloca el resultado de la operacion
 		*/
-		void rest(const core::DataTime& dt, unsigned int hours, core::DataTime& result);
+		void rest(const core::Time& dt, unsigned int hours, core::Time& result);
 	private:
 		SchemaWeek schema_week;
 		unsigned int time_per_hour;//en minutes por hora
@@ -594,7 +594,7 @@ namespace oct::ec::sche
 		std::map<key_hbs, HBRS> hbrs_list;//horas disponible por materia y salon
 	};
 	
-	typedef std::vector<core::DataTime> DaysTimes;
+	typedef std::vector<core::Time> DaysTimes;
 	struct TeacherDust
 	{
 		const Teacher* teacher;

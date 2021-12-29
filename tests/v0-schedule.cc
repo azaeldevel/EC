@@ -277,7 +277,7 @@ void schedule_devel()
 		std::cout << "day2.size() = " << day2.size() << "\n";
 		CU_ASSERT(false);		
 	}
-	for(const oct::core::DataTime& dt : day2)
+	for(const oct::core::Time& dt : day2)
 	{
 		//std::cout << std::put_time(&dt, "%a %H:%M") << "\n";
 		if(dt.tm_wday == 2) 
@@ -336,7 +336,7 @@ void schedule_devel()
 		std::cout << "week1[2].size() = " << week1[2].size() << "\n";
 		CU_ASSERT(false);		
 	}
-	for(const oct::core::DataTime& dt : week1[2])
+	for(const oct::core::Time& dt : week1[2])
 	{
 		//std::cout << std::put_time(&dt, "%a %H:%M") << "\n";
 		if(dt.tm_wday == 2) 
@@ -770,7 +770,7 @@ void schedule_devel()
 		//std::cout << hbrs.second.room->get_name() << " - " << hbrs.second.subject->get_name() << " : " << hbrs.second.disp_hours << "\n";
 	}
 	
-	oct::core::DataTime dt1[10];
+	oct::core::Time dt1[10];
 	for(unsigned int i = 0; i < 10; i++)
 	{
 		std::string str_time = "Tue ";
@@ -796,7 +796,7 @@ void schedule_devel()
 		}
 	}
 	
-	oct::core::DataTime dt2[10];
+	oct::core::Time dt2[10];
 	dt2[0].read("Tue 6:35","%a %H:%M");
 	for(unsigned int i = 0; i < 10; i++)
 	{
