@@ -599,6 +599,28 @@ namespace oct::ec::sche
 		
 		return false;
 	}*/
+	
+	
+	
+	
+	void DaysOptions::random(Day& day)const
+	{
+		if(size() == 0 ) return;
+		
+		if(size() == 1)
+		{
+			day = front();
+			return;
+		}
+		
+		std::uniform_int_distribution<> distrib(0,size() - 1);
+		DaysOptions::const_iterator it = begin();
+		std::advance(it,distrib(gen));
+		day = *it;
+	}
+	
+	
+	
 
 	
 	WeekOptions::WeekOptions() : std::vector<DaysOptions>(WeekHours::WEEK_SIZE) 
@@ -606,14 +628,14 @@ namespace oct::ec::sche
 		
 	}
 	
-	void WeekOptions::random(WeekHours& week)
+	void WeekOptions::random(WeekHours& week)const
 	{
 		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE; day_actual++)
 		{
 			if(at(day_actual).size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
 			
 			std::uniform_int_distribution<> distrib(0, at(day_actual).size() - 1);
-			DaysOptions::iterator it = at(day_actual).begin();
+			DaysOptions::const_iterator it = at(day_actual).begin();
 			std::advance(it,distrib(gen));
 			week[day_actual] = *it;
 		}

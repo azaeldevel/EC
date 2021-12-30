@@ -191,7 +191,12 @@ namespace oct::ec::sche
 		Blocks blocks;
 	};
 
-	typedef std::list<Day> DaysOptions;
+	//typedef std::list<Day> DaysOptions;
+	class DaysOptions : public std::list<Day>
+	{
+	public:
+		void random(Day&)const;
+	};
 	//typedef std::vector<DaysCombs> WeekCombs;
 	class WeekOptions : public std::vector<DaysOptions>
 	{
@@ -201,7 +206,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Genera una semana al azar en base las opciones disponibles en el objeto
 		**/
-		void random(WeekHours&);
+		void random(WeekHours&)const;
 
 
 		/**

@@ -134,6 +134,7 @@ void Enviroment::initial()
 			//std::cout << (&*itGroup)->room->get_name() << " : ";
 			for(const Subject* subjectGroup : *itGroup)
 			{
+				//std::cout << "Enviroment::initial step : 1 \n";
 				lessons[subject].group = &*itGroup;
 				lessons[subject].room = (&*itGroup)->room;
 				lessons[subject].subject = subjectGroup;
@@ -160,11 +161,18 @@ void Enviroment::initial()
 				WeekOptions week_opt;
 				week.inters(lessons[subject].room->get_week (),lessons[subject].teacher->get_week());
 				check_codes code = week.check();
-				week.combns(*lessons[subject].subject,week_opt);		
-				//select_times(lessons[subject],week_opt);
-				week_opt.random(lessons[subject].week);		
+				week.combns(*lessons[subject].subject,week_opt);
+				
+				//std::cout << "Enviroment::initial step : 2\n";
+				//es un algoritmo que creara los horarios lo mas correctos posibles
+				select_times(lessons[subject],week_opt);
+				//std::cout << "Enviroment::initial step : 3 \n";
+				//agrega horas al azar si no se ha acompletado el tiempo por semana
+				random_complete_times(lessons[subject],week_opt);//week_opt.random(lessons[subject].week);
+				//std::cout << "Enviroment::initial step : 4 \n";
 				subject++;
 				it_subject++;
+				//std::cout << "Enviroment::initial step : 5 \n";
 			}
 			//std::cout << "\n";
 			itGroup++;
@@ -231,18 +239,25 @@ unsigned int Enviroment::get_sigma_hours_limit() const
 
 void Enviroment::select_times(Lesson& lesson,const WeekOptions& week_opt)
 {
-	WeekHours week_disp;
+	/*WeekHours week_disp;
 	week_disp.inters(lesson.room->get_week(),lesson.teacher->get_week());
 	
 	unsigned int disp = week_disp.days_disp();
 	unsigned int hours_per_day = lesson.subject->get_time() / disp;
-	unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);
-	
-	for(unsigned int i = 0; i < 7; i++)
-	{
-		//week_opt.get_day(i,hours_per_day,lesson.week[i]);
-	}
+	unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);*/
 }
 
+void Enviroment::random_complete_times(Lesson& lesson,const WeekOptions& week_opt)
+{
+	for(unsigned int i = 0; i < WeekHours::WEEK_SIZE; i++)
+	{
+		//std::cout << lesson.subject->get_name() << " requiere " << lesson.subject->get_time() << " de las cuales hay " << lesson.week.count_hours() << "\n";
+		if(lesson.subject->get_time() <= lesson.week.count_hours()) return;
+		if(lesson.week[i].size() > 0) continue;
+		
+		//TODO:realizar esta asignacion en un orden aleatorio
+		week_opt[i].random(lesson.week[i]);
+	}
+}
 }
 
