@@ -239,12 +239,13 @@ unsigned int Enviroment::get_sigma_hours_limit() const
 
 void Enviroment::select_times(Lesson& lesson,const WeekOptions& week_opt)
 {
-	/*WeekHours week_disp;
+	WeekHours week_disp;
 	week_disp.inters(lesson.room->get_week(),lesson.teacher->get_week());
 	
 	unsigned int disp = week_disp.days_disp();
+	if(disp == 0) return;
 	unsigned int hours_per_day = lesson.subject->get_time() / disp;
-	unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);*/
+	unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);
 }
 
 void Enviroment::random_complete_times(Lesson& lesson,const WeekOptions& week_opt)
