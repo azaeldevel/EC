@@ -2017,7 +2017,11 @@ namespace oct::ec::sche
 			WeekOptions week_opt;
 			week.inters(lesson->room->get_week (),lesson->teacher->get_week());
 			week.combns(*lesson->subject,week_opt);
-			week_opt.random(lesson->week);
+			
+			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);	
+			unsigned int iday = distrib(gen);
+			Day* day = &lesson->week[iday];
+			week_opt[iday].random(*day);
 		}
 		else
 		{		
@@ -2026,9 +2030,13 @@ namespace oct::ec::sche
 				
 			WeekHours week;
 			WeekOptions week_opt;
-			week.inters(lesson->room->get_week(),lesson->teacher->get_week());
+			week.inters(lesson->room->get_week (),lesson->teacher->get_week());
 			week.combns(*lesson->subject,week_opt);
-			week_opt.random(lesson->week);
+			
+			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);	
+			unsigned int iday = distrib(gen);
+			Day* day = &lesson->week[iday];
+			week_opt[iday].random(*day);
 		}
 	}
 	
