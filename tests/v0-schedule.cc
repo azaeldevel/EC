@@ -503,9 +503,9 @@ void schedule_devel()
 		CU_ASSERT(false);		
 	}
 		
-	std::list<oct::ec::sche::Day> combsList;
+	std::list<Day> combsList;
 	day6.combns(combsList,2);
-	if(combsList.front().get_blocks().size() == 7) 
+	if(combsList.front().get_blocks().size() == 0) 
 	{
 		CU_ASSERT(true);
 	}
@@ -534,7 +534,7 @@ void schedule_devel()
 	day6.combns(combsList,3);
 	std::list<oct::ec::sche::Day>::iterator itDay = combsList.begin();
 	itDay++;	
-	if((*itDay).get_blocks().size() == 5) 
+	if((*itDay).get_blocks().size() == 1) 
 	{
 		CU_ASSERT(true);
 	}
@@ -622,7 +622,7 @@ void schedule_devel()
 	}
 	
 	//este valor puede cambiar comforme mejore el algoritmo, esta a que por propositos de desarrollo
-	if(week_opt.count() == 472392) 
+	if(week_opt.count() == 108226272) 
 	{
 		CU_ASSERT(true);
 	}
@@ -678,7 +678,7 @@ void schedule_devel()
 	std::cout << "\n";
 	//std::cout << "Interseccion \n";	
 	//week3.print(std::cout);*/
-	if(week_opt2.count() == 3072) 
+	if(week_opt2.count() == 10631250) 
 	{
 		CU_ASSERT(true);
 	}
@@ -704,6 +704,49 @@ void schedule_devel()
 	//WeekHours week3;
 	//week_opt.random(week3);
 	//week3.print(std::cout);
+	
+	
+	Day day_base;
+	oct::core::Time time_base;	
+	for(const Day& day_op : week3)
+	{
+		if(not day_op.empty()) 
+		{
+			/*
+			std::cout << "\tdays_ops.size(): " << days_ops.size() << "\n";
+			for(const Day& day : days_ops)
+			{
+				day.print_day(std::cout);
+				std::cout << "\n";
+				day.print_blocks(std::cout);
+				std::cout << "\n";
+			}
+			*/
+			day_base = day_op;
+			break;
+		}
+	}
+	if(day_base.empty()) 
+	{
+		CU_ASSERT(false);
+	}
+	else 
+	{
+		CU_ASSERT(true);		
+	}
+	std::cout << "\tHours count :" << day_base.size() << " \n";
+	time_base = *random(day_base);
+	std::cout << "\tDia base : ";
+	day_base.print_day(std::cout);
+	std::cout << "\n";
+	std::cout << "\tHora base : " << time_base.tm_hour << "\n";
+	Day day_selected;
+	week3.get_day(time_base.tm_wday,2,time_base,data.config,day_selected);
+	day_selected.print_day(std::cout);
+	std::cout << "\n";
+	
+	
+	
 
 	Enviroment sche ("logs",DATA_DIR);
 	try
@@ -746,24 +789,7 @@ void schedule_devel()
 		std::cout << "not sche_teachers.empty() = " << not sche_teachers.empty() << "\n";
 		CU_ASSERT(false);		
 	}
-	/*
-	for(const Lesson* lesson : sche_teachers)
-	{
-		std::cout << lesson->teacher->get_name() << " - " << lesson->room->get_name() << "\n";
-	}
-	*/
-	/*const std::map<std::string, Teachers_Subjects::HBS>& ts1_list = data.teachers_subjects.get_hbs();
-	for(auto const& hbs : ts1_list)
-	{
-		std::cout << hbs.first << "," << hbs.second.req_hours << "," << hbs.second.disp_hours << "\n";		
-	}
-	*/	
-	/*
-	for(const Group& group : data.groups.get_list())
-	{
-		std::cout << group.room->get_name() << "\n";
-	}
-	*/
+	
 	const std::map<Groups::key_hbs, Groups::HBRS>& hbrs_list = data.groups.get_hbrs();
 	for(auto const& hbrs : hbrs_list)
 	{
@@ -777,12 +803,7 @@ void schedule_devel()
 		str_time += std::to_string(i + 5) + ":00";
 		dt1[i].read(str_time,"%a %H:%M");
 	}
-	/*for(unsigned int i = 0; i < 10; i++)
-	{
-		std::cout << "Hora : ";
-		dt1[i].print(std::cout,"%a %H:%M"); 
-		std::cout << "\n ";
-	}*/
+	
 	for(unsigned int i = 0; i < 10; i++)
 	{
 		if(dt1[i].tm_hour == i + 5) 
@@ -853,6 +874,10 @@ void schedule_devel()
 	}
 	
 	
-	
+	/*std::uniform_int_distribution<int> distrib(0, 9);
+	for(unsigned int i = 0; i < 100; i++)
+	{
+		std::cout << i << ":" << distrib(oct::ec::dre) << "\n";
+	}*/
 }
 

@@ -64,36 +64,24 @@ namespace oct::ec::sche
 	
 	template<typename T> typename std::list<T>::const_iterator random(const std::list<T>& ls)
 	{
-		if(ls.size() > 1)
-		{
-			std::uniform_int_distribution<> distrib(0, ls.size() - 1);
-			typename std::list<T>::const_iterator it = ls.begin();
-			std::advance(it,distrib(gen));				
-			return it;
-		}
-		else if(ls.size() == 1)
-		{
-			return ls.begin();
-		}
+		if(ls.size() == 0) ls.end();
+		if(ls.size() == 1) ls.begin();
 		
-		return ls.end();
+		std::uniform_int_distribution<> distrib(0, ls.size() - 1);
+		typename std::list<T>::const_iterator it = ls.begin();
+		std::advance(it,distrib(dre));				
+		return it;
 	}
 
 	template<typename T> typename std::vector<T>::const_iterator random(const std::vector<T>& ls)
 	{
-		if(ls.size() > 1)
-		{
-			std::uniform_int_distribution<> distrib(0, ls.size() - 1);
-			typename std::vector<T>::const_iterator it = ls.begin();
-			std::advance(it,distrib(gen));				
-			return it;
-		}
-		else if(ls.size() == 1)
-		{
-			return ls.begin();
-		}
+		if(ls.size() == 0) ls.end();
+		if(ls.size() == 1) ls.begin();
 		
-		return ls.end();
+		std::uniform_int_distribution<> distrib(0, ls.size() - 1);
+		typename std::vector<T>::const_iterator it = ls.begin();
+		std::advance(it,distrib(dre));				
+		return it;
 	}
 
 
@@ -273,6 +261,10 @@ namespace oct::ec::sche
 		*\brief Seleciona un dia al azar
 		**/
 		const Day* random_day_disp()const;
+		/**
+		*\brief Optiene para el dia numero 'day' la canitad de 'hours' en la hora 'base' si encuentra coloca el resultado en 'result' y retorna true
+		**/
+		bool get_day(unsigned int day,unsigned int hours,const core::Time& at,const Configuration& ,Day& result)const;
 
 	private:
 		void combns(std::list<WeekHours>&,const WeekOptions&)const;

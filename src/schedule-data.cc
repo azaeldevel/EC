@@ -395,15 +395,17 @@ namespace oct::ec::sche
 			throw core::Exception(msg,__FILE__,__LINE__);
 		}
 		//std::cout << "Day::combns - Step 2.0\n";
-		Day d;
 		//std::cout << "Day::combns - Step 2.1\n";
-		days.push_back(d);
 		//std::cout << "Day::combns - Step 2.2\n";
-		Day& day = days.back();//bloques de combinacion generados
+		//bloques de combinacion generados
 		//std::cout << "Day::combns - Step 3\n";
 		for(const Block& block : blocks)
 		{
 			//bloques equivalentes al numero de horas pedidos
+			Day d;
+			days.push_back(d);
+			Day& day = days.back();
+			//block_mult.clear();
 			if(block.size() == hours)
 			{
 				day.add(block);
@@ -419,6 +421,9 @@ namespace oct::ec::sche
 				Block block_mult;
 				for(unsigned int i = 0; i < mult; i++)
 				{
+					Day d;
+					days.push_back(d);
+					Day& day = days.back();
 					block_mult.clear();
 					for(unsigned int j = 0; j < hours; j++)
 					{
@@ -657,64 +662,81 @@ namespace oct::ec::sche
 
 		return totals;
 	}
-	bool WeekOptions::get_day(unsigned int day_num,unsigned int hours,const core::Time& base,const Configuration& config,Day& day)const
+	
+	real distance_by_hour(const Day& day, const core::Time& base)
+	{
+		real sigma = 0;
+		for(const core::Time& time : day)
+		{
+			sigma += std::pow(real(time.tm_hour - base.tm_hour),2.0);
+		}
+		sigma /= real(day.size());
+		
+		return sigma;
+	}
+	struct distance_measure
+	{
+		bool operator()(real f,real s)
+		{
+			return f < s;
+		}
+	};
+	/*bool WeekHours::get_day(unsigned int day_num,unsigned int hours,const core::Time& base,const Configuration& config,Day& day)const
 	{
 		if(hours == 0) return false;
 		
 		DaysOptions ops;
 		unsigned int count_post;
 		Day::const_iterator it_prev;
-		
+		Day::Block block;
+		bool post_flags = false;
+		if(day_num > 6) throw core::Exception("El dia solicitado no es valido.",__FILE__,__LINE__);
+		const Day& days_ops = at(day_num);
 		//buscar si algun dia coinside con la cantidad de horas necesitadas
-		for(const DaysOptions& days_ops : *this)
+		for(const Day& day_op : days_ops)
 		{
-			for(const Day& day_op : days_ops)
+			if(day_op.size() < hours) continue;
+			count_post = 0;
+			block.clear();
+			for(Day::const_iterator it = day_op.begin()++; it != day_op.end(); it++)
 			{
-				if(day_op.size() < hours) continue;
-				count_post = 0;
-				for(Day::const_iterator it = day_op.begin()++; it != day_op.end(); it++)
-				{
-					it_prev = it;
-					it_prev--;
-					if(is_post_hour(*it_prev,*it,config)) count_post++;
+				it_prev = it;
+				it_prev--;
+				post_flags = is_post_hour(*it_prev,*it,config);
+				if(not post_flags)
+				{//si no se comp-letan la minimia cantidad de horas continuas
+					count_post = 0;
+					continue;
 				}
-				//TODO:Verificar que las horas esta cerca de base
-				if(count_post == hours) ops.push_back(day_op);
-			}
-		}
-		if(ops.size() > 1)
-		{
-			day = *sche::random(ops);			
-			return true;
-		}
-		
-		//
-		for(const DaysOptions& days_ops : *this)
-		{
-			for(const Day& day_op : days_ops)
-			{
-				if(day_op.size() < hours) continue;
-				count_post = 0;
-				for(Day::const_iterator it = day_op.begin()++; it != day_op.end(); it++)
+				
+				if(post_flags) count_post++;
+				if(count_post < hours)
 				{
-					it_prev = it;
-					it_prev--;
-					if(is_post_hour(*it_prev,*it,config)) count_post++;
+					block.push_back(&*it);
 				}
-				if(count_post > hours)
+				else if(count_post == hours)
 				{
-					day_op.combns(ops,hours);					
+					block.push_back(&*it);
+					Day new_day;
+					new_day.add(block);
+					ops.push_back(new_day);
 				}
 			}
 		}
-		if(ops.size() > 1)
+		if(ops.size() < 2)
 		{
-			day = *sche::random(ops);			
-			return true;
+			return false;//si no hay elecion simplemene no offrece datos
 		}
 		
-		return false;
-	}
+		std::multimap<real,const Day*,distance_measure> day_ops2;
+		for(const Day& day : ops)
+		{//introduce los datos en una lista ordenada por su distanca a la hora base
+			day_ops2.insert({distance_by_hour(day,base),&day});
+		}
+		day = *day_ops2.begin()->second;//optiene el elemento mas cercano a la hora base
+		return true;//si pudo ofrecer datos
+	}*/
+
 	
 	
 	
@@ -896,7 +918,61 @@ namespace oct::ec::sche
 		
 		return day;
 	}
-
+	bool WeekHours::get_day(unsigned int day_num,unsigned int hours,const core::Time& base,const Configuration& config,Day& day)const
+	{
+		if(hours == 0) return false;
+		
+		DaysOptions ops;
+		unsigned int count_post;
+		Day::const_iterator it_prev;
+		Day::Block block;
+		bool post_flags = false;
+		if(day_num > 6) throw core::Exception("El dia solicitado no es valido.",__FILE__,__LINE__);
+		const Day& day_op = at(day_num);
+		if(day_op.size() < hours) return false;
+		//buscar si algun dia coinside con la cantidad de horas necesitadas
+		//for(const core::Time& time : days_ops)
+		{
+			count_post = 0;
+			block.clear();
+			for(Day::const_iterator it = day_op.begin()++; it != day_op.end(); it++)
+			{
+				it_prev = it;
+				it_prev--;
+				post_flags = is_post_hour(*it_prev,*it,config);
+				if(not post_flags)
+				{//si no se comp-letan la minimia cantidad de horas continuas
+					count_post = 0;
+					continue;
+				}
+				
+				if(post_flags) count_post++;
+				if(count_post < hours)
+				{
+					block.push_back(&*it);
+				}
+				else if(count_post == hours)
+				{
+					block.push_back(&*it);
+					Day new_day;
+					new_day.add(block);
+					ops.push_back(new_day);
+				}
+			}
+		}
+		if(ops.size() < 2)
+		{
+			return false;//si no hay elecion simplemene no offrece datos
+		}
+		
+		std::multimap<real,const Day*,distance_measure> day_ops2;
+		for(const Day& day : ops)
+		{//introduce los datos en una lista ordenada por su distanca a la hora base
+			day_ops2.insert({distance_by_hour(day,base),&day});
+		}
+		day = *day_ops2.begin()->second;//optiene el elemento mas cercano a la hora base
+		return true;//si pudo ofrecer datos
+	}
 
 	
 	

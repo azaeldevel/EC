@@ -45,6 +45,7 @@ double randNumber(double min, double max);
 
 
 static std::random_device rd;
+static std::default_random_engine dre;
 static std::mt19937 gen;
 
 /**
