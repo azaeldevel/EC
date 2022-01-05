@@ -11,12 +11,13 @@
 	<fstream>
 	"ec.hh"
 
-1639732068 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
+1641449536 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
 	<list>
 	<string>
 	<vector>
 	<iostream>
 	<fstream>
+	<random>
 	<octetos/core/Error.hh>
 	<octetos/core/shell.hh>
 	<Error.hh>
@@ -60,7 +61,7 @@
 	<limits.h>
 	"max.hh"
 
-1639106116 c:\users\azael\documents\develop\octetos\ec\src\max.hh
+1641449536 c:\users\azael\documents\develop\octetos\ec\src\max.hh
 	"GA.hh"
 
 1639108727 source:c:\users\azael\documents\develop\octetos\ec\src\sudoku.cc
@@ -86,4 +87,19 @@
 1639204074 source:c:\users\azael\documents\develop\octetos\ec\src\ec-max.cc
 	<fstream>
 	"max.hh"
+
+1641425994 source:c:\users\azael\documents\develop\octetos\ec\src\ec-schedule.cc
+	<fstream>
+	<string>
+	<octetos/core/shell.hh>
+	<shell.hh>
+	"schedule.hh"
+
+1641449536 c:\users\azael\documents\develop\octetos\ec\src\schedule.hh
+	"schedule-data.hh"
+
+1641449536 c:\users\azael\documents\develop\octetos\ec\src\schedule-data.hh
+	<map>
+	<ctime>
+	"ec.hh"
 
