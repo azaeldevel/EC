@@ -121,7 +121,7 @@ namespace oct::ec::sche
 		*/
 		virtual void initial();
 
-		void select_times(Lesson&,const WeekOptions&);
+		void select_times(Lesson&,const WeekHours&);
 		void random_complete_times(Lesson&,const WeekOptions&);
 
 		//unsigned int counter()const;

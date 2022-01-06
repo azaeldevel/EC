@@ -89,7 +89,7 @@ void Enviroment::init(const std::string& dirproy)
 	
 	CRITERION = 4;
 	//SCHEDULE_ERROR = 0;
-	schedule_overlap_max = data.groups.get_list().size() * data.groups.get_max_lessons() * std::pow(Single::WEEK_HOURS/2,2);
+	schedule_overlap_max = data.groups.get_list().size() * data.groups.get_max_lessons();
 	schedule_overlap_max2 = std::pow(schedule_overlap_max,2);
 	schedule_cover_max = data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS - 7);
 	schedule_cover_max2 = std::pow(schedule_cover_max,2);
@@ -118,7 +118,7 @@ void Enviroment::initial()
 	Schedules inits;
 	inits.resize(initPopulation);
 	
-	if(initPopulation < data.groups.get_list().size() * 2) core::Exception("El tamano de la poblacion inicial es muy bajo",__FILE__,__LINE__);
+	if(initPopulation < data.groups.get_list().size() * 2) throw core::Exception("El tamano de la poblacion inicial es muy bajo",__FILE__,__LINE__);
 	if((initPopulation % data.groups.get_list().size()) != 0 and (initPopulation / data.groups.get_list().size() ) < 2 ) throw core::Exception("La poblacion inicial deve ser multiplos de la cantida de grupos.",__FILE__,__LINE__);
 	
 	for(unsigned int i = 0; i < initPopulation; i++)
@@ -165,11 +165,10 @@ void Enviroment::initial()
 				
 				//std::cout << "Enviroment::initial step : 2\n";
 				//es un algoritmo que creara los horarios lo mas correctos posibles
-				select_times(lessons[subject],week_opt);
-				//std::cout << "Enviroment::initial step : 3 \n";
-				//agrega horas al azar si no se ha acompletado el tiempo por semana
-				random_complete_times(lessons[subject],week_opt);//week_opt.random(lessons[subject].week);
-				//std::cout << "Enviroment::initial step : 4 \n";
+				select_times(lessons[subject],week);
+				//std::cout << "Enviroment::initial step : 3\n";
+				random_complete_times(lessons[subject],week_opt);
+				//std::cout << "Enviroment::initial step : 4\n";
 				subject++;
 				it_subject++;
 				//std::cout << "Enviroment::initial step : 5 \n";
@@ -226,8 +225,6 @@ unsigned int Enviroment::get_sigma_hours_limit() const
 {
 	return schedule_max_hours;
 }*/
-
-
 /*double Enviroment::get_gamma() const
 {
 	return GAMMA;
@@ -237,15 +234,32 @@ unsigned int Enviroment::get_sigma_hours_limit() const
 	return PORTION;
 }*/
 
-void Enviroment::select_times(Lesson& lesson,const WeekOptions& week_opt)
+void Enviroment::select_times(Lesson& lesson,const WeekHours& week)
 {
-	WeekHours week_disp;
-	week_disp.inters(lesson.room->get_week(),lesson.teacher->get_week());
-	
-	unsigned int disp = week_disp.days_disp();
+	if(lesson.subject->get_time() == 0) throw core::Exception("No puede habe hora 0 en el la materia.",__FILE__,__LINE__);
+	unsigned int disp = week.days_disp();
 	if(disp == 0) return;
 	unsigned int hours_per_day = lesson.subject->get_time() / disp;
-	unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);
+	if(hours_per_day == 0) return;
+	//unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);
+	
+	const core::Time* time;
+	for(unsigned int i = 0; i < WeekHours::WEEK_SIZE; i++)
+	{
+		time = &*random(week[i]);
+		week.get_day(i,hours_per_day,*time,data.config,lesson.week[i]);
+	}
+	unsigned int count_H = lesson.week.count_hours();
+	if(count_H < lesson.subject->get_time())
+	{
+		for(unsigned int i = 0; i < WeekHours::WEEK_SIZE; i++)
+		{
+			if(lesson.week[i].empty())
+			{
+				week.get_day(i,lesson.subject->get_time() - count_H,*time,data.config,lesson.week[i]);
+			}
+		}
+	}
 }
 
 void Enviroment::random_complete_times(Lesson& lesson,const WeekOptions& week_opt)

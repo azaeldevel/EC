@@ -261,6 +261,7 @@ namespace oct::ec::sche
 		*\brief Seleciona un dia al azar
 		**/
 		const Day* random_day_disp()const;
+		
 		/**
 		*\brief Optiene para el dia numero 'day' la canitad de 'hours' en la hora 'base' si encuentra coloca el resultado en 'result' y retorna true
 		**/

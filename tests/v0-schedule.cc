@@ -734,16 +734,16 @@ void schedule_devel()
 	{
 		CU_ASSERT(true);		
 	}
-	std::cout << "\tHours count :" << day_base.size() << " \n";
+	//std::cout << "\tHours count :" << day_base.size() << " \n";
 	time_base = *random(day_base);
-	std::cout << "\tDia base : ";
-	day_base.print_day(std::cout);
-	std::cout << "\n";
-	std::cout << "\tHora base : " << time_base.tm_hour << "\n";
+	//std::cout << "\tDia base : ";
+	//day_base.print_day(std::cout);
+	/*std::cout << "\n";
+	std::cout << "\tHora base : " << time_base.tm_hour << "\n";*/
 	Day day_selected;
 	week3.get_day(time_base.tm_wday,2,time_base,data.config,day_selected);
-	day_selected.print_day(std::cout);
-	std::cout << "\n";
+	//day_selected.print_day(std::cout);
+	//std::cout << "\n";
 	
 	
 	

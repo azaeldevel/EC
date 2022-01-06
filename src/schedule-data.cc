@@ -919,9 +919,10 @@ namespace oct::ec::sche
 		return day;
 	}
 	bool WeekHours::get_day(unsigned int day_num,unsigned int hours,const core::Time& base,const Configuration& config,Day& day)const
-	{
+	{			
 		if(hours == 0) return false;
-
+		
+		//std::cout << "Step 1\n";
 		DaysOptions ops;
 		unsigned int count_post;
 		Day::const_iterator it_prev;
@@ -930,13 +931,14 @@ namespace oct::ec::sche
 		if(day_num > 6) throw core::Exception("El dia solicitado no es valido.",__FILE__,__LINE__);
 		const Day& day_op = at(day_num);
 		if(day_op.size() < hours) return false;
-		//buscar si algun dia coinside con la cantidad de horas necesitadas
+		//std::cout << "Step 2\n";
 		//for(const core::Time& time : days_ops)
 		{
 			count_post = 0;
 			block.clear();
 			for(Day::const_iterator it = day_op.begin()++; it != day_op.end(); it++)
 			{
+				//std::cout << "Step 2.1\n";
 				it_prev = it;
 				it_prev--;
 				post_flags = is_post_hour(*it_prev,*it,config);
@@ -945,7 +947,8 @@ namespace oct::ec::sche
 					count_post = 0;
 					continue;
 				}
-
+				
+				//std::cout << "Step 2.2\n";
 				if(post_flags) count_post++;
 				if(count_post < hours)
 				{
@@ -958,19 +961,23 @@ namespace oct::ec::sche
 					new_day.add(block);
 					ops.push_back(new_day);
 				}
+				
+				//std::cout << "Step 2.3\n";
 			}
 		}
 		if(ops.size() < 2)
 		{
 			return false;//si no hay elecion simplemene no offrece datos
 		}
-
+		
+		//std::cout << "Step 3\n";
 		std::multimap<real,const Day*,distance_measure> day_ops2;
 		for(const Day& day : ops)
 		{//introduce los datos en una lista ordenada por su distanca a la hora base
 			day_ops2.insert({distance_by_hour(day,base),&day});
 		}
 		day = *day_ops2.begin()->second;//optiene el elemento mas cercano a la hora base
+		//std::cout << "Step 4\n";
 		return true;//si pudo ofrecer datos
 	}
 
