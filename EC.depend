@@ -103,3 +103,16 @@
 	<ctime>
 	"ec.hh"
 
+1641428668 source:c:\users\azael\documents\develop\octetos\ec\src\schedule-data.cc
+	<sstream>
+	<fstream>
+	<iostream>
+	<locale>
+	<ctime>
+	<iomanip>
+	<stdlib.h>
+	<stdio.h>
+	<time.h>
+	<algorithm>
+	"schedule.hh"
+

@@ -1,17 +1,17 @@
 /*
  * main.cc
  * Copyright (C) 2021 Azael Reyes <azael.devel@gmail.com>
- * 
+ *
  * octetos-schedule is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * octetos-schedule is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,7 +32,7 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 
-extern "C" char* strptime(const char* s,const char* f,struct tm* tm) 
+extern "C" char* strptime(const char* s,const char* f,struct tm* tm)
 {
 	std::istringstream input(s);
 	input.imbue(std::locale(setlocale(LC_ALL, nullptr)));
@@ -58,11 +58,11 @@ namespace oct::core
 	Person::Person()
 	{
 	}
-	 
+
 	const std::string& Person::operator =(const std::string& n)
 	{
 		name = n;
-		
+
 		return n;
 	}
 	const std::string& Person::get_name()const
@@ -87,7 +87,7 @@ namespace oct::core
 		tm_isdst = 0;
 	}
 	Time::Time(const tm& t)
-	{		
+	{
 		tm_sec = t.tm_sec;
 		tm_min = t.tm_min;
 		tm_hour = t.tm_hour;
@@ -99,7 +99,7 @@ namespace oct::core
 		tm_isdst = t.tm_isdst;
 	}
 	Time::Time(const Time& t)
-	{		
+	{
 		tm_sec = t.tm_sec;
 		tm_min = t.tm_min;
 		tm_hour = t.tm_hour;
@@ -110,7 +110,7 @@ namespace oct::core
 		tm_yday = t.tm_yday;
 		tm_isdst = t.tm_isdst;
 	}
-	
+
 	const std::time_t* Time::operator =(const std::time_t* t)
 	{
 		*this = *std::localtime(t);
@@ -132,7 +132,7 @@ namespace oct::core
 		tm_wday = t.tm_wday;
 		tm_yday = t.tm_yday;
 		tm_isdst = t.tm_isdst;
-		
+
 		return t;
 	}
 	const Time& Time::operator =(const Time& t)
@@ -146,30 +146,30 @@ namespace oct::core
 		tm_wday = t.tm_wday;
 		tm_yday = t.tm_yday;
 		tm_isdst = t.tm_isdst;
-		
+
 		return t;
 	}
 	bool Time::operator ==(const Time& o)const
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
-		
+
 		std::tm tm_o = o;
 		std::time_t t_o = std::mktime(&tm_o);
-		
-		if(t_this == t_o) return true;		
+
+		if(t_this == t_o) return true;
 		return false;
-	}	
+	}
 	bool Time::operator ==(const std::time_t& o)const
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
-		
-		
-		if(t_this == o) return true;		
+
+
+		if(t_this == o) return true;
 		return false;
 	}
-	
+
 	int Time::get_week_day()const
 	{
 		return tm_wday;
@@ -178,13 +178,13 @@ namespace oct::core
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
-		
+
 		std::tm tm_o = o;
 		std::time_t t_o = std::mktime(&tm_o);
-		
-		return difftime(t_o, t_this);		
+
+		return difftime(t_o, t_this);
 	}
-	
+
 	void Time::print(std::ostream& out, const std::string& format) const
 	{
 		out << std::put_time(this, format.c_str());
@@ -193,11 +193,11 @@ namespace oct::core
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
-		
+
 		t_this += s;
 		*this = *std::localtime(&t_this);
 	}
-	
+
 	void Time::read(const std::string& time, const std::string& format)
 	{
 		if(strptime(time.c_str(),format.c_str(),this) == NULL) throw core::Exception("fallo la lectura del string para Time",__FILE__,__LINE__);
@@ -214,7 +214,7 @@ namespace oct::ec::sche
 		std::time_t t_first = std::mktime(&tm_first);
 		t_first += config.get_seconds_per_hour();
 		core::Time tm_next = *std::localtime(&t_first);
-		
+
 		if(tm_next == second) return true;
 		return false;
 	}
@@ -224,7 +224,7 @@ namespace oct::ec::sche
 		std::time_t t_second = std::mktime(&tm_second);
 		t_second -= config.get_seconds_per_hour();
 		core::Time tm_prev = *std::localtime(&t_second);
-		
+
 		if(tm_prev == first) return true;
 		return false;
 	}
@@ -233,7 +233,7 @@ namespace oct::ec::sche
 		core::Time tm_first = first;
 		std::time_t t_first = std::mktime(&tm_first);
 		t_first += config.get_seconds_per_hour() * hours;
-		
+
 		first = t_first;
 	}
 	void rest_hours(core::Time& first,unsigned int hours, const Configuration& config)
@@ -241,14 +241,14 @@ namespace oct::ec::sche
 		core::Time tm_first = first;
 		std::time_t t_first = std::mktime(&tm_first);
 		t_first -= config.get_seconds_per_hour() * hours;
-		
+
 		first = t_first;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	Day::Day()
 	{
 	}
@@ -256,7 +256,7 @@ namespace oct::ec::sche
 	{
 		//std::cout << "Day::Day(const Day& d) - Step 1.0\n";
 		if(size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-		
+
 		for(const core::Time& dt : d)
 		{
 			push_back(dt);
@@ -270,7 +270,7 @@ namespace oct::ec::sche
 	{
 		//std::cout << "Day::operator = - Step 1.0\n";
 		if(size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-		
+
 		for(const core::Time& dt : d)
 		{
 			push_back(dt);
@@ -293,14 +293,14 @@ namespace oct::ec::sche
 	{
 		if(comp1.size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
 		if(comp2.size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-		
+
 		for(const core::Time& tdt : comp1)
 		{
 			for(const core::Time& cdt : comp2)
 			{
 				//if(tdt.tm_wday != cdt.tm_wday) throw core::Exception("Los objetos indicado, tiene dias distinto",__FILE__,__LINE__);
-				
-				if(tdt.tm_hour == cdt.tm_hour) 
+
+				if(tdt.tm_hour == cdt.tm_hour)
 				{
 					push_back(cdt);
 				}
@@ -308,13 +308,13 @@ namespace oct::ec::sche
 		}
 		//blocks.clear();
 		sort();
-		return *this;		
+		return *this;
 	}
 	bool Day::haveDisponible()const
 	{
 		return std::list<core::Time>::size() > 0 ? true : false;
 	}
-	
+
 	std::list<core::Time>::iterator Day::blocking(std::list<core::Time>::iterator b)
 	{
 		if(size() == 1)
@@ -325,26 +325,26 @@ namespace oct::ec::sche
 			return end();
 		}
 
-		
+
 		iterator itPrev = b;
 		iterator itActual = b;
 		itActual++;
 		Block block;
 		block.push_back(&*itPrev);
 		while(itActual != end())
-		{			
+		{
 			if((*itActual).tm_hour == (*itPrev).tm_hour + 1)
 			{
 				block.push_back(&*itActual);
 			}
-			else 
+			else
 			{
 				blocks.push_back(block);
 				return itActual;
 			}
-			
+
 			itActual++;
-			itPrev++;			
+			itPrev++;
 		}
 		blocks.push_back(block);
 		return itActual;
@@ -357,10 +357,10 @@ namespace oct::ec::sche
 	{
 		//ordenar los elementos core::Time por su valor tm_wday
 		std::list<core::Time>::sort(cmpHour);
-		
+
 		//contruir bloques de horas continuas
 		if(size() == 0) return;//no hay nada que ordenar si hay 1 o 0 elementos
-		
+
 		iterator it = begin();
 		while(it != end())
 		{
@@ -373,22 +373,22 @@ namespace oct::ec::sche
 		for(const core::Time* dt : b)
 		{
 			push_back(*dt);
-			newb.push_back(&back());	
+			newb.push_back(&back());
 		}
 		blocks.push_back(newb);
-	}	
+	}
 	void Day::combns(std::list<Day>& days, unsigned int hours)const
 	{
-		if(hours < 1) throw core::Exception("No esta permitido bloques de 0",__FILE__,__LINE__);		
+		if(hours < 1) throw core::Exception("No esta permitido bloques de 0",__FILE__,__LINE__);
 		if(size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-		
+
 		//std::cout << "Day::combns - Step 1\n";
 		unsigned int countHB = 0;
 		for(const Block& b : blocks)
 		{
 			countHB += b.size();
 		}
-		if(countHB != size()) 
+		if(countHB != size())
 		{
 			std::string msg = "Los bloques contiene un total de '";
 			msg += std::to_string(countHB) + ", sin embargo, el dia contiene " + std::to_string(size()) + " horas.";
@@ -411,7 +411,7 @@ namespace oct::ec::sche
 				day.add(block);
 				continue;//estas horas ya fueron repartidas
 			}
-			
+
 			//bloques con multiplos de horas pedidos
 			const unsigned int mult = block.size() / hours;
 			//unsigned int count_blocks = 0;
@@ -433,7 +433,7 @@ namespace oct::ec::sche
 					//count_blocks++;
 					day.add(block_mult);
 				}
-				/*if(day.get_blocks().size() != count_blocks)		
+				/*if(day.get_blocks().size() != count_blocks)
 				{
 					std::string msg = "Hay '";
 					msg += std::to_string(count_blocks) + "' bloques creados, sin embargo, se agregaron " + std::to_string(day.get_blocks().size());
@@ -445,7 +445,7 @@ namespace oct::ec::sche
 			}
 			else
 			{
-				
+
 			}
 		}
 		//std::cout << "Day::combns - Step 4\n";
@@ -455,12 +455,12 @@ namespace oct::ec::sche
 		unsigned int free = block.size() - ((block.size() / hours) * hours);
 		const unsigned int mult = block.size() / hours;
 		Block::const_iterator it_day = block.begin();
-		
+
 		Block block_mult;
 		//comenzar enfrente
 		for(unsigned int k = 0; k < free; k++)
 		{
-			if(it_day != block.end()) 
+			if(it_day != block.end())
 			{
 				it_day++;
 			}
@@ -481,8 +481,8 @@ namespace oct::ec::sche
 					it_day++;
 				}
 				day.add(block_mult);
-			}	
-		}		
+			}
+		}
 	}
 	void Day::print_day(std::ostream& out) const
 	{
@@ -491,9 +491,9 @@ namespace oct::ec::sche
 			dt.print(out,"%a %H:%M");
 			out << " ";
 		}
-	}	
+	}
 	void Day::print_blocks(std::ostream& out) const
-	{		
+	{
 		for(const Block& b : blocks)
 		{
 			out << "\t";
@@ -504,20 +504,20 @@ namespace oct::ec::sche
 			}
 			out << "\n";
 		}
-	}	
+	}
 	void Day::print_intevals_csv(std::ostream& out, const Data& data) const
 	{
 		if(not check()) throw core::Exception("El dia no es valido",__FILE__,__LINE__);
-		
+
 		for(unsigned int i = 0; i < size(); i++)
 		{
 			if(size() == 1)
 			{
-				
+
 			}
 			else
 			{
-			
+
 			}
 			if(i < size() - 1) out << ",";
 		}
@@ -525,7 +525,7 @@ namespace oct::ec::sche
 	check_codes Day::check() const
 	{
 		if(size() == 0 and blocks.size() == 0)  return check_codes::PASS;
-		
+
 		//verificar ordenammiento
 		/*const_iterator itPrev = begin();
 		const_iterator itActual = begin();
@@ -536,32 +536,32 @@ namespace oct::ec::sche
 			{
 				return false;
 			}
-			
+
 			itActual++;
-			itPrev++;			
+			itPrev++;
 		}*/
 
 		for(const core::Time dt : *this)
 		{
 			if((*begin()).tm_wday != dt.tm_wday) return check_codes::HOURS_DIFFERENT_DAY;
 		}
-		
+
 		unsigned int countHB = 0;
 		for(const Block& b : blocks)
 		{
 			countHB += b.size();
 		}
 		if(countHB != size()) return check_codes::BLOCK_CONTENT_SIZE_FAIL;//no coinciden las cantidad de horas
-		
-		
+
+
 		return check_codes::PASS;
 	}
 	const Day::Block* Day::random_block() const
 	{
 		if(blocks.size() == 0) return NULL;
 		else if(blocks.size() == 1) return &blocks.front();
-				
-		std::uniform_int_distribution<> distrib(0, blocks.size());		
+
+		std::uniform_int_distribution<> distrib(0, blocks.size());
 		Blocks::const_iterator it = blocks.begin();
 		std::advance(it,distrib(gen));
 		if(it != blocks.end()) &*it;
@@ -571,17 +571,17 @@ namespace oct::ec::sche
 	void Day::get_hours_around(const core::Time& hour, unsigned int count,Day::Block& block)const
 	{
 		if(count == 0) return;
-		else if(count == 1) 
+		else if(count == 1)
 		{
 			get_hours_around(hour,block);
 			return;
 		}
-		
+
 		const_iterator it = std::find(begin(),end(),hour);
 		if(it == end()) return;
 		for(unsigned int i = 0; i < count; i++)
 		{
-			
+
 		}
 	}
 	void Day::get_hours_around(const core::Time& hour,Day::Block& block)const
@@ -601,44 +601,44 @@ namespace oct::ec::sche
 		core::Time newdt;
 		data.config.add(first,1,newdt);
 		if(second == newdt) return true;
-		
+
 		return false;
 	}*/
-	
-	
-	
-	
+
+
+
+
 	void DaysOptions::random(Day& day)const
 	{
 		if(size() == 0 ) return;
-		
+
 		if(size() == 1)
 		{
 			day = front();
 			return;
 		}
-		
+
 		std::uniform_int_distribution<> distrib(0,size() - 1);
 		DaysOptions::const_iterator it = begin();
 		std::advance(it,distrib(gen));
 		day = *it;
 	}
-	
-	
-	
 
-	
-	WeekOptions::WeekOptions() : std::vector<DaysOptions>(WeekHours::WEEK_SIZE) 
+
+
+
+
+	WeekOptions::WeekOptions() : std::vector<DaysOptions>(WeekHours::WEEK_SIZE)
 	{
-		
+
 	}
-	
+
 	void WeekOptions::random(WeekHours& week)const
 	{
 		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE; day_actual++)
 		{
 			if(at(day_actual).size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
-			
+
 			std::uniform_int_distribution<> distrib(0, at(day_actual).size() - 1);
 			DaysOptions::const_iterator it = at(day_actual).begin();
 			std::advance(it,distrib(gen));
@@ -662,7 +662,7 @@ namespace oct::ec::sche
 
 		return totals;
 	}
-	
+
 	real distance_by_hour(const Day& day, const core::Time& base)
 	{
 		real sigma = 0;
@@ -671,12 +671,12 @@ namespace oct::ec::sche
 			sigma += std::pow(real(time.tm_hour - base.tm_hour),2.0);
 		}
 		sigma /= real(day.size());
-		
+
 		return sigma;
 	}
 	struct distance_measure
 	{
-		bool operator()(real f,real s)
+		bool operator()(const real f,const real s) const
 		{
 			return f < s;
 		}
@@ -684,7 +684,7 @@ namespace oct::ec::sche
 	/*bool WeekHours::get_day(unsigned int day_num,unsigned int hours,const core::Time& base,const Configuration& config,Day& day)const
 	{
 		if(hours == 0) return false;
-		
+
 		DaysOptions ops;
 		unsigned int count_post;
 		Day::const_iterator it_prev;
@@ -708,7 +708,7 @@ namespace oct::ec::sche
 					count_post = 0;
 					continue;
 				}
-				
+
 				if(post_flags) count_post++;
 				if(count_post < hours)
 				{
@@ -727,7 +727,7 @@ namespace oct::ec::sche
 		{
 			return false;//si no hay elecion simplemene no offrece datos
 		}
-		
+
 		std::multimap<real,const Day*,distance_measure> day_ops2;
 		for(const Day& day : ops)
 		{//introduce los datos en una lista ordenada por su distanca a la hora base
@@ -737,9 +737,9 @@ namespace oct::ec::sche
 		return true;//si pudo ofrecer datos
 	}*/
 
-	
-	
-	
+
+
+
 	const unsigned int WeekHours::WEEK_SIZE = 7;
 	WeekHours::WeekHours()
 	{
@@ -748,13 +748,13 @@ namespace oct::ec::sche
 	WeekHours& WeekHours::inters(const WeekHours& comp1, const WeekHours& comp2)
 	{
 		if(comp2.size() != comp1.size() and size() == comp1.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
-		
+
 		for(unsigned int i = 0; i < size(); i++)
 		{
 			at(i).inters(comp1[i],comp2[i]);
 		}
-		
-		return *this;	
+
+		return *this;
 	}
 	unsigned int WeekHours::days_disp() const
 	{
@@ -763,22 +763,22 @@ namespace oct::ec::sche
 		{
 			if(day.size() > 0) count++;
 		}
-		
+
 		return count;
 	}
-	
+
 	void WeekHours::combns(const Subject& subject, WeekOptions& week_combs)const
 	{
 		if(week_combs.size() != WEEK_SIZE)  throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
 		if(size() != week_combs.size()) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
 		if(size() != WEEK_SIZE) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
-		
-		
+
+
 		/*
 		unsigned int disp = days_disp();
 		unsigned int mean_hours,diff_hours,botton_hours,floor_hours;
 		mean_hours = subject.get_time() / disp;
-		if(mean_hours == 0) 
+		if(mean_hours == 0)
 		{
 			mean_hours = 1;
 			diff_hours = 0;
@@ -791,11 +791,11 @@ namespace oct::ec::sche
 			botton_hours = mean_hours + diff_hours;
 			floor_hours = mean_hours - diff_hours;
 		}
-				
+
 		for(unsigned int day = 0; day < size(); day++)
 		{
 			if(at(day).haveDisponible())
-			{				
+			{
 				at(day).combns(week_combs[day],mean_hours);
 				if(botton_hours > mean_hours) at(day).combns(week_combs[day],botton_hours);
 				if(floor_hours > 0) at(day).combns(week_combs[day],floor_hours);
@@ -809,12 +809,12 @@ namespace oct::ec::sche
 				if(at(day).haveDisponible()) at(day).combns(week_combs[day],hours);
 			}
 		}
-		
+
 		//TODO:Agregar combinacion para 'Menor cantidad de dias'
 		//Dever dar la posibildad de la mayor cantidad de horas posibles al dia
-		
+
 		//TODO:Hay varias combinaciones posibles desde 1 hasta subject->get_time()
-		
+
 	}
 	void WeekHours::sort()
 	{
@@ -843,7 +843,7 @@ namespace oct::ec::sche
 			check_codes code = day.check();
 			if(day.check() != check_codes::PASS) return code;
 		}
-		
+
 		return check_codes::PASS;
 	}
 	bool WeekHours::empty()const
@@ -862,7 +862,7 @@ namespace oct::ec::sche
 		{
 			count += day.size();
 		}
-		
+
 		return count;
 	}
 	void WeekHours::print_intevals_csv(std::ostream& out, const Data& data) const
@@ -883,16 +883,16 @@ namespace oct::ec::sche
 	{
 		const Day* day = random_day_disp();
 		if(day == NULL) return; //No hay dias disponibles
-		
+
 		const Day::Block* block = day->random_block();
 		if(block == NULL) return;//No hay horas disponibles
-		
+
 		const core::DataTime* hour = *random(*block);
-				
+
 		unsigned int disp = days_disp();
 		unsigned int hours_per_day = subject.get_time() / disp;
 		unsigned int hours_hat = subject.get_time() - (hours_per_day * disp);
-				
+
 		for(unsigned int i = 0; i < disp; i++)
 		{
 			if(at(i).size() > 0)
@@ -902,12 +902,12 @@ namespace oct::ec::sche
 				if(block.size() > 0) week[i].add(block);
 				block.clear();
 			}
-		}					
+		}
 	}*/
 	const Day* WeekHours::random_day_disp()const
 	{
 		if(days_disp() == 0) return NULL;
-		
+
 		const Day* day = NULL;
 		std::uniform_int_distribution<> distrib(0, 6);
 		do
@@ -915,13 +915,13 @@ namespace oct::ec::sche
 			day = &at(distrib(gen));
 		}
 		while(day->size() > 0);
-		
+
 		return day;
 	}
 	bool WeekHours::get_day(unsigned int day_num,unsigned int hours,const core::Time& base,const Configuration& config,Day& day)const
 	{
 		if(hours == 0) return false;
-		
+
 		DaysOptions ops;
 		unsigned int count_post;
 		Day::const_iterator it_prev;
@@ -945,7 +945,7 @@ namespace oct::ec::sche
 					count_post = 0;
 					continue;
 				}
-				
+
 				if(post_flags) count_post++;
 				if(count_post < hours)
 				{
@@ -964,7 +964,7 @@ namespace oct::ec::sche
 		{
 			return false;//si no hay elecion simplemene no offrece datos
 		}
-		
+
 		std::multimap<real,const Day*,distance_measure> day_ops2;
 		for(const Day& day : ops)
 		{//introduce los datos en una lista ordenada por su distanca a la hora base
@@ -974,11 +974,11 @@ namespace oct::ec::sche
 		return true;//si pudo ofrecer datos
 	}
 
-	
-	
-	
-	
-	
+
+
+
+
+
 
 	IntervalTime::IntervalTime()
 	{}
@@ -991,11 +991,11 @@ namespace oct::ec::sche
 	{
 		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especificar el mismos dia.",__FILE__,__LINE__);
 		if(begin.tm_hour >= end.tm_hour) throw core::Exception("La hora de inicio deve ser meno que lahora final.",__FILE__,__LINE__);
-		
-		int hours = config->to_hours(begin.diff(end));	
-		
+
+		int hours = config->to_hours(begin.diff(end));
+
 		if(hours < 1) return;
-		
+
 		tm tm1 = begin;
 		time_t t = mktime(&tm1);
 		tm* newt = localtime(&t);
@@ -1015,16 +1015,16 @@ namespace oct::ec::sche
 	{
 		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especificar el mismos dia.",__FILE__,__LINE__);
 		if(begin.tm_hour >= end.tm_hour) throw core::Exception("La hora de inicio deve ser meno que lahora final.",__FILE__,__LINE__);
-		
-		int hours = config->to_hours(begin.diff(end));	
-		
+
+		int hours = config->to_hours(begin.diff(end));
+
 		if(hours < 1) return;
-		
+
 		Day& day = out[begin.tm_wday];
 		Day::Block b;
 		day.get_blocks().push_back(b);
 		Day::Block& block = day.get_blocks().back();
-		
+
 		tm tm1 = begin;
 		time_t t = mktime(&tm1);
 		tm* newt = localtime(&t);
@@ -1062,10 +1062,10 @@ namespace oct::ec::sche
 
 
 
-	const std::string Configuration::formats_dt_hour = "%H:%M";	
+	const std::string Configuration::formats_dt_hour = "%H:%M";
 	const std::string Configuration::formats_dt_day_hour = "%a %H:%M";
 	const std::string Configuration::formats_dt_dayn_hour = "%w %H:%M";
-	
+
 	Configuration::Configuration()
 	{
 		schema_week = SchemaWeek::MS;
@@ -1073,7 +1073,7 @@ namespace oct::ec::sche
 		format = FormatDT::DAY_HOUR;
 		hours_sigma = 0.085;
 	}
-	
+
 	/*unsigned int Configuration::get_time_per_hour() const
 	{
 		return time_per_hour;
@@ -1137,7 +1137,7 @@ namespace oct::ec::sche
 			case SchemaWeek::MF:
 			case SchemaWeek::MS:
 				return 1;
-				
+
 			default:
 				throw core::Exception("Esquema de semana desconocido.",__FILE__,__LINE__);
 		}
@@ -1160,9 +1160,9 @@ namespace oct::ec::sche
 		dt_t -= hours * get_time_per_hour() * 60;
 		result = *localtime(&dt_t);
 	}*/
-	
-	
-	
+
+
+
 	Target::Target() : config(NULL)
 	{
 		init();
@@ -1223,21 +1223,21 @@ namespace oct::ec::sche
 			day.sort();
 		}
 	}*/
-	
-	
-	
+
+
+
 
 	Teacher::Teacher(const std::string& name,const std::string& ap,const std::string& am) : oct::core::Person(name,ap,am)
 	{
-		
+
 	}
 	Teacher::Teacher(const std::string& name) : oct::core::Person(name)
 	{
-		
+
 	}
 	Teacher::Teacher()
 	{
-		
+
 	}
 	void Teacher::print(std::ostream& out) const
 	{
@@ -1247,21 +1247,21 @@ namespace oct::ec::sche
 
 
 
-	
-	
+
+
 	Room::Room(const std::string& n)
 	{
 		name = n;
 	}
 	Room::Room()
 	{
-		
+
 	}
 
 	Room& Room::operator =(const std::string& n)
 	{
 		name = n;
-		
+
 		return *this;
 	}
 	const std::string& Room::get_name()const
@@ -1273,17 +1273,17 @@ namespace oct::ec::sche
 		out << get_name() << ",";
 		Target::print(out);
 	}
-	
-	
 
-	
+
+
+
 	Subject::Subject(const std::string& n)
 	{
 		name = n;
 	}
 	Subject::Subject()
 	{
-		
+
 	}
 	const std::string& Subject::get_name()const
 	{
@@ -1303,21 +1303,21 @@ namespace oct::ec::sche
 		out << get_name() << ",";
 		out << get_time();
 	}
-	
-	
-	
-	
+
+
+
+
 	Targets::Targets() : dataObject(NULL)
 	{
 	}
 	Targets::Targets(const Data* d) : dataObject(d)
 	{
-	}		
+	}
 	const Data* Targets::operator = (const Data* d)
 	{
 		dataObject = d;
 		return d;
-	}		
+	}
 	const Data* Targets::set(const Data* d)
 	{
 		dataObject = d;
@@ -1330,35 +1330,35 @@ namespace oct::ec::sche
 		int timeDay = dataObject->config.get_begin_day();
 		while(std::getline(ssline,data,','))
 		{
-			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR and timeDay > 6) 
+			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR and timeDay > 6)
 			{
 				std::string msg = "El formtato indicado solo permite 7 datos de entrada en ";
 				msg += "'" + fn + "':" + std::to_string(line);
 				throw core::Exception(msg, __FILE__,__LINE__);
 			}
 			std::stringstream ssTime(data);
-			
+
 			std::getline(ssTime,strH,'-');
 			//std::cout << "strH : '" << strH << "'\n";
 			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 			time.set_begin(strH);
 			//time.begin.print(std::cout,Configuration::formats_dt_day_hour);
 			//std::cout << "\n";
-			
+
 			std::getline(ssTime,strH,'-');
 			//std::cout << "strH : '" << strH << "'\n";
 			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 			time.set_end(strH);
 			//time.end.print(std::cout,Configuration::formats_dt_day_hour);
 			//std::cout << "\n";
-			
-			if(time.begin.tm_wday != time.end.tm_wday) 
+
+			if(time.begin.tm_wday != time.end.tm_wday)
 			{
 				std::string msg = "El intervalode tiempo se deve referir al mimso dia ";
 				msg += "'" + fn + "':" + std::to_string(line);
 				throw core::Exception(msg, __FILE__,__LINE__);
 			}
-			if(time.begin.tm_hour >= time.end.tm_hour) 
+			if(time.begin.tm_hour >= time.end.tm_hour)
 			{
 				std::string msg = "La hora de inicio deve ser menor que la hora final ";
 				msg += "'" + fn + "':" + std::to_string(line);
@@ -1368,13 +1368,13 @@ namespace oct::ec::sche
 			timeDay++;
 		}
 	}
-	
-	
-	
-	
 
 
-	
+
+
+
+
+
 	Teachers::Teachers(const std::string& fn)
 	{
 		loadFile(fn);
@@ -1390,11 +1390,11 @@ namespace oct::ec::sche
 	void Teachers::loadFile(const std::string& fn)
 	{
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
-		
+
 		oct::core::Shell shell;
 		//std::cout << "cwd 2:" << shell.cwd() << "\n";
 		//std::cout << "dir 2:" << fn << "\n";
-		
+
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
@@ -1415,13 +1415,13 @@ namespace oct::ec::sche
 				//std::cout << "\n";
 			}
 			indexing();
-		}	
+		}
 		else
 		{
 			std::string msg = "Fallo la aperturade '";
 			msg += fn + "'";
 			throw core::Exception(msg,__FILE__,__LINE__);
-		}	
+		}
 	}
 	void Teachers::print(std::ostream& out)
 	{
@@ -1430,7 +1430,7 @@ namespace oct::ec::sche
 			row.print(out);
 			out << "\n";
 		}
-	}	
+	}
 	void Teachers::indexing()
 	{
 		if(teacher_by_name.size() > 0) teacher_by_name.clear();
@@ -1444,15 +1444,15 @@ namespace oct::ec::sche
 		std::map<std::string, Teacher*>::const_iterator it = teacher_by_name.find(str);
 
 		if(it != teacher_by_name.end()) return it->second;
-		return NULL;		
+		return NULL;
 	}
 
 
 
-	
 
-	
-		
+
+
+
 	Subjects::Subjects(const std::string& fn, const Data* d) : Targets(d)
 	{
 		loadFile(fn);
@@ -1463,7 +1463,7 @@ namespace oct::ec::sche
 	void Subjects::loadFile(const std::string& fn)
 	{
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
-		
+
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strH;
 		if(csv.is_open())
@@ -1480,8 +1480,8 @@ namespace oct::ec::sche
 
 				std::getline(str,data,',');
 				//std::cout << data << ",";
-				std::string name = data;	
-				
+				std::string name = data;
+
 				std::getline(str,data,',');
 				std::string time = data;
 				//std::cout << "\n";
@@ -1502,7 +1502,7 @@ namespace oct::ec::sche
 						time.granulate(&dataObject->config,subject.get_times());
 						timeDay++;
 					}
-				}	*/			
+				}	*/
 			}
 			indexing();
 		}
@@ -1511,7 +1511,7 @@ namespace oct::ec::sche
 			std::string msg = "Fallo la aperturade '";
 			msg += fn + "'";
 			throw core::Exception(msg,__FILE__,__LINE__);
-		}		
+		}
 	}
 	void Subjects::print(std::ostream& out)const
 	{
@@ -1520,7 +1520,7 @@ namespace oct::ec::sche
 			s.print(out);
 			out << "\n";
 		}
-	}		
+	}
 	void Subjects::indexing()
 	{
 		if(subject_by_name.size() > 0) subject_by_name.clear();
@@ -1534,25 +1534,25 @@ namespace oct::ec::sche
 		std::map<std::string, Subject*>::const_iterator it = subject_by_name.find(str);
 
 		if(it != subject_by_name.end()) return it->second;
-		return NULL;		
+		return NULL;
 	}
 	const std::list<Subject>& Subjects::get_list() const
 	{
 		return subjects;
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 
 
 
 	Teachers_Subjects::Row::Row()
 	{
-		
-	}	
+
+	}
 	void Teachers_Subjects::Row::print(std::ostream& out)const
 	{
 		out << teacher->get_name() << ",";
@@ -1568,7 +1568,7 @@ namespace oct::ec::sche
 	Teachers_Subjects::Teachers_Subjects()
 	{
 
-	}	
+	}
 	const std::list<Teachers_Subjects::Row>& Teachers_Subjects::get_list() const
 	{
 		return teachers_subjects;
@@ -1579,9 +1579,9 @@ namespace oct::ec::sche
 	}
 	void Teachers_Subjects::loadFile(const std::string& fn)
 	{
-		
+
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
-		
+
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data;
 		if(csv.is_open())
@@ -1597,7 +1597,7 @@ namespace oct::ec::sche
 				{
 					row.teacher = rt;
 				}
-				else 	
+				else
 				{
 					std::string msg = "Archivo '";
 					msg += fn + "', el maestro '" + data + "', no esta registrada en su correpondiente archivo.";
@@ -1606,25 +1606,25 @@ namespace oct::ec::sche
 				//std::cout << data << ",";
 				while(std::getline(str,data,','))
 				{
-					//std::cout << data << ",";				
+					//std::cout << data << ",";
 					const Subject* rs = dataObject->subjects.search(data);
 					if(rs)
 					{
 						row.push_back(rs);
 					}
-					else 	
+					else
 					{
 						std::string msg = "Archivo '";
 						msg += fn + "', la materia '" + data + "', no esta registrada en su correpondiente archivo.";
 						throw core::Exception(msg,__FILE__,__LINE__);
 					}
 				}
-								
+
 				//std::cout << "\n";
 				teachers_subjects.push_back(row);
 			}
 			indexing();
-		}	
+		}
 		else
 		{
 			std::string msg = "Fallo la aperturade '";
@@ -1654,7 +1654,7 @@ namespace oct::ec::sche
 		{
 			l.push_back(it->second);
 		}
-	}	
+	}
 	void Teachers_Subjects::indexing()
 	{
 		if(teachers_by_name.size() > 0) teachers_by_name.clear();
@@ -1662,36 +1662,36 @@ namespace oct::ec::sche
 		for(Row& row : teachers_subjects)
 		{
 			if(not row.teacher) throw core::Exception("Valor nulo para puntero de Maestro",__FILE__,__LINE__);
-			
+
 			auto itTeacher = teachers_by_name.find(row.teacher->get_name());
-			if(itTeacher != teachers_by_name.end()) 
+			if(itTeacher != teachers_by_name.end())
 			{
 				std::string msg = "El Maestro '";
 				msg += row.teacher->get_name() + "' ya esta registrado previeamente en el artivo Maestros/Materias.";
 				throw core::Exception(msg,__FILE__,__LINE__);
 			}
 			teachers_by_name.insert({row.teacher->get_name(),&row});
-			
+
 			for(const Subject* subject : row)
 			{
 				if(not subject) throw core::Exception("Valor nulo para puntero de Materia",__FILE__,__LINE__);
-				subjects_by_name.insert({subject->get_name(),&row});				
-				
+				subjects_by_name.insert({subject->get_name(),&row});
+
 				std::map<std::string, HBS>::iterator it = hbs_by_subject.find(subject->get_name());
 				if(it == hbs_by_subject.end())
-				{		
+				{
 					HBS hbs;
 					hbs.subject = subject;
 					hbs.row = &row;
 					hbs.req_hours = subject->get_time();
 					hbs.disp_hours = row.teacher->get_week().count_hours();
-					hbs_by_subject.insert({subject->get_name(),hbs});					
+					hbs_by_subject.insert({subject->get_name(),hbs});
 				}
 				else
 				{
 					HBS& hbs = (*it).second;
 					hbs.disp_hours += row.teacher->get_week().count_hours();
-				}				
+				}
 			}
 		}
 	}
@@ -1699,7 +1699,7 @@ namespace oct::ec::sche
 	{
 		std::map<std::string, HBS> hbs_list;
 		HBS hbs;
-		std::list<const Row*> rows;		
+		std::list<const Row*> rows;
 		for(const Subject& subject : dataObject->subjects.get_list())
 		{
 			searchSubjects(subject.get_name(), rows);
@@ -1707,29 +1707,29 @@ namespace oct::ec::sche
 			{
 				//hbs_list.find();
 			}
-			
+
 			rows.clear();
 		}
 	}
-	
-	
+
+
 	Rooms::Rooms(const std::string& fn)
 	{
 		loadFile(fn);
 	}
 	Rooms::Rooms()
 	{
-		
-	}	
+
+	}
 	const std::list<Room>& Rooms::get_list() const
 	{
 		return rooms;
 	}
-	
+
 	void Rooms::loadFile(const std::string& fn)
-	{		
+	{
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
-		
+
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
@@ -1740,25 +1740,25 @@ namespace oct::ec::sche
 				std::stringstream str(line);
 				std::getline(str,data,',');
 				Room r;
-				rooms.push_back(r);	
+				rooms.push_back(r);
 				Room& room = rooms.back();
 				//std::cout << data << ",";
 				room = data;
 				//std::getline(str,data,',');
-				//row.subject = data;				
+				//row.subject = data;
 				fetch_times(room,str,line_number,fn);
 				line_number++;
 				//std::cout << "\n";
 			}
 			indexing();
-		}	
+		}
 		else
 		{
 			std::string msg = "Fallo la aperturade '";
 			msg += fn + "'";
 			throw core::Exception(msg,__FILE__,__LINE__);
-		}	
-	}	
+		}
+	}
 	void Rooms::print(std::ostream& out)const
 	{
 		for(const Room& r : rooms)
@@ -1772,7 +1772,7 @@ namespace oct::ec::sche
 		std::map<std::string, Room*>::const_iterator it = rooms_by_name.find(str);
 
 		if(it != rooms_by_name.end()) return it->second;
-		return NULL;		
+		return NULL;
 	}
 	void Rooms::indexing()
 	{
@@ -1787,21 +1787,21 @@ namespace oct::ec::sche
 
 	Group::Group()
 	{
-	}		
+	}
 	void Group::print(std::ostream& out)const
 	{
 		out << room->get_name() << ",";
 		//out << teacher.get_name() << ",";
 	}
-	
+
 	Groups::Groups(const std::string& fn,const Data* d) : Targets(d)
 	{
 		loadFile(fn);
 	}
 	Groups::Groups()
 	{
-		
-	}	
+
+	}
 	const std::list<Group>& Groups::get_list() const
 	{
 		return groups;
@@ -1810,12 +1810,12 @@ namespace oct::ec::sche
 	{
 		return hbrs_list;
 	}
-	
+
 	void Groups::loadFile(const std::string& fn)
 	{
-		
+
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
-		
+
 		std::fstream csv(fn, std::ios::in);
 		std::string line,data,strTime,strH;
 		if(csv.is_open())
@@ -1827,31 +1827,31 @@ namespace oct::ec::sche
 				Group row;
 				//std::cout << "room : " << data << "\n";
 				const Room* newr = dataObject->rooms.search(data);
-				if(newr) 
+				if(newr)
 				{
 					row.room = newr;
 				}
-				else 	
+				else
 				{
 					std::string msg = "Archivo '";
 					msg += fn + "', la materia '" + data + "', no esta registrada en su correpondiente archivo.";
 					throw core::Exception(msg,__FILE__,__LINE__);
-				}	
-				
+				}
+
 				while(std::getline(str,data,','))
-				{	
+				{
 					//std::cout << data << ",";
-					const Subject* news = dataObject->subjects.search(data);	
-					if(news) 
+					const Subject* news = dataObject->subjects.search(data);
+					if(news)
 					{
 						row.push_back(news);
 					}
-					else 	
+					else
 					{
 						std::string msg = "Archivo '";
 						msg += fn + "', la materia '" + data + "', no esta registrada en su correpondiente archivo.";
 						throw core::Exception(msg,__FILE__,__LINE__);
-					}		
+					}
 				}
 				groups.push_back(row);
 			}
@@ -1861,14 +1861,14 @@ namespace oct::ec::sche
 			{
 				if((*it).size()> max_lessons) max_lessons = (*it).size();
 			}
-		}	
+		}
 		else
 		{
 			std::string msg = "Fallo la aperturade '";
 			msg += fn + "'";
 			throw core::Exception(msg,__FILE__,__LINE__);
-		}	
-	}	
+		}
+	}
 	void Groups::print(std::ostream& out)const
 	{
 		for(const Group& row : groups)
@@ -1882,14 +1882,14 @@ namespace oct::ec::sche
 		std::map<std::string, Group*>::const_iterator it = groups_by_name.find(str);
 
 		if(it != groups_by_subject.end()) return it->second;
-		return NULL;		
-	}	
+		return NULL;
+	}
 	const Group* Groups::search_by_subject(const std::string& str) const
 	{
 		std::map<std::string, Group*>::const_iterator it = groups_by_subject.find(str);
 
 		if(it != groups_by_name.end()) return it->second;
-		return NULL;		
+		return NULL;
 	}
 	void Groups::indexing()
 	{
@@ -1911,7 +1911,7 @@ namespace oct::ec::sche
 			for(const Subject* s : g)
 			{
 				groups_by_subject.insert({s->get_name(),&g});
-				
+
 				//std::cout << "Subject : " << s->get_name() << "\n";
 				key_hbs key;
 				key.room = g.room;
@@ -1919,7 +1919,7 @@ namespace oct::ec::sche
 				//std::cout << "find  " << s->get_name() << " - " << g.room->get_name() << ".\n";
 				std::map<key_hbs, HBRS>::iterator it = hbrs_list.find(key);
 				if(it == hbrs_list.end())
-				{		
+				{
 					//std::cout << "prev " << s->get_name() << " - " << g.room->get_name() << ".\n";
 					HBRS hbrs;
 					hbrs.disp_hours = 0;
@@ -1929,7 +1929,7 @@ namespace oct::ec::sche
 					WeekHours week;
 					std::list<const Teachers_Subjects::Row*> rows;
 					dataObject->teachers_subjects.searchSubjects(s->get_name(),rows);
-					if(rows.empty()) 
+					if(rows.empty())
 					{
 						std::string msg;
 						msg = "No se encontro la amateria '" + s->get_name() + "' para el salon '" + g.room->get_name() + "'\n";;
@@ -1943,7 +1943,7 @@ namespace oct::ec::sche
 						week.clear_days();
 					}
 					//std::cout << "inserting  " << s->get_name() << " - " << g.room->get_name() << ".\n";
-					hbrs_list.insert({key,hbrs});				
+					hbrs_list.insert({key,hbrs});
 				}
 				else
 				{
@@ -1971,9 +1971,9 @@ namespace oct::ec::sche
 		else if(subject->get_name() < o.subject->get_name()) return true;
 		return false;
 	}
-	
-	
-	
+
+
+
 	void Data::load(const std::string& dir)
 	{
 		//TODO:validacion estricta delas entredas
@@ -1989,9 +1989,9 @@ namespace oct::ec::sche
 		((Targets&)groups) = this;
 		groups.loadFile(dir + "/groups.csv");
 	}
-	
-	
-	
+
+
+
 	Lesson::Lesson()
 	{
 		group = NULL;
@@ -2000,15 +2000,15 @@ namespace oct::ec::sche
 		room = NULL;
 		data = NULL;
 	}
-	
-	
+
+
 	ClassRoom::ClassRoom()
 	{
 
 	}
 	ClassRoom::ClassRoom(unsigned int z) : std::vector<Lesson>(z)
 	{
-		
+
 	}
 	ClassRoom::ClassRoom(const ClassRoom& g)
 	{
@@ -2022,7 +2022,7 @@ namespace oct::ec::sche
 	ClassRoom& ClassRoom::operator =(const ClassRoom& g)
 	{
 		resize(g.size());
-		
+
 		for(unsigned int i = 0; i < g.size(); i++)
 		{
 			at(i) = g[i];
@@ -2035,26 +2035,26 @@ namespace oct::ec::sche
 		if(g1.size() != g2.size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
 		if(g1.size() == 0) throw core::Exception("No hay lecciones",__FILE__,__LINE__);
 		if(g2.size() == 0) throw core::Exception("No hay lecciones",__FILE__,__LINE__);
-		
+
 		resize(g1.size());
 		std::bernoulli_distribution distrib(0.6);
 		for(unsigned int i = 0; i < g1.size(); i++)
 		{//selecciona al azar una de las collecciones para elegir agregar dico goal a la collacion actual
-			if(distrib(gen)) 
+			if(distrib(gen))
 			{
 				at(i) = g1.at(i);
 			}
-			else 
+			else
 			{
 				at(i) = g2.at(i);
 			}
 		}
-	}	
+	}
 	void ClassRoom::mutate()
 	{
 		if(size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
 		//std::cout << "\tLessons::mutate Step 1\n";
-		
+
 		std::uniform_int_distribution<int> distrib(0, size() - 1);
 		std::bernoulli_distribution random_mutation(0.5);
 		//std::cout << "\tLessons::mutate Step 2.0.0\n";
@@ -2088,47 +2088,47 @@ namespace oct::ec::sche
 			}
 			//std::cout << "\tLessons::mutate Step 2.0.5\n";
 			lesson->teacher = (*itr)->teacher;
-			
+
 			WeekHours week;
 			WeekOptions week_opt;
 			week.inters(lesson->room->get_week (),lesson->teacher->get_week());
 			week.combns(*lesson->subject,week_opt);
-			
-			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);	
+
+			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
 			unsigned int iday = distrib(gen);
 			Day* day = &lesson->week[iday];
 			week_opt[iday].random(*day);
 		}
 		else
-		{		
+		{
 			//std::cout << "\tLessons::mutate Step 2.0.2\n";
 			Lesson* lesson = &at(distrib(gen));
-				
+
 			WeekHours week;
 			WeekOptions week_opt;
 			week.inters(lesson->room->get_week (),lesson->teacher->get_week());
 			week.combns(*lesson->subject,week_opt);
-			
-			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);	
+
+			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
 			unsigned int iday = distrib(gen);
 			Day* day = &lesson->week[iday];
 			week_opt[iday].random(*day);
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	Schedule::Schedule()
 	{
 
 	}
 	Schedule::Schedule(unsigned int z) : std::vector<ClassRoom>(z)
 	{
-		
+
 	}
 	Schedule::Schedule(const Schedule& g)
 	{
@@ -2143,7 +2143,7 @@ namespace oct::ec::sche
 	Schedule& Schedule::operator =(const Schedule& g)
 	{
 		resize(g.size());
-		
+
 		for(unsigned int i = 0; i < g.size(); i++)
 		{
 			at(i) = g[i];
@@ -2180,7 +2180,7 @@ namespace oct::ec::sche
 		if(s1.size() != s2.size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
 		if(s1.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
 		if(s2.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
-		
+
 		for(unsigned int i = 0; i < size(); i++)
 		{
 			at(i).juncting(s1[i],s2[i]);
@@ -2192,6 +2192,6 @@ namespace oct::ec::sche
 		std::uniform_int_distribution<int> distrib(0, size() - 1);
 		at(distrib(gen)).mutate();
 	}
-		
+
 }
 
