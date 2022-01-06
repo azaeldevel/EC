@@ -919,9 +919,9 @@ namespace oct::ec::sche
 		return day;
 	}
 	bool WeekHours::get_day(unsigned int day_num,unsigned int hours,const core::Time& base,const Configuration& config,Day& day)const
-	{			
+	{
 		if(hours == 0) return false;
-		
+
 		//std::cout << "Step 1\n";
 		DaysOptions ops;
 		unsigned int count_post;
@@ -947,7 +947,7 @@ namespace oct::ec::sche
 					count_post = 0;
 					continue;
 				}
-				
+
 				//std::cout << "Step 2.2\n";
 				if(post_flags) count_post++;
 				if(count_post < hours)
@@ -961,7 +961,7 @@ namespace oct::ec::sche
 					new_day.add(block);
 					ops.push_back(new_day);
 				}
-				
+
 				//std::cout << "Step 2.3\n";
 			}
 		}
@@ -969,7 +969,7 @@ namespace oct::ec::sche
 		{
 			return false;//si no hay elecion simplemene no offrece datos
 		}
-		
+
 		//std::cout << "Step 3\n";
 		std::multimap<real,const Day*,distance_measure> day_ops2;
 		for(const Day& day : ops)
@@ -1346,18 +1346,18 @@ namespace oct::ec::sche
 			std::stringstream ssTime(data);
 
 			std::getline(ssTime,strH,'-');
-			//std::cout << "strH : '" << strH << "'\n";
+			std::cout << "strH : '" << strH << "'\n";
 			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 			time.set_begin(strH);
-			//time.begin.print(std::cout,Configuration::formats_dt_day_hour);
-			//std::cout << "\n";
+			time.begin.print(std::cout,Configuration::formats_dt_day_hour);
+			std::cout << "\n";
 
 			std::getline(ssTime,strH,'-');
-			//std::cout << "strH : '" << strH << "'\n";
+			std::cout << "strH : '" << strH << "'\n";
 			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 			time.set_end(strH);
-			//time.end.print(std::cout,Configuration::formats_dt_day_hour);
-			//std::cout << "\n";
+			time.end.print(std::cout,Configuration::formats_dt_day_hour);
+			std::cout << "\n";
 
 			if(time.begin.tm_wday != time.end.tm_wday)
 			{
