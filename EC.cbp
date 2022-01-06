@@ -89,6 +89,10 @@
 					<Add library="octetos-EC" />
 					<Add directory="bin/Debug" />
 				</Linker>
+				<ExtraCommands>
+					<Add before='cmd /c COPY /Y &quot;C:\msys64\mingw64\bin\libgcc_s_seh-1.dll&quot; bin\Debug' />
+					<Add before="cmd /c COPY /Y ..\core\bin\Debug\octetos-core.dll bin\Debug" />
+				</ExtraCommands>
 			</Target>
 		</Build>
 		<Unit filename="src/GA.cc">
