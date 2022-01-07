@@ -505,7 +505,7 @@ namespace oct::ec::sche
 			out << "\n";
 		}
 	}
-	void Day::print_intevals_csv(std::ostream& out, const Data& data) const
+	void Day::print_intevals_csv(std::ostream& out, const Configuration& data) const
 	{
 		if(not check()) throw core::Exception("El dia no es valido",__FILE__,__LINE__);
 
@@ -865,7 +865,7 @@ namespace oct::ec::sche
 
 		return count;
 	}
-	void WeekHours::print_intevals_csv(std::ostream& out, const Data& data) const
+	void WeekHours::print_intevals_csv(std::ostream& out, const Configuration& data) const
 	{
 		for(unsigned int i = 0; i < size(); i++)
 		{
@@ -1079,6 +1079,7 @@ namespace oct::ec::sche
 		seconds_per_hour = 60 * 60;
 		format = FormatDT::DAY_HOUR;
 		hours_sigma = 0.085;
+		out_dir = "logs/schedule";
 	}
 
 	/*unsigned int Configuration::get_time_per_hour() const
@@ -1167,7 +1168,10 @@ namespace oct::ec::sche
 		dt_t -= hours * get_time_per_hour() * 60;
 		result = *localtime(&dt_t);
 	}*/
-
+	const std::string Configuration::get_out_directory()const
+	{
+		return out_dir;
+	}
 
 
 	Target::Target() : config(NULL)
@@ -2122,7 +2126,13 @@ namespace oct::ec::sche
 			week_opt[iday].random(*day);
 		}
 	}
-
+	void ClassRoom::save_csv(std::ostream& out) const
+	{
+		for(const Lesson& l : *this)
+		{
+			
+		}
+	}
 
 
 
@@ -2200,5 +2210,15 @@ namespace oct::ec::sche
 		at(distrib(gen)).mutate();
 	}
 
+	void Schedule::save_csv(const Configuration& config) const
+	{
+		std::ofstream out_csv;
+		for(const ClassRoom& cr : *this)
+		{
+			out_csv.open(config.get_out_directory());
+			cr.save_csv(out_csv);
+			out_csv.close();
+		}
+	}
 }
 

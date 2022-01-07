@@ -43,7 +43,7 @@ namespace oct::ec::sche::output
 		
 		return *this;
 	}
-	void Student::print_csv(std::ostream& out,const Data& data) const
+	void Student::print_csv(std::ostream& out,const Configuration& data) const
 	{
 		if(size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
 		
@@ -59,6 +59,13 @@ namespace oct::ec::sche::output
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
 	Students::Students(const sche::Schedule& s)
 	{
 		resize(s.size());
@@ -68,4 +75,11 @@ namespace oct::ec::sche::output
 		}
 	}
 	
+	void Students::print_csv(std::ostream& out,const Configuration& data) const
+	{
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			at(i).print_csv(out,data);
+		}
+	}
 }
