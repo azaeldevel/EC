@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <chrono>
 
 
 void schedule_devel();
@@ -17,7 +18,6 @@ int schedule_clean(void);
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Testing..\n";
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
 

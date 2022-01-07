@@ -1,5 +1,6 @@
 # depslib dependency file v1.0
-1639204286 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
+1641449536 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
+	<cfloat>
 	<random>
 	<iostream>
 	<algorithm>
@@ -8,6 +9,7 @@
 	<stdio.h>
 	<string.h>
 	<fcntl.h>
+	<iomanip>
 	<fstream>
 	"ec.hh"
 
@@ -56,7 +58,7 @@
 	<map>
 	"ec.hh"
 
-1639192226 source:c:\users\azael\documents\develop\octetos\ec\src\max.cc
+1641449536 source:c:\users\azael\documents\develop\octetos\ec\src\max.cc
 	<iostream>
 	<limits.h>
 	"max.hh"
@@ -64,7 +66,7 @@
 1641449536 c:\users\azael\documents\develop\octetos\ec\src\max.hh
 	"GA.hh"
 
-1639108727 source:c:\users\azael\documents\develop\octetos\ec\src\sudoku.cc
+1641449536 source:c:\users\azael\documents\develop\octetos\ec\src\sudoku.cc
 	<list>
 	<math.h>
 	<fstream>
@@ -75,7 +77,7 @@
 	<stdio.h>
 	"sudoku.hh"
 
-1639108610 c:\users\azael\documents\develop\octetos\ec\src\sudoku.hh
+1641449536 c:\users\azael\documents\develop\octetos\ec\src\sudoku.hh
 	<octetos/core/MD5sum.hh>
 	<MD5sum.hh>
 	"GA.hh"
@@ -132,7 +134,7 @@
 	<stdio.h>
 	<time.h>
 
-1641520107 source:c:\users\azael\documents\develop\octetos\ec\tests\v0.cc
+1641520649 source:c:\users\azael\documents\develop\octetos\ec\tests\v0.cc
 	<CUnit/Basic.h>
 	<iostream>
 	<cstdlib>
@@ -143,4 +145,10 @@
 	<stdlib.h>
 	<stdio.h>
 	<time.h>
+
+1641449536 source:c:\users\azael\documents\develop\octetos\ec\src\schedule-eval.cc
+	"schedule.hh"
+
+1641449536 source:c:\users\azael\documents\develop\octetos\ec\src\schedule-output.cc
+	"schedule-data.hh"
 

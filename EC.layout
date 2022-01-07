@@ -1,55 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
-	<ActiveTarget name="ec-schedule" />
-	<File name="src\schedule.hh" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1853" topLine="75" />
-		</Cursor>
-	</File>
-	<File name="src\ec.cc" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="10556" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src\max.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2353" topLine="84" />
-		</Cursor>
-	</File>
-	<File name="src\schedule-data.cc" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="32112" topLine="1342" />
-		</Cursor>
-	</File>
-	<File name="src\ec.hh" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="153" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src\ec-max.cc" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="973" topLine="21" />
-		</Cursor>
-	</File>
-	<File name="src\sudoku.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1692" topLine="0" />
-		</Cursor>
-	</File>
+	<ActiveTarget name="tests-v0" />
 	<File name="src\schedule.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="208" topLine="111" />
 		</Cursor>
 	</File>
-	<File name="src\ec-schedule.cc" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src\schedule-data.cc" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1355" topLine="27" />
-		</Cursor>
-	</File>
-	<File name="src\max.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8360" topLine="0" />
+			<Cursor1 position="3968" topLine="168" />
 		</Cursor>
 	</File>
 	<File name="src\sudoku.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -57,9 +17,59 @@
 			<Cursor1 position="3874" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="src\ec-max.cc" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="973" topLine="21" />
+		</Cursor>
+	</File>
+	<File name="src\schedule.hh" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1853" topLine="75" />
+		</Cursor>
+	</File>
+	<File name="tests\v0.cc" open="1" top="1" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="338" topLine="6" />
+		</Cursor>
+	</File>
 	<File name="src\schedule-data.hh" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="84" />
+			<Cursor1 position="2676" topLine="99" />
+		</Cursor>
+	</File>
+	<File name="src\ec.cc" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="10556" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\sudoku.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1692" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\ec.hh" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="153" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\max.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8360" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\max.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2353" topLine="84" />
+		</Cursor>
+	</File>
+	<File name="tests\v0-schedule.cc" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="185" topLine="862" />
+		</Cursor>
+	</File>
+	<File name="src\ec-schedule.cc" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1355" topLine="27" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

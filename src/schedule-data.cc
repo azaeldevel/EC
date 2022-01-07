@@ -1051,19 +1051,19 @@ namespace oct::ec::sche
 	}
 	void IntervalTime::set_begin(const Configuration* config,const std::string& str)
 	{
-		strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&begin);
+		if(strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&begin) == NULL) throw core::Exception("Fallo el parseado del string", __FILE__,__LINE__);
 	}
 	void IntervalTime::set_end(const Configuration* config,const std::string& str)
 	{
-		strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&end);
+		if(strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&end) == NULL) throw core::Exception("Fallo el parseado del string", __FILE__,__LINE__);
 	}
 	void IntervalTime::set_begin(const std::string& str)
 	{
-		strptime(str.c_str(), "%w %H:%M",&begin);
+		if(strptime(str.c_str(), "%w %H:%M",&begin) == NULL) throw core::Exception("Fallo el parseado del string", __FILE__,__LINE__);
 	}
 	void IntervalTime::set_end(const std::string& str)
 	{
-		strptime(str.c_str(), "%w %H:%M",&end);
+		if(strptime(str.c_str(), "%w %H:%M",&end) == NULL) throw core::Exception("Fallo el parseado del string", __FILE__,__LINE__);
 	}
 
 
