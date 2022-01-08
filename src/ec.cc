@@ -738,7 +738,14 @@ bool Enviroment::run()
 		else if (solutions.size() == maxPopulation)//si toda la poblacion es una solucion
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tLa cantidad de solucione es igual a la poblacion.\n";
-			if(logDirectoryFlag) save(solutions,"solutions.cvs");
+			SaveCollection saveColl(logDirectory);
+			saveColl.open("solutions.cvs");
+			for(Single* s : solutions)
+			{
+				s->save(saveColl);
+				(*saveColl.out) << "\n";
+			}
+			saveColl.close();
 			history.close();
 			return true;		
 		}
