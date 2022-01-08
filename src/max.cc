@@ -316,15 +316,16 @@ void Single::eval()
 	//if(true) std::cout << "Single::eval " << USHRT_MAX << " \n";
 	fitness = double(chromo.getNumber()) / double(USHRT_MAX);
 }
-void Single::save(Save& s)
+void Single::save(Save& fn)
 {
 	//std::cout << "\tSingle::save 1\n";
-	(*s.out) << getID();
-	(*s.out) << ",";
-	(*s.out) << getFitness();
-	(*s.out) << ",";
-	(*s.out) << chromo.getNumber();
+	(*fn.out) << getID();
+	(*fn.out) << ",";
+	(*fn.out) << getFitness();
+	(*fn.out) << ",";
+	(*fn.out) << chromo.getNumber();
 	//std::cout << "\tSingle::save 2\n";
+	(*fn.out).flush();
 }
 void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 {
@@ -395,7 +396,7 @@ void Enviroment::init()
 	maxProgenitor = 200;
 	//echoSteps = false;
 	stopperMinSolutions(2);
-	stopperMaxIterations(100);
+	stopperMaxIterations(200);
 	epsilon = 1.0/double(USHRT_MAX);
 	//std::cout << "epsilon = " << epsilon << "\n";
 	comparer = &oct::ec::cmpStrength;

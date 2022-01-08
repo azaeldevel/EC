@@ -575,7 +575,6 @@ void Enviroment::init()
 	//addTerminator(ae::Terminations::JAM);
 	//sliceJam = iterJam /10;
 	comparer = &cmpStrength;
-	savingDevice = new Save(std::cout);
 }
 void Enviroment::initBoard(const std::string& initTable)
 {

@@ -194,27 +194,72 @@ void Junction::randFill(TypeJuntion t)
 	{
 		out = NULL;
 	}
-	Save::Save(std::ostream& o)
+	Save::Save(std::ofstream& o)
 	{
 		out = &o;
 	}
-	Save::Save(std::ostream* o)
+	Save::Save(std::ofstream* o)
 	{
 		out = o;
 	}
-	Save::operator std::ostream&()
+	Save::operator std::ofstream&()
 	{
 		return *out;
 	}
-	std::ostream& Save::operator =(std::ostream& o)
+	std::ofstream& Save::operator =(std::ofstream& o)
 	{
 		out = &o;
 		return o;
 	}
-	std::ostream* Save::operator =(std::ostream* o)
+	std::ofstream* Save::operator =(std::ofstream* o)
 	{
 		out = o;
 		return o;
+	}
+	
+	
+	
+	SaveCollection::SaveCollection(const std::string& dir) : directory(dir)
+	{
+	}
+	SaveCollection::~SaveCollection()
+	{
+		if(out) close();
+	}
+	
+	void SaveCollection::open(const std::string& filename)
+	{
+		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
+		
+		std::string strfn = directory + "/" + filename;		
+		out = new std::ofstream(strfn);
+		if(not out->is_open()) throw oct::core::Exception("Fallo apertura de archivo.",__FILE__,__LINE__);
+	}
+	void SaveCollection::close()
+	{
+		if(out)
+		{
+			out->flush();
+			out->close();
+			delete out;
+			out = NULL;
+		}
+	}
+	
+	
+	
+	
+
+	SaveCollectionByIteration::SaveCollectionByIteration(const std::string& dir,const std::string& p) : SaveCollection(dir),prefix(p)
+	{
+	}
+	
+	void SaveCollectionByIteration::open(Iteration it)
+	{
+		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
+		
+		std::string strfn = prefix + "-" + std::to_string(it) + ".csv";		
+		SaveCollection::open(strfn);
 	}
 
 
@@ -222,9 +267,29 @@ void Junction::randFill(TypeJuntion t)
 
 
 
+	SaveIteration::SaveIteration(const std::string& dir) : SaveCollectionByIteration(dir,"iterations")
+	{
+	}
 
 
 
+
+
+
+	SaveChilds::SaveChilds(const std::string& dir) : SaveCollectionByIteration(dir,"childs")
+	{
+	}
+	
+	
+	
+	
+	
+	SaveSelections::SaveSelections(const std::string& dir) : SaveCollectionByIteration(dir,"selections")
+	{
+	}
+	
+	
+	
 
 
 
@@ -486,7 +551,10 @@ bool Enviroment::getEchoSteps()const
 {
 	return echoSteps;
 }
-
+const std::string& Enviroment::getLogDirectory()const
+{
+	return logDirectory;
+}
 
 ID Enviroment::nextID()
 {
@@ -563,7 +631,6 @@ bool Enviroment::run()
 	if(maxProgenitor  < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
 	while(true)
 	{
-		//std::cout << "\tEnviroment::run - while Step 1\n";
 		if(stopMaxIterations)
 		{
 			if(actualIteration > maxIteration)
@@ -580,6 +647,7 @@ bool Enviroment::run()
 			if(maxIteration > 0) (*fout) << "Iteracion : " << actualIteration << "/" << maxIteration << "\n";
 			else (*fout) << "Iteracion : " << actualIteration << "\n";
 		}
+		//std::cout << "\tEnviroment::run - while Step 1\n";
 		
 		//std::cout << "\tEnviroment::run - while Step 2\n";
 		if(not comparer)
@@ -609,18 +677,14 @@ bool Enviroment::run()
 		//std::cout << "\tEnviroment::run - while Step 3\n";
 		if(logDirectoryFlag)
 		{
-			std::string strfn = logDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
-			std::ofstream fn(strfn);
-			savingDevice->out = &fn;
-			//std::cout << "\t\t" << strfn << "\n";
-			if(not fn.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			SaveIteration saveit(logDirectory);
+			saveit.open(actualIteration);
 			for(ec::Single* s : *this)
 			{
-				s->save(*savingDevice);
-				fn << "\n";
+				s->save(saveit);
+				(*saveit.out) << "\n";
 			}
-			fn.flush();
-			fn.close();
+			saveit.close();
 		}
 		//std::cout << "\tEnviroment::run - while Step 3.5\n";
 		if(logDirectoryFlag or logDirectoryHistoryFlag)
@@ -660,7 +724,7 @@ bool Enviroment::run()
 		if(stopMinSolutions and solutions.size() >= minSolutions)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			if(logDirectoryFlag) save(solutions,"solutions.cvs");
+			//if(logDirectoryFlag) save(solutions,"solutions.cvs");
 			history.close();
 			return true;
 		}
@@ -674,22 +738,18 @@ bool Enviroment::run()
 		
 		ec::ID countBefore = size();
 		selection();
+		SaveSelections saveSelections(logDirectory);
+		saveSelections.open(actualIteration);
 		//std::cout << "\tEnviroment::run - while Step 4\n";
 		if(logDirectoryFlag)
 		{
-			std::string strSelection = logDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
-			//std::cout << "\t\t" << strSelection << "\n";
-			std::ofstream fnSelection(strSelection);
-			savingDevice->out = &fnSelection;
-			if(not fnSelection.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(Single* s : *this)
 			{
-				s->save(*savingDevice);
-				fnSelection << "\n";
+				s->save(saveSelections);
+				(*saveSelections.out) << "\n";
 			}
-			fnSelection.flush();
-			fnSelection.close();
 		}
+		saveSelections.close();
 		//std::cout << "\tEnviroment::run - while Step 5\n";
 		unsigned short removes = countBefore - size();
 		//deletes == 0 ? counUndelete++ : counUndelete = 0;
@@ -719,33 +779,23 @@ bool Enviroment::run()
 		
 		//std::cout << "\tEnviroment::run - while Step 9\n";
 		juncting();				
-		std::ofstream fnChilds;
-		if(logDirectoryFlag)
-		{
-			std::string strChilds = logDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
-			fnChilds.open(strChilds);
-		}
-		//std::cout << "\tEnviroment::run - while Step 10\n";
-		
+		SaveChilds savechilds(logDirectory);
+		//std::cout << "\tEnviroment::run - while Step 10\n";		
 		std::bernoulli_distribution random_mutation(mutableProb);
-		if(logDirectoryFlag) if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+		if(logDirectoryFlag) savechilds.open(actualIteration);
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 			if(random_mutation(rd)) s->mutate();
 			//if(triggerRepeatEnable and triggerRepeatMin > sigma) s->mutate();
 			s->eval();
 			if(logDirectoryFlag)
-			{
-				s->save(*savingDevice);
-				fnChilds << "\n";
+			{				
+				s->save(savechilds);
+				(*savechilds.out) << "\n";
 			}
 			push_front(s);
 		}
-		if(logDirectoryFlag)
-		{
-			fnChilds.flush();
-			fnChilds.close();
-		}
+		savechilds.close();
 		if(echolevel > 1 and fout != NULL)
 		{
 			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";

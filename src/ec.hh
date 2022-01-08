@@ -112,15 +112,50 @@ private:
 struct Save
 {
 	Save();
-	Save(std::ostream&);
-	Save(std::ostream*);
-	operator std::ostream&();
-	std::ostream& operator =(std::ostream&);
-	std::ostream* operator =(std::ostream*);
+	Save(std::ofstream&);
+	Save(std::ofstream*);
+	operator std::ofstream&();
+	std::ofstream& operator =(std::ofstream&);
+	std::ofstream* operator =(std::ofstream*);
 
 	//virtual void save(const Enviroment&);
 	
-	std::ostream* out;
+	std::ofstream* out;
+};
+
+struct SaveCollection : public Save
+{
+	SaveCollection(const std::string&);
+	~SaveCollection();
+
+	void open(const std::string&);
+	void close();
+
+protected:
+	std::string directory;
+};
+
+struct SaveCollectionByIteration : public SaveCollection
+{
+	SaveCollectionByIteration(const std::string&,const std::string&);
+
+	void open(Iteration it);
+
+private:
+	std::string prefix;
+};
+
+struct SaveIteration : public SaveCollectionByIteration
+{
+	SaveIteration(const std::string&);
+};
+struct SaveChilds : public SaveCollectionByIteration
+{
+	SaveChilds(const std::string&);
+};
+struct SaveSelections : public SaveCollectionByIteration
+{
+	SaveSelections(const std::string&);
 };
 
 
@@ -169,7 +204,7 @@ public:
 	/**
 	*\brief Crea un arcivo CSV con los datos relevantes del individuo
 	*/
-	virtual void save(Save& fn) = 0;
+	virtual void save(Save&) = 0;
 	/**
 	*\brief Imprime los datos relevantes del individuo
 	*/
@@ -245,6 +280,7 @@ public:
 	std::ostream* getFout();
 	//const std::string getLogSubDirectory()const;
 	Iteration getIterationActual()const;
+	const std::string& getLogDirectory()const;
 	
 	/**
 	*\brief Devuelve el siguiento ID para un nuevo objeto Single
