@@ -32,9 +32,11 @@ namespace oct::ec::sche
 	void Single::save(Save& c)
 	{
 		const Configuration& config = ((Enviroment*)env)->get_data().config;
+		
 		std::string strDay = std::to_string(oct::core::getDayID());
 		std::string strTime = std::to_string(oct::core::getTimeID());
-		std::string dir = config.get_out_directory() + "/" + std::to_string(env->getIterationActual()) + "/" + std::to_string(config._id);
+		std::string dir = config.get_out_directory() + "/" + std::to_string(env->getIterationActual()) + "/" + std::to_string(getID());
+		
 		env->shell.mkdir(dir);
 		save_csv(config,dir);		
 	}
@@ -115,7 +117,7 @@ void Enviroment::init(const std::string& dirproy)
 	//PORTION = 1.0/real(CRITERION);
 	//schedule_max_hours = std::min((unsigned int)data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS/2), Single::WEEK_HOURS2) ;
 	//GAMMA = 1.0/real(SCHEDULE_MAX_HOURS * CRITERION);
-	
+	savingDevice = new Saving();
 }
 
 void Enviroment::initial()

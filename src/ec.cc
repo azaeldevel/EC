@@ -190,7 +190,10 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-
+	Save::Save()
+	{
+		out = NULL;
+	}
 	Save::Save(std::ostream& o)
 	{
 		out = &o;
@@ -206,6 +209,12 @@ void Junction::randFill(TypeJuntion t)
 	std::ostream& Save::operator =(std::ostream& o)
 	{
 		out = &o;
+		return o;
+	}
+	std::ostream* Save::operator =(std::ostream* o)
+	{
+		out = o;
+		return o;
 	}
 
 

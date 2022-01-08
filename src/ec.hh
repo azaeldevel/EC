@@ -111,10 +111,12 @@ private:
 
 struct Save
 {
+	Save();
 	Save(std::ostream&);
 	Save(std::ostream*);
 	operator std::ostream&();
 	std::ostream& operator =(std::ostream&);
+	std::ostream* operator =(std::ostream*);
 
 	//virtual void save(const Enviroment&);
 	
