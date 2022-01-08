@@ -724,7 +724,14 @@ bool Enviroment::run()
 		if(stopMinSolutions and solutions.size() >= minSolutions)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			//if(logDirectoryFlag) save(solutions,"solutions.cvs");
+			SaveCollection saveColl(logDirectory);
+			saveColl.open("solutions.cvs");
+			for(Single* s : solutions)
+			{
+				s->save(saveColl);
+				(*saveColl.out) << "\n";
+			}
+			saveColl.close();
 			history.close();
 			return true;
 		}

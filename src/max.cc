@@ -392,8 +392,8 @@ Enviroment::Enviroment(int argc, const char* argv[]) : oct::ec::Enviroment(argc,
 void Enviroment::init()
 {
 	initPopulation = 1000;
-	maxPopulation = 1000;
-	maxProgenitor = 200;
+	maxPopulation = 5000;
+	maxProgenitor = 10;
 	//echoSteps = false;
 	stopperMinSolutions(2);
 	stopperMaxIterations(200);
