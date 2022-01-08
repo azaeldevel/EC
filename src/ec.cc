@@ -549,6 +549,9 @@ bool Enviroment::run()
 	//bool triggerRepeatEnable = true;
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;	
 	//double triggerJam2 = 1.0e-20;	
+	
+	if(size() < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);	
+	if(maxProgenitor  < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
 	while(true)
 	{
 		//std::cout << "\tEnviroment::run - while Step 1\n";
@@ -832,6 +835,10 @@ Single* Enviroment::getRandomSingleAny()
 	
 	return *it;
 }
+Single* Enviroment::getRandomSingleFirst()
+{	
+	return front();
+}
 Single* Enviroment::getRandomSingleTop()
 {
 	const_iterator it = begin();
@@ -853,10 +860,9 @@ Iteration Enviroment::getIterationActual()const
 void Enviroment::juncting()
 {
 	Single *single1,*single2;
-	newschils.clear();
 	do
 	{
-		single1 = getRandomSingleTop();
+		single1 = getRandomSingleFirst();
 		do
 		{
 			single2 = getRandomSingleTop();	

@@ -326,6 +326,7 @@ private:
 	Single* getRandomSingle();
 	Single* getRandomSingleTop();
 	Single* getRandomSingleAny();
+	Single* getRandomSingleFirst();
 
 protected:
 	std::string logDirectory;

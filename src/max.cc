@@ -41,7 +41,8 @@ geneUS Chromosome::randGenNumber()
 {
 	geneUS g;
 	caret_2B_16b* gene = reinterpret_cast<caret_2B_16b*>((geneUS*)&g);
-	double randNum = randNumber(0.0,1.0);
+	std::uniform_real_distribution<double> distribution(0.0,1.0);
+	double randNum = distribution(gen);
 
 	if(randNum < 1.0/16.0)
 	{
@@ -112,8 +113,8 @@ geneUS Chromosome::randGenNumber()
 }
 Chromosome::pfnCombine Chromosome::randCombine()
 {
-	double randN = randNumber(0.0,4.0);
-	unsigned short randUS = randN + 1;
+	std::uniform_int_distribution<> distribution(1,4);
+	unsigned short randUS = distribution(gen);
 	switch(randUS)
 	{
 		case 1:
