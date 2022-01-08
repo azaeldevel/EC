@@ -219,7 +219,8 @@ geneUS Chromosome::mutate(const geneUS& g)
 	if(sizeof(caret_2B_16b) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
 
 	caret_2B_16b gene = *reinterpret_cast<const caret_2B_16b*>((const geneUS*)&g);
-	double randNum = randNumber(0.0,1.0);
+	std::uniform_real_distribution<double> distribution(0.0,1.0);
+	double randNum = distribution(gen);
 
 	if(randNum < 1.0/16.0)
 	{
@@ -316,11 +317,13 @@ void Single::eval()
 }
 void Single::save(Save& s)
 {
+	//std::cout << "\tSingle::save 1\n";
 	(*s.out) << getID();
 	(*s.out) << ",";
 	(*s.out) << getFitness();
 	(*s.out) << ",";
 	(*s.out) << chromo.getNumber();
+	//std::cout << "\tSingle::save 2\n";
 }
 void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 {
@@ -330,11 +333,11 @@ void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* 
 		Chromosome::pfnCombine algCombine;
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.2\n";
 		geneUS genN = chromo.combination(((Single*)single)->chromo.getNumber());
-		double randMutate = randNumber(0.0,1.0);
-		/*if(env->getProbabilityMutationEvent() < randMutate)
+		std::uniform_real_distribution<double> distribution(0.0,1.0);
+		if(distribution(gen) < env->getMutableProbability())
 		{
 			genN = Chromosome::mutate(genN);
-		}*/
+		}
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.3\n";
 		double randAlgSingle = randNumber(0.0,1.0);
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.4\n";
@@ -395,6 +398,7 @@ void Enviroment::init()
 	epsilon = 1.0/double(USHRT_MAX);
 	//std::cout << "epsilon = " << epsilon << "\n";
 	comparer = &oct::ec::cmpStrength;
+	savingDevice = new Save(NULL);
 }
 
 

@@ -114,6 +114,9 @@ struct Save
 	Save(std::ostream&);
 	Save(std::ostream*);
 	operator std::ostream&();
+	std::ostream& operator =(std::ostream&);
+
+	//virtual void save(const Enviroment&);
 	
 	std::ostream* out;
 };
@@ -232,7 +235,7 @@ public:
 	double getMedia() const;
 	double getEpsilon() const;
 	//double getProbabilityMutableGene()const;
-	//double getMutableProbability()const;
+	real getMutableProbability()const;
 	//void remove(ae::Single*);
 	unsigned long getSession()const;
 	//static unsigned long getDayID();

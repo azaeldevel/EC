@@ -203,6 +203,10 @@ void Junction::randFill(TypeJuntion t)
 	{
 		return *out;
 	}
+	std::ostream& Save::operator =(std::ostream& o)
+	{
+		out = &o;
+	}
 
 
 
@@ -411,10 +415,10 @@ double Enviroment::getEpsilon() const
 {
 	return pMutableGene;
 }*/
-/*double Enviroment::getMutableProbability()const
+double Enviroment::getMutableProbability()const
 {
 	return mutableProb;
-}*/
+}
 /*
 unsigned long Enviroment::getSession()const
 {
@@ -595,6 +599,7 @@ bool Enviroment::run()
 		{
 			std::string strfn = logDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
 			std::ofstream fn(strfn);
+			savingDevice->out = &fn;
 			//std::cout << "\t\t" << strfn << "\n";
 			if(not fn.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ec::Single* s : *this)
@@ -605,6 +610,7 @@ bool Enviroment::run()
 			fn.flush();
 			fn.close();
 		}
+		//std::cout << "\tEnviroment::run - while Step 3.5\n";
 		if(logDirectoryFlag or logDirectoryHistoryFlag)
 		{
 			if(history.is_open())
@@ -662,6 +668,7 @@ bool Enviroment::run()
 			std::string strSelection = logDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
 			//std::cout << "\t\t" << strSelection << "\n";
 			std::ofstream fnSelection(strSelection);
+			savingDevice->out = &fnSelection;
 			if(not fnSelection.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(Single* s : *this)
 			{
@@ -819,23 +826,23 @@ Single* Enviroment::getRandomSingle()
 Single* Enviroment::getRandomSingleAny()
 {
 	const_iterator it = begin();
-
-	//std::mt19937 gen(rd());
+	
     std::uniform_int_distribution<int> distrib(0, size() - 1);
 	std::advance(it,distrib(gen));
+	
 	return *it;
 }
 Single* Enviroment::getRandomSingleTop()
 {
 	const_iterator it = begin();
-
-	//std::mt19937 gen(rd());
+	
     std::lognormal_distribution<double> distrib(0.0,1.0);
-    unsigned int offset = std::abs(distrib(gen));    
-    while(offset >= size())
+    unsigned int offset;    
+    do
     {
     	offset = std::abs(distrib(gen));
-    }    
+    }   
+    while(offset >= size());
 	std::advance(it,offset);
 	return *it;
 }
@@ -849,9 +856,12 @@ void Enviroment::juncting()
 	newschils.clear();
 	do
 	{
-		ec::Single* single1 = getRandomSingle();
-		ec::Single* single2 = getRandomSingle();	
-		if(single1 == single2) continue;
+		single1 = getRandomSingleTop();
+		do
+		{
+			single2 = getRandomSingleTop();	
+		}
+		while(single1 == single2);
 		
 		single1->juncting(newschils,single2);
 	}
