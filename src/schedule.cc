@@ -29,9 +29,14 @@ namespace oct::ec::sche
 	{
 
 	}
-	void Single::save(std::ofstream& fn)
+	void Single::save(Save& c)
 	{
-		
+		const Configuration& config = ((Enviroment*)env)->get_data().config;
+		std::string strDay = std::to_string(oct::core::getDayID());
+		std::string strTime = std::to_string(oct::core::getTimeID());
+		std::string dir = config.get_out_directory() + "/" + std::to_string(env->getIterationActual()) + "/" + std::to_string(config._id);
+		env->shell.mkdir(dir);
+		save_csv(config,dir);		
 	}
 	void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{

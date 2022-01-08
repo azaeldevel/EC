@@ -191,6 +191,25 @@ void Junction::randFill(TypeJuntion t)
 
 
 
+	Save::Save(std::ostream& o)
+	{
+		out = &o;
+	}
+	Save::Save(std::ostream* o)
+	{
+		out = o;
+	}
+	Save::operator std::ostream&()
+	{
+		return *out;
+	}
+
+
+
+
+
+
+
 
 
 
@@ -280,7 +299,7 @@ void Enviroment::init()
 	stopMinSolutions = false;
 	mutableProb = 0.002;
 	//pMutableGene = -1.0;
-	fout = NULL;
+	//fout = NULL;
 	stopMaxIterations=false;
 	stopMaxSerie = false;
 	//percen_at_iteration = 0.4;//%
@@ -297,6 +316,7 @@ void Enviroment::init()
 	actualSerie = 0;
 	newIteration = false;
 	fout = &std::cout;
+	savingDevice = NULL;
 }
 Enviroment::Enviroment()
 {
@@ -305,6 +325,8 @@ Enviroment::Enviroment()
 Enviroment::~Enviroment()
 {
 	if(size() > 0) free();
+	delete savingDevice;
+	savingDevice = NULL;
 }
 
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
@@ -523,7 +545,6 @@ bool Enviroment::run()
 	//bool triggerRepeatEnable = true;
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;	
 	//double triggerJam2 = 1.0e-20;	
-	
 	while(true)
 	{
 		//std::cout << "\tEnviroment::run - while Step 1\n";
@@ -531,6 +552,7 @@ bool Enviroment::run()
 		{
 			if(actualIteration > maxIteration)
 			{
+				if(fout) (*fout) << "Se alacanzo el limite maximo de iteraciones\n";
 				history.close();
 				return false;
 			}
@@ -577,7 +599,7 @@ bool Enviroment::run()
 			if(not fn.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(ec::Single* s : *this)
 			{
-				s->save(fn);
+				s->save(*savingDevice);
 				fn << "\n";
 			}
 			fn.flush();
@@ -643,7 +665,7 @@ bool Enviroment::run()
 			if(not fnSelection.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(Single* s : *this)
 			{
-				s->save(fnSelection);
+				s->save(*savingDevice);
 				fnSelection << "\n";
 			}
 			fnSelection.flush();
@@ -695,7 +717,7 @@ bool Enviroment::run()
 			s->eval();
 			if(logDirectoryFlag)
 			{
-				s->save(fnChilds);
+				s->save(*savingDevice);
 				fnChilds << "\n";
 			}
 			push_front(s);
@@ -817,6 +839,10 @@ Single* Enviroment::getRandomSingleTop()
 	std::advance(it,offset);
 	return *it;
 }
+Iteration Enviroment::getIterationActual()const
+{
+	return actualIteration;
+}
 void Enviroment::juncting()
 {
 	Single *single1,*single2;
@@ -852,7 +878,7 @@ void Enviroment::save()
 	std::ofstream fn(strfn);
 	for(ec::Single* s : *this)
 	{
-		s->save(fn);
+		s->save(*savingDevice);
 		fn << "\n";
 	}
 	fn.flush();
@@ -906,7 +932,7 @@ void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file
 	std::ofstream fn(strfn);
 	for(ec::Single* s : lst)
 	{
-		s->save(fn);
+		s->save(*savingDevice);
 		fn << "\n";
 	}
 	fn.flush();
@@ -925,6 +951,15 @@ void Enviroment::commands(int argc, const char* argv[])
 			if(not shell.exists(logDirectory))
 			{
 				shell.mkdir(logDirectory);
+			}
+		}
+		if(strcmp("--directory-history-logs",argv[i]) == 0)
+		{
+			logDirectoryHistory = argv[++i];
+			basedir = logDirectoryHistory;
+			if(not shell.exists(logDirectory))
+			{
+				shell.mkdir(logDirectoryHistory);
 			}
 		}
 		if(strcmp("--iterations",argv[i]) == 0)

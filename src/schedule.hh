@@ -10,6 +10,11 @@
 
 namespace oct::ec::sche
 {
+
+	struct Saving : public Save
+	{
+		
+	};
 	
 	/**
 	*\brief Representa una posible solucion a nuestro problema
@@ -34,7 +39,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Crea un arcivo CSV con los datos relevantes del individuo
 		*/
-		virtual void save(std::ofstream& fn);		
+		virtual void save(Save& fn);		
 		/**
 		*\brief Realiza el apareo entre dos individuos
 		*/

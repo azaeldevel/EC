@@ -493,21 +493,33 @@ namespace oct::ec::sche
 			out << "\n";
 		}
 	}
-	void Day::print_intevals_csv(std::ostream& out, const Configuration& data) const
+	void Day::print_intevals_csv(std::ostream& out, const Configuration& config) const
 	{
 		if(not check()) throw core::Exception("El dia no es valido",__FILE__,__LINE__);
 
-		for(unsigned int i = 0; i < size(); i++)
+		unsigned int block_i = 0;
+		for(Blocks::const_iterator it = blocks.begin(); it != blocks.end(); it++,block_i++)
 		{
-			if(size() == 1)
+			if((*it).size() == 1)
 			{
-
+				(*it).front()->print(out,"%w %H:%M");
+				out << "-";
+				oct::core::Time timeEnd;
+				timeEnd = *(*it).front();
+				add_hours(timeEnd,1,config);
+				timeEnd.print(out,"%w %H:%M");
 			}
 			else
 			{
-
+				
+				(*it).front()->print(out,"%w %H:%M");
+				out << "-";
+				oct::core::Time timeEnd;
+				timeEnd = *(*it).back();
+				add_hours(timeEnd,1,config);
+				timeEnd.print(out,"%w %H:%M");
 			}
-			if(i < size() - 1) out << ",";
+			if(block_i < blocks.size() - 1) out << ",";
 		}
 	}
 	check_codes Day::check() const
@@ -2114,11 +2126,17 @@ namespace oct::ec::sche
 			week_opt[iday].random(*day);
 		}
 	}
-	void ClassRoom::save_csv(std::ostream& out) const
+	void ClassRoom::save_csv(std::ostream& out,const Configuration& config) const
 	{
 		for(const Lesson& l : *this)
 		{
-			
+			for(unsigned int i = 0; i < size(); i++)
+			{
+				out << at(i).room->get_name() << "\n";
+				out << at(i).subject->get_name() << ",";
+				out << at(i).teacher->get_name() << ",";
+				at(i).week.print_intevals_csv(out,config);
+			}
 		}
 	}
 
@@ -2198,13 +2216,13 @@ namespace oct::ec::sche
 		at(distrib(gen)).mutate();
 	}
 
-	void Schedule::save_csv(const Configuration& config) const
+	void Schedule::save_csv(const Configuration& config,const std::string& dir) const
 	{
 		std::ofstream out_csv;
 		for(const ClassRoom& cr : *this)
 		{
-			out_csv.open(config.get_out_directory());
-			cr.save_csv(out_csv);
+			out_csv.open(dir + "/" + cr[0].group->name);
+			cr.save_csv(out_csv,config);
 			out_csv.close();
 		}
 	}

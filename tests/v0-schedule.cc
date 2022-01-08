@@ -754,7 +754,7 @@ void schedule_devel()
 
 
 
-	Enviroment sche ("logs",DATA_DIR);
+	/*Enviroment sche ("logs",DATA_DIR);
 	try
 	{
 		sche.initial();
@@ -794,7 +794,7 @@ void schedule_devel()
 	{
 		std::cout << "not sche_teachers.empty() = " << not sche_teachers.empty() << "\n";
 		CU_ASSERT(false);
-	}
+	}*/
 
 	const std::map<Groups::key_hbs, Groups::HBRS>& hbrs_list = data.groups.get_hbrs();
 	for(auto const& hbrs : hbrs_list)

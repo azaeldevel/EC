@@ -108,6 +108,17 @@ private:
 	TypeJuntion type;
 };
 
+
+struct Save
+{
+	Save(std::ostream&);
+	Save(std::ostream*);
+	operator std::ostream&();
+	
+	std::ostream* out;
+};
+
+
 /**
 *\brief Representa una posible solucion a nuestro problema
 */
@@ -153,7 +164,7 @@ public:
 	/**
 	*\brief Crea un arcivo CSV con los datos relevantes del individuo
 	*/
-	virtual void save(std::ofstream& fn) = 0;
+	virtual void save(Save& fn) = 0;
 	/**
 	*\brief Imprime los datos relevantes del individuo
 	*/
@@ -188,6 +199,7 @@ bool cmpStrength(const Single* f,const Single* s);
 *\brief Algoritmo de ordenamiento
 */
 bool cmpStrength1(const Single* f,const Single* s);
+
 
 /**
 *\brief Pricipales variables de control y proceso
@@ -227,6 +239,7 @@ public:
 	//static unsigned long getTimeID();
 	std::ostream* getFout();
 	//const std::string getLogSubDirectory()const;
+	Iteration getIterationActual()const;
 	
 	/**
 	*\brief Devuelve el siguiento ID para un nuevo objeto Single
@@ -298,6 +311,13 @@ public:
 	*\brief Libera la memoria ocupada por la actual poblacion y vacia la lista
 	*/
 	virtual void free();
+
+public:
+	
+	//
+	oct::core::Shell shell;
+	
+	
 private:
 	
 	Single* getRandomSingle();
@@ -372,9 +392,7 @@ protected:
 
 	bool echoSteps;
 
-	//
-	oct::core::Shell shell;
-
+	Save* savingDevice;
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion

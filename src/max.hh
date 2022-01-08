@@ -62,7 +62,7 @@ namespace oct::ec::max
 		/**
 		*\brief Crea un arcivo CSV con los datos relevantes del individuo
 		*/
-		virtual void save(std::ofstream& fn);		
+		virtual void save(Save& fn);		
 		/**
 		*\brief Realiza el apareo entre dos individuos
 		*/

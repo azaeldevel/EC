@@ -65,7 +65,7 @@ public:
 	virtual void eval();
 	virtual void randFill();
 	virtual void juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single);
-	virtual void save(std::ofstream& fn);
+	virtual void save(Save& fn);
 	//const oct::core::StringMD5& getMD5() const;
 	virtual void mutate();
 

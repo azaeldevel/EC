@@ -145,7 +145,7 @@ namespace oct::ec::sche
 
 		void print_day(std::ostream&) const;
 		void print_blocks(std::ostream&) const;
-		void print_intevals_csv(std::ostream&,const Configuration& data) const;
+		void print_intevals_csv(std::ostream&,const Configuration&) const;
 
 
 		/**
@@ -239,7 +239,7 @@ namespace oct::ec::sche
 
 		void print(std::ostream&) const;
 
-		void print_intevals_csv(std::ostream&,const Configuration& data) const;
+		void print_intevals_csv(std::ostream&,const Configuration&) const;
 
 		check_codes check()const;
 
@@ -318,7 +318,7 @@ namespace oct::ec::sche
 
 	public:
 		Configuration();
-		Configuration(const std::string& name);
+		//Configuration(const std::string& name);
 		unsigned int to_hours(double )const;
 		//unsigned int get_time_per_hour() const;
 		unsigned int get_seconds_per_hour() const;
@@ -347,6 +347,9 @@ namespace oct::ec::sche
 		*\param result variable de retorno, donde se coloca el resultado de la operacion
 		*/
 		void rest(const core::Time& dt, unsigned int hours, core::Time& result);
+
+		//
+		unsigned int _id;
 	private:
 		SchemaWeek schema_week;
 		unsigned int seconds_per_hour;//en minutes por hora
@@ -670,7 +673,7 @@ namespace oct::ec::sche
 
 		void mutate();
 		
-		void save_csv(std::ostream&) const;
+		void save_csv(std::ostream&,const Configuration&) const;
 
 	private:
 	private:
@@ -696,7 +699,7 @@ namespace oct::ec::sche
 
 		void mutate();
 		
-		void save_csv(const Configuration&) const;
+		void save_csv(const Configuration&,const std::string&) const;
 	private:
 
 	private:

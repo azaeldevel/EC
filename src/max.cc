@@ -314,13 +314,13 @@ void Single::eval()
 	//if(true) std::cout << "Single::eval " << USHRT_MAX << " \n";
 	fitness = double(chromo.getNumber()) / double(USHRT_MAX);
 }
-void Single::save(std::ofstream& fn)
+void Single::save(Save& s)
 {
-	fn << getID();
-	fn << ",";
-	fn << getFitness();
-	fn << ",";
-	fn << chromo.getNumber();
+	(*s.out) << getID();
+	(*s.out) << ",";
+	(*s.out) << getFitness();
+	(*s.out) << ",";
+	(*s.out) << chromo.getNumber();
 }
 void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 {
