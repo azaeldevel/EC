@@ -189,6 +189,12 @@ namespace oct::core
 	{
 	    std::istringstream ss(time);
         ss >> std::get_time(this, format.c_str());
+        if(ss.fail())
+        {
+        	std::string msg = "Fallo la lecrtura de la fecha '";
+        	msg += time + "' con el formato '" + format + "'";
+        	throw core::Exception(msg,__FILE__,__LINE__);
+        }
 	}
 }
 
@@ -279,8 +285,8 @@ namespace oct::ec::sche
 	}
 	Day& Day::inters(const Day& comp1, const Day& comp2)
 	{
-		if(comp1.size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-		if(comp2.size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(comp1.size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(comp2.size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
 
 		for(const core::Time& tdt : comp1)
 		{
@@ -493,21 +499,33 @@ namespace oct::ec::sche
 			out << "\n";
 		}
 	}
-	void Day::print_intevals_csv(std::ostream& out, const Configuration& data) const
+	void Day::print_intevals_csv(std::ostream& out, const Configuration& config) const
 	{
 		if(not check()) throw core::Exception("El dia no es valido",__FILE__,__LINE__);
 
-		for(unsigned int i = 0; i < size(); i++)
+		unsigned int block_i = 0;
+		for(Blocks::const_iterator it = blocks.begin(); it != blocks.end(); it++,block_i++)
 		{
-			if(size() == 1)
+			if((*it).size() == 1)
 			{
-
+				(*it).front()->print(out,"%w %H:%M");
+				out << "-";
+				oct::core::Time timeEnd;
+				timeEnd = *(*it).front();
+				add_hours(timeEnd,1,config);
+				timeEnd.print(out,"%w %H:%M");
 			}
 			else
 			{
-
+				
+				(*it).front()->print(out,"%w %H:%M");
+				out << "-";
+				oct::core::Time timeEnd;
+				timeEnd = *(*it).back();
+				add_hours(timeEnd,1,config);
+				timeEnd.print(out,"%w %H:%M");
 			}
-			if(i < size() - 1) out << ",";
+			if(block_i < blocks.size() - 1) out << ",";
 		}
 	}
 	check_codes Day::check() const
@@ -1061,13 +1079,22 @@ namespace oct::ec::sche
 	const std::string Configuration::formats_dt_day_hour = "%a %H:%M";
 	const std::string Configuration::formats_dt_dayn_hour = "%w %H:%M";
 
-	Configuration::Configuration()
+	void Configuration::init()
 	{
 		schema_week = SchemaWeek::MS;
 		seconds_per_hour = 60 * 60;
 		format = FormatDT::DAY_HOUR;
 		hours_sigma = 0.085;
-		out_dir = "logs/schedule";
+		out_dir = "logs/schedule";	
+	}
+	Configuration::Configuration()
+	{
+		init();
+	}
+	Configuration::Configuration(const std::string& dir)
+	{
+		init();
+		out_dir = dir;
 	}
 
 	/*unsigned int Configuration::get_time_per_hour() const
@@ -1973,6 +2000,14 @@ namespace oct::ec::sche
 
 
 
+	Data::Data()
+	{
+	}	
+	Data::Data(const std::string& in_dir,const std::string& out_dir) : config(out_dir)
+	{
+		load(in_dir);
+	}
+
 	void Data::load(const std::string& dir)
 	{
 		//TODO:validacion estricta delas entredas
@@ -2114,11 +2149,17 @@ namespace oct::ec::sche
 			week_opt[iday].random(*day);
 		}
 	}
-	void ClassRoom::save_csv(std::ostream& out) const
+	void ClassRoom::save_csv(std::ostream& out,const Configuration& config) const
 	{
 		for(const Lesson& l : *this)
 		{
-			
+			for(unsigned int i = 0; i < size(); i++)
+			{
+				out << at(i).room->get_name() << "\n";
+				out << at(i).subject->get_name() << ",";
+				out << at(i).teacher->get_name() << ",";
+				at(i).week.print_intevals_csv(out,config);
+			}
 		}
 	}
 
@@ -2198,13 +2239,13 @@ namespace oct::ec::sche
 		at(distrib(gen)).mutate();
 	}
 
-	void Schedule::save_csv(const Configuration& config) const
+	void Schedule::save_csv(const Configuration& config,const std::string& dir) const
 	{
 		std::ofstream out_csv;
 		for(const ClassRoom& cr : *this)
 		{
-			out_csv.open(config.get_out_directory());
-			cr.save_csv(out_csv);
+			out_csv.open(dir + "/" + cr[0].group->name);
+			cr.save_csv(out_csv,config);
 			out_csv.close();
 		}
 	}

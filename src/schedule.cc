@@ -29,9 +29,14 @@ namespace oct::ec::sche
 	{
 
 	}
-	void Single::save(std::ofstream& fn)
+	void Single::save(Save&)
 	{
+		const Configuration& config = ((Enviroment*)env)->get_data().config;
 		
+		std::string dir = config.get_out_directory() + "/" + std::to_string(env->getIterationActual()) + "/" + std::to_string(getID());
+		
+		env->shell.mkdir(dir);
+		save_csv(config,dir);		
 	}
 	void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{
@@ -60,27 +65,26 @@ namespace oct::ec::sche
 	
 
 
-Enviroment::Enviroment(const std::string& log,const std::string& dirproy)
+Enviroment::Enviroment(const std::string& log,const std::string& in_dir,const std::string& out_dir) : data(in_dir,out_dir)
 {
-	init(dirproy);
-	
-	logDirectoryHistory = log;	
+	if(echolevel > 0 and fout != NULL) (*fout) << "Creando Ambiente..\n";
+	logDirectory = log;
+	init(in_dir);		
 }
 Enviroment::~Enviroment()
 {
-	
 }
-void Enviroment::init(const std::string& dirproy)
+void Enviroment::init(const std::string& in_dir)
 {
+	if(echolevel > 0 and fout != NULL) (*fout) << "Inicializacion..\n";
 	mutableProb = 0.05;
-	
-	if(not dirproy.empty())
+		
+	if(not in_dir.empty())
 	{
-		directory = dirproy;	
-		data.load(directory);
-		initPopulation = std::pow(data.groups.get_list().size(),2);
-		maxProgenitor = data.groups.get_list().size() * std::pow(data.groups.get_max_lessons(),2);
-		maxPopulation = std::pow(data.groups.get_list().size() * data.groups.get_max_lessons(),2);
+		input_directory = in_dir;
+		initPopulation = data.groups.get_list().size() * data.groups.get_max_lessons();
+		maxProgenitor = initPopulation;
+		maxPopulation = std::pow(initPopulation,2);
 	}
 	else
 	{
@@ -89,7 +93,7 @@ void Enviroment::init(const std::string& dirproy)
 	
 	CRITERION = 4;
 	//SCHEDULE_ERROR = 0;
-	schedule_overlap_max = data.groups.get_list().size() * data.groups.get_max_lessons();
+	schedule_overlap_max = data.groups.get_list().size() * data.groups.get_max_lessons() * Single::WEEK_HOURS/2;
 	schedule_overlap_max2 = std::pow(schedule_overlap_max,2);
 	schedule_cover_max = data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS - 7);
 	schedule_cover_max2 = std::pow(schedule_cover_max,2);
@@ -110,30 +114,50 @@ void Enviroment::init(const std::string& dirproy)
 	//PORTION = 1.0/real(CRITERION);
 	//schedule_max_hours = std::min((unsigned int)data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS/2), Single::WEEK_HOURS2) ;
 	//GAMMA = 1.0/real(SCHEDULE_MAX_HOURS * CRITERION);
-	
 }
 
 void Enviroment::initial()
 {
+	if(echolevel > 0 and fout != NULL) (*fout) << "Poblando ambiente..";
 	Schedules inits;
 	inits.resize(initPopulation);
 	
 	if(initPopulation < data.groups.get_list().size() * 2) throw core::Exception("El tamano de la poblacion inicial es muy bajo",__FILE__,__LINE__);
 	if((initPopulation % data.groups.get_list().size()) != 0 and (initPopulation / data.groups.get_list().size() ) < 2 ) throw core::Exception("La poblacion inicial deve ser multiplos de la cantida de grupos.",__FILE__,__LINE__);
 	
+	if(echolevel > 0 and fout != NULL) 
+	{
+		(*fout) << ".";
+		fout->flush();
+	}
 	for(unsigned int i = 0; i < initPopulation; i++)
 	{
+		if(echolevel > 0 and fout != NULL)
+		{
+			(*fout) << ".";
+			fout->flush();
+		}
 		Single* sche = new Single(nextID(),*this);
 		sche->resize(data.groups.get_list().size());
 		Groups::const_iterator itGroup = data.groups.get_list().begin();
 		for(ClassRoom& lessons : *sche)
 		{
+			if(echolevel > 0 and fout != NULL)
+			{
+				(*fout) << ".";
+				fout->flush();
+			}
 			lessons.resize((*itGroup).size());
 			std::vector<const Subject*>::const_iterator it_subject = (*itGroup).begin();
 			unsigned int subject = 0;
 			//std::cout << (&*itGroup)->room->get_name() << " : ";
 			for(const Subject* subjectGroup : *itGroup)
 			{
+				if(echolevel > 0 and fout != NULL)
+				{
+					(*fout) << ".";
+					fout->flush();
+				}
 				//std::cout << "Enviroment::initial step : 1 \n";
 				lessons[subject].group = &*itGroup;
 				lessons[subject].room = (&*itGroup)->room;
@@ -167,7 +191,7 @@ void Enviroment::initial()
 				//es un algoritmo que creara los horarios lo mas correctos posibles
 				select_times(lessons[subject],week);
 				//std::cout << "Enviroment::initial step : 3\n";
-				random_complete_times(lessons[subject],week_opt);
+				//random_complete_times(lessons[subject],week_opt);
 				//std::cout << "Enviroment::initial step : 4\n";
 				subject++;
 				it_subject++;
@@ -240,7 +264,7 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week)
 	unsigned int disp = week.days_disp();
 	if(disp == 0) return;
 	unsigned int hours_per_day = lesson.subject->get_time() / disp;
-	if(hours_per_day == 0) return;
+	if(hours_per_day == 0) hours_per_day = 1;
 	//unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);
 	
 	const core::Time* time;
@@ -248,7 +272,9 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week)
 	{
 		time = &*random(week[i]);
 		week.get_day(i,hours_per_day,*time,data.config,lesson.week[i]);
+		if(lesson.week[i].size() > lesson.subject->get_time()) break;
 	}
+	/*
 	unsigned int count_H = lesson.week.count_hours();
 	if(count_H < lesson.subject->get_time())
 	{
@@ -260,6 +286,17 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week)
 			}
 		}
 	}
+	*/
+	/*
+	Day* day;
+	count_H = lesson.week.count_hours();
+	do
+	{		
+		day = &*random(lesson.week);
+		week.get_day(i,(lesson.subject->get_time() - count_H) + day->size(),*time,data.config,*day)
+	}
+	while();
+	*/
 }
 
 void Enviroment::random_complete_times(Lesson& lesson,const WeekOptions& week_opt)

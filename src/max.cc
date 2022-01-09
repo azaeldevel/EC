@@ -15,7 +15,7 @@ struct caret_2B_half
 };
 struct caret_2B_16b
 {
-	unsigned short a:1,b:1,c:1,d:1,e:1,f:1,g:1,h:1,i:1,j:1,k:1,l:1,m:1,n:1,o:1;
+	unsigned short a:1,b:1,c:1,d:1,e:1,f:1,g:1,h:1,i:1,j:1,k:1,l:1,m:1,n:1,o:1,p:1;
 };
 
 Chromosome::Chromosome() : oct::ec::Chromosome("max")
@@ -41,79 +41,66 @@ geneUS Chromosome::randGenNumber()
 {
 	geneUS g;
 	caret_2B_16b* gene = reinterpret_cast<caret_2B_16b*>((geneUS*)&g);
-	double randNum = randNumber(0.0,1.0);
+	std::uniform_int_distribution<> distribution(1,16);
 
-	if(randNum < 1.0/16.0)
+	switch(distribution(gen))
 	{
-		gene->a = 1;
-	}
-	else if(randNum < 2.0/16.0)
-	{
-		gene->b = 1;
-	}
-	else if(randNum < 3.0/16.0)
-	{
-		gene->c = 1;
-	}
-	else if(randNum < 4.0/16.0)
-	{
-		gene->d = 1;
-	}
-	else if(randNum < 5.0/16.0)
-	{
-		gene->e = 1;
-	}
-	else if(randNum < 6.0/16.0)
-	{
-		gene->f = 1;
-	}
-	else if(randNum < 7.0/16.0)
-	{
-		gene->g = 1;
-	}
-	else if(randNum < 8.0/16.0)
-	{
-		gene->h = 1;
-	}
-	else if(randNum < 9.0/16.0)
-	{
-		gene->i = 1;
-	}
-	else if(randNum < 10.0/16.0)
-	{
-		gene->j = 1;
-	}
-	else if(randNum < 11.0/16.0)
-	{
-		gene->k = 1;
-	}
-	else if(randNum < 12.0/16.0)
-	{
-		gene->l = 1;
-	}
-	else if(randNum < 13.0/16.0)
-	{
-		gene->m = 1;
-	}
-	else if(randNum < 14.0/16.0)
-	{
-		gene->n = 1;
-	}
-	else if(randNum < 15.0/16.0)
-	{
-		gene->o = 1;
-	}
-	else
-	{
-		gene->o = 1;
+		case 1:
+			gene->a = 1;
+			break;
+		case 2:
+			gene->b = 1;
+			break;
+		case 3:
+			gene->c = 1;
+			break;
+		case 4:
+			gene->d = 1;
+			break;
+		case 5:
+			gene->e = 1;
+			break;
+		case 6:
+			gene->f = 1;
+			break;
+		case 7:
+			gene->g = 1;
+			break;
+		case 8:
+			gene->h = 1;
+			break;
+		case 9:
+			gene->i = 1;
+			break;
+		case 10:
+			gene->j = 1;
+			break;
+		case 11:
+			gene->k = 1;
+			break;
+		case 12:
+			gene->l = 1;
+			break;
+		case 13:
+			gene->m = 1;
+			break;
+		case 14:
+			gene->n = 1;
+			break;
+		case 15:
+			gene->o = 1;
+			break;
+		case 16:
+			gene->p = 1;
+			break;
 	}
 
 	return g;
 }
 Chromosome::pfnCombine Chromosome::randCombine()
 {
-	double randN = randNumber(0.0,4.0);
-	unsigned short randUS = randN + 1;
+	std::uniform_int_distribution<> distribution(1,4);
+	unsigned short randUS = distribution(gen);
 	switch(randUS)
 	{
 		case 1:
@@ -184,6 +171,7 @@ geneUS Chromosome::combine3(const geneUS& gene)
 	g3.m = g1->m;
 	g3.n = g2->n;
 	g3.o = g1->o;
+	g3.p = g2->p;
 
 	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
 	return newgen;
@@ -210,6 +198,7 @@ geneUS Chromosome::combine4(const geneUS& gene)
 	g3.m = g2->m;
 	g3.n = g1->n;
 	g3.o = g2->o;
+	g3.p = g1->p;
 
 	geneUS newgen = reinterpret_cast<const geneUS&>(g3);
 	return newgen;
@@ -219,75 +208,58 @@ geneUS Chromosome::mutate(const geneUS& g)
 	if(sizeof(caret_2B_16b) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
 
 	caret_2B_16b gene = *reinterpret_cast<const caret_2B_16b*>((const geneUS*)&g);
-	double randNum = randNumber(0.0,1.0);
+	std::uniform_int_distribution<> distribution(1,16);
 
-	if(randNum < 1.0/16.0)
+	switch(distribution(gen))
 	{
-		gene.a = not gene.a;
-	}
-	else if(randNum < 2.0/16.0)
-	{
-		gene.b = not gene.b;
-	}
-	else if(randNum < 3.0/16.0)
-	{
-		gene.c = not gene.c;
-	}
-	else if(randNum < 4.0/16.0)
-	{
-		gene.d = not gene.d;
-	}
-	else if(randNum < 5.0/16.0)
-	{
-		gene.e = not gene.e;
-	}
-	else if(randNum < 6.0/16.0)
-	{
-		gene.f = not gene.f;
-	}
-	else if(randNum < 7.0/16.0)
-	{
-		gene.g = not gene.g;
-	}
-	else if(randNum < 8.0/16.0)
-	{
-		gene.h = not gene.h;
-	}
-	else if(randNum < 9.0/16.0)
-	{
-		gene.i = not gene.i;
-	}
-	else if(randNum < 10.0/16.0)
-	{
-		gene.j = not gene.j;
-	}
-	else if(randNum < 11.0/16.0)
-	{
-		gene.k = not gene.k;
-	}
-	else if(randNum < 12.0/16.0)
-	{
-		gene.l = not gene.l;
-	}
-	else if(randNum < 13.0/16.0)
-	{
-		gene.m = not gene.m;
-	}
-	else if(randNum < 14.0/16.0)
-	{
-		gene.n = not gene.n;
-	}
-	else if(randNum < 15.0/16.0)
-	{
-		gene.o = not gene.o;
-	}
-	else if(randNum < 16.0/16.0)
-	{
-		gene.o = not gene.o;
-	}
-	else
-	{
-		gene.o = not gene.o;
+		case 1:
+			gene.a = 1;
+			break;
+		case 2:
+			gene.b = 1;
+			break;
+		case 3:
+			gene.c = 1;
+			break;
+		case 4:
+			gene.d = 1;
+			break;
+		case 5:
+			gene.e = 1;
+			break;
+		case 6:
+			gene.f = 1;
+			break;
+		case 7:
+			gene.g = 1;
+			break;
+		case 8:
+			gene.h = 1;
+			break;
+		case 9:
+			gene.i = 1;
+			break;
+		case 10:
+			gene.j = 1;
+			break;
+		case 11:
+			gene.k = 1;
+			break;
+		case 12:
+			gene.l = 1;
+			break;
+		case 13:
+			gene.m = 1;
+			break;
+		case 14:
+			gene.n = 1;
+			break;
+		case 15:
+			gene.o = 1;
+			break;
+		case 16:
+			gene.p = 1;
+			break;
 	}
 
 	geneUS newGen = *reinterpret_cast<geneUS*>(&gene);
@@ -314,13 +286,16 @@ void Single::eval()
 	//if(true) std::cout << "Single::eval " << USHRT_MAX << " \n";
 	fitness = double(chromo.getNumber()) / double(USHRT_MAX);
 }
-void Single::save(std::ofstream& fn)
+void Single::save(Save& fn)
 {
-	fn << getID();
-	fn << ",";
-	fn << getFitness();
-	fn << ",";
-	fn << chromo.getNumber();
+	//std::cout << "\tSingle::save 1\n";
+	(*fn.out) << getID();
+	(*fn.out) << ",";
+	(*fn.out) << getFitness();
+	(*fn.out) << ",";
+	(*fn.out) << chromo.getNumber();
+	//std::cout << "\tSingle::save 2\n";
+	(*fn.out).flush();
 }
 void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 {
@@ -330,11 +305,11 @@ void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* 
 		Chromosome::pfnCombine algCombine;
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.2\n";
 		geneUS genN = chromo.combination(((Single*)single)->chromo.getNumber());
-		double randMutate = randNumber(0.0,1.0);
-		/*if(env->getProbabilityMutationEvent() < randMutate)
+		std::uniform_real_distribution<double> distribution(0.0,1.0);
+		if(distribution(gen) < env->getMutableProbability())
 		{
 			genN = Chromosome::mutate(genN);
-		}*/
+		}
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.3\n";
 		double randAlgSingle = randNumber(0.0,1.0);
 		if(env->getEchoSteps()) std::cout << "Single::juncting Step C.2.4\n";
@@ -387,11 +362,11 @@ Enviroment::Enviroment(int argc, const char* argv[]) : oct::ec::Enviroment(argc,
 void Enviroment::init()
 {
 	initPopulation = 1000;
-	maxPopulation = 1000;
-	maxProgenitor = 200;
+	maxPopulation = 5000;
+	maxProgenitor = 10;
 	//echoSteps = false;
 	stopperMinSolutions(2);
-	stopperMaxIterations(100);
+	stopperMaxIterations(200);
 	epsilon = 1.0/double(USHRT_MAX);
 	//std::cout << "epsilon = " << epsilon << "\n";
 	comparer = &oct::ec::cmpStrength;

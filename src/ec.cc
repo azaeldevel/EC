@@ -190,9 +190,106 @@ void Junction::randFill(TypeJuntion t)
 
 
 
+	Save::Save()
+	{
+		out = NULL;
+	}
+	Save::Save(std::ofstream& o)
+	{
+		out = &o;
+	}
+	Save::Save(std::ofstream* o)
+	{
+		out = o;
+	}
+	Save::operator std::ofstream&()
+	{
+		return *out;
+	}
+	std::ofstream& Save::operator =(std::ofstream& o)
+	{
+		out = &o;
+		return o;
+	}
+	std::ofstream* Save::operator =(std::ofstream* o)
+	{
+		out = o;
+		return o;
+	}
+	
+	
+	
+	SaveCollection::SaveCollection(const std::string& dir) : directory(dir)
+	{
+	}
+	SaveCollection::~SaveCollection()
+	{
+		if(out) close();
+	}
+	
+	void SaveCollection::open(const std::string& filename)
+	{
+		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
+		
+		std::string strfn = directory + "/" + filename;		
+		out = new std::ofstream(strfn);
+		if(not out->is_open()) throw oct::core::Exception("Fallo apertura de archivo.",__FILE__,__LINE__);
+	}
+	void SaveCollection::close()
+	{
+		if(out)
+		{
+			out->flush();
+			out->close();
+			delete out;
+			out = NULL;
+		}
+	}
+	
+	
+	
+	
+
+	SaveCollectionByIteration::SaveCollectionByIteration(const std::string& dir,const std::string& p) : SaveCollection(dir),prefix(p)
+	{
+	}
+	
+	void SaveCollectionByIteration::open(Iteration it)
+	{
+		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
+		
+		std::string strfn = prefix + "-" + std::to_string(it) + ".csv";		
+		SaveCollection::open(strfn);
+	}
 
 
 
+
+
+
+	SaveIteration::SaveIteration(const std::string& dir) : SaveCollectionByIteration(dir,"iterations")
+	{
+	}
+
+
+
+
+
+
+	SaveChilds::SaveChilds(const std::string& dir) : SaveCollectionByIteration(dir,"childs")
+	{
+	}
+	
+	
+	
+	
+	
+	SaveSelections::SaveSelections(const std::string& dir) : SaveCollectionByIteration(dir,"selections")
+	{
+	}
+	
+	
+	
 
 
 
@@ -280,7 +377,7 @@ void Enviroment::init()
 	stopMinSolutions = false;
 	mutableProb = 0.002;
 	//pMutableGene = -1.0;
-	fout = NULL;
+	//fout = NULL;
 	stopMaxIterations=false;
 	stopMaxSerie = false;
 	//percen_at_iteration = 0.4;//%
@@ -297,6 +394,7 @@ void Enviroment::init()
 	actualSerie = 0;
 	newIteration = false;
 	fout = &std::cout;
+	savingDevice = NULL;
 }
 Enviroment::Enviroment()
 {
@@ -305,6 +403,8 @@ Enviroment::Enviroment()
 Enviroment::~Enviroment()
 {
 	if(size() > 0) free();
+	delete savingDevice;
+	savingDevice = NULL;
 }
 
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
@@ -389,10 +489,10 @@ double Enviroment::getEpsilon() const
 {
 	return pMutableGene;
 }*/
-/*double Enviroment::getMutableProbability()const
+double Enviroment::getMutableProbability()const
 {
 	return mutableProb;
-}*/
+}
 /*
 unsigned long Enviroment::getSession()const
 {
@@ -451,7 +551,10 @@ bool Enviroment::getEchoSteps()const
 {
 	return echoSteps;
 }
-
+const std::string& Enviroment::getLogDirectory()const
+{
+	return logDirectory;
+}
 
 ID Enviroment::nextID()
 {
@@ -477,11 +580,11 @@ bool Enviroment::run()
 	actualIteration = 1;
 	//std::cout << "\tEnviroment::run : Step 1\n";
 	initial();
+    //std::cout << "\tEnviroment::run : Step 2\n";
 	for(ec::Single* single : *this)
 	{
 		single->eval();
 	}
-    //std::cout << "\tEnviroment::run : Step 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
 	//std::cout << "\tEnviroment::run : Step 3\n";
@@ -514,23 +617,25 @@ bool Enviroment::run()
 	}
 	//std::cout << "\tStep 4\n";
 
-	ID oldleaderID = 0;
-	double oldLeaderFitness = 0.0;
-	Iteration countOldLeader = 0;
-	Iteration countOldLeaderFitness = 0;
+	//ID oldleaderID = 0;
+	//double oldLeaderFitness = 0.0;
+	//Iteration countOldLeader = 0;
+	//Iteration countOldLeaderFitness = 0;
 	//std::mt19937 gen(rd());
 	//Iteration maxRepeat = 10 + minSolutions;
 	//bool triggerRepeatEnable = true;
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;	
 	//double triggerJam2 = 1.0e-20;	
 	
+	if(size() < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);	
+	if(maxProgenitor  < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
 	while(true)
 	{
-		//std::cout << "\tEnviroment::run - while Step 1\n";
 		if(stopMaxIterations)
 		{
 			if(actualIteration > maxIteration)
 			{
+				if(fout) (*fout) << "Se alacanzo el limite maximo de iteraciones\n";
 				history.close();
 				return false;
 			}
@@ -542,6 +647,7 @@ bool Enviroment::run()
 			if(maxIteration > 0) (*fout) << "Iteracion : " << actualIteration << "/" << maxIteration << "\n";
 			else (*fout) << "Iteracion : " << actualIteration << "\n";
 		}
+		//std::cout << "\tEnviroment::run - while Step 1\n";
 		
 		//std::cout << "\tEnviroment::run - while Step 2\n";
 		if(not comparer)
@@ -571,18 +677,16 @@ bool Enviroment::run()
 		//std::cout << "\tEnviroment::run - while Step 3\n";
 		if(logDirectoryFlag)
 		{
-			std::string strfn = logDirectory +  "/iteracion-" + std::to_string(actualIteration) + ".csv";
-			std::ofstream fn(strfn);
-			//std::cout << "\t\t" << strfn << "\n";
-			if(not fn.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+			SaveIteration saveit(logDirectory);
+			saveit.open(actualIteration);
 			for(ec::Single* s : *this)
 			{
-				s->save(fn);
-				fn << "\n";
+				s->save(saveit);
+				(*saveit.out) << "\n";
 			}
-			fn.flush();
-			fn.close();
+			saveit.close();
 		}
+		//std::cout << "\tEnviroment::run - while Step 3.5\n";
 		if(logDirectoryFlag or logDirectoryHistoryFlag)
 		{
 			if(history.is_open())
@@ -620,35 +724,46 @@ bool Enviroment::run()
 		if(stopMinSolutions and solutions.size() >= minSolutions)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			if(logDirectoryFlag) save(solutions,"solutions.cvs");
+			SaveCollection saveColl(logDirectory);
+			saveColl.open("solutions.cvs");
+			for(Single* s : solutions)
+			{
+				s->save(saveColl);
+				(*saveColl.out) << "\n";
+			}
+			saveColl.close();
 			history.close();
 			return true;
 		}
 		else if (solutions.size() == maxPopulation)//si toda la poblacion es una solucion
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tLa cantidad de solucione es igual a la poblacion.\n";
-			if(logDirectoryFlag) save(solutions,"solutions.cvs");
+			SaveCollection saveColl(logDirectory);
+			saveColl.open("solutions.cvs");
+			for(Single* s : solutions)
+			{
+				s->save(saveColl);
+				(*saveColl.out) << "\n";
+			}
+			saveColl.close();
 			history.close();
 			return true;		
 		}
 		
 		ec::ID countBefore = size();
 		selection();
+		SaveSelections saveSelections(logDirectory);
+		saveSelections.open(actualIteration);
 		//std::cout << "\tEnviroment::run - while Step 4\n";
 		if(logDirectoryFlag)
 		{
-			std::string strSelection = logDirectory +  "/selection-" + std::to_string(actualIteration) + ".csv";
-			//std::cout << "\t\t" << strSelection << "\n";
-			std::ofstream fnSelection(strSelection);
-			if(not fnSelection.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
 			for(Single* s : *this)
 			{
-				s->save(fnSelection);
-				fnSelection << "\n";
+				s->save(saveSelections);
+				(*saveSelections.out) << "\n";
 			}
-			fnSelection.flush();
-			fnSelection.close();
 		}
+		saveSelections.close();
 		//std::cout << "\tEnviroment::run - while Step 5\n";
 		unsigned short removes = countBefore - size();
 		//deletes == 0 ? counUndelete++ : counUndelete = 0;
@@ -678,33 +793,23 @@ bool Enviroment::run()
 		
 		//std::cout << "\tEnviroment::run - while Step 9\n";
 		juncting();				
-		std::ofstream fnChilds;
-		if(logDirectoryFlag)
-		{
-			std::string strChilds = logDirectory + "/hijos-" + std::to_string(actualIteration) + ".csv";
-			fnChilds.open(strChilds);
-		}
-		//std::cout << "\tEnviroment::run - while Step 10\n";
-		
+		SaveChilds savechilds(logDirectory);
+		//std::cout << "\tEnviroment::run - while Step 10\n";		
 		std::bernoulli_distribution random_mutation(mutableProb);
-		if(logDirectoryFlag) if(not fnChilds.is_open()) throw oct::core::Exception("No se logro abrir el archivo",__FILE__,__LINE__);
+		if(logDirectoryFlag) savechilds.open(actualIteration);
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 			if(random_mutation(rd)) s->mutate();
 			//if(triggerRepeatEnable and triggerRepeatMin > sigma) s->mutate();
 			s->eval();
 			if(logDirectoryFlag)
-			{
-				s->save(fnChilds);
-				fnChilds << "\n";
+			{				
+				s->save(savechilds);
+				(*savechilds.out) << "\n";
 			}
 			push_front(s);
 		}
-		if(logDirectoryFlag)
-		{
-			fnChilds.flush();
-			fnChilds.close();
-		}
+		savechilds.close();
 		if(echolevel > 1 and fout != NULL)
 		{
 			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
@@ -797,35 +902,45 @@ Single* Enviroment::getRandomSingle()
 Single* Enviroment::getRandomSingleAny()
 {
 	const_iterator it = begin();
-
-	//std::mt19937 gen(rd());
+	
     std::uniform_int_distribution<int> distrib(0, size() - 1);
 	std::advance(it,distrib(gen));
+	
 	return *it;
+}
+Single* Enviroment::getRandomSingleFirst()
+{	
+	return front();
 }
 Single* Enviroment::getRandomSingleTop()
 {
 	const_iterator it = begin();
-
-	//std::mt19937 gen(rd());
+	
     std::lognormal_distribution<double> distrib(0.0,1.0);
-    unsigned int offset = std::abs(distrib(gen));    
-    while(offset >= size())
+    unsigned int offset;    
+    do
     {
     	offset = std::abs(distrib(gen));
-    }    
+    }   
+    while(offset >= size());
 	std::advance(it,offset);
 	return *it;
+}
+Iteration Enviroment::getIterationActual()const
+{
+	return actualIteration;
 }
 void Enviroment::juncting()
 {
 	Single *single1,*single2;
-	newschils.clear();
 	do
 	{
-		ec::Single* single1 = getRandomSingle();
-		ec::Single* single2 = getRandomSingle();	
-		if(single1 == single2) continue;
+		single1 = getRandomSingleFirst();
+		do
+		{
+			single2 = getRandomSingleTop();	
+		}
+		while(single1 == single2);
 		
 		single1->juncting(newschils,single2);
 	}
@@ -852,7 +967,7 @@ void Enviroment::save()
 	std::ofstream fn(strfn);
 	for(ec::Single* s : *this)
 	{
-		s->save(fn);
+		s->save(*savingDevice);
 		fn << "\n";
 	}
 	fn.flush();
@@ -906,7 +1021,7 @@ void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file
 	std::ofstream fn(strfn);
 	for(ec::Single* s : lst)
 	{
-		s->save(fn);
+		s->save(*savingDevice);
 		fn << "\n";
 	}
 	fn.flush();
@@ -925,6 +1040,15 @@ void Enviroment::commands(int argc, const char* argv[])
 			if(not shell.exists(logDirectory))
 			{
 				shell.mkdir(logDirectory);
+			}
+		}
+		if(strcmp("--directory-history-logs",argv[i]) == 0)
+		{
+			logDirectoryHistory = argv[++i];
+			basedir = logDirectoryHistory;
+			if(not shell.exists(logDirectory))
+			{
+				shell.mkdir(logDirectoryHistory);
 			}
 		}
 		if(strcmp("--iterations",argv[i]) == 0)

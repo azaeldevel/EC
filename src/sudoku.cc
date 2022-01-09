@@ -405,17 +405,17 @@ void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* 
 		if(env->getEchoLevel() > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n";
 	}
 }
-void Single::save(std::ofstream& fn)
+void Single::save(Save& s)
 {
-	fn << getID();
-	fn << ",";
-	fn << getFitness();
-	fn << ",";
-	fn << getErros();
+	(*s.out) << getID();
+	(*s.out) << ",";
+	(*s.out) << getFitness();
+	(*s.out) << ",";
+	(*s.out) << getErros();
 	//fn << ",";
 	//fn << getMD5();
-	fn << ",";
-	fn << getAge();
+	(*s.out) << ",";
+	(*s.out) << getAge();
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -424,8 +424,8 @@ void Single::save(std::ofstream& fn)
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{
-					fn << ",";
-					fn << tabla[i][k].getNumber(j,l);
+					(*s.out) << ",";
+					(*s.out) << tabla[i][k].getNumber(j,l);
 				}
 			}
 		}
