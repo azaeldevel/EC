@@ -145,7 +145,7 @@ namespace oct::ec::sche
 
 		void print_day(std::ostream&) const;
 		void print_blocks(std::ostream&) const;
-		void print_intevals_csv(std::ostream&,const Data& data) const;
+		void print_intevals_csv(std::ostream&,const Configuration& data) const;
 
 
 		/**
@@ -239,7 +239,7 @@ namespace oct::ec::sche
 
 		void print(std::ostream&) const;
 
-		void print_intevals_csv(std::ostream&,const Data& data) const;
+		void print_intevals_csv(std::ostream&,const Configuration& data) const;
 
 		check_codes check()const;
 
@@ -330,6 +330,7 @@ namespace oct::ec::sche
 		FormatDT get_format_dt()const;
 		int get_begin_day() const;
 		real get_hours_sigma()const;
+		const std::string get_out_directory()const;
 
 		/**
 		*\brief Agrega a la hora indicada, la cantidad de horas indicas y coloca el resultado el variable de retorno
@@ -352,6 +353,7 @@ namespace oct::ec::sche
 		Schema schema;
 		FormatDT format;
 		real hours_sigma;
+		std::string out_dir;
 	public:
 		static const std::string formats_dt_hour;
 		static const std::string formats_dt_day_hour;
@@ -667,6 +669,8 @@ namespace oct::ec::sche
 		void juncting(const ClassRoom&,const ClassRoom&);
 
 		void mutate();
+		
+		void save_csv(std::ostream&) const;
 
 	private:
 	private:
@@ -691,7 +695,8 @@ namespace oct::ec::sche
 		void juncting(const Schedule&,const Schedule&);
 
 		void mutate();
-
+		
+		void save_csv(const Configuration&) const;
 	private:
 
 	private:
@@ -758,7 +763,7 @@ namespace oct::ec::sche
 			Student();
 			Student(const ClassRoom& );
 			Student& operator =(const ClassRoom& );
-			void print_csv(std::ostream&,const Data&) const;
+			void print_csv(std::ostream&,const Configuration&) const;
 		private:
 			const sche::Group* group;
 		};
@@ -769,6 +774,7 @@ namespace oct::ec::sche
 			
 		public:
 			Students(const sche::Schedule& );
+			void print_csv(std::ostream&,const Configuration&) const;
 		};
 	}
 
