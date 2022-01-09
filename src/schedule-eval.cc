@@ -65,7 +65,7 @@ namespace oct::ec::sche
 			}
 		}
 		
-		if(count >  ((Enviroment&)*env).get_overlap_max()) throw oct::core::Exception("El conteo de horas no deve exceder WEEK_OVERLAP_MAX",__FILE__,__LINE__);
+		if(count >  ((Enviroment&)*env).get_overlap_max2()) throw oct::core::Exception("El conteo de horas no deve exceder WEEK_OVERLAP_MAX",__FILE__,__LINE__);
 		//if(count > ((Enviroment&)*env).get_schedule_max_hours()) throw oct::core::Exception("El conteo de horas errones execdio el maximo esperado",__FILE__,__LINE__);
 		if(count == 0) 
 		{
@@ -101,7 +101,7 @@ namespace oct::ec::sche
 			}
 		}
 		
-		if(count >  ((Enviroment&)*env).get_cover_max()) throw oct::core::Exception("El conteo de horas no deve exceder SCHEDULE_COVER_MAX",__FILE__,__LINE__);
+		if(count >  ((Enviroment&)*env).get_cover_max2()) throw oct::core::Exception("El conteo de horas no deve exceder SCHEDULE_COVER_MAX",__FILE__,__LINE__);
 		if(count == 0)
 		{
 			std::cout << "\tcover count = " << count << "\n";

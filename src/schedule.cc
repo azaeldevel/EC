@@ -89,7 +89,7 @@ void Enviroment::init(const std::string& dirproy)
 	
 	CRITERION = 4;
 	//SCHEDULE_ERROR = 0;
-	schedule_overlap_max = data.groups.get_list().size() * data.groups.get_max_lessons();
+	schedule_overlap_max = data.groups.get_list().size() * data.groups.get_max_lessons() * Single::WEEK_HOURS/2;
 	schedule_overlap_max2 = std::pow(schedule_overlap_max,2);
 	schedule_cover_max = data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS - 7);
 	schedule_cover_max2 = std::pow(schedule_cover_max,2);
@@ -167,7 +167,7 @@ void Enviroment::initial()
 				//es un algoritmo que creara los horarios lo mas correctos posibles
 				select_times(lessons[subject],week);
 				//std::cout << "Enviroment::initial step : 3\n";
-				random_complete_times(lessons[subject],week_opt);
+				//random_complete_times(lessons[subject],week_opt);
 				//std::cout << "Enviroment::initial step : 4\n";
 				subject++;
 				it_subject++;
@@ -240,7 +240,7 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week)
 	unsigned int disp = week.days_disp();
 	if(disp == 0) return;
 	unsigned int hours_per_day = lesson.subject->get_time() / disp;
-	if(hours_per_day == 0) return;
+	if(hours_per_day == 0) hours_per_day = 1;
 	//unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);
 	
 	const core::Time* time;
@@ -248,7 +248,9 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week)
 	{
 		time = &*random(week[i]);
 		week.get_day(i,hours_per_day,*time,data.config,lesson.week[i]);
+		if(lesson.week[i].size() > lesson.subject->get_time()) break;
 	}
+	/*
 	unsigned int count_H = lesson.week.count_hours();
 	if(count_H < lesson.subject->get_time())
 	{
@@ -260,6 +262,17 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week)
 			}
 		}
 	}
+	*/
+	/*
+	Day* day;
+	count_H = lesson.week.count_hours();
+	do
+	{		
+		day = &*random(lesson.week);
+		week.get_day(i,(lesson.subject->get_time() - count_H) + day->size(),*time,data.config,*day)
+	}
+	while();
+	*/
 }
 
 void Enviroment::random_complete_times(Lesson& lesson,const WeekOptions& week_opt)
