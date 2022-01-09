@@ -189,6 +189,12 @@ namespace oct::core
 	{
 	    std::istringstream ss(time);
         ss >> std::get_time(this, format.c_str());
+        if(ss.fail())
+        {
+        	std::string msg = "Fallo la lecrtura de la fecha '";
+        	msg += time + "' con el formato '" + format + "'";
+        	throw core::Exception(msg,__FILE__,__LINE__);
+        }
 	}
 }
 
@@ -279,8 +285,8 @@ namespace oct::ec::sche
 	}
 	Day& Day::inters(const Day& comp1, const Day& comp2)
 	{
-		if(comp1.size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-		if(comp2.size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(comp1.size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(comp2.size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
 
 		for(const core::Time& tdt : comp1)
 		{
