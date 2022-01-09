@@ -580,11 +580,11 @@ bool Enviroment::run()
 	actualIteration = 1;
 	//std::cout << "\tEnviroment::run : Step 1\n";
 	initial();
+    //std::cout << "\tEnviroment::run : Step 2\n";
 	for(ec::Single* single : *this)
 	{
 		single->eval();
 	}
-    //std::cout << "\tEnviroment::run : Step 2\n";
 	unsigned short counUndelete = 0;
 	std::ofstream history;
 	//std::cout << "\tEnviroment::run : Step 3\n";
@@ -617,10 +617,10 @@ bool Enviroment::run()
 	}
 	//std::cout << "\tStep 4\n";
 
-	ID oldleaderID = 0;
-	double oldLeaderFitness = 0.0;
-	Iteration countOldLeader = 0;
-	Iteration countOldLeaderFitness = 0;
+	//ID oldleaderID = 0;
+	//double oldLeaderFitness = 0.0;
+	//Iteration countOldLeader = 0;
+	//Iteration countOldLeaderFitness = 0;
 	//std::mt19937 gen(rd());
 	//Iteration maxRepeat = 10 + minSolutions;
 	//bool triggerRepeatEnable = true;

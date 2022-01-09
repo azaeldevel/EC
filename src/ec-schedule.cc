@@ -40,7 +40,13 @@ int main(int argc, const char* argv[])
 		return EXIT_SUCCESS;
 	}*/
 
-	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment("logs","tests");
+	
+	std::string strDay = std::to_string(oct::core::getDayID());
+	std::string strTime = std::to_string(oct::core::getTimeID());
+	std::string strid = strDay + "-" + strTime;
+	std::string log_dir = "logs/schedule/";
+	log_dir += strid;
+	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment(log_dir,"tests",log_dir);
 	sche->enableEcho(&std::cout,2);
 
 	bool ret;

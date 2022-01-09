@@ -10,11 +10,6 @@
 
 namespace oct::ec::sche
 {
-
-	struct Saving : public Save
-	{
-		
-	};
 	
 	/**
 	*\brief Representa una posible solucion a nuestro problema
@@ -91,7 +86,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Constructor que recive un directorio para guardar estadisticas
 		*/
-		Enviroment(const std::string& log,const std::string& dir);
+		Enviroment(const std::string& log,const std::string& dir,const std::string& out_dir);
 		/**
 		*\brief Inicia las variables
 		*/
@@ -132,8 +127,9 @@ namespace oct::ec::sche
 		//unsigned int counter()const;
 
 	private:
-		std::string directory;
+		std::string input_directory;
 		Data data;	
+		std::string strid;
 		
 		unsigned int CRITERION;
 		//real PORTION;

@@ -370,7 +370,6 @@ void Enviroment::init()
 	epsilon = 1.0/double(USHRT_MAX);
 	//std::cout << "epsilon = " << epsilon << "\n";
 	comparer = &oct::ec::cmpStrength;
-	savingDevice = new Save(NULL);
 }
 
 

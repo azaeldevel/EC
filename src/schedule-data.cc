@@ -1073,13 +1073,22 @@ namespace oct::ec::sche
 	const std::string Configuration::formats_dt_day_hour = "%a %H:%M";
 	const std::string Configuration::formats_dt_dayn_hour = "%w %H:%M";
 
-	Configuration::Configuration()
+	void Configuration::init()
 	{
 		schema_week = SchemaWeek::MS;
 		seconds_per_hour = 60 * 60;
 		format = FormatDT::DAY_HOUR;
 		hours_sigma = 0.085;
-		out_dir = "logs/schedule";
+		out_dir = "logs/schedule";	
+	}
+	Configuration::Configuration()
+	{
+		init();
+	}
+	Configuration::Configuration(const std::string& dir)
+	{
+		init();
+		out_dir = dir;
 	}
 
 	/*unsigned int Configuration::get_time_per_hour() const
@@ -1984,6 +1993,14 @@ namespace oct::ec::sche
 	}
 
 
+
+	Data::Data()
+	{
+	}	
+	Data::Data(const std::string& in_dir,const std::string& out_dir) : config(out_dir)
+	{
+		load(in_dir);
+	}
 
 	void Data::load(const std::string& dir)
 	{

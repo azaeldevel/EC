@@ -317,8 +317,9 @@ namespace oct::ec::sche
 		};
 
 	public:
+		void init();
 		Configuration();
-		//Configuration(const std::string& name);
+		Configuration(const std::string& name);
 		unsigned int to_hours(double )const;
 		//unsigned int get_time_per_hour() const;
 		unsigned int get_seconds_per_hour() const;
@@ -641,6 +642,9 @@ namespace oct::ec::sche
 		Rooms rooms;
 		Teachers_Subjects teachers_subjects;
 		Groups groups;
+
+		Data();
+		Data(const std::string& in_dir,const std::string& out_dir);
 
 		void load(const std::string& dir);
 	};
