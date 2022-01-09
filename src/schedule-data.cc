@@ -30,20 +30,7 @@
 
 #include "schedule.hh"
 
-#if defined(_WIN32) || defined(_WIN64)
 
-extern "C" char* strptime(const char* s,const char* f,struct tm* tm)
-{
-	std::istringstream input(s);
-	input.imbue(std::locale(setlocale(LC_ALL, nullptr)));
-	input >> std::get_time(tm, f);
-	if (input.fail()) {
-		return nullptr;
-	}
-	return (char*)(s + input.tellg());
-}
-
-#endif
 
 namespace oct::core
 {
@@ -200,7 +187,8 @@ namespace oct::core
 
 	void Time::read(const std::string& time, const std::string& format)
 	{
-		if(strptime(time.c_str(),format.c_str(),this) == NULL) throw core::Exception("fallo la lectura del string para Time",__FILE__,__LINE__);
+	    std::istringstream ss(time);
+        ss >> std::get_time(this, format.c_str());
 	}
 }
 
@@ -1051,19 +1039,19 @@ namespace oct::ec::sche
 	}
 	void IntervalTime::set_begin(const Configuration* config,const std::string& str)
 	{
-		if(strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&begin) == NULL) throw core::Exception("Fallo el parseado del string", __FILE__,__LINE__);
+		begin.read(str,Configuration::formats_dt_dayn_hour);
 	}
 	void IntervalTime::set_end(const Configuration* config,const std::string& str)
 	{
-		if(strptime(str.c_str(), Configuration::formats_dt_dayn_hour.c_str(),&end) == NULL) throw core::Exception("Fallo el parseado del string", __FILE__,__LINE__);
+		end.read(str,Configuration::formats_dt_dayn_hour);
 	}
 	void IntervalTime::set_begin(const std::string& str)
 	{
-		if(strptime(str.c_str(), "%w %H:%M",&begin) == NULL) throw core::Exception("Fallo el parseado del string", __FILE__,__LINE__);
+		begin.read(str,"%w %H:%M");
 	}
 	void IntervalTime::set_end(const std::string& str)
 	{
-		if(strptime(str.c_str(), "%w %H:%M",&end) == NULL) throw core::Exception("Fallo el parseado del string", __FILE__,__LINE__);
+		end.read(str,"%w %H:%M");
 	}
 
 
@@ -1346,18 +1334,18 @@ namespace oct::ec::sche
 			std::stringstream ssTime(data);
 
 			std::getline(ssTime,strH,'-');
-			std::cout << "strH : '" << strH << "'\n";
+			//std::cout << "strH : '" << strH << "'\n";
 			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 			time.set_begin(strH);
-			time.begin.print(std::cout,Configuration::formats_dt_day_hour);
-			std::cout << "\n";
+			//time.begin.print(std::cout,Configuration::formats_dt_day_hour);
+			//std::cout << "\n";
 
 			std::getline(ssTime,strH,'-');
-			std::cout << "strH : '" << strH << "'\n";
+			//std::cout << "strH : '" << strH << "'\n";
 			if(dataObject->config.get_format_dt() == Configuration::FormatDT::HOUR) strH = std::to_string(timeDay) + " " + strH;
 			time.set_end(strH);
-			time.end.print(std::cout,Configuration::formats_dt_day_hour);
-			std::cout << "\n";
+			//time.end.print(std::cout,Configuration::formats_dt_day_hour);
+			//std::cout << "\n";
 
 			if(time.begin.tm_wday != time.end.tm_wday)
 			{
