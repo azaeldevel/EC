@@ -35,6 +35,7 @@ namespace oct::core
 		void print(std::ostream&, const std::string&) const;
 
 		void read(const std::string& time, const std::string& format);
+		void read(const std::string& time, const std::string& format,const std::locale&);
 	};
 
 	class Person
@@ -286,8 +287,8 @@ namespace oct::ec::sche
 		*\brief Convirte el valor time en elementos de la clase Day, crea los bloques de tiempo.
 		**/
 		void granulate(const Configuration*, WeekHours& out);
-		void set_begin(const Configuration*,const std::string& str);
-		void set_end(const Configuration*,const std::string& str);
+		//void set_begin(const Configuration*,const std::string& str);
+		//void set_end(const Configuration*,const std::string& str);
 		void set_begin(const std::string& str);
 		void set_end(const std::string& str);
 		

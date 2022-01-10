@@ -33,7 +33,7 @@ int schedule_clean(void)
 
 void schedule_devel()
 {
-	if(data.teachers.get_list().size() == 25)
+	if(data.teachers.get_list().size() == 8)
 	{
 		CU_ASSERT(true);
 	}
@@ -50,7 +50,7 @@ void schedule_devel()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.rooms.get_list().size() == 6)
+	if(data.rooms.get_list().size() == 1)
 	{
 		//std::cout << "count : " << data.rooms.get_list().size() << "\n";
 		CU_ASSERT(true);
@@ -59,7 +59,7 @@ void schedule_devel()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.teachers_subjects.get_list().size() == 25)
+	if(data.teachers_subjects.get_list().size() == 8)
 	{
 		CU_ASSERT(true);
 	}
@@ -99,7 +99,7 @@ void schedule_devel()
 	//data.teachers_subjects.print(std::cout);
 	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS;
 	data.teachers_subjects.searchSubjects("Espanol I",rowTS);
-	if(rowTS.size() == 5)
+	if(rowTS.size() == 2)
 	{
 		//
 		/*for(oct::ec::sche::Teachers_Subjects::Row* row : rowTS)
@@ -118,7 +118,7 @@ void schedule_devel()
 
 	std::list<const Teachers_Subjects::Row*> rowTS2;
 	data.teachers_subjects.searchSubjects("Geografia I",rowTS2);
-	if(rowTS2.size() == 3)
+	if(rowTS2.size() == 1)
 	{
 		//oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*>::iterator it = rowTS2.begin();
 		//std::cout << "rowTS2->teacher " << (*it)->teacher->get_name()<< "\n";
@@ -133,7 +133,7 @@ void schedule_devel()
 
 	std::list<const oct::ec::sche::Teachers_Subjects::Row*> rowTS3;
 	data.teachers_subjects.searchSubjects("Estadistica I",rowTS3);
-	if(rowTS3.size() == 5)
+	if(rowTS3.size() == 2)
 	{
 		//oct::ec::sche::List<const oct::ec::sche::Teachers_Subjects::Row*>::iterator it = rowTS3.begin();
 		//std::cout << "rowTS3->teacher " << (*it)->teacher->get_name()<< "\n";
@@ -195,7 +195,7 @@ void schedule_devel()
 
 
 	IntervalTime time1;
-	time1.set_begin(&data.config, "1 8:00");
+	time1.set_begin("Mon 08:00");
 	if(time1.begin.tm_hour == 8)
 	{
 		CU_ASSERT(true);
@@ -205,7 +205,7 @@ void schedule_devel()
 		std::cout << "time1.begin.tm_hour = " << time1.begin.tm_hour << "\n";
 		CU_ASSERT(false);
 	}
-	time1.set_end(&data.config, "1 20:00");
+	time1.set_end("Mon 20:00");
 	if(time1.end.tm_hour == 20)
 	{
 		CU_ASSERT(true);
@@ -217,7 +217,7 @@ void schedule_devel()
 	}
 	oct::ec::sche::Day day;
 	time1.granulate(&data.config,day);
-	if(day.size() == 12)
+	if(day.size() == 16)
 	{
 		CU_ASSERT(true);
 	}
@@ -228,22 +228,22 @@ void schedule_devel()
 	}
 	typedef oct::ec::sche::Day::iterator iterator_day;
 
-	int i = 0;
+	/*int i = 0;
 	for(iterator_day it = day.begin(); it != day.end(); it++, i++)
 	{
 		if((*it).tm_hour == i + 8)
 		{
 			CU_ASSERT(true);
-		}
+		} 
 		else
 		{
 			std::cout << "day[i].tm_hour = " << i + 8 << "\n";
 			CU_ASSERT(false);
 		}
-	}
+	}*/
 
 	IntervalTime time2;
-	time2.set_begin("2 8:00");
+	time2.set_begin("Tue 08:00");
 	if(time2.begin.tm_wday == 2)
 	{
 		CU_ASSERT(true);
@@ -262,7 +262,7 @@ void schedule_devel()
 		std::cout << "time1.begin.tm_hour = " << time2.begin.tm_hour << "\n";
 		CU_ASSERT(false);
 	}
-	time2.set_end("2 20:00");
+	time2.set_end("Tue 20:00");
 	if(time2.end.tm_hour == 20)
 	{
 		CU_ASSERT(true);
@@ -274,7 +274,7 @@ void schedule_devel()
 	}
 	oct::ec::sche::Day day2;
 	time2.granulate(&data.config,day2);
-	if(day2.size() == 12)
+	if(day2.size() == 16)
 	{
 		CU_ASSERT(true);
 	}
@@ -302,7 +302,7 @@ void schedule_devel()
 	//room1->print(std::cout);
 
 	IntervalTime time3;
-	time3.set_begin("2 8:00");
+	time3.set_begin("Tue 08:00");
 	if(time3.begin.tm_wday == 2)
 	{
 		CU_ASSERT(true);
@@ -321,7 +321,7 @@ void schedule_devel()
 		std::cout << "time3.begin.tm_hour = " << time3.begin.tm_hour << "\n";
 		CU_ASSERT(false);
 	}
-	time3.set_end("2 20:00");
+	time3.set_end("Tue 20:00");
 	if(time3.end.tm_hour == 20)
 	{
 		CU_ASSERT(true);
@@ -333,7 +333,7 @@ void schedule_devel()
 	}
 	oct::ec::sche::WeekHours week1;
 	time3.granulate(&data.config,week1);
-	if(week1[2].size() == 12)
+	if(week1[2].size() == 16)
 	{
 		CU_ASSERT(true);
 	}
@@ -357,7 +357,7 @@ void schedule_devel()
 	}
 
 	IntervalTime time4;
-	time4.set_begin(&data.config, "1 6:00");
+	time4.set_begin("Mon 06:00");
 	if(time4.begin.tm_hour == 6)
 	{
 		CU_ASSERT(true);
@@ -367,7 +367,7 @@ void schedule_devel()
 		std::cout << "time4.begin.tm_hour = " << time4.begin.tm_hour << "\n";
 		CU_ASSERT(false);
 	}
-	time4.set_end(&data.config, "1 16:00");
+	time4.set_end("Mon 16:00");
 	if(time4.end.tm_hour == 16)
 	{
 		CU_ASSERT(true);
@@ -379,7 +379,7 @@ void schedule_devel()
 	}
 	oct::ec::sche::Day day4;
 	time4.granulate(&data.config,day4);
-	if(day4.size() == 10)
+	if(day4.size() == 13)
 	{
 		CU_ASSERT(true);
 	}
@@ -392,7 +392,7 @@ void schedule_devel()
 	//interseccion de horas
 	oct::ec::sche::Day day5;
 	day5.inters(day,day4);
-	if(day5.size() == 8)
+	if(day5.size() == 13)
 	{
 		/*std::cout << "day\n";
 		day.print_day(std::cout);
@@ -411,9 +411,9 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}
 
-	IntervalTime time6("1 4:00", "1 10:00");
-	IntervalTime time7("1 12:00", "1 16:00");
-	IntervalTime time8("1 17:00", "1 20:00");
+	IntervalTime time6("Mon 04:00", "Mon 10:00");
+	IntervalTime time7("Mon 12:00", "Mon 16:00");
+	IntervalTime time8("Mon 17:00", "Mon 20:00");
 	oct::ec::sche::Day day6;
 	time8.granulate(&data.config,day6);
 	time6.granulate(&data.config,day6);
@@ -424,7 +424,7 @@ void schedule_devel()
 		dt.print(std::cout,oct::ec::sche::Configuration::formats_dt_day_hour);
 		std::cout << "\n";
 	}*/
-	if(day6.get_blocks().size() == 3)
+	if(day6.get_blocks().size() == 7)
 	{
 		CU_ASSERT(true);
 	}
@@ -446,7 +446,7 @@ void schedule_devel()
 		}*/
 		if( iBlock == 0)
 		{
-			if((*itBlock).size() == 6)
+			if((*itBlock).size() == 1)
 			{
 				CU_ASSERT(true);
 			}
@@ -499,7 +499,7 @@ void schedule_devel()
 		std::cout << "day6.back().tm_hour = " << day6.back().tm_hour << "\n";
 		CU_ASSERT(false);
 	}
-	if(day6.size() == 13)
+	if(day6.size() == 17)
 	{
 		CU_ASSERT(true);
 	}
@@ -540,7 +540,7 @@ void schedule_devel()
 	day6.combns(combsList,3);
 	std::list<oct::ec::sche::Day>::iterator itDay = combsList.begin();
 	itDay++;
-	if((*itDay).get_blocks().size() == 1)
+	if((*itDay).get_blocks().size() == 0)
 	{
 		CU_ASSERT(true);
 	}
@@ -628,7 +628,7 @@ void schedule_devel()
 	}
 
 	//este valor puede cambiar comforme mejore el algoritmo, esta a que por propositos de desarrollo
-	if(week_opt.count() == 108226272)
+	if(week_opt.count() == 32505856)
 	{
 		CU_ASSERT(true);
 	}
@@ -684,7 +684,7 @@ void schedule_devel()
 	std::cout << "\n";
 	//std::cout << "Interseccion \n";
 	//week3.print(std::cout);*/
-	if(week_opt2.count() == 10631250)
+	if(week_opt2.count() == 143589642)
 	{
 		CU_ASSERT(true);
 	}
@@ -803,12 +803,16 @@ void schedule_devel()
 	}
 
 	oct::core::Time dt1[10];
-	for(unsigned int i = 0; i < 10; i++)
-	{
-		std::string str_time = "Tue ";
-		str_time += std::to_string(i + 5) + ":00";
-		dt1[i].read(str_time,"%a %H:%M");
-	}
+	dt1[0].read("Tue 05:00","%a %H:%M");
+	dt1[1].read("Tue 06:00","%a %H:%M");
+	dt1[2].read("Tue 07:00","%a %H:%M");
+	dt1[3].read("Tue 08:00","%a %H:%M");
+	dt1[4].read("Tue 09:00","%a %H:%M");
+	dt1[5].read("Tue 10:00","%a %H:%M");
+	dt1[6].read("Tue 11:00","%a %H:%M");
+	dt1[7].read("Tue 12:00","%a %H:%M");
+	dt1[8].read("Tue 13:00","%a %H:%M");
+	dt1[9].read("Tue 14:00","%a %H:%M");
 
 	for(unsigned int i = 0; i < 10; i++)
 	{
@@ -823,11 +827,17 @@ void schedule_devel()
 		}
 	}
 
-	oct::core::Time dt2[10];
-	for(oct::core::Time& time : dt2)
-	{
-		time.read("Tue 6:35","%a %H:%M");
-	}
+	oct::core::Time dt2[10];	
+	dt2[0].read("Tue 06:35","%a %H:%M");
+	dt2[1].read("Tue 06:35","%a %H:%M");
+	dt2[2].read("Tue 06:35","%a %H:%M");
+	dt2[3].read("Tue 06:35","%a %H:%M");
+	dt2[4].read("Tue 06:35","%a %H:%M");
+	dt2[5].read("Tue 06:35","%a %H:%M");
+	dt2[6].read("Tue 06:35","%a %H:%M");
+	dt2[7].read("Tue 06:35","%a %H:%M");
+	dt2[8].read("Tue 06:35","%a %H:%M");
+	dt2[9].read("Tue 06:35","%a %H:%M");
 	/*for(unsigned int i = 0; i < 10; i++)
 	{
 		std::cout << "Hora : ";
@@ -838,19 +848,27 @@ void schedule_devel()
 	{
 		add_hours(dt2[i],i,data.config);
 	}
-	for(unsigned int i = 0; i < 10; i++)
+	if(dt2[0].tm_hour == 6 and dt2[0].tm_min == 35)
 	{
-		if(dt2[i].tm_hour == i + 6 and dt2[i].tm_min == 35)
-		{
-			CU_ASSERT(true);
-		}
-		else
-		{
-			std::cout << "dt2[i].tm_hour = " << dt2
-			[i].tm_hour << "\n";
-			CU_ASSERT(false);
-		}
+		CU_ASSERT(true);
 	}
+	else
+	{
+		std::cout << "dt2[i].tm_hour = " << dt2[0].tm_hour << ", dt2[i].tm_min ="  << dt2[0].tm_min << "\n";
+		CU_ASSERT(false);
+	}
+	if(dt2[1].tm_hour == 7 and dt2[1].tm_min == 20)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "dt2[i].tm_hour = " << dt2[1].tm_hour << ", dt2[i].tm_min ="  << dt2[1].tm_min << "\n";
+		CU_ASSERT(false);
+	}
+	
+	
+	
 	bool ret_dt2;
 	for(unsigned int i = 1; i < 10; i++)
 	{

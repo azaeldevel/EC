@@ -196,6 +196,18 @@ namespace oct::core
         	throw core::Exception(msg,__FILE__,__LINE__);
         }
 	}
+	void Time::read(const std::string& time, const std::string& format,const std::locale& locale)
+	{
+	    std::istringstream ss(time);
+	    ss.imbue(locale);
+        ss >> std::get_time(this, format.c_str());
+        if(ss.fail())
+        {
+        	std::string msg = "Fallo la lecrtura de la fecha '";
+        	msg += time + "' con el formato '" + format + "'";
+        	throw core::Exception(msg,__FILE__,__LINE__);
+        }
+	}
 }
 
 namespace oct::ec::sche
@@ -1055,21 +1067,21 @@ namespace oct::ec::sche
 			block.push_back(&day.back());
 		}
 	}
-	void IntervalTime::set_begin(const Configuration* config,const std::string& str)
+	/*void IntervalTime::set_begin(const Configuration* config,const std::string& str)
 	{
 		begin.read(str,Configuration::formats_dt_dayn_hour);
 	}
 	void IntervalTime::set_end(const Configuration* config,const std::string& str)
 	{
 		end.read(str,Configuration::formats_dt_dayn_hour);
-	}
+	}*/
 	void IntervalTime::set_begin(const std::string& str)
 	{
-		begin.read(str,"%w %H:%M");
+		begin.read(str,"%a %H:%M");
 	}
 	void IntervalTime::set_end(const std::string& str)
 	{
-		end.read(str,"%w %H:%M");
+		end.read(str,"%a %H:%M");
 	}
 
 
@@ -1082,7 +1094,7 @@ namespace oct::ec::sche
 	void Configuration::init()
 	{
 		schema_week = SchemaWeek::MS;
-		seconds_per_hour = 60 * 60;
+		seconds_per_hour = 45 * 60;
 		format = FormatDT::DAY_HOUR;
 		hours_sigma = 0.085;
 		out_dir = "logs/schedule";	

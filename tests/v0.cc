@@ -16,8 +16,13 @@ void schedule_devel();
 int schedule_init(void);
 int schedule_clean(void);
 
-int main(int argc, char *argv[])
+void time_devel()
 {
+		
+}
+
+int main(int argc, char *argv[])
+{	
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
 
@@ -28,7 +33,13 @@ int main(int argc, char *argv[])
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
-
+	
+	if ((NULL == CU_add_test(pSuite, "Developing Time class", time_devel)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+	
 	if ((NULL == CU_add_test(pSuite, "Developing Schedule", schedule_devel)))
 	{
 		CU_cleanup_registry();

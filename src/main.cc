@@ -26,33 +26,30 @@
 #include <fstream>
 #include <octetos/core/shell.hh>
 
-#include "trans.hh"
+#include "schedule.hh"
 
 
 int main(int argc, const char* argv[])
 {
-	if(argc < 2) 
-	{
-		std::cerr << "Indique el parametro necesarion\n";
-		std::cerr << "trans  dirlog\n";
-		return EXIT_SUCCESS;
-	}
-			
-	std::string logDir = argv[1];
-	std::string logDirectory;	
-	bool logFile = not logDir.empty();//
+	oct::core::Time time1;
+	time1.read("Vie 23:15","%a %H:%M",std::locale("es_MX.utf-8"));
+	time1.print(std::cout,"%c");
 	
-	if(logFile) 
-	{
-		logDirectory = logDir + "/" + std::to_string(oct::core::getDayID());
-		oct::core::Shell shell;
-		shell.mkdir(logDirectory,true);
-	}
+	std::cout << "\n";
 	
-	oct::ec::trans::Enviroment* trans = new oct::ec::trans::Enviroment(logDirectory);
-	trans->enableEcho(&std::cout,2);
+	std::locale mx1("es_MX.utf-8");
+	std::locale mx2("es_MX.utf-8");
 	
-	return trans->run()? EXIT_SUCCESS : EXIT_FAILURE;
+	std::locale en("en_US.utf-8");
+	std::locale actual;
+	std::cout << "Locale si : " << actual.name() << "\n";
+	
+	std::cout << "\n";
+	if(mx1 == mx2) std::cout << "Son iguales\n";
+	if(mx1 != en) std::cout << "Son diferentes\n";
+	if(mx2 != en) std::cout << "Son diferentes\n";
+	
+	return EXIT_SUCCESS ;
 }
 
 

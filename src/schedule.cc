@@ -82,6 +82,7 @@ void Enviroment::init(const std::string& in_dir)
 	if(not in_dir.empty())
 	{
 		input_directory = in_dir;
+		if(not shell.exists(input_directory)) shell.mkdir(input_directory);
 		initPopulation = data.groups.get_list().size() * data.groups.get_max_lessons();
 		maxProgenitor = initPopulation;
 		maxPopulation = std::pow(initPopulation,2);
