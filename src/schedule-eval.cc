@@ -57,7 +57,7 @@ namespace oct::ec::sche
 				{
 					for(unsigned int l = 0; l < at(k).size(); l++)
 					{
-						week_actual.inters(at(i)[j].week,at(k)[l].week);
+						week_actual.inters(at(i)[j].week,at(k)[l].week,((Enviroment*)env)->get_data().config);
 						count += week_actual.count_hours();
 						week_actual.clear_days();
 					}

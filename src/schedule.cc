@@ -184,7 +184,7 @@ void Enviroment::initial()
 				
 				WeekHours week;
 				WeekOptions week_opt;
-				week.inters(lessons[subject].room->get_week (),lessons[subject].teacher->get_week());
+				week.inters(lessons[subject].room->get_week(),lessons[subject].teacher->get_week(),data.config);
 				check_codes code = week.check();
 				week.combns(*lessons[subject].subject,week_opt);
 				

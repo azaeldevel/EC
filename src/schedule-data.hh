@@ -5,6 +5,7 @@
 
 #include <map>
 #include <ctime>
+#include <execinfo.h>
 
 #include "ec.hh"
 
@@ -24,6 +25,7 @@ namespace oct::core
 		const Time& operator =(const Time&);
 		bool operator ==(const Time&)const;
 		bool operator ==(const std::time_t&)const;
+		bool operator ==(const std::tm&)const;
 		bool operator <(const Time&)const;
 		bool operator >(const Time&)const;
 
@@ -52,6 +54,9 @@ namespace oct::core
 		std::string name; 
 	};
 
+	void print_backtrace(const char*,int);
+	void signal_abort(int);
+	void signal_segmentv(int);
 }
 
 namespace oct::ec::sche
@@ -116,6 +121,7 @@ namespace oct::ec::sche
 		
 	public:
 		Day();
+		Day(const Configuration&);
 		Day(const Day&);
 		Day& operator =(const Day&);
 
@@ -125,7 +131,7 @@ namespace oct::ec::sche
 		/**
 		*\brief determinar horas en comun
 		**/
-		Day& inters(const Day& comp1, const Day& comp2);
+		Day& inters(const Day& comp1, const Day& comp2,const Configuration&);
 
 		/**
 		*\brief determinar horas en comundeterminar en este dia
@@ -170,7 +176,7 @@ namespace oct::ec::sche
 
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
-		std::list<core::Time>::iterator blocking(std::list<core::Time>::iterator begin,const Configuration&);
+		void blocking(const Configuration&);
 		
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el bloque
@@ -223,7 +229,11 @@ namespace oct::ec::sche
 		/**
 		*\brief determinar horas en comun
 		**/
-		WeekHours& inters(const WeekHours& comp1, const WeekHours& comp2);
+		WeekHours& inters(const WeekHours& comp1, const WeekHours& comp2,const Configuration& config);
+
+		const Configuration& get_configuration()const;
+
+		bool check_configuration()const;
 
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
@@ -288,7 +298,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Convirte el valor time en elementos de la clase Day, crea los bloques de tiempo.
 		**/
-		void granulate(const Configuration*, WeekHours& out);
+		//void granulate(const Configuration*, WeekHours& out);
 		//void set_begin(const Configuration*,const std::string& str);
 		//void set_end(const Configuration*,const std::string& str);
 		void set_begin(const std::string& str);

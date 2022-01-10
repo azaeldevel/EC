@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <chrono>
+#include <csignal>
 
 
 void schedule_devel();
@@ -25,6 +26,9 @@ int main(int argc, char *argv[])
 {	
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
+
+	signal(SIGSEGV,oct::core::signal_segmentv);
+	signal(SIGABRT,oct::core::signal_abort);
 
 	CU_pSuite pSuite = NULL;
 	pSuite = CU_add_suite("Testing Evolution Computing..", schedule_init, schedule_clean);
