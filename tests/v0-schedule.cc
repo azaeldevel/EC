@@ -411,20 +411,20 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}
 
-	IntervalTime time6("Mon 04:00", "Mon 10:00");
-	IntervalTime time7("Mon 12:00", "Mon 16:00");
-	IntervalTime time8("Mon 17:00", "Mon 20:00");
+	IntervalTime time6("Mon 08:00", "Mon 11:00");
+	IntervalTime time7("Mon 13:00", "Mon 16:00");
+	IntervalTime time8("Mon 17:00", "Mon 23:00");
 	oct::ec::sche::Day day6;
 	time8.granulate(&data.config,day6);
 	time6.granulate(&data.config,day6);
 	time7.granulate(&data.config,day6);
-	day6.sort();
-	/*for(const oct::core::DataTime& dt : day6)
+	day6.sort(data.config);
+	for(const oct::core::Time& dt : day6)
 	{
 		dt.print(std::cout,oct::ec::sche::Configuration::formats_dt_day_hour);
 		std::cout << "\n";
-	}*/
-	if(day6.get_blocks().size() == 7)
+	}
+	if(day6.get_blocks().size() == 3) //12 horas de clase, 9 hora de tiempo
 	{
 		CU_ASSERT(true);
 	}
@@ -444,7 +444,7 @@ void schedule_devel()
 			dt->print(std::cout,oct::ec::sche::Configuration::formats_dt_day_hour);
 			std::cout << "\n";
 		}*/
-		if( iBlock == 0)
+		if(iBlock == 0)
 		{
 			if((*itBlock).size() == 1)
 			{

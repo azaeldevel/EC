@@ -156,7 +156,16 @@ namespace oct::core
 		if(t_this == o) return true;
 		return false;
 	}
+	bool Time::operator <(const Time& o)const
+	{
+		std::tm tm_this = *this;
+		std::time_t t_this = std::mktime(&tm_this);
 
+		std::tm tm_o = o;
+		std::time_t t_o = std::mktime(&tm_o);
+		
+		return t_this < t_o;
+	}
 	int Time::get_week_day()const
 	{
 		return tm_wday;
@@ -257,11 +266,13 @@ namespace oct::ec::sche
 
 	Day::Day()
 	{
+		config = NULL;
 	}
 	Day::Day(const Day& d)
 	{
 		//std::cout << "Day::Day(const Day& d) - Step 1.0\n";
-		if(size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(not d.config) throw core::Exception("Aun no se asigna informacion de configuracion",__FILE__,__LINE__);
 
 		for(const core::Time& dt : d)
 		{
@@ -269,13 +280,14 @@ namespace oct::ec::sche
 		}
 		//std::cout << "Day::Day(const Day& d) - Step 2.0\n";
 		//blocks.clear();
-		sort();//ordena y genera bloques
+		sort(*d.config);//ordena y genera bloques
 		//std::cout << "Day::Day(const Day& d) - Step 3.0\n";
 	}
 	Day& Day::operator =(const Day& d)
 	{
 		//std::cout << "Day::operator = - Step 1.0\n";
-		if(size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(not d.config) throw core::Exception("Aun no se asigna informacion de configuracion",__FILE__,__LINE__);
 
 		for(const core::Time& dt : d)
 		{
@@ -283,7 +295,7 @@ namespace oct::ec::sche
 		}
 		//std::cout << "Day::operator = - Step 2.0\n";
 		//blocks.clear();
-		sort();//ordena y genera bloques
+		sort(*d.config);//ordena y genera bloques
 		//std::cout << "Day::operator = - Step 3.0\n";
 		return *this;
 	}
@@ -313,7 +325,7 @@ namespace oct::ec::sche
 			}
 		}
 		//blocks.clear();
-		sort();
+		sort(*comp1.config);
 		return *this;
 	}
 	bool Day::haveDisponible()const
@@ -321,7 +333,7 @@ namespace oct::ec::sche
 		return std::list<core::Time>::size() > 0 ? true : false;
 	}
 
-	std::list<core::Time>::iterator Day::blocking(std::list<core::Time>::iterator b)
+	std::list<core::Time>::iterator Day::blocking(std::list<core::Time>::iterator b,const Configuration& config)
 	{
 		if(size() == 1)
 		{
@@ -337,9 +349,12 @@ namespace oct::ec::sche
 		itActual++;
 		Block block;
 		block.push_back(&*itPrev);
+		core::Time nextTime;
 		while(itActual != end())
 		{
-			if((*itActual).tm_hour == (*itPrev).tm_hour + 1)
+			nextTime = (*itActual);
+			add_hours(nextTime,1,config);
+			if((*itActual) == nextTime)
 			{
 				block.push_back(&*itActual);
 			}
@@ -355,14 +370,15 @@ namespace oct::ec::sche
 		blocks.push_back(block);
 		return itActual;
 	}
-	bool cmpHour(const core::Time& firts,const core::Time& second)
+	bool cmpTimes(const core::Time& firts,const core::Time& second)
 	{
-		return firts.tm_hour < second.tm_hour;
+		return firts < second;
 	}
-	void Day::sort()
+	void Day::sort(const Configuration& config)
 	{
+		this->config = &config;
 		//ordenar los elementos core::Time por su valor tm_wday
-		std::list<core::Time>::sort(cmpHour);
+		std::list<core::Time>::sort(cmpTimes);
 
 		//contruir bloques de horas continuas
 		if(size() == 0) return;//no hay nada que ordenar si hay 1 o 0 elementos
@@ -370,7 +386,7 @@ namespace oct::ec::sche
 		iterator it = begin();
 		while(it != end())
 		{
-			it = blocking(it);
+			it = blocking(it,config);
 		}
 	}
 	void Day::add(const Block& b)
@@ -762,6 +778,7 @@ namespace oct::ec::sche
 	WeekHours::WeekHours()
 	{
 		resize(7);
+		config = NULL;
 	}
 	WeekHours& WeekHours::inters(const WeekHours& comp1, const WeekHours& comp2)
 	{
@@ -834,11 +851,12 @@ namespace oct::ec::sche
 		//TODO:Hay varias combinaciones posibles desde 1 hasta subject->get_time()
 
 	}
-	void WeekHours::sort()
+	void WeekHours::sort(const Configuration& config)
 	{
+		this->config = &config;
 		for(Day& day : *this)
 		{
-			day.sort();
+			day.sort(config);
 		}
 	}
 	void WeekHours::print(std::ostream& out) const

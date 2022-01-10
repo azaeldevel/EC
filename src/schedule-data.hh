@@ -140,7 +140,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Ordena y crea los bloques de horas
 		*/
-		void sort();
+		void sort(const Configuration&);
 
 		void add(const Block& );
 
@@ -170,7 +170,7 @@ namespace oct::ec::sche
 
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
-		std::list<core::Time>::iterator blocking(std::list<core::Time>::iterator begin);
+		std::list<core::Time>::iterator blocking(std::list<core::Time>::iterator begin,const Configuration&);
 		
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el bloque
@@ -178,6 +178,7 @@ namespace oct::ec::sche
 		void combns(std::list<Day>&, unsigned int hours, const Block& b,Day&)const;
 	private:
 		Blocks blocks;
+		const Configuration* config;
 	};
 
 	//typedef std::list<Day> DaysOptions;
@@ -236,7 +237,7 @@ namespace oct::ec::sche
 
 		unsigned int days_disp() const;
 
-		void sort();
+		void sort(const Configuration&);
 
 		void print(std::ostream&) const;
 
@@ -270,6 +271,7 @@ namespace oct::ec::sche
 
 	private:
 		void combns(std::list<WeekHours>&,const WeekOptions&)const;
+		const Configuration* config;
 	};
 
 	struct IntervalTime
