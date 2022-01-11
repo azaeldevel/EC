@@ -16,17 +16,19 @@ namespace oct::ec::max
 	class Chromosome : public oct::ec::Chromosome
 	{
 	public:
-		typedef geneUS (Chromosome::*pfnCombine)(const geneUS&);
+		typedef unsigned int pfnCombine;
 
 	public:
 		Chromosome();
 		Chromosome(geneUS,pfnCombine);
+		Chromosome(const Chromosome&);
+		const Chromosome& operator =(const Chromosome&);
 		geneUS getNumber() const;
 		pfnCombine getCombine()const;
 
 		
-		geneUS combination(const geneUS& gene);
-		static geneUS mutate(const geneUS& gene);
+		geneUS combination(geneUS gene);
+		void mutate();
 		static geneUS randGenNumber();
 		static pfnCombine randCombine();
 
@@ -35,10 +37,10 @@ namespace oct::ec::max
 		pfnCombine combine;
 
 	private:	
-		geneUS combine1(const geneUS& gene);
-		geneUS combine2(const geneUS& gene);
-		geneUS combine3(const geneUS& gene);
-		geneUS combine4(const geneUS& gene);
+		geneUS combine1(geneUS gene);
+		geneUS combine2(geneUS gene);
+		geneUS combine3(geneUS gene);
+		geneUS combine4(geneUS gene);
 
 	};
 
@@ -73,6 +75,8 @@ namespace oct::ec::max
 		virtual void print(std::ostream&) const;
 
 		virtual void mutate();
+
+		void set(const Chromosome&);
 
 	private:
 		Chromosome chromo;
