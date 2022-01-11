@@ -742,8 +742,7 @@ void schedule_devel()
 	//WeekHours week3;
 	//week_opt.random(week3);
 	//week3.print(std::cout);
-
-
+	
 	Day day_base;
 	oct::core::Time time_base;
 	for(const Day& day_op : week3)
@@ -827,12 +826,6 @@ void schedule_devel()
 		std::cout << "not sche_teachers.empty() = " << not sche_teachers.empty() << "\n";
 		CU_ASSERT(false);
 	}*/
-
-	const std::map<Groups::key_hbs, Groups::HBRS>& hbrs_list = data.groups.get_hbrs();
-	for(auto const& hbrs : hbrs_list)
-	{
-		//std::cout << hbrs.second.room->get_name() << " - " << hbrs.second.subject->get_name() << " : " << hbrs.second.disp_hours << "\n";
-	}
 
 	oct::core::Time dt1[10];
 	dt1[0].read("Tue 05:00","%a %H:%M");
@@ -929,6 +922,10 @@ void schedule_devel()
 		}
 	}
 
+	for(auto const& [key,value] : data.get_list_hbrs())
+	{
+		std::cout << "(" << key.room->get_name() << "," << key.subject->get_name() << "-->" << value.disp_hours << "\n";
+	}
 
 	/*std::uniform_int_distribution<int> distrib(0, 9);
 	for(unsigned int i = 0; i < 100; i++)

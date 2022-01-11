@@ -20,6 +20,8 @@
 
 #include <fstream>
 #include <string>
+#include <csignal>
+
 
 #if defined(__GNUC__) && defined(__linux__)
     #include <octetos/core/shell.hh>
@@ -33,13 +35,8 @@
 
 int main(int argc, const char* argv[])
 {
-	/*if(argc < 2)
-	{
-		std::cerr << "Indique el parametro necesario\n";
-		std::cerr << "trans  dirlog\n";
-		return EXIT_SUCCESS;
-	}*/
-
+	signal(SIGSEGV,oct::core::signal_segmentv);
+	signal(SIGABRT,oct::core::signal_abort);
 	
 	std::string strDay = std::to_string(oct::core::getDayID());
 	std::string strTime = std::to_string(oct::core::getTimeID());

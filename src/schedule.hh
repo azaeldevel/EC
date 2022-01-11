@@ -68,9 +68,9 @@ namespace oct::ec::sche
 		/**
 		*\brief Asegura que las horas selecionas este dentro de un rango de desviacion esandar asignado
 		*/
-		void signam_hours();
-		real signam_hours(const ClassRoom&);
-		real signam_hours(const Lesson&);
+		void sigma_hours();
+		real sigma_hours(const ClassRoom&);
+		real sigma_hours(const Lesson&);
 	private:
 
 

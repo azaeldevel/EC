@@ -78,6 +78,16 @@ namespace oct::ec::sche
 		std::advance(it,distrib(dre));				
 		return it;
 	}
+	template<typename T> typename std::list<T>::iterator random(std::list<T>& ls)
+	{
+		if(ls.size() == 0) ls.end();
+		if(ls.size() == 1) ls.begin();
+		
+		std::uniform_int_distribution<> distrib(0, ls.size() - 1);
+		typename std::list<T>::iterator it = ls.begin();
+		std::advance(it,distrib(dre));				
+		return it;
+	}
 
 	template<typename T> typename std::vector<T>::const_iterator random(const std::vector<T>& ls)
 	{
@@ -86,6 +96,16 @@ namespace oct::ec::sche
 		
 		std::uniform_int_distribution<> distrib(0, ls.size() - 1);
 		typename std::vector<T>::const_iterator it = ls.begin();
+		std::advance(it,distrib(dre));				
+		return it;
+	}
+	template<typename T> typename std::vector<T>::iterator random(std::vector<T>& ls)
+	{
+		if(ls.size() == 0) ls.end();
+		if(ls.size() == 1) ls.begin();
+		
+		std::uniform_int_distribution<> distrib(0, ls.size() - 1);
+		typename std::vector<T>::iterator it = ls.begin();
 		std::advance(it,distrib(dre));				
 		return it;
 	}
@@ -173,6 +193,8 @@ namespace oct::ec::sche
 		void get_hours_around(const core::Time&,Block& )const;
 
 		static bool is_continue(const core::Time& first, const core::Time& second, const Data&);
+
+		void clear();
 
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
@@ -525,13 +547,7 @@ namespace oct::ec::sche
 			Row();
 			void print(std::ostream&)const;
 		};
-		struct HBS
-		{
-			const Subject* subject;			
-			const Row* row;
-			unsigned int req_hours;
-			unsigned int disp_hours;
-		};
+
 	public: 
 		Teachers_Subjects();
 		Teachers_Subjects(const std::string& fn,const Data* data);
@@ -539,9 +555,15 @@ namespace oct::ec::sche
 		void print(std::ostream&)const;
 
 		const std::list<Row>& get_list() const;
-		const std::map<std::string, HBS>& get_hbs()const;
 
+		
+		/**
+		*\brief Busca el maestro inidcado
+		**/
 		const Row* searchTeachers(const std::string&)const;
+		/**
+		*\brief 
+		**/
 		void searchSubjects(const std::string&, std::list<const Row*>& )const;
 		void hour_by_subjects_csv(std::ofstream& fn);
 		
@@ -551,7 +573,6 @@ namespace oct::ec::sche
 		std::list<Row> teachers_subjects;
 		std::map<std::string, Row*> teachers_by_name;
 		std::multimap<std::string, Row*> subjects_by_name;
-		std::map<std::string, HBS> hbs_by_subject;
 	};
 
 	class Rooms : public Targets
@@ -576,7 +597,11 @@ namespace oct::ec::sche
 		std::multimap<std::string, Room*> rooms_by_name;
 	};
 
-
+	struct coverage
+	{
+		const Subject* subject;
+		bool is;
+	};
 	struct Group : public std::vector<const Subject*>
 	{
 		std::string name;//TODO:soporte para gruopos en distintos salon
@@ -584,6 +609,9 @@ namespace oct::ec::sche
 			
 		Group();	
 		void print(std::ostream&) const;
+		bool is_cover(const Subject&,const Teachers_Subjects&);
+
+		std::map<std::string,coverage> cover;
 	};
 
 	class Groups : public Targets
@@ -591,28 +619,13 @@ namespace oct::ec::sche
 	public:
 		typedef std::list<Group>::iterator iterator;
 		typedef std::list<Group>::const_iterator const_iterator;
-		struct key_hbs
-		{
-			const Room* room;
-			const Subject* subject;
 
-			bool operator < (const key_hbs&) const;
-		};
-
-		struct HBRS
-		{
-			const Room* room;
-			const Subject* subject;
-			const Group* group;	
-			//unsigned int req_hours;
-			unsigned int disp_hours;
-		};
 	public:
 		Groups();
 		Groups(const std::string& fn,const Data* data);
 		const std::list<Group>& get_list() const;
+		std::list<Group>& get_list();
 		unsigned int get_max_lessons()const;
-		const std::map<key_hbs, HBRS>& get_hbrs()const;
 
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
@@ -628,17 +641,16 @@ namespace oct::ec::sche
 		std::map<std::string, Group*> groups_by_name;
 		std::multimap<std::string, Group*> groups_by_subject;
 		unsigned int max_lessons;
-		std::map<key_hbs, HBRS> hbrs_list;//horas disponible por materia y salon
 	};
 	
-	typedef std::vector<core::Time> DaysTimes;
+	/*typedef std::vector<core::Time> DaysTimes;
 	struct TeacherDust
 	{
 		const Teacher* teacher;
 		std::vector<DaysTimes> times;
 	};
 
-	/*struct Target
+	struct Target
 	{
 		std::vector<TeacherDust> teachers;
 		unsigned int subject;
@@ -649,6 +661,29 @@ namespace oct::ec::sche
 
 	struct Data
 	{
+		struct HBS
+		{
+			const Subject* subject;			
+			const Teachers_Subjects::Row* row;
+			unsigned int req_hours;
+			unsigned int disp_hours;
+		};
+		struct key_hbs
+		{
+			const Room* room;
+			const Subject* subject;
+
+			bool operator < (const key_hbs&) const;
+		};
+		struct HBRS
+		{
+			const Room* room;
+			const Subject* subject;
+			const Group* group;	
+			//unsigned int req_hours;
+			unsigned int disp_hours;
+		};
+
 		Configuration config;
 		Teachers teachers;
 		Subjects subjects;
@@ -660,6 +695,15 @@ namespace oct::ec::sche
 		Data(const std::string& in_dir,const std::string& out_dir);
 
 		void load(const std::string& dir);
+
+		const std::map<key_hbs, HBRS>& get_list_hbrs() const;
+		const std::map<std::string, Data::HBS>& get_hbs()const;
+
+	private:
+		void build();
+	private:
+		std::map<std::string, HBS> hbs_by_subject;
+		std::map<key_hbs, HBRS> hbrs_list;//horas disponible por materia y salon
 	};
 	
 	struct Lesson
@@ -672,6 +716,10 @@ namespace oct::ec::sche
 		WeekHours week;
 
 		Lesson();
+		void mutate();
+		void mutate_change_teacher();
+		void mutate_time();
+		void mutate_empty_day();
 	};
 	
 	/**

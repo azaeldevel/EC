@@ -38,7 +38,7 @@ namespace oct::ec::sche
 		not_empty();//un horarion con 0 horas no es util.
 		//std::cout << "\tfiteness = " << fitness << "\n";
 		
-		signam_hours();
+		sigma_hours();
 		//std::cout << "\tfiteness = " << fitness << "\n";
 		
 		//TODO:Evaluar la opcion 'Menor cantidad de dias', 'Mayor cantidad de dias'
@@ -141,12 +141,12 @@ namespace oct::ec::sche
 		}
 	}
 	
-	void Single::signam_hours()
+	void Single::sigma_hours()
 	{
 		real f = 0;
 		for(ClassRoom cr : *this)
 		{
-			f += signam_hours(cr);
+			f += sigma_hours(cr);
 		}
 		f /= real(size());
 		//std::cout << "\tsignam_hours = " << f << "\n";
@@ -165,18 +165,18 @@ namespace oct::ec::sche
 			return;
 		}
 	}
-	real Single::signam_hours(const ClassRoom& cr)
+	real Single::sigma_hours(const ClassRoom& cr)
 	{
 		real f = 0;
 		for(Lesson l : cr)
 		{
-			f += signam_hours(l);
+			f += sigma_hours(l);
 		}		
 		f /= real(cr.size());
 		//std::cout << "\t\tsignam_hours classroom " << f << "\n";
 		return f;
 	}
-	real Single::signam_hours(const Lesson& l)
+	real Single::sigma_hours(const Lesson& l)
 	{
 		real mean = 0;
 		unsigned int count = 0;

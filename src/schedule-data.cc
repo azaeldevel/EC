@@ -669,6 +669,12 @@ namespace oct::ec::sche
 
 		return false;
 	}*/
+	
+	void Day::clear()
+	{
+		std::list<core::Time>::clear();		
+		blocks.clear();
+	}
 
 
 
@@ -688,7 +694,6 @@ namespace oct::ec::sche
 		std::advance(it,distrib(gen));
 		day = *it;
 	}
-
 
 
 
@@ -1674,10 +1679,6 @@ namespace oct::ec::sche
 	{
 		return teachers_subjects;
 	}
-	const std::map<std::string, Teachers_Subjects::HBS>& Teachers_Subjects::get_hbs()const
-	{
-		return hbs_by_subject;
-	}
 	void Teachers_Subjects::loadFile(const std::string& fn)
 	{
 
@@ -1777,29 +1778,11 @@ namespace oct::ec::sche
 			{
 				if(not subject) throw core::Exception("Valor nulo para puntero de Materia",__FILE__,__LINE__);
 				subjects_by_name.insert({subject->get_name(),&row});
-
-				std::map<std::string, HBS>::iterator it = hbs_by_subject.find(subject->get_name());
-				if(it == hbs_by_subject.end())
-				{
-					HBS hbs;
-					hbs.subject = subject;
-					hbs.row = &row;
-					hbs.req_hours = subject->get_time();
-					hbs.disp_hours = row.teacher->get_week().count_hours();
-					hbs_by_subject.insert({subject->get_name(),hbs});
-				}
-				else
-				{
-					HBS& hbs = (*it).second;
-					hbs.disp_hours += row.teacher->get_week().count_hours();
-				}
 			}
 		}
 	}
 	void Teachers_Subjects::hour_by_subjects_csv(std::ofstream& fn)
 	{
-		std::map<std::string, HBS> hbs_list;
-		HBS hbs;
 		std::list<const Row*> rows;
 		for(const Subject& subject : dataObject->subjects.get_list())
 		{
@@ -1894,7 +1877,24 @@ namespace oct::ec::sche
 		out << room->get_name() << ",";
 		//out << teacher.get_name() << ",";
 	}
-
+	bool Group::is_cover(const Subject& s,const Teachers_Subjects& ts)
+	{
+		std::list<const Teachers_Subjects::Row*> row;
+		ts.searchSubjects(s.get_name(),row);
+		if(row.size() == 0)		
+		{
+			std::string msg = "La tabla de Maestros-Materia no contine refereancia para '";
+			msg += s.get_name() + "'";
+			throw core::Exception(msg,__FILE__,__LINE__);
+		}
+		
+		for(const Teachers_Subjects::Row* r : row)
+		{
+			if(r->teacher->get_week().count_hours() >= s.get_time()) return true;
+		}
+		
+		return false;
+	}
 	Groups::Groups(const std::string& fn,const Data* d) : Targets(d)
 	{
 		loadFile(fn);
@@ -1907,10 +1907,11 @@ namespace oct::ec::sche
 	{
 		return groups;
 	}
-	const std::map<Groups::key_hbs, Groups::HBRS>& Groups::get_hbrs()const
+	std::list<Group>& Groups::get_list()
 	{
-		return hbrs_list;
+		return groups;
 	}
+
 
 	void Groups::loadFile(const std::string& fn)
 	{
@@ -2000,8 +2001,7 @@ namespace oct::ec::sche
 		for(Group& g : groups)
 		{
 			it = groups_by_name.find(g.room->get_name());
-			//std::cout << "Grupo : " << g.room->get_name() << "\n";
-			//std::cout << "Size : " << groups_by_name.size() << "\n";
+			
 			if(it != groups_by_name.end())
 			{
 				std::string msg;
@@ -2012,53 +2012,6 @@ namespace oct::ec::sche
 			for(const Subject* s : g)
 			{
 				groups_by_subject.insert({s->get_name(),&g});
-
-				//std::cout << "Subject : " << s->get_name() << "\n";
-				key_hbs key;
-				key.room = g.room;
-				key.subject = s;
-				//std::cout << "find  " << s->get_name() << " - " << g.room->get_name() << ".\n";
-				std::map<key_hbs, HBRS>::iterator it = hbrs_list.find(key);
-				if(it == hbrs_list.end())
-				{
-					//std::cout << "prev " << s->get_name() << " - " << g.room->get_name() << ".\n";
-					HBRS hbrs;
-					hbrs.disp_hours = 0;
-					hbrs.subject = s;
-					hbrs.room = g.room;
-					hbrs.group = &g;
-					WeekHours week;
-					std::list<const Teachers_Subjects::Row*> rows;
-					dataObject->teachers_subjects.searchSubjects(s->get_name(),rows);
-					if(rows.empty())
-					{
-						std::string msg;
-						msg = "No se encontro la amateria '" + s->get_name() + "' para el salon '" + g.room->get_name() + "'\n";;
-						throw core::Exception(msg,__FILE__,__LINE__);
-					}
-					for(const Teachers_Subjects::Row* row : rows)
-					{
-						//std::cout << "comparando horaio " << s->get_name() << " - " << g.room->get_name() << " horaios\n";
-						week.inters(g.room->get_week(),row->teacher->get_week(),dataObject->config);
-						hbrs.disp_hours += week.count_hours();
-						week.clear_days();
-					}
-					//std::cout << "inserting  " << s->get_name() << " - " << g.room->get_name() << ".\n";
-					hbrs_list.insert({key,hbrs});
-				}
-				else
-				{
-					HBRS& hbrs = (*it).second;
-					WeekHours week;
-					std::list<const Teachers_Subjects::Row*> rows;
-					dataObject->teachers_subjects.searchSubjects(s->get_name(),rows);
-					for(const Teachers_Subjects::Row* row : rows)
-					{
-						week.inters(g.room->get_week(),row->teacher->get_week(),dataObject->config);
-						hbrs.disp_hours += week.count_hours();
-						week.clear_days();
-					}
-				}
 			}
 		}
 	}
@@ -2066,12 +2019,7 @@ namespace oct::ec::sche
 	{
 		return max_lessons;
 	}
-	bool Groups::key_hbs::operator < (const key_hbs& o) const
-	{
-		if(room->get_name() < o.room->get_name()) return true;
-		else if(subject->get_name() < o.subject->get_name()) return true;
-		return false;
-	}
+
 
 
 
@@ -2082,7 +2030,14 @@ namespace oct::ec::sche
 	{
 		load(in_dir);
 	}
-
+	const std::map<Data::key_hbs, Data::HBRS>& Data::get_list_hbrs() const
+	{
+		return hbrs_list;
+	}	
+	const std::map<std::string, Data::HBS>& Data::get_hbs()const
+	{
+		return hbs_by_subject;
+	}
 	void Data::load(const std::string& dir)
 	{
 		//TODO:validacion estricta delas entredas
@@ -2097,9 +2052,98 @@ namespace oct::ec::sche
 		teachers_subjects.loadFile(dir + "/teachers-subjects.csv");
 		((Targets&)groups) = this;
 		groups.loadFile(dir + "/groups.csv");
+		
+		build();
 	}
-
-
+	void Data::build()
+	{
+		for(const Teachers_Subjects::Row& row : teachers_subjects.get_list())
+		{
+			for(const Subject* subject : row)
+			{
+				std::map<std::string, HBS>::iterator it = hbs_by_subject.find(subject->get_name());
+				if(it == hbs_by_subject.end())
+				{
+					HBS hbs;
+					hbs.subject = subject;
+					hbs.row = &row;
+					hbs.req_hours = subject->get_time();
+					hbs.disp_hours = row.teacher->get_week().count_hours();
+					hbs_by_subject.insert({subject->get_name(),hbs});
+				}
+				else
+				{
+					HBS& hbs = (*it).second;
+					hbs.disp_hours += row.teacher->get_week().count_hours();
+				}
+			}
+		}
+		for(Group& g : groups.get_list())
+		{
+			for(const Subject* subject : g)
+			{
+				
+				//std::cout << "Subject : " << s->get_name() << "\n";
+				key_hbs key;
+				key.room = g.room;
+				key.subject = subject;
+				//std::cout << "find  " << s->get_name() << " - " << g.room->get_name() << ".\n";
+				std::map<key_hbs, Data::HBRS>::iterator it = hbrs_list.find(key);
+				if(it == hbrs_list.end())
+				{
+					//std::cout << "prev " << s->get_name() << " - " << g.room->get_name() << ".\n";
+					HBRS hbrs;
+					hbrs.disp_hours = 0;
+					hbrs.subject = subject;
+					hbrs.room = g.room;
+					hbrs.group = &g;
+					WeekHours week;
+					std::list<const Teachers_Subjects::Row*> rows;
+					teachers_subjects.searchSubjects(subject->get_name(),rows);
+					if(rows.empty())
+					{
+						std::string msg;
+						msg = "No se encontro la amateria '" + subject->get_name() + "' para el salon '" + g.room->get_name() + "'\n";;
+						throw core::Exception(msg,__FILE__,__LINE__);
+					}
+					for(const Teachers_Subjects::Row* row : rows)
+					{
+						//std::cout << "comparando horaio " << s->get_name() << " - " << g.room->get_name() << " horaios\n";
+						week.inters(g.room->get_week(),row->teacher->get_week(),config);
+						hbrs.disp_hours += week.count_hours();
+						week.clear_days();
+					}
+					//std::cout << "inserting  " << s->get_name() << " - " << g.room->get_name() << ".\n";
+					hbrs_list.insert({key,hbrs});
+				}
+				else
+				{
+					HBRS& hbrs = (*it).second;
+					WeekHours week;
+					std::list<const Teachers_Subjects::Row*> rows;
+					teachers_subjects.searchSubjects(subject->get_name(),rows);
+					for(const Teachers_Subjects::Row* row : rows)
+					{
+						week.inters(g.room->get_week(),row->teacher->get_week(),config);
+						hbrs.disp_hours += week.count_hours();
+						week.clear_days();
+					}
+				}
+				
+				//
+				coverage cover;
+				cover.subject = subject;
+				cover.is = g.is_cover(*subject,teachers_subjects);
+				g.cover.insert({subject->get_name(),cover});
+			}
+		}
+	}
+	bool Data::key_hbs::operator < (const key_hbs& o) const
+	{
+		if(room->get_name() < o.room->get_name()) return true;
+		else if(subject->get_name() < o.subject->get_name()) return true;
+		return false;
+	}
 
 	Lesson::Lesson()
 	{
@@ -2109,7 +2153,86 @@ namespace oct::ec::sche
 		room = NULL;
 		data = NULL;
 	}
+	void Lesson::mutate()
+	{
+		std::uniform_int_distribution<int> distrib(1,3);
+		switch(distrib(gen))
+		{
+			case 1:
+				mutate_change_teacher();
+				break;
+			case 2:
+				mutate_time();
+				break;	
+			case 3:
+				mutate_empty_day();
+				break;			
+		}
+	}
+	void Lesson::mutate_change_teacher()
+	{
+			if(not data) throw core::Exception("No se asigno el objeto de datos",__FILE__,__LINE__);
+			if(not room->get_week().check_configuration()) throw core::Exception("No se ha asignado datos de configuracion",__FILE__,__LINE__);
+			if(not teacher->get_week().check_configuration()) throw core::Exception("No se ha asignado datos de configuracion",__FILE__,__LINE__);
 
+			//std::cout << "\tLessons::mutate Step 2.0.2\n";
+			std::list<const Teachers_Subjects::Row*> rows;
+			//std::cout << "\tMateria : " << lesson->subject->get_name() <<  " \n";
+			data->teachers_subjects.searchSubjects(subject->get_name(),rows);
+			if(rows.empty())
+			{
+				std::string msg = "No hay opciones en la busqueda de '";
+				msg += subject->get_name() + "'";
+				throw core::Exception(msg,__FILE__,__LINE__);
+			}
+			//std::cout << "\tLessons::mutate Step 2.0.3\n";
+			//std::cout << lessons[subject].subject->get_name();
+			std::list<const Teachers_Subjects::Row*>::const_iterator itr = random(rows);
+			//std::cout << "\tLessons::mutate Step 2.0.4\n";
+			if(itr == rows.end())
+			{
+				std::string msg = "No se encontro maestro asociado para '";
+				msg += subject->get_name() + "'";
+				throw core::Exception(msg,__FILE__,__LINE__);
+			}
+			//std::cout << "\tLessons::mutate Step 2.0.5\n";
+			teacher = (*itr)->teacher;
+
+			WeekHours week;
+			WeekOptions week_opt;
+			week.inters(room->get_week(),teacher->get_week(),data->config);
+			week.combns(*subject,week_opt);
+
+			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
+			unsigned int iday = distrib(gen);
+			Day* day = &week[iday];
+			week_opt[iday].random(*day);
+	}
+	void Lesson::mutate_time()
+	{
+			WeekHours week;
+			WeekOptions week_opt;
+			week.inters(room->get_week (),teacher->get_week(),data->config);
+			week.combns(*subject,week_opt);
+
+			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
+			unsigned int iday = distrib(gen);
+			Day* day = &week[iday];
+			week_opt[iday].random(*day);
+	}	
+	void Lesson::mutate_empty_day()
+	{
+		Day* day = NULL;
+		unsigned int count = 0;
+		do
+		{
+		 	day = &*random(week);
+		 	count++;
+		}
+		while(not day->empty() and count < 14);
+		
+		day->clear();
+	}
 
 	ClassRoom::ClassRoom()
 	{
@@ -2166,65 +2289,9 @@ namespace oct::ec::sche
 		//std::cout << "\tLessons::mutate Step 1\n";
 
 		std::uniform_int_distribution<int> distrib(0, size() - 1);
-		std::bernoulli_distribution random_mutation(0.5);
+		//std::bernoulli_distribution random_mutation(0.5);
 		//std::cout << "\tLessons::mutate Step 2.0.0\n";
-		if(random_mutation(gen))
-		{
-
-			//std::cout << "\tLessons::mutate Step 2.0.1\n";
-			Lesson* lesson = &at(distrib(gen));
-			if(not lesson->data) throw core::Exception("No se asigno el objeto de datos",__FILE__,__LINE__);
-			if(not lesson->room->get_week().check_configuration()) throw core::Exception("No se ha asignado datos de configuracion",__FILE__,__LINE__);
-			if(not lesson->teacher->get_week().check_configuration()) throw core::Exception("No se ha asignado datos de configuracion",__FILE__,__LINE__);
-
-			//std::cout << "\tLessons::mutate Step 2.0.2\n";
-			std::list<const Teachers_Subjects::Row*> rows;
-			//std::cout << "\tMateria : " << lesson->subject->get_name() <<  " \n";
-			lesson->data->teachers_subjects.searchSubjects(lesson->subject->get_name(),rows);
-			if(rows.empty())
-			{
-				std::string msg = "No hay opciones en la busqueda de '";
-				msg += lesson->subject->get_name() + "'";
-				throw core::Exception(msg,__FILE__,__LINE__);
-			}
-			//std::cout << "\tLessons::mutate Step 2.0.3\n";
-			//std::cout << lessons[subject].subject->get_name();
-			std::list<const Teachers_Subjects::Row*>::const_iterator itr = random(rows);
-			//std::cout << "\tLessons::mutate Step 2.0.4\n";
-			if(itr == rows.end())
-			{
-				std::string msg = "No se encontro maestro asociado para '";
-				msg += lesson->subject->get_name() + "'";
-				throw core::Exception(msg,__FILE__,__LINE__);
-			}
-			//std::cout << "\tLessons::mutate Step 2.0.5\n";
-			lesson->teacher = (*itr)->teacher;
-
-			WeekHours week;
-			WeekOptions week_opt;
-			week.inters(lesson->room->get_week(),lesson->teacher->get_week(),lesson->data->config);
-			week.combns(*lesson->subject,week_opt);
-
-			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
-			unsigned int iday = distrib(gen);
-			Day* day = &lesson->week[iday];
-			week_opt[iday].random(*day);
-		}
-		else
-		{
-			//std::cout << "\tLessons::mutate Step 2.0.2\n";
-			Lesson* lesson = &at(distrib(gen));
-
-			WeekHours week;
-			WeekOptions week_opt;
-			week.inters(lesson->room->get_week (),lesson->teacher->get_week(),lesson->data->config);
-			week.combns(*lesson->subject,week_opt);
-
-			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
-			unsigned int iday = distrib(gen);
-			Day* day = &lesson->week[iday];
-			week_opt[iday].random(*day);
-		}
+		at(distrib(gen)).mutate();
 	}
 	void ClassRoom::save_csv(std::ostream& out,const Configuration& config) const
 	{
