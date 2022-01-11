@@ -2406,9 +2406,9 @@ namespace oct::ec::sche
 		std::ofstream out_csv;
 		for(const ClassRoom& cr : *this)
 		{
-			out_csv.open(dir + "/" + cr[0].group->name);
-			cr.save_csv(out_csv,config);
-			out_csv.close();
+			//out_csv.open(dir + "/" + cr[0].group->name);
+			//cr.save_csv(out_csv,config);
+			//out_csv.close();
 		}
 	}
 }

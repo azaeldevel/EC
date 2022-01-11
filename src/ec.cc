@@ -732,7 +732,7 @@ bool Enviroment::run()
 			if( 1.0 - (*it)->getFitness() < epsilon) solutions.push_back(*it);
 			else break;//si no fuen solucio las siguientes tampoco
 		}
-		if((solutions.size() >= minSolutions or solutions.size() == maxPopulation) and logDirectoryFlag)//se definion una cantidad minima de soluciones
+		if(solutions.size() >= minSolutions and logDirectoryFlag and stopMinSolutions)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
 			SaveCollection saveColl(logDirectory);
@@ -746,7 +746,27 @@ bool Enviroment::run()
 			history.close();
 			return true;
 		}
-		else if(solutions.size() >= minSolutions or solutions.size() == maxPopulation)//se definion una cantidad minima de soluciones
+		else if(solutions.size() == maxPopulation and logDirectoryFlag)//se definion una cantidad minima de soluciones
+		{
+			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
+			SaveCollection saveColl(logDirectory);
+			saveColl.open("solutions.cvs");
+			for(Single* s : solutions)
+			{
+				s->save(saveColl);
+				(*saveColl.out) << "\n";
+			}
+			saveColl.close();
+			history.close();
+			return true;
+		}
+		else if(solutions.size() >= minSolutions and stopMinSolutions)//se definion una cantidad minima de soluciones
+		{
+			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
+			
+			return true;
+		}
+		else if(solutions.size() == maxPopulation)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
 			
