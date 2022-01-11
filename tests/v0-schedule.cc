@@ -414,7 +414,6 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}
 
-	//std::cout << ">>>>>>>>>>>>>>Day6.\n";
 	IntervalTime time6("Mon 08:00", "Mon 11:00");
 	IntervalTime time7("Mon 13:00", "Mon 16:00");
 	IntervalTime time8("Mon 17:00", "Mon 23:00");
@@ -438,7 +437,7 @@ void schedule_devel()
 			std::cout << "\n";
 		}
 	}*/
-	//std::cout << "<<<<<<<<<<<<<<Day6.\n";
+	
 	if(day6.get_blocks().size() == 3) //12 horas de clase, 9 hora de tiempo
 	{
 		CU_ASSERT(true);
@@ -540,17 +539,20 @@ void schedule_devel()
 		std::cout << "Contenido de bloques es " << day6_count << ", pero el dia contine : " << day6.size() << "\n";
 		CU_ASSERT(false);
 	}
+	
+	//std::cout << ">>>>>>>>>>>>>>Day6.\n";
 	std::list<Day> combsList;
 	day6.combns(combsList,2);
-	if(combsList.front().get_blocks().size() == 8)
+	if(combsList.size() == 11)
 	{
 		CU_ASSERT(true);
 	}
 	else
 	{
-		std::cout << "combsList.front().get_blocks().size() = " << combsList.front().get_blocks().size() << "\n";
+		std::cout << "combsList.size() = " << combsList.size() << "\n";
 		CU_ASSERT(false);
 	}
+	//std::cout << "<<<<<<<<<<<<<<Day6.\n";
 	/*unsigned int i_day = 0;
 	iBlock = 0;
 	for(const oct::ec::sche::Day& day : combsList)
@@ -569,15 +571,13 @@ void schedule_devel()
 		i_day++;
 	}*/
 	day6.combns(combsList,3);
-	std::list<oct::ec::sche::Day>::iterator itDay = combsList.begin();
-	itDay++;
-	if((*itDay).get_blocks().size() == 0)
+	if(combsList.size() == 18)
 	{
 		CU_ASSERT(true);
 	}
 	else
 	{
-		std::cout << "(*itDay).get_blocks().size() = " << (*itDay).get_blocks().size() << "\n";
+		std::cout << "combsList.size() = " << combsList.size() << "\n";
 		CU_ASSERT(false);
 	}
 	/*
@@ -659,7 +659,7 @@ void schedule_devel()
 	}
 
 	//este valor puede cambiar comforme mejore el algoritmo, esta a que por propositos de desarrollo
-	if(week_opt.count() == 32505856)
+	if(week_opt.count() == 4919376)
 	{
 		CU_ASSERT(true);
 	}
@@ -713,9 +713,9 @@ void schedule_devel()
 	std::cout << "Week Teacher \n";
 	teacher2->get_week ().print(std::cout);
 	std::cout << "\n";
-	//std::cout << "Interseccion \n";
-	//week3.print(std::cout);*/
-	if(week_opt2.count() == 143589642)
+	//std::cout << "Interseccion \n";*/
+	//week3.print(std::cout);
+	if(week_opt2.count() == 37949472)
 	{
 		CU_ASSERT(true);
 	}
@@ -724,20 +724,21 @@ void schedule_devel()
 		std::cout << "week_opt2.count() = " << week_opt2.count() << "\n";
 		CU_ASSERT(false);
 	}
-	WeekHours week4;
-	week_opt2.random(week4);
+	//std::cout << "week_opt2.random(week4>>>>>>>>>>>>>>>>>>>>>>>\n";
+	//WeekHours week4;
+	//week_opt2.random(week4);
+	//std::cout << "week_opt2.random(week4<<<<<<<<<<<<<<<<<<<<<<<\n";
 	//std::cout << "Horario \n";
 	//week4.print(std::cout);
-	if(week4.empty())
+	/*if(week4.empty())
 	{
 		std::cout << "week4.empty() is empty\n";
 		CU_ASSERT(false);
 	}
 	else
 	{
-
 		CU_ASSERT(true);
-	}
+	}*/
 	//WeekHours week3;
 	//week_opt.random(week3);
 	//week3.print(std::cout);

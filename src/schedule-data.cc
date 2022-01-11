@@ -456,7 +456,6 @@ namespace oct::ec::sche
 			Day d;
 			days.push_back(d);
 			Day& day = days.back();
-			//block_mult.clear();
 			if(block.size() == hours)
 			{
 				day.add(block);
@@ -468,16 +467,19 @@ namespace oct::ec::sche
 			//unsigned int count_blocks = 0;
 			if(mult > 0)
 			{
+				//std::cout << "mult > 0\n";
 				Block::const_iterator it_hour = block.begin();
 				Block block_mult;
 				for(unsigned int i = 0; i < mult; i++)
 				{
+					//std::cout << "\t"<< i <<"\n";
 					Day d;
-					days.push_back(d);
+					days.push_back(day);
 					Day& day = days.back();
 					block_mult.clear();
 					for(unsigned int j = 0; j < hours; j++)
 					{
+						//std::cout << "\t\t"<< j <<"\n";
 						block_mult.push_back(*it_hour);
 						it_hour++;
 					}
@@ -700,11 +702,13 @@ namespace oct::ec::sche
 	{
 		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE; day_actual++)
 		{
-			if(at(day_actual).size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
-
+			if(at(day_actual).size() == 0) continue;//si no hay elementos a en el dia actual omitir
+			std::cout << "day_actual = " << day_actual << "\n";
 			std::uniform_int_distribution<> distrib(0, at(day_actual).size() - 1);
+			unsigned int i = distrib(gen);
 			DaysOptions::const_iterator it = at(day_actual).begin();
-			std::advance(it,distrib(gen));
+			std::cout << "i = " << i << "\n";
+			std::advance(it,i);
 			week[day_actual] = *it;
 		}
 	}
