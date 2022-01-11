@@ -632,7 +632,9 @@ bool Enviroment::run()
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;	
 	//double triggerJam2 = 1.0e-20;	
 	std::bernoulli_distribution mutation_distr(mutableProb);
-		
+	
+	if(echolevel > 0 and fout != NULL) (*fout) << "\n";
+	
 	if(size() < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);	
 	if(maxProgenitor  < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
 	while(true)

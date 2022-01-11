@@ -71,6 +71,12 @@ namespace oct::ec::sche
 		void sigma_hours();
 		real sigma_hours(const ClassRoom&);
 		real sigma_hours(const Lesson&);
+
+
+		/**
+		*\brief Asegura que si la clase es de mas de una horas sean continuas
+		*/
+		void unique_class();//TODO: implementar
 	private:
 
 

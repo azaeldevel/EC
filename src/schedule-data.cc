@@ -591,24 +591,13 @@ namespace oct::ec::sche
 		unsigned int block_i = 0;
 		for(Blocks::const_iterator it = blocks.begin(); it != blocks.end(); it++,block_i++)
 		{
-			if((*it).size() == 1)
-			{
-				(*it).front()->print(out,"%w %H:%M");
-				out << "-";
-				oct::core::Time timeEnd;
-				timeEnd = *(*it).front();
-				add_hours(timeEnd,1,config);
-				timeEnd.print(out,"%w %H:%M");
-			}
-			else
-			{
-				(*it).front()->print(out,"%w %H:%M");
-				out << "-";
-				oct::core::Time timeEnd;
-				timeEnd = *(*it).back();
-				add_hours(timeEnd,1,config);
-				timeEnd.print(out,"%w %H:%M");
-			}
+			(*it).front()->print(out,"%a %H:%M");
+			out << "-";
+			oct::core::Time timeEnd;
+			timeEnd = *(*it).back();
+			add_hours(timeEnd,1,config);
+			timeEnd.print(out,"%a %H:%M");
+			
 			if(block_i < blocks.size() - 1) out << ",";
 		}
 	}
@@ -986,6 +975,7 @@ namespace oct::ec::sche
 		for(unsigned int i = 0; i < size(); i++)
 		{
 			at(i).print_intevals_csv(out,data);
+			if(i < size() - 1) out << ",";
 		}
 	}
 	void WeekHours::clear_days()
