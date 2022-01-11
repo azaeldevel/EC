@@ -75,7 +75,7 @@ Enviroment::Enviroment(const std::string& log,const std::string& in_dir,const st
 	if(echolevel > 0 and fout != NULL) (*fout) << "Creando Ambiente..\n";
 	logDirectory = log;
 	
-	if(not shell.exists(in_dir)) shell.mkdir(in_dir,true);
+	//if(not shell.exists(in_dir)) shell.mkdir(in_dir,true);
 	if(not shell.exists(out_dir)) shell.mkdir(out_dir,true);
 	
 	init(in_dir);		
