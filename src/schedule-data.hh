@@ -145,6 +145,8 @@ namespace oct::ec::sche
 		Day(const Day&);
 		Day& operator =(const Day&);
 
+		void set(const Configuration&);
+
 		Blocks& get_blocks();
 		const Blocks& get_blocks() const;
 
@@ -245,6 +247,8 @@ namespace oct::ec::sche
 
 	public:
 		WeekHours();
+		WeekHours(const Configuration&);
+		void set(const Configuration&);
 
 		const std::list<const Day*>& get_disponible()const;
 

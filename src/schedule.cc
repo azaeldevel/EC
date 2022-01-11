@@ -73,6 +73,7 @@ Enviroment::Enviroment(const std::string& log,const std::string& in_dir,const st
 }
 Enviroment::~Enviroment()
 {
+	
 }
 void Enviroment::init(const std::string& in_dir)
 {
@@ -82,7 +83,7 @@ void Enviroment::init(const std::string& in_dir)
 	if(not in_dir.empty())
 	{
 		input_directory = in_dir;
-		if(not shell.exists(input_directory)) shell.mkdir(input_directory);
+		if(not shell.exists(input_directory)) shell.mkdir(input_directory,true);
 		initPopulation = data.groups.get_list().size() * data.groups.get_max_lessons();
 		maxProgenitor = initPopulation;
 		maxPopulation = std::pow(initPopulation,2);
@@ -182,7 +183,7 @@ void Enviroment::initial()
 				lessons[subject].data =&data;
 										
 				
-				WeekHours week;
+				WeekHours week(data.config);
 				WeekOptions week_opt;
 				week.inters(lessons[subject].room->get_week(),lessons[subject].teacher->get_week(),data.config);
 				check_codes code = week.check();
@@ -259,45 +260,32 @@ unsigned int Enviroment::get_sigma_hours_limit() const
 	return PORTION;
 }*/
 
-void Enviroment::select_times(Lesson& lesson,const WeekHours& week)
+void Enviroment::select_times(Lesson& lesson,const WeekHours& week_dispon)
 {
 	if(lesson.subject->get_time() == 0) throw core::Exception("No puede habe hora 0 en el la materia.",__FILE__,__LINE__);
-	unsigned int disp = week.days_disp();
-	if(disp == 0) return;
-	unsigned int hours_per_day = lesson.subject->get_time() / disp;
+	unsigned int day_disp = week_dispon.days_disp();
+	if(day_disp == 0) return;
+	unsigned int hours_per_day = lesson.subject->get_time() / day_disp;
 	if(hours_per_day == 0) hours_per_day = 1;
 	//unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);
 	
 	const core::Time* time;
+	unsigned int day;
 	for(unsigned int i = 0; i < WeekHours::WEEK_SIZE; i++)
-	{
-		time = &*random(week[i]);
-		week.get_day(i,hours_per_day,*time,data.config,lesson.week[i]);
-		if(lesson.week[i].size() > lesson.subject->get_time()) break;
-	}
-	/*
-	unsigned int count_H = lesson.week.count_hours();
-	if(count_H < lesson.subject->get_time())
-	{
-		for(unsigned int i = 0; i < WeekHours::WEEK_SIZE; i++)
+	{//primer dias dsiponoble no vacieo
+		if(not week_dispon[i].empty()) 
 		{
-			if(lesson.week[i].empty())
-			{
-				week.get_day(i,lesson.subject->get_time() - count_H,*time,data.config,lesson.week[i]);
-			}
+			day = i;
+			break;
 		}
 	}
-	*/
-	/*
-	Day* day;
-	count_H = lesson.week.count_hours();
-	do
-	{		
-		day = &*random(lesson.week);
-		week.get_day(i,(lesson.subject->get_time() - count_H) + day->size(),*time,data.config,*day)
+	time = &*random(week_dispon[day]);//hora base seleccionada
+	for(unsigned int i = day; i < WeekHours::WEEK_SIZE; i++)
+	{
+		week_dispon.get_day(i,hours_per_day,*time,data.config,lesson.week[i]);
+		if(lesson.week[i].size() > lesson.subject->get_time()) break;
 	}
-	while();
-	*/
+	lesson.week.set(lesson.data->config);
 }
 
 void Enviroment::random_complete_times(Lesson& lesson,const WeekOptions& week_opt)
