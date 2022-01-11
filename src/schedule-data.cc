@@ -588,8 +588,6 @@ namespace oct::ec::sche
 	}
 	void Day::print_intevals_csv(std::ostream& out, const Configuration& config) const
 	{
-		if(not check()) throw core::Exception("El dia no es valido",__FILE__,__LINE__);
-
 		unsigned int block_i = 0;
 		for(Blocks::const_iterator it = blocks.begin(); it != blocks.end(); it++,block_i++)
 		{
@@ -604,7 +602,6 @@ namespace oct::ec::sche
 			}
 			else
 			{
-				
 				(*it).front()->print(out,"%w %H:%M");
 				out << "-";
 				oct::core::Time timeEnd;
@@ -1943,12 +1940,14 @@ namespace oct::ec::sche
 			while(std::getline(csv,line))
 			{
 				std::stringstream str(line);
+				
 				std::getline(str,data,',');
 				Group row;
 				//std::cout << "room : " << data << "\n";
 				const Room* newr = dataObject->rooms.search(data);
 				if(newr)
 				{
+					row.name = data;
 					row.room = newr;
 				}
 				else
@@ -2315,13 +2314,10 @@ namespace oct::ec::sche
 	{
 		for(const Lesson& l : *this)
 		{
-			for(unsigned int i = 0; i < size(); i++)
-			{
-				out << at(i).room->get_name() << "\n";
-				out << at(i).subject->get_name() << ",";
-				out << at(i).teacher->get_name() << ",";
-				at(i).week.print_intevals_csv(out,config);
-			}
+			out << l.subject->get_name() << ",";
+			out << l.teacher->get_name() << ",";
+			l.week.print_intevals_csv(out,config);
+			out << "\n";
 		}
 	}
 
@@ -2404,11 +2400,24 @@ namespace oct::ec::sche
 	void Schedule::save_csv(const Configuration& config,const std::string& dir) const
 	{
 		std::ofstream out_csv;
+		std::string fn;
 		for(const ClassRoom& cr : *this)
 		{
-			//out_csv.open(dir + "/" + cr[0].group->name);
-			//cr.save_csv(out_csv,config);
-			//out_csv.close();
+			fn = dir + "/" + cr[0].group->name + ".csv";
+			//std::cout << "Open Schedule : " << fn << "\n";
+			out_csv.open(fn);
+			if(out_csv.is_open())
+			{
+				cr.save_csv(out_csv,config);
+				out_csv.flush();
+				out_csv.close();
+			}
+			else
+			{
+				std::string msg = "Fallo la apertura de '";
+				msg += fn + "'";
+				throw core::Exception(msg,__FILE__,__LINE__);
+			}
 		}
 	}
 }

@@ -29,8 +29,13 @@ namespace oct::ec::sche
 	{
 
 	}
-	void Single::save(Save&)
-	{
+	void Single::save(Save& fn)
+	{	
+		(*fn.out) << getID();
+		(*fn.out) << ",";
+		(*fn.out) << getFitness();
+		(*fn.out) << "\n";
+		
 		const Configuration& config = ((Enviroment*)env)->get_data().config;
 		
 		std::string dir = config.get_out_directory() + "/" + std::to_string(env->getIterationActual()) + "/" + std::to_string(getID());
