@@ -69,7 +69,7 @@ namespace oct::ec::sche
 		//if(count > ((Enviroment&)*env).get_schedule_max_hours()) throw oct::core::Exception("El conteo de horas errones execdio el maximo esperado",__FILE__,__LINE__);
 		if(count == 0) 
 		{
-			std::cout << "\toverlap_by_teacher count = " << count << "\n";
+			//std::cout << "\toverlap_by_teacher count = " << count << "\n";
 			fitness += 1.0/((Enviroment&)*env).get_criterion();
 		}
 		else
@@ -104,7 +104,7 @@ namespace oct::ec::sche
 		if(count >  ((Enviroment&)*env).get_cover_max2()) throw oct::core::Exception("El conteo de horas no deve exceder SCHEDULE_COVER_MAX",__FILE__,__LINE__);
 		if(count == 0)
 		{
-			std::cout << "\tcover count = " << count << "\n";
+			//std::cout << "\tcover count = " << count << "\n";
 			fitness += 1.0/((Enviroment&)*env).get_criterion();
 		}
 		else
@@ -152,7 +152,7 @@ namespace oct::ec::sche
 		//std::cout << "\tsignam_hours = " << f << "\n";
 		if(((Enviroment&)*env).get_sigma_hours_limit() > f)
 		{
-			std::cout << "\tsignam_hours = " << f << "\n";
+			//std::cout << "\tsignam_hours = " << f << "\n";
 			fitness += 1.0/((Enviroment&)*env).get_criterion();
 			return;
 		}
