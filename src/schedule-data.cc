@@ -358,7 +358,7 @@ namespace oct::ec::sche
 		}
 		//std::cout << "Day::Day(const Day& d) - Step 2.0\n";
 		//blocks.clear();
-		if(config)
+		/*if(config)
 		{
 			sort(*config);
 		}
@@ -369,7 +369,8 @@ namespace oct::ec::sche
 		else
 		{
 			config = NULL;		
-		}
+		}*/
+		config = d.config;
 		//std::cout << "Day::Day(const Day& d) - Step 3.0\n";
 	}
 	Day& Day::operator =(const Day& d)
