@@ -28,11 +28,14 @@ namespace oct::core
 		bool operator ==(const std::tm&)const;
 		bool operator <(const Time&)const;
 		bool operator >(const Time&)const;
+		bool operator <=(const Time&)const;
+		bool operator >=(const Time&)const;
 
 		int get_week_day()const;
 		double diff(const Time& dt)const;
 
-		void addSeconds(std::time_t);
+		void add(std::time_t);
+		void rest(std::time_t);
 
 		void print(std::ostream&, const std::string&) const;
 
@@ -123,8 +126,9 @@ namespace oct::ec::sche
 	*\return true en caso de que la relacion se cumpla, falso en caso de que no
 	*/
 	bool is_prev_hour(const core::Time& first,const core::Time& second, const Configuration&);
-	void add_hours(core::Time& first,unsigned int hours, const Configuration& config);
-	void rest_hours(core::Time& first,unsigned int hours, const Configuration& config);
+	//void add_hours(core::Time& first,unsigned int hours, const Configuration& config);
+	//void rest_hours(core::Time& first,unsigned int hours, const Configuration& config);
+	//void add_hours(core::Time& first,unsigned int hours, unsigned int);
 
 
 	enum check_codes
@@ -141,11 +145,10 @@ namespace oct::ec::sche
 		
 	public:
 		Day();
-		Day(const Configuration&);
 		Day(const Day&);
 		Day& operator =(const Day&);
 
-		void set(const Configuration&);
+		//void set(const Configuration&);
 
 		Blocks& get_blocks();
 		const Blocks& get_blocks() const;
@@ -153,7 +156,7 @@ namespace oct::ec::sche
 		/**
 		*\brief determinar horas en comun
 		**/
-		Day& inters(const Day& comp1, const Day& comp2,const Configuration&);
+		void inters(const Day& comp1, const Day& comp2);
 
 		/**
 		*\brief determinar horas en comundeterminar en este dia
@@ -248,14 +251,14 @@ namespace oct::ec::sche
 	public:
 		WeekHours();
 		WeekHours(const Configuration&);
-		void set(const Configuration&);
+		//void set(const Configuration&);
 
 		const std::list<const Day*>& get_disponible()const;
 
 		/**
 		*\brief determinar horas en comun
 		**/
-		WeekHours& inters(const WeekHours& comp1, const WeekHours& comp2,const Configuration& config);
+		void inters(const WeekHours& comp1, const WeekHours& comp2);
 
 		const Configuration& get_configuration()const;
 

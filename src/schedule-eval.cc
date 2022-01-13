@@ -29,15 +29,17 @@ namespace oct::ec::sche
 	{
 		fitness = 0;
 		
-		//std::cout << "\tSingle::eval : Step 1\n";
-		//std::cout << "\tgamma = " << env->getGamma() << "\n";		
+		//std::cout << "Step 1\n";	
 		overlap_by_teacher();
-		//std::cout << "\tfiteness = " << fitness << "\n";
-		cover();		
-		//std::cout << "\tfiteness = " << fitness << "\n";
+		
+		//std::cout << "Step 2\n";
+		cover();	
+			
+		//std::cout << "Step 3\n";
 		not_empty();//un horarion con 0 horas no es util.
 		//std::cout << "\tfiteness = " << fitness << "\n";
 		
+		//std::cout << "Step 4\n";
 		sigma_hours();
 		//std::cout << "\tfiteness = " << fitness << "\n";
 		
@@ -57,7 +59,7 @@ namespace oct::ec::sche
 				{
 					for(unsigned int l = 0; l < at(k).size(); l++)
 					{
-						week_actual.inters(at(i)[j].week,at(k)[l].week,((Enviroment*)env)->get_data().config);
+						week_actual.inters(at(i)[j].week,at(k)[l].week);
 						count += week_actual.count_hours();
 						week_actual.clear_days();
 					}

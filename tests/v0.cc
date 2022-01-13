@@ -19,7 +19,74 @@ int schedule_clean(void);
 
 void time_devel()
 {
-		
+	oct::core::Time times1[10];	
+	times1[0].read("Tue 05:00","%a %H:%M");
+	times1[1].read("Tue 05:00","%a %H:%M");
+	times1[2].read("Tue 05:00","%a %H:%M");
+	times1[3].read("Tue 05:00","%a %H:%M");
+	times1[4].read("Tue 05:00","%a %H:%M");
+	times1[5].read("Tue 05:00","%a %H:%M");
+	times1[6].read("Tue 05:00","%a %H:%M");
+	times1[7].read("Tue 05:00","%a %H:%M");
+	times1[8].read("Tue 05:00","%a %H:%M");
+	times1[9].read("Tue 05:00","%a %H:%M");
+	
+	for(unsigned int i = 1; i < 10; i++)
+	{
+		if(times1[0] == times1[i])
+		{
+			CU_ASSERT(true);
+		}
+		else
+		{
+			CU_ASSERT(false);
+		}
+	}
+	if(times1[0].tm_hour == 5 and times1[0].tm_min == 0)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		CU_ASSERT(false);
+	}
+	for(unsigned int i = 1; i < 10; i++)
+	{
+		times1[i].add(i*60*60);
+	}
+	for(unsigned int i = 1; i < 10; i++)
+	{
+		if(times1[i-1] < times1[i])
+		{
+			CU_ASSERT(true);
+		}
+		else
+		{
+			CU_ASSERT(false);
+		}
+	}
+	for(unsigned int i = 1; i < 10; i++)
+	{
+		if(times1[i-1] <= times1[i])
+		{
+			CU_ASSERT(true);
+		}
+		else
+		{
+			CU_ASSERT(false);
+		}
+	}
+	for(unsigned int i = 9; i > 0; i--)
+	{
+		if(times1[i] > times1[i-1])
+		{
+			CU_ASSERT(true);
+		}
+		else
+		{
+			CU_ASSERT(false);
+		}
+	}
 }
 
 int main(int argc, char *argv[])
