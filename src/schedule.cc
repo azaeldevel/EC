@@ -1,5 +1,8 @@
 
 #include <iomanip>
+#include <typeinfo>
+#include <typeindex>
+
 
 #include "schedule.hh"
 
@@ -13,13 +16,10 @@ namespace oct::core
 namespace oct::ec::sche
 {
 	
-	
+	unsigned int Single::jump_saver = 10;
 
 	Single::Single(ID id,Enviroment& env,const Junction& j) : ec::Single(id,env,j)
 	{
-		
-		
-		
 	}
 	Single::Single(ID id,Enviroment& env, const Schedule& s) : ec::Single(id,env), Schedule(s)
 	{
@@ -35,13 +35,21 @@ namespace oct::ec::sche
 		(*fn.out) << ",";
 		(*fn.out) << getFitness();
 		(*fn.out) << "\n";
-		
-		const Configuration& config = ((Enviroment*)env)->get_data().config;
-		
-		std::string dir = config.get_out_directory() + "/" + std::to_string(env->getIterationActual()) + "/" + std::to_string(getID());
-		
-		env->shell.mkdir(dir);
-		save_csv(config,dir);		
+
+		unsigned int mod = env->getIterationActual() % jump_saver;
+		std::type_index ti(typeid(fn));
+		if(mod == 0 or ti == std::type_index(typeid(SaveSolutions)) or env->getIterationActual() == 1)
+		{
+			const Configuration& config = ((Enviroment*)env)->get_data().config;
+			
+			std::string dir = config.get_out_directory() + "/" + std::to_string(env->getIterationActual()) + "/" + std::to_string(getID());
+			
+			env->shell.mkdir(dir);
+			save_csv(config,dir);	
+			if(env->getIterationActual() < 100) jump_saver = 10;
+			else if(env->getIterationActual() < 1000) jump_saver = 100;
+			else if(env->getIterationActual() < 10000) jump_saver = 1000;
+		}
 	}
 	void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{

@@ -51,6 +51,7 @@ namespace oct::ec::sche
 		static const unsigned int WEEK_HOURS;
 		static const unsigned int WEEK_HOURS2;
 		static const unsigned int WEEK_HOURS3;
+		static unsigned int jump_saver;
 
 	private:
 		

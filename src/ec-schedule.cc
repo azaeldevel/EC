@@ -43,7 +43,7 @@ int main(int argc, const char* argv[])
 	std::string strid = strDay + "-" + strTime;
 	std::string log_dir = "logs/schedule/";
 	log_dir += strid;
-	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment(log_dir,"tests",log_dir);
+	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment(log_dir,"tests/en",log_dir);
 	sche->enableEcho(&std::cout,2);
 
 	bool ret;

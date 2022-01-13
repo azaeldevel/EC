@@ -293,6 +293,15 @@ void Junction::randFill(TypeJuntion t)
 	{
 	}
 	
+
+
+
+
+
+
+	SaveSolutions::SaveSolutions(const std::string& dir) : SaveCollectionByIteration(dir,"solutions")
+	{
+	}
 	
 	
 
@@ -737,8 +746,8 @@ bool Enviroment::run()
 		if(solutions.size() >= minSolutions and logDirectoryFlag and stopMinSolutions)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			SaveCollection saveColl(logDirectory);
-			saveColl.open("solutions.cvs");
+			SaveSolutions saveColl(logDirectory);
+			//saveColl.open("solutions.cvs");
 			for(Single* s : solutions)
 			{
 				s->save(saveColl);
@@ -751,8 +760,8 @@ bool Enviroment::run()
 		else if(solutions.size() == maxPopulation and logDirectoryFlag)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			SaveCollection saveColl(logDirectory);
-			saveColl.open("solutions.cvs");
+			SaveSolutions saveColl(logDirectory);
+			//saveColl.open("solutions.cvs");
 			for(Single* s : solutions)
 			{
 				s->save(saveColl);

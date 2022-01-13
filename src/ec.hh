@@ -157,6 +157,10 @@ struct SaveSelections : public SaveCollectionByIteration
 {
 	SaveSelections(const std::string&);
 };
+struct SaveSolutions : public SaveCollectionByIteration
+{
+	SaveSolutions(const std::string&);
+};
 
 
 /**
