@@ -176,6 +176,36 @@ namespace oct::core
 		
 		return t_this < t_o;
 	}
+	bool Time::operator >(const Time& o)const
+	{
+		std::tm tm_this = *this;
+		std::time_t t_this = std::mktime(&tm_this);
+
+		std::tm tm_o = o;
+		std::time_t t_o = std::mktime(&tm_o);
+		
+		return t_this > t_o;
+	}
+	bool Time::operator <=(const Time& o)const
+	{
+		std::tm tm_this = *this;
+		std::time_t t_this = std::mktime(&tm_this);
+
+		std::tm tm_o = o;
+		std::time_t t_o = std::mktime(&tm_o);
+		
+		return t_this <= t_o;
+	}
+	bool Time::operator >=(const Time& o)const
+	{
+		std::tm tm_this = *this;
+		std::time_t t_this = std::mktime(&tm_this);
+
+		std::tm tm_o = o;
+		std::time_t t_o = std::mktime(&tm_o);
+		
+		return t_this >= t_o;
+	}
 	int Time::get_week_day()const
 	{
 		return tm_wday;
@@ -195,12 +225,20 @@ namespace oct::core
 	{
 		out << std::put_time(this, format.c_str());
 	}
-	void Time::addSeconds(std::time_t s)
+	void Time::add(std::time_t s)
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
 
 		t_this += s;
+		*this = *std::localtime(&t_this);
+	}
+	void Time::rest(std::time_t s)
+	{
+		std::tm tm_this = *this;
+		std::time_t t_this = std::mktime(&tm_this);
+
+		t_this -= s;
 		*this = *std::localtime(&t_this);
 	}
 
@@ -276,7 +314,7 @@ namespace oct::ec::sche
 		if(tm_prev == first) return true;
 		return false;
 	}
-	void add_hours(core::Time& first,unsigned int hours, const Configuration& config)
+	/*void add_hours(core::Time& first,unsigned int hours, const Configuration& config)
 	{
 		core::Time tm_first = first;
 		std::time_t t_first = std::mktime(&tm_first);
@@ -292,6 +330,14 @@ namespace oct::ec::sche
 
 		first = t_first;
 	}
+	void add_hours(core::Time& first,unsigned int hours,unsigned int second_per_hour)
+	{
+		core::Time tm_first = first;
+		std::time_t t_first = std::mktime(&tm_first);
+		t_first += second_per_hour * hours;
+
+		first = t_first;
+	}*/
 
 
 
@@ -300,10 +346,6 @@ namespace oct::ec::sche
 	Day::Day()
 	{
 		config = NULL;
-	}
-	Day::Day(const Configuration& c)
-	{
-		config = &c;
 	}
 	Day::Day(const Day& d)
 	{
@@ -316,7 +358,7 @@ namespace oct::ec::sche
 		}
 		//std::cout << "Day::Day(const Day& d) - Step 2.0\n";
 		//blocks.clear();
-		if(config)
+		/*if(config)
 		{
 			sort(*config);
 		}
@@ -327,7 +369,8 @@ namespace oct::ec::sche
 		else
 		{
 			config = NULL;		
-		}
+		}*/
+		config = d.config;
 		//std::cout << "Day::Day(const Day& d) - Step 3.0\n";
 	}
 	Day& Day::operator =(const Day& d)
@@ -356,10 +399,10 @@ namespace oct::ec::sche
 		//std::cout << "Day::operator = - Step 3.0\n";
 		return *this;
 	}
-	void Day::set(const Configuration& c)
+	/*void Day::set(const Configuration& c)
 	{
-		config = &c;
-	}
+		sort(c);
+	}*/
 	
 	
 	Day::Blocks& Day::get_blocks()
@@ -370,28 +413,61 @@ namespace oct::ec::sche
 	{
 		return blocks;
 	}
-	Day& Day::inters(const Day& comp1, const Day& comp2,const Configuration& config)
+	void Day::inters(const Day& day1, const Day& day2)
 	{
-		if(comp1.size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-		if(comp2.size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-		if(not comp1.config) throw core::Exception("No se ha asignado la informacion de configuracion",__FILE__,__LINE__);
-		if(not comp2.config) throw core::Exception("No se ha asignado la informacion de configuracion",__FILE__,__LINE__);
-
-		for(const core::Time& tdt : comp1)
+		if(day1.size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(day2.size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		if(not day1.config) throw core::Exception("No se ha asignado la informacion de configuracion",__FILE__,__LINE__);
+		if(not day2.config) throw core::Exception("No se ha asignado la informacion de configuracion",__FILE__,__LINE__);
+		if(size() != 0) throw core::Exception("Dia no vacio",__FILE__,__LINE__);
+		
+		if(day1.size() == 0 or day2.size() == 0) return;
+		
+		//se asumeme que las horas en el dia esta ordenadas, ello resulta de que el el dato config esta asignado
+		if(day1.back() < day2.front())
+		{//no traslape
+			return;//simplemente sale sin agregar horas al dia actual
+		}
+		else if(day2.back() < day1.front())
+		{//no traslape
+			return;//simplemente sale sin agregar horas al dia actual
+		}
+		
+		//Nota grafica : pendiente		
+		if(day1.front() <= day2.front())
 		{
-			for(const core::Time& cdt : comp2)
-			{
-				//if(tdt.tm_wday != cdt.tm_wday) throw core::Exception("Los objetos indicado, tiene dias distinto",__FILE__,__LINE__);
-
-				if(tdt.tm_hour == cdt.tm_hour)
+			Day::const_iterator it_day2 = day2.begin();
+			Day::const_iterator it_day1 = std::find(day1.begin(),day1.end(),*it_day2);
+			for(;it_day1 != day1.end() and it_day2 != day2.end(); it_day1++,it_day2++)
+			{			
+				/*(*it_day1).print(std::cout,"%a %H:%M");
+				std::cout << " == ";
+				(*it_day2).print(std::cout,"%a %H:%M");
+				std::cout << "\n";*/
+				if((*it_day1) == (*it_day2))
 				{
-					push_back(cdt);
+					push_back(*it_day1);
 				}
 			}
 		}
-		//blocks.clear();
-		sort(*comp1.config);
-		return *this;
+		else if(day2.front() < day1.front())
+		{
+			Day::const_iterator it_day1 = day1.begin();
+			Day::const_iterator it_day2 = std::find(day2.begin(),day2.end(),*it_day1);
+			for(;it_day1 != day1.end() and it_day2 != day2.end(); it_day1++,it_day2++)
+			{			
+				/*(*it_day1).print(std::cout,"%a %H:%M");
+				std::cout << " == ";
+				(*it_day2).print(std::cout,"%a %H:%M");
+				std::cout << "\n";*/
+				if((*it_day1) == (*it_day2))
+				{
+					push_back(*it_day1);
+				}
+			}
+		}
+		
+		sort(*day1.config);
 	}
 	bool Day::haveDisponible()const
 	{
@@ -416,8 +492,8 @@ namespace oct::ec::sche
 		core::Time nextTime;
 		for(unsigned int i = 0; i < size(); i++,itPost++,itActual++)
 		{
-			nextTime = *itActual;
-			add_hours(nextTime,1,config);			
+			nextTime = *itActual;	
+			nextTime.add(config.get_seconds_per_hour());		
 			if((*itPost) == nextTime)
 			{
 				block.push_back(&*itPost);
@@ -595,7 +671,7 @@ namespace oct::ec::sche
 			out << "-";
 			oct::core::Time timeEnd;
 			timeEnd = *(*it).back();
-			add_hours(timeEnd,1,config);
+			timeEnd.add(config.get_seconds_per_hour());
 			timeEnd.print(out,"%a %H:%M");
 			
 			if(block_i < blocks.size() - 1) out << ",";
@@ -830,14 +906,14 @@ namespace oct::ec::sche
 		config = &c;
 	}
 	
-	void WeekHours::set(const Configuration& c)
+	/*void WeekHours::set(const Configuration& c)
 	{
 		config = &c;
 		for(Day& day : *this)
 		{
-			day.set(c);
+			day.sort(c);
 		}	
-	}
+	}*/
 	
 	const Configuration& WeekHours::get_configuration()const
 	{
@@ -849,16 +925,16 @@ namespace oct::ec::sche
 	}
 	
 	
-	WeekHours& WeekHours::inters(const WeekHours& comp1, const WeekHours& comp2,const Configuration& config)
+	void WeekHours::inters(const WeekHours& comp1, const WeekHours& comp2)
 	{
 		if(comp2.size() != comp1.size() and size() == comp1.size()) throw core::Exception("La cantidad de dias no coinciden",__FILE__,__LINE__);
 
 		for(unsigned int i = 0; i < size(); i++)
 		{
-			at(i).inters(comp1[i],comp2[i],config);
+			at(i).inters(comp1[i],comp2[i]);
 		}
 
-		return *this;
+		return;
 	}
 	unsigned int WeekHours::days_disp() const
 	{
@@ -2110,13 +2186,13 @@ namespace oct::ec::sche
 					if(rows.empty())
 					{
 						std::string msg;
-						msg = "No se encontro la amateria '" + subject->get_name() + "' para el salon '" + g.room->get_name() + "'\n";;
+						msg = "No se encontro la materia '" + subject->get_name() + "' para el salon '" + g.room->get_name() + "'\n";;
 						throw core::Exception(msg,__FILE__,__LINE__);
 					}
 					for(const Teachers_Subjects::Row* row : rows)
 					{
 						//std::cout << "comparando horaio " << s->get_name() << " - " << g.room->get_name() << " horaios\n";
-						week.inters(g.room->get_week(),row->teacher->get_week(),config);
+						week.inters(g.room->get_week(),row->teacher->get_week());
 						hbrs.disp_hours += week.count_hours();
 						week.clear_days();
 					}
@@ -2131,7 +2207,7 @@ namespace oct::ec::sche
 					teachers_subjects.searchSubjects(subject->get_name(),rows);
 					for(const Teachers_Subjects::Row* row : rows)
 					{
-						week.inters(g.room->get_week(),row->teacher->get_week(),config);
+						week.inters(g.room->get_week(),row->teacher->get_week());
 						hbrs.disp_hours += week.count_hours();
 						week.clear_days();
 					}
@@ -2207,24 +2283,27 @@ namespace oct::ec::sche
 
 			WeekHours week;
 			WeekOptions week_opt;
-			week.inters(room->get_week(),teacher->get_week(),data->config);
+			week.inters(room->get_week(),teacher->get_week());
 			week.combns(*subject,week_opt);
 
+			//escoger un dia al azar para sobre-escribir
 			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
 			unsigned int iday = distrib(gen);
-			Day* day = &week[iday];
+			Day* day = &this->week[iday];
+			day->sort(data->config);
 			week_opt[iday].random(*day);
 	}
 	void Lesson::mutate_time()
 	{
 			WeekHours week;
 			WeekOptions week_opt;
-			week.inters(room->get_week (),teacher->get_week(),data->config);
+			week.inters(room->get_week (),teacher->get_week());
 			week.combns(*subject,week_opt);
 
 			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
 			unsigned int iday = distrib(gen);
-			Day* day = &week[iday];
+			Day* day = &this->week[iday];
+			day->sort(data->config);
 			week_opt[iday].random(*day);
 	}	
 	void Lesson::mutate_empty_day()

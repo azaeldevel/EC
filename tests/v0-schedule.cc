@@ -11,9 +11,9 @@
 #include <time.h>
 
 #if CODEBLOCKS_IDE
-    #define DATA_DIR "tests"
+    #define DATA_DIR "tests/en"
 #else
-    #define DATA_DIR "../../tests"
+    #define DATA_DIR "../../tests/en"
 #endif
 
 using namespace oct::ec::sche;
@@ -51,13 +51,14 @@ void schedule_devel()
 	{
 		CU_ASSERT(false);
 	}
-	if(data.rooms.get_list().size() == 1)
+	if(data.rooms.get_list().size() == 8)
 	{
-		//std::cout << "count : " << data.rooms.get_list().size() << "\n";
+		
 		CU_ASSERT(true);
 	}
 	else
 	{
+		std::cout << "count : " << data.rooms.get_list().size() << "\n";
 		CU_ASSERT(false);
 	}
 	if(data.teachers_subjects.get_list().size() == 8)
@@ -216,8 +217,9 @@ void schedule_devel()
 		std::cout << "time1.end.tm_hour = " << time1.end.tm_hour << "\n";
 		CU_ASSERT(false);
 	}
-	oct::ec::sche::Day day(data.config);
+	oct::ec::sche::Day day;
 	time1.granulate(&data.config,day);
+	day.sort(data.config);
 	if(day.size() == 16)
 	{
 		CU_ASSERT(true);
@@ -273,8 +275,9 @@ void schedule_devel()
 		std::cout << "time2.end.tm_hour = " << time2.end.tm_hour << "\n";
 		CU_ASSERT(false);
 	}
-	oct::ec::sche::Day day2(data.config);
+	oct::ec::sche::Day day2;
 	time2.granulate(&data.config,day2);
+	day2.sort(data.config);
 	if(day2.size() == 16)
 	{
 		CU_ASSERT(true);
@@ -360,8 +363,8 @@ void schedule_devel()
 	}*/
 
 	IntervalTime time4;
-	time4.set_begin("Mon 06:00");
-	if(time4.begin.tm_hour == 6)
+	time4.set_begin("Mon 05:00");
+	if(time4.begin.tm_hour == 5)
 	{
 		CU_ASSERT(true);
 	}
@@ -380,9 +383,10 @@ void schedule_devel()
 		std::cout << "time4.end.tm_hour = " << time4.end.tm_hour << "\n";
 		CU_ASSERT(false);
 	}
-	oct::ec::sche::Day day4(data.config);
+	oct::ec::sche::Day day4;
 	time4.granulate(&data.config,day4);
-	if(day4.size() == 13)
+	day4.sort(data.config);
+	if(day4.size() == 14)
 	{
 		CU_ASSERT(true);
 	}
@@ -393,9 +397,23 @@ void schedule_devel()
 	}
 
 	//interseccion de horas
-	oct::ec::sche::Day day5(data.config);
-	day5.inters(day,day4,data.config);
-	if(day5.size() == 13)
+	oct::ec::sche::Day day5;
+	/*std::cout << "day:\n";
+	for(const oct::core::Time& time : day)
+	{
+		time.print(std::cout,"%a %H:%M");
+		std::cout << "\n";
+	}
+	std::cout << "day4:\n";
+	for(const oct::core::Time& time : day4)
+	{
+		time.print(std::cout,"%a %H:%M");
+		std::cout << "\n";
+	}*/
+	//std::cout << "day5>>>\n";
+	day5.inters(day,day4);
+	//std::cout << "day5<<<\n";
+	if(day5.size() == 10)
 	{
 		/*std::cout << "day\n";
 		day.print_day(std::cout);
@@ -410,6 +428,11 @@ void schedule_devel()
 	}
 	else
 	{
+		for(const oct::core::Time& time : day5)
+		{
+			time.print(std::cout,"%a %H:%M");
+			std::cout << "\n";
+		}
 		std::cout << "day5.size() = " << day5.size() << "\n";
 		CU_ASSERT(false);
 	}
@@ -683,7 +706,7 @@ void schedule_devel()
 
 	WeekHours week3;
 	WeekOptions week_opt2;
-	week3.inters(room1->get_week (),teacher2->get_week (),data.config);
+	week3.inters(room1->get_week (),teacher2->get_week ());
 	check_codes codes1 = week3.check();
 	if(codes1 == check_codes::PASS)
 	{
@@ -715,7 +738,7 @@ void schedule_devel()
 	std::cout << "\n";
 	//std::cout << "Interseccion \n";*/
 	//week3.print(std::cout);
-	if(week_opt2.count() == 37949472)
+	if(week_opt2.count() == 708750)
 	{
 		CU_ASSERT(true);
 	}
@@ -785,7 +808,7 @@ void schedule_devel()
 
 
 
-	/*Enviroment sche ("logs",DATA_DIR);
+	/*Enviroment sche ("logs/schedule",DATA_DIR,"logs/schedule");
 	try
 	{
 		sche.initial();
@@ -817,13 +840,13 @@ void schedule_devel()
 	}
 	std::vector<const Lesson*> sche_teachers;
 	single_shce.search_teachers("Monica Perez Ortencia",sche_teachers);
-	if(sche_teachers.size() == 1)
+	if(sche_teachers.size() == 8)
 	{
 		CU_ASSERT(true);
 	}
 	else
 	{
-		std::cout << "not sche_teachers.empty() = " << not sche_teachers.empty() << "\n";
+		std::cout << "sche_teachers.size() = " << sche_teachers.size()<< "\n";
 		CU_ASSERT(false);
 	}*/
 
@@ -871,7 +894,7 @@ void schedule_devel()
 	}*/
 	for(unsigned int i = 0; i < 10; i++)
 	{
-		add_hours(dt2[i],i,data.config);
+		dt2[i].add(i*data.config.get_seconds_per_hour());
 	}
 	if(dt2[0].tm_hour == 6 and dt2[0].tm_min == 35)
 	{
@@ -922,10 +945,10 @@ void schedule_devel()
 		}
 	}
 
-	for(auto const& [key,value] : data.get_list_hbrs())
+	/*for(auto const& [key,value] : data.get_list_hbrs())
 	{
 		std::cout << "(" << key.room->get_name() << "," << key.subject->get_name() << "-->" << value.disp_hours << "\n";
-	}
+	}*/
 
 	/*std::uniform_int_distribution<int> distrib(0, 9);
 	for(unsigned int i = 0; i < 100; i++)
