@@ -19,7 +19,7 @@ int schedule_clean(void);
 
 void time_devel()
 {
-	oct::core::Time times1[10];	
+	oct::core::Time times1[10];
 	times1[0].read("Tue 05:00","%a %H:%M");
 	times1[1].read("Tue 05:00","%a %H:%M");
 	times1[2].read("Tue 05:00","%a %H:%M");
@@ -30,7 +30,7 @@ void time_devel()
 	times1[7].read("Tue 05:00","%a %H:%M");
 	times1[8].read("Tue 05:00","%a %H:%M");
 	times1[9].read("Tue 05:00","%a %H:%M");
-	
+
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		if(times1[0] == times1[i])
@@ -90,12 +90,18 @@ void time_devel()
 }
 
 int main(int argc, char *argv[])
-{	
+{
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
 
+	#if defined(__GNUC__) && defined(__linux__)
 	signal(SIGSEGV,oct::core::signal_segmentv);
 	signal(SIGABRT,oct::core::signal_abort);
+    #elif defined(__GNUC__) && (defined(_WIN32) || defined(_WIN64))
+
+    #else
+        #error "Pltaforma desconocida"
+    #endif
 
 	CU_pSuite pSuite = NULL;
 	pSuite = CU_add_suite("Testing Evolution Computing..", schedule_init, schedule_clean);
@@ -104,13 +110,13 @@ int main(int argc, char *argv[])
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
-	
+
 	if ((NULL == CU_add_test(pSuite, "Developing Time class", time_devel)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
-	
+
 	if ((NULL == CU_add_test(pSuite, "Developing Schedule", schedule_devel)))
 	{
 		CU_cleanup_registry();
