@@ -35,9 +35,15 @@
 
 int main(int argc, const char* argv[])
 {
+    #if defined(__GNUC__) && defined(__linux__)
 	signal(SIGSEGV,oct::core::signal_segmentv);
 	signal(SIGABRT,oct::core::signal_abort);
-	
+    #elif defined(__GNUC__) && (defined(_WIN32) || defined(_WIN64))
+
+    #else
+        #error "Pltaforma desconocida"
+    #endif
+
 	std::string strDay = std::to_string(oct::core::getDayID());
 	std::string strTime = std::to_string(oct::core::getTimeID());
 	std::string strid = strDay + "-" + strTime;
