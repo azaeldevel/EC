@@ -387,8 +387,8 @@ void Enviroment::init()
 	echoPrecision = 20;
 	logDirectoryFlag = false;
 	//sigmaReduction = 1.0;
-	minSolutions = 0;
-	stopMinSolutions = false;
+	//minSolutions = 0;
+	//stopMinSolutions = false;
 	mutableProb = 0.002;
 	//pMutableGene = -1.0;
 	//fout = NULL;
@@ -409,6 +409,7 @@ void Enviroment::init()
 	newIteration = false;
 	fout = &std::cout;
 	savingDevice = NULL;
+	stopperMinSolutions(1);
 }
 Enviroment::Enviroment()
 {

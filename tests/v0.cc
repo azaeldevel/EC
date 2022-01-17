@@ -30,7 +30,12 @@ void time_devel()
 	times1[7].read("Tue 05:00","%a %H:%M");
 	times1[8].read("Tue 05:00","%a %H:%M");
 	times1[9].read("Tue 05:00","%a %H:%M");
-
+	/*for(unsigned int i = 0; i < 10; i++)
+	{
+		times1[i].print(std::cout,"%c");		
+		std::cout << "\n";
+	}
+	std::cout << "\n";*/
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		if(times1[0] == times1[i])
@@ -40,6 +45,17 @@ void time_devel()
 		else
 		{
 			CU_ASSERT(false);
+		}
+	}
+	for(unsigned int i = 1; i < 10; i++)
+	{
+		if(times1[0] != times1[i])
+		{
+			CU_ASSERT(false);
+		}
+		else
+		{
+			CU_ASSERT(true);
 		}
 	}
 	if(times1[0].tm_hour == 5 and times1[0].tm_min == 0)
@@ -53,10 +69,30 @@ void time_devel()
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		times1[i].add(i*60*60);
+	}	
+	/*for(unsigned int i = 0; i < 10; i++)
+	{
+		times1[i].print(std::cout,"%c");		
+		std::cout << "\n";
 	}
+	std::cout << "\n";*/
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		if(times1[i-1] < times1[i])
+		{
+			CU_ASSERT(true);
+		}
+		else
+		{
+			times1[i-1].print(std::cout,"%a %H:%M");
+			std::cout << "<";
+			times1[i].print(std::cout,"%a %H:%M");
+			CU_ASSERT(false);
+		}
+	}
+	for(unsigned int i = 0; i < 9; i++)
+	{
+		if(times1[i+1] > times1[i])
 		{
 			CU_ASSERT(true);
 		}

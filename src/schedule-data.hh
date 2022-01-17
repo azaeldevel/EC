@@ -27,16 +27,27 @@ namespace oct::core
 		Time(const Time&);
 
 		const std::time_t* operator =(const std::time_t*);
-		const std::time_t& operator =(const std::time_t&);
+		std::time_t operator =(std::time_t);
 		const tm& operator =(const tm&);
 		const Time& operator =(const Time&);
 		bool operator ==(const Time&)const;
-		bool operator ==(const std::time_t&)const;
 		bool operator ==(const std::tm&)const;
+		bool operator ==(std::time_t)const;
+		bool operator !=(const Time&)const;
+		bool operator !=(const std::tm&)const;
+		bool operator !=(std::time_t)const;
 		bool operator <(const Time&)const;
+		bool operator <(const tm&)const;
+		bool operator <(std::time_t)const;
 		bool operator >(const Time&)const;
+		bool operator >(const tm&)const;
+		bool operator >(std::time_t)const;
 		bool operator <=(const Time&)const;
+		bool operator <=(const tm&)const;
+		bool operator <=(std::time_t)const;
 		bool operator >=(const Time&)const;
+		bool operator >=(const tm&)const;
+		bool operator >=(std::time_t)const;
 
 		int get_week_day()const;
 		double diff(const Time& dt)const;
