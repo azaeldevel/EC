@@ -593,6 +593,7 @@ void schedule_devel()
 		}
 		i_day++;
 	}*/
+	//std::cout << "Step 1\n";
 	day6.combns(combsList,3);
 	if(combsList.size() == 18)
 	{
@@ -603,6 +604,7 @@ void schedule_devel()
 		std::cout << "combsList.size() = " << combsList.size() << "\n";
 		CU_ASSERT(false);
 	}
+	//std::cout << "Step 2\n";
 	/*
 	unsigned int i_day = 0;
 	for(const oct::ec::sche::Day& day : combsList)
@@ -670,7 +672,11 @@ void schedule_devel()
 	//week2.print(std::cout);
 	//std::list<oct::ec::sche::WeekHours> weeks_combs;
 	oct::ec::sche::WeekOptions week_opt;
-	week2.combns(*subject1,week_opt);
+	
+	//std::cout << "Step 3\n";
+	week2.sort(data.config);
+	week2.combns(*subject1,week_opt);	
+	//std::cout << "Step 4\n";
 	if(week_opt.size() == 7)
 	{
 		CU_ASSERT(true);
@@ -729,7 +735,10 @@ void schedule_devel()
 		}
 		CU_ASSERT(false);
 	}
+	//std::cout << "Step 5\n";
+	week3.sort(data.config);
 	week3.combns(*subject2,week_opt2);
+	//std::cout << "Step 6\n";
 	/*std::cout << "Week Room \n";
 	room1->get_week ().print(std::cout);
 	std::cout << "\n";

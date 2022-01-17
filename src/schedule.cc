@@ -233,7 +233,7 @@ void Enviroment::initial()
 		std::cout << "(" << key.room->get_name() << "," << key.subject->get_name() << "-->" << value.disp_hours << "\n";
 	}*/
 	
-	std::cout << "--------------------------------------------------------------\n";
+	std::cout << "\n--------------------------------------------------------------\n";
 }
 const Data& Enviroment::get_data()const
 {
