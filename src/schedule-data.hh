@@ -5,7 +5,13 @@
 
 #include <map>
 #include <ctime>
-#include <execinfo.h>
+#if defined(__GNUC__) && defined(__linux__)
+    #include <execinfo.h>
+#elif defined(__GNUC__) && (defined(_WIN32) || defined(_WIN64))
+
+#else
+    #error "Pltaforma desconocida"
+#endif
 
 #include "ec.hh"
 
@@ -65,7 +71,7 @@ namespace oct::core
 		const std::string& get_name()const;
 
 	private:
-		std::string name; 
+		std::string name;
 	};
 
 	void print_backtrace(const char*,int);
@@ -75,31 +81,31 @@ namespace oct::core
 
 namespace oct::ec::sche
 {
-	
+
 	class Enviroment;
 	struct Data;
 	class Configuration;
 	class Subject;
 	class WeekHours;
-	
+
 	template<typename T> typename std::list<T>::const_iterator random(const std::list<T>& ls)
 	{
 		if(ls.size() == 0) ls.end();
 		if(ls.size() == 1) ls.begin();
-		
+
 		std::uniform_int_distribution<> distrib(0, ls.size() - 1);
 		typename std::list<T>::const_iterator it = ls.begin();
-		std::advance(it,distrib(dre));				
+		std::advance(it,distrib(dre));
 		return it;
 	}
 	template<typename T> typename std::list<T>::iterator random(std::list<T>& ls)
 	{
 		if(ls.size() == 0) ls.end();
 		if(ls.size() == 1) ls.begin();
-		
+
 		std::uniform_int_distribution<> distrib(0, ls.size() - 1);
 		typename std::list<T>::iterator it = ls.begin();
-		std::advance(it,distrib(dre));				
+		std::advance(it,distrib(dre));
 		return it;
 	}
 
@@ -107,20 +113,20 @@ namespace oct::ec::sche
 	{
 		if(ls.size() == 0) ls.end();
 		if(ls.size() == 1) ls.begin();
-		
+
 		std::uniform_int_distribution<> distrib(0, ls.size() - 1);
 		typename std::vector<T>::const_iterator it = ls.begin();
-		std::advance(it,distrib(dre));				
+		std::advance(it,distrib(dre));
 		return it;
 	}
 	template<typename T> typename std::vector<T>::iterator random(std::vector<T>& ls)
 	{
 		if(ls.size() == 0) ls.end();
 		if(ls.size() == 1) ls.begin();
-		
+
 		std::uniform_int_distribution<> distrib(0, ls.size() - 1);
 		typename std::vector<T>::iterator it = ls.begin();
-		std::advance(it,distrib(dre));				
+		std::advance(it,distrib(dre));
 		return it;
 	}
 
@@ -153,7 +159,7 @@ namespace oct::ec::sche
 	public:
 		typedef std::list<const core::Time*> Block;
 		typedef std::list<Block> Blocks;
-		
+
 	public:
 		Day();
 		Day(const Day&);
@@ -215,7 +221,7 @@ namespace oct::ec::sche
 	private:
 		//static bool cmpHour(const core::DataTime& f,const core::DataTime& s);
 		void blocking(const Configuration&);
-		
+
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el bloque
 		**/
@@ -236,7 +242,7 @@ namespace oct::ec::sche
 	{
 	public:
 		WeekOptions();
-		
+
 		/**
 		*\brief Genera una semana al azar en base las opciones disponibles en el objeto
 		**/
@@ -299,7 +305,7 @@ namespace oct::ec::sche
 		check_codes check()const;
 
 		bool empty()const;
-		
+
 		/**
 		*\brief Cuenta las horas que hay en esta semana
 		**/
@@ -316,13 +322,13 @@ namespace oct::ec::sche
 		*\brief Seleciona un dia al azar
 		**/
 		const Day* random_day_disp()const;
-		
+
 		/**
 		*\brief Optiene para el dia numero 'day' la canitad de 'hours' en la hora 'base' si encuentra coloca el resultado en 'result' y retorna true
 		**/
 		bool get_day(unsigned int day,unsigned int hours,const core::Time& at,const Configuration& ,Day& result)const;
 
-		
+
 	private:
 		void combns(std::list<WeekHours>&,const WeekOptions&)const;
 		const Configuration* config;
@@ -347,10 +353,10 @@ namespace oct::ec::sche
 		//void set_end(const Configuration*,const std::string& str);
 		void set_begin(const std::string& str);
 		void set_end(const std::string& str);
-		
+
 	};
-	
-	
+
+
 
 	class Configuration
 	{
@@ -420,7 +426,7 @@ namespace oct::ec::sche
 		static const std::string formats_dt_day_hour;
 		static const std::string formats_dt_dayn_hour;
 	};
-		
+
 	class Target
 	{
 	public:
@@ -429,12 +435,12 @@ namespace oct::ec::sche
 		void init();
 		const Configuration* operator =(const Configuration*);
 		const Configuration* set(const Configuration*);
-		const WeekHours& get_week()const;	
-		WeekHours& get_week();			
+		const WeekHours& get_week()const;
+		WeekHours& get_week();
 		void print(std::ostream&)const;
 		/**
 		*\brief Guarda la lista de horas indicadas en orden segun el dia indicado
-		**/	
+		**/
 		//void save(const Day&);
 
 		void sort();
@@ -456,15 +462,15 @@ namespace oct::ec::sche
 		Teacher(const std::string& name,const std::string& ap,const std::string& am);
 		Teacher(const std::string& name);
 		Teacher();
-		void init(); 		
+		void init();
 		void print(std::ostream&)const;
-		
-	protected:	
-		
+
+	protected:
+
 	private:
 		std::string name;
 	};
-		
+
 	class Subject : public Target
 	{
 	public:
@@ -476,13 +482,13 @@ namespace oct::ec::sche
 		unsigned int get_time()const;
 		void print(std::ostream&)const;
 
-	public:		
+	public:
 
 	private:
 		std::string name;
 		unsigned int time;//tiempo que se devfe impartir de clase
 	};
-	
+
 	class Room : public Target
 	{
 	public:
@@ -492,21 +498,21 @@ namespace oct::ec::sche
 		const std::string& get_name()const;
 		Room& operator =(const std::string&);
 		void print(std::ostream&) const;
-		
-	public:		
+
+	public:
 
 	private:
 		std::string name;
 	};
 
-	
+
 	class Targets
 	{
 
 	public:
 		Targets();
 		Targets(const Data*);
-		
+
 		const Data* operator = (const Data*);
 		const Data* set(const Data*);
 
@@ -515,11 +521,11 @@ namespace oct::ec::sche
 	protected:
 		const Data* dataObject;
 	};
-	
+
 	class Teachers : public Targets
-	{		
+	{
 	public:
-	
+
 	public:
 		Teachers();
 		Teachers(const std::string& fn);
@@ -541,15 +547,15 @@ namespace oct::ec::sche
 	class Subjects : public Targets
 	{
 	public:
-		
-	public: 
+
+	public:
 		Subjects(const std::string& fn, const Data* );
 		Subjects();
 		void loadFile(const std::string& fn);
 		void print(std::ostream&)const;
 		const Subject* search(const std::string&) const;
 		const std::list<Subject>& get_list() const;
-		
+
 	private:
 		void indexing();
 	private:
@@ -558,10 +564,10 @@ namespace oct::ec::sche
 	};
 
 
-	
+
 	class Teachers_Subjects : public Targets
 	{
-	public: 
+	public:
 		struct Row : public std::list<const Subject*>
 		{
 			const Teacher* teacher;
@@ -570,7 +576,7 @@ namespace oct::ec::sche
 			void print(std::ostream&)const;
 		};
 
-	public: 
+	public:
 		Teachers_Subjects();
 		Teachers_Subjects(const std::string& fn,const Data* data);
 		void loadFile(const std::string& fn);
@@ -578,17 +584,17 @@ namespace oct::ec::sche
 
 		const std::list<Row>& get_list() const;
 
-		
+
 		/**
 		*\brief Busca el maestro inidcado
 		**/
 		const Row* searchTeachers(const std::string&)const;
 		/**
-		*\brief 
+		*\brief
 		**/
 		void searchSubjects(const std::string&, std::list<const Row*>& )const;
 		void hour_by_subjects_csv(std::ofstream& fn);
-		
+
 	private:
 		void indexing();
 	private:
@@ -600,7 +606,7 @@ namespace oct::ec::sche
 	class Rooms : public Targets
 	{
 	public:
-		
+
 	public:
 		Rooms();
 		Rooms(const std::string& fn);
@@ -610,7 +616,7 @@ namespace oct::ec::sche
 		void print(std::ostream&)const;
 
 		const Room* search(const std::string&)const;
-		
+
 	private:
 		void indexing();
 
@@ -628,8 +634,8 @@ namespace oct::ec::sche
 	{
 		std::string name;//TODO:soporte para gruopos en distintos salon
 		const Room* room;
-			
-		Group();	
+
+		Group();
 		void print(std::ostream&) const;
 		bool is_cover(const Subject&,const Teachers_Subjects&);
 
@@ -664,7 +670,7 @@ namespace oct::ec::sche
 		std::multimap<std::string, Group*> groups_by_subject;
 		unsigned int max_lessons;
 	};
-	
+
 	/*typedef std::vector<core::Time> DaysTimes;
 	struct TeacherDust
 	{
@@ -678,14 +684,14 @@ namespace oct::ec::sche
 		unsigned int subject;
 		std::vector<DaysTimes> room;
 	};*/
-	
+
 	typedef std::vector<Target> Pile;
 
 	struct Data
 	{
 		struct HBS
 		{
-			const Subject* subject;			
+			const Subject* subject;
 			const Teachers_Subjects::Row* row;
 			unsigned int req_hours;
 			unsigned int disp_hours;
@@ -701,7 +707,7 @@ namespace oct::ec::sche
 		{
 			const Room* room;
 			const Subject* subject;
-			const Group* group;	
+			const Group* group;
 			//unsigned int req_hours;
 			unsigned int disp_hours;
 		};
@@ -727,7 +733,7 @@ namespace oct::ec::sche
 		std::map<std::string, HBS> hbs_by_subject;
 		std::map<key_hbs, HBRS> hbrs_list;//horas disponible por materia y salon
 	};
-	
+
 	struct Lesson
 	{
 		const Group* group;
@@ -743,7 +749,7 @@ namespace oct::ec::sche
 		void mutate_time();
 		void mutate_empty_day();
 	};
-	
+
 	/**
 	*\brief Clases impartidas aun gurpo
 	**/
@@ -755,11 +761,11 @@ namespace oct::ec::sche
 		ClassRoom(const ClassRoom&);
 
 		ClassRoom& operator =(const ClassRoom&);
-		
+
 		void juncting(const ClassRoom&,const ClassRoom&);
 
 		void mutate();
-		
+
 		void save_csv(std::ostream&,const Configuration&) const;
 
 	private:
@@ -767,7 +773,7 @@ namespace oct::ec::sche
 	};
 
 	/**
-	*\brief 
+	*\brief
 	**/
 	class Schedule : public std::vector<ClassRoom>
 	{
@@ -775,23 +781,23 @@ namespace oct::ec::sche
 		Schedule();
 		Schedule(unsigned int);
 		Schedule(const Schedule&);
-		
+
 		Schedule& operator =(const Schedule&);
 
 		void search_teachers(const std::string&, std::vector<const Lesson*>&)const;
-		
+
 		void indexing();
 
 		void juncting(const Schedule&,const Schedule&);
 
 		void mutate();
-		
+
 		void save_csv(const Configuration&,const std::string&) const;
 	private:
 
 	private:
 		std::multimap<std::string, const Lesson*> lesson_by_teacher;
-		
+
 	};
 
 	/**
@@ -805,22 +811,22 @@ namespace oct::ec::sche
 	/*struct ScheduleStudent : public Schedule
 	{
 
-	private:	
-		
+	private:
+
 	};
 	struct ScheduleTeacher : public Schedule
 	{
 
 
-	private:	
-		
+	private:
+
 	};
 
 	struct ScheduleStudents : public std::vector<ScheduleStudent>
 	{
 
 	};
-	struct ScheduleTeachers : public std::vector<ScheduleTeacher> 
+	struct ScheduleTeachers : public std::vector<ScheduleTeacher>
 	{
 
 	};*/
@@ -848,7 +854,7 @@ namespace oct::ec::sche
 		class Student : public std::vector<Day>
 		{
 		public:
-			
+
 		public:
 			Student();
 			Student(const ClassRoom& );
@@ -861,7 +867,7 @@ namespace oct::ec::sche
 		class Students : public std::vector<Student>
 		{
 		public:
-			
+
 		public:
 			Students(const sche::Schedule& );
 			void print_csv(std::ostream&,const Configuration&) const;
