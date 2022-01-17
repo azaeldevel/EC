@@ -658,8 +658,8 @@ namespace oct::ec::sche
 	void Day::combns(std::list<Day>& days, unsigned int hours)const
 	{
 		if(hours < 1) throw core::Exception("No esta permitido bloques de 0",__FILE__,__LINE__);
-		if(size() > 24) core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-
+		if(size() > 24)  throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
+		
 		//std::cout << "Day::combns - Step 1\n";
 		unsigned int countHB = 0;
 		for(const Block& b : blocks)
@@ -946,8 +946,20 @@ namespace oct::ec::sche
 		}
 
 		return totals;
+	}	
+	void WeekOptions::sort(const Configuration& config)
+	{
+		this->config = &config;		
+		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE; day_actual++)
+		{
+			for(Day& day : at(day_actual))
+			{
+				day.sort(config);
+			}
+		}
 	}
-
+	
+	
 	real distance_by_hour(const core::Time& day, const core::Time& base)
 	{
 		return std::pow(real(day.tm_hour - base.tm_hour),2.0);;

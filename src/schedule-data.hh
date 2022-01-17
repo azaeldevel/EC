@@ -258,8 +258,11 @@ namespace oct::ec::sche
 		*\brief Optiene para el dia numero 'day' la canitad de 'hours' en la hora 'base' si encuentra coloca el resultado en 'result' y retorna true
 		**/
 		bool get_day(unsigned int day,unsigned int hours,const core::Time& at,const Configuration& ,Day& result)const;
+
+		void sort(const Configuration&);
 	private:
 		//std::random_device rd;
+		const Configuration* config;
 	};
 	class WeekHours : public std::vector<Day>
 	{
@@ -326,6 +329,7 @@ namespace oct::ec::sche
 		**/
 		bool get_day(unsigned int day,unsigned int hours,const core::Time& at,const Configuration& ,Day& result)const;
 
+		
 	private:
 		void combns(std::list<WeekHours>&,const WeekOptions&)const;
 		const Configuration* config;
