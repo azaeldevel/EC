@@ -63,15 +63,8 @@ namespace oct::core
 
 	Time::Time()
 	{
-		tm_sec = 0;
-		tm_min = 0;
-		tm_hour = 0;
-		tm_mday = 0;
-		tm_mon = 0;
-		tm_year = 0;
-		tm_wday = 0;
-		tm_yday = 0;
-		tm_isdst = 0;
+		std::time_t t = 0;
+		*this = *std::localtime(&t);
 	}
 	Time::Time(const tm& t)
 	{
@@ -103,7 +96,7 @@ namespace oct::core
 		*this = *std::localtime(t);
 		return t;
 	}
-	const std::time_t& Time::operator =(const std::time_t& t)
+	std::time_t Time::operator =(std::time_t t)
 	{
 		*this = *std::localtime(&t);
 		return t;
@@ -136,18 +129,32 @@ namespace oct::core
 
 		return t;
 	}
+	
+	
+	//operadores de compracion
 	bool Time::operator ==(const Time& o)const
 	{
-		std::tm tm_this = *this;
-		std::time_t t_this = std::mktime(&tm_this);
-
-		std::tm tm_o = o;
-		std::time_t t_o = std::mktime(&tm_o);
-
-		if(t_this == t_o) return true;
-		return false;
+		if(tm_sec != o.tm_sec) return false;
+		else if(tm_min != o.tm_min) return false;
+		else if(tm_hour != o.tm_hour) return false;
+		else if(tm_mday != o.tm_mday) return false;
+		else if(tm_mon != o.tm_mon) return false;
+		else if(tm_year != o.tm_year) return false;
+		
+		return true;
 	}
-	bool Time::operator ==(const std::time_t& o)const
+	bool Time::operator ==(const std::tm& o)const
+	{
+		if(tm_sec != o.tm_sec) return false;
+		else if(tm_min != o.tm_min) return false;
+		else if(tm_hour != o.tm_hour) return false;
+		else if(tm_mday != o.tm_mday) return false;
+		else if(tm_mon != o.tm_mon) return false;
+		else if(tm_year != o.tm_year) return false;
+		
+		return true;
+	}
+	bool Time::operator ==(std::time_t o)const
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
@@ -155,57 +162,167 @@ namespace oct::core
 		if(t_this == o) return true;
 		return false;
 	}
-	bool Time::operator ==(const std::tm& o)const
+	
+	bool Time::operator !=(const Time& o)const
+	{		
+		if(tm_sec == o.tm_sec) return false;
+		else if(tm_min == o.tm_min) return false;
+		else if(tm_hour == o.tm_hour) return false;
+		else if(tm_mday == o.tm_mday) return false;
+		else if(tm_mon == o.tm_mon) return false;
+		else if(tm_year == o.tm_year) return false;
+		
+		return true;
+	}
+	bool Time::operator !=(const std::tm& o)const
+	{
+		if(tm_sec == o.tm_sec) return false;
+		else if(tm_min == o.tm_min) return false;
+		else if(tm_hour == o.tm_hour) return false;
+		else if(tm_mday == o.tm_mday) return false;
+		else if(tm_mon == o.tm_mon) return false;
+		else if(tm_year == o.tm_year) return false;
+		
+		return true;
+	}
+	bool Time::operator !=(std::time_t o)const
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
 
-		std::tm tm_o = o;
-		std::time_t t_o = std::mktime(&tm_o);
-
-		if(t_this == t_o) return true;
+		if(t_this != o) return true;
 		return false;
 	}
+	
 	bool Time::operator <(const Time& o)const
+	{
+		if(tm_year < o.tm_year) return true;
+		else if(tm_year > o.tm_year) return false;
+		else if(tm_mon < o.tm_mon) return true;
+		else if(tm_mon > o.tm_mon) return false;
+		else if(tm_mday < o.tm_mday) return true;
+		else if(tm_mday > o.tm_mday) return false;
+		else if(tm_hour < o.tm_hour) return true;
+		else if(tm_hour > o.tm_hour) return false;
+		else if(tm_min < o.tm_min) return true;
+		else if(tm_min > o.tm_min) return false;
+		else if(tm_sec < o.tm_sec) return true;
+		else if(tm_sec > o.tm_sec) return false;
+		
+		return false;
+	}
+	bool Time::operator <(const tm& o)const
+	{
+		if(tm_year < o.tm_year) return true;
+		else if(tm_year > o.tm_year) return false;
+		else if(tm_mon < o.tm_mon) return true;
+		else if(tm_mon > o.tm_mon) return false;
+		else if(tm_mday < o.tm_mday) return true;
+		else if(tm_mday > o.tm_mday) return false;
+		else if(tm_hour < o.tm_hour) return true;
+		else if(tm_hour > o.tm_hour) return false;
+		else if(tm_min < o.tm_min) return true;
+		else if(tm_min > o.tm_min) return false;
+		else if(tm_sec < o.tm_sec) return true;
+		else if(tm_sec > o.tm_sec) return false;
+		
+		return false;
+	}	
+	bool Time::operator <(std::time_t t_o)const
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
-
-		std::tm tm_o = o;
-		std::time_t t_o = std::mktime(&tm_o);
 
 		return t_this < t_o;
 	}
+	
 	bool Time::operator >(const Time& o)const
+	{		
+		if(tm_year < o.tm_year) return false;
+		else if(tm_year > o.tm_year) return true;
+		else if(tm_mon < o.tm_mon) return false;
+		else if(tm_mon > o.tm_mon) return true;
+		else if(tm_mday < o.tm_mday) return false;
+		else if(tm_mday > o.tm_mday) return true;
+		else if(tm_hour < o.tm_hour) return false;
+		else if(tm_hour > o.tm_hour) return true;
+		else if(tm_min < o.tm_min) return false;
+		else if(tm_min > o.tm_min) return true;
+		else if(tm_sec < o.tm_sec) return false;
+		else if(tm_sec > o.tm_sec) return true;
+		
+		return false;
+	}
+	bool Time::operator >(const tm& o)const
+	{
+		if(tm_year < o.tm_year) return false;
+		else if(tm_year > o.tm_year) return true;
+		else if(tm_mon < o.tm_mon) return false;
+		else if(tm_mon > o.tm_mon) return true;
+		else if(tm_mday < o.tm_mday) return false;
+		else if(tm_mday > o.tm_mday) return true;
+		else if(tm_hour < o.tm_hour) return false;
+		else if(tm_hour > o.tm_hour) return true;
+		else if(tm_min < o.tm_min) return false;
+		else if(tm_min > o.tm_min) return true;
+		else if(tm_sec < o.tm_sec) return false;
+		else if(tm_sec > o.tm_sec) return true;
+		
+		return false;
+	}
+	bool Time::operator >(std::time_t t_o)const
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
-
-		std::tm tm_o = o;
-		std::time_t t_o = std::mktime(&tm_o);
 
 		return t_this > t_o;
 	}
+	
 	bool Time::operator <=(const Time& o)const
+	{
+		if(operator <(o)) return true;
+		if(operator ==(o)) return true;
+		
+		return false;
+	}
+	bool Time::operator <=(const tm& o)const
+	{
+		if(operator <(o)) return true;
+		if(operator ==(o)) return true;
+		
+		return false;
+	}
+	bool Time::operator <=(std::time_t t_o)const
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
-
-		std::tm tm_o = o;
-		std::time_t t_o = std::mktime(&tm_o);
 
 		return t_this <= t_o;
 	}
+	
 	bool Time::operator >=(const Time& o)const
+	{
+		if(operator >(o)) return true;
+		if(operator ==(o)) return true;
+		
+		return false;
+	}
+	bool Time::operator >=(const tm& o)const
+	{
+		if(operator >(o)) return true;
+		if(operator ==(o)) return true;
+		
+		return false;
+	}	
+	bool Time::operator >=(std::time_t t_o)const
 	{
 		std::tm tm_this = *this;
 		std::time_t t_this = std::mktime(&tm_this);
 
-		std::tm tm_o = o;
-		std::time_t t_o = std::mktime(&tm_o);
-
 		return t_this >= t_o;
 	}
+	
+	
 	int Time::get_week_day()const
 	{
 		return tm_wday;
@@ -227,16 +344,14 @@ namespace oct::core
 	}
 	void Time::add(std::time_t s)
 	{
-		std::tm tm_this = *this;
-		std::time_t t_this = std::mktime(&tm_this);
+		std::time_t t_this = std::mktime(this);
 
 		t_this += s;
 		*this = *std::localtime(&t_this);
 	}
 	void Time::rest(std::time_t s)
 	{
-		std::tm tm_this = *this;
-		std::time_t t_this = std::mktime(&tm_this);
+		std::time_t t_this = std::mktime(this);
 
 		t_this -= s;
 		*this = *std::localtime(&t_this);
@@ -1135,13 +1250,13 @@ namespace oct::ec::sche
 			//escojer las mas proximas
 			newDay.clear();
 			unsigned int j = 0;
-			for(auto const& [key,value] : day_ops2)
+			//for(auto const& [key,value] : day_ops2)
+			for(auto it = day_ops2.begin(); it != day_ops2.end();it++)
 			{
 				if(j >= day_ops2.size()) break;
 				if(j >= hours) break;
-
-				newDay.push_back(*value);
-
+				
+				newDay.push_back(*(*it).second);
 				j++;
 			}
 			if(newDay.size() == hours)
