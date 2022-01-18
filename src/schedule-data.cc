@@ -63,7 +63,11 @@ namespace oct::core
 
 	Time::Time()
 	{
-		std::time_t t = 0;
+		//std::time_t t = 0;
+		//*this = *std::localtime(&t);
+	}
+	Time::Time(std::time_t t)
+	{
 		*this = *std::localtime(&t);
 	}
 	Time::Time(const tm& t)
@@ -415,8 +419,25 @@ namespace oct::core
 namespace oct::ec::sche
 {
 
+	Time::Time() : core::Time(FIRST_SUNDAY)
+	{
+		//std::time_t t = 0;
+		//*this = *std::localtime(&t);
+	}
+	Time::Time(const std::tm& t) : oct::core::Time(t)
+	{
+	}
+	Time::Time(const Time& t) : oct::core::Time(t)
+	{
+	}
+	
+	
+	
+	
+	
+	
 
-	bool is_post_hour(const core::Time& first,const core::Time& second, const Configuration& config)
+	bool is_post_hour(const Time& first,const Time& second, const Configuration& config)
 	{
 		core::Time tm_first = first;
 		std::time_t t_first = std::mktime(&tm_first);
@@ -426,12 +447,12 @@ namespace oct::ec::sche
 		if(tm_next == second) return true;
 		return false;
 	}
-	bool is_prev_hour(const core::Time& first,const core::Time& second, const Configuration& config)
+	bool is_prev_hour(const Time& first,const Time& second, const Configuration& config)
 	{
-		core::Time tm_second= second;
+		Time tm_second= second;
 		std::time_t t_second = std::mktime(&tm_second);
 		t_second -= config.get_seconds_per_hour();
-		core::Time tm_prev = *std::localtime(&t_second);
+		Time tm_prev = *std::localtime(&t_second);
 
 		if(tm_prev == first) return true;
 		return false;
@@ -474,7 +495,7 @@ namespace oct::ec::sche
 		//std::cout << "Day::Day(const Day& d) - Step 1.0\n";
 		if(size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
 
-		for(const core::Time& dt : d)
+		for(const Time& dt : d)
 		{
 			push_back(dt);
 		}
@@ -500,7 +521,7 @@ namespace oct::ec::sche
 		//std::cout << "Day::operator = - Step 1.0\n";
 		if(size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
 
-		for(const core::Time& dt : d)
+		for(const Time& dt : d)
 		{
 			push_back(dt);
 		}
@@ -593,7 +614,7 @@ namespace oct::ec::sche
 	}
 	bool Day::haveDisponible()const
 	{
-		return std::list<core::Time>::size() > 0 ? true : false;
+		return std::list<Time>::size() > 0 ? true : false;
 	}
 
 	void Day::blocking(const Configuration& config)
@@ -611,7 +632,7 @@ namespace oct::ec::sche
 		itPost++;
 		Block block;
 		block.push_back(&*itActual);
-		core::Time nextTime;
+		Time nextTime;
 		for(unsigned int i = 0; i < size(); i++,itPost++,itActual++)
 		{
 			nextTime = *itActual;
@@ -628,7 +649,7 @@ namespace oct::ec::sche
 			}
 		}
 	}
-	bool cmpTimes(const core::Time& firts,const core::Time& second)
+	bool cmpTimes(const Time& firts,const Time& second)
 	{
 		return firts < second;
 	}
@@ -636,7 +657,7 @@ namespace oct::ec::sche
 	{
 		this->config = &config;
 		//ordenar los elementos core::Time por su valor tm_wday
-		std::list<core::Time>::sort(cmpTimes);
+		std::list<Time>::sort(cmpTimes);
 		//std::cout << ">>>sorted\n";
 		blocks.clear();
 		//contruir bloques de horas continuas
@@ -647,7 +668,7 @@ namespace oct::ec::sche
 	void Day::add(const Block& b)
 	{
 		Block newb;
-		for(const core::Time* dt : b)
+		for(const Time* dt : b)
 		{
 			push_back(*dt);
 			newb.push_back(&back());
@@ -765,7 +786,7 @@ namespace oct::ec::sche
 	}
 	void Day::print_day(std::ostream& out) const
 	{
-		for(const core::Time& dt : *this)
+		for(const Time& dt : *this)
 		{
 			dt.print(out,"%a %H:%M");
 			out << " ";
@@ -776,13 +797,13 @@ namespace oct::ec::sche
 		for(const Block& b : blocks)
 		{
 			out << "\t";
-			for(const core::Time* dt : b)
+			for(const Time* dt : b)
 			{
 				dt->print(out,"%a %H:%M");
 				out << " ";
 			}
 			out << "\n";
-		}
+		} 
 	}
 	void Day::print_intevals_csv(std::ostream& out, const Configuration& config) const
 	{
@@ -791,7 +812,7 @@ namespace oct::ec::sche
 		{
 			(*it).front()->print(out,"%a %H:%M");
 			out << "-";
-			oct::core::Time timeEnd;
+			Time timeEnd;
 			timeEnd = *(*it).back();
 			timeEnd.add(config.get_seconds_per_hour());
 			timeEnd.print(out,"%a %H:%M");
@@ -818,7 +839,7 @@ namespace oct::ec::sche
 			itPrev++;
 		}*/
 
-		for(const core::Time dt : *this)
+		for(const Time dt : *this)
 		{
 			if((*begin()).tm_wday != dt.tm_wday) return check_codes::HOURS_DIFFERENT_DAY;
 		}
@@ -845,7 +866,7 @@ namespace oct::ec::sche
 
 		return NULL;
 	}
-	void Day::get_hours_around(const core::Time& hour, unsigned int count,Day::Block& block)const
+	void Day::get_hours_around(const Time& hour, unsigned int count,Day::Block& block)const
 	{
 		if(count == 0) return;
 		else if(count == 1)
@@ -861,7 +882,7 @@ namespace oct::ec::sche
 
 		}
 	}
-	void Day::get_hours_around(const core::Time& hour,Day::Block& block)const
+	void Day::get_hours_around(const Time& hour,Day::Block& block)const
 	{
 		const_iterator it = std::find(begin(),end(),hour);
 		if(it != end())
@@ -884,7 +905,7 @@ namespace oct::ec::sche
 
 	void Day::clear()
 	{
-		std::list<core::Time>::clear();
+		std::list<Time>::clear();
 		blocks.clear();
 	}
 
@@ -959,7 +980,7 @@ namespace oct::ec::sche
 	}
 
 
-	real distance_by_hour(const core::Time& day, const core::Time& base)
+	real distance_by_hour(const Time& day, const Time& base)
 	{
 		return std::pow(real(day.tm_hour - base.tm_hour),2.0);;
 	}
@@ -1234,7 +1255,7 @@ namespace oct::ec::sche
 
 		return day;
 	}
-	bool WeekHours::get_day(unsigned int day_num,unsigned int hours,const core::Time& base,const Configuration& config,Day& day)const
+	bool WeekHours::get_day(unsigned int day_num,unsigned int hours,const Time& base,const Configuration& config,Day& day)const
 	{
 		if(day_num > 6) throw core::Exception("El dia solicitado no es valido.",__FILE__,__LINE__);
 		if(hours == 0) return false;
@@ -1244,7 +1265,7 @@ namespace oct::ec::sche
 
 		const Day* day_op;
 		//std::cout << "Step 2\n";
-		std::multimap<real,const core::Time*,distance_measure> day_ops2;
+		std::multimap<real,const Time*,distance_measure> day_ops2;
 		Day newDay;
 		//for(unsigned int i = day_num; i < WeekHours::WEEK_SIZE; i++)
 		{
@@ -1253,7 +1274,7 @@ namespace oct::ec::sche
 			day_ops2.clear();
 			day_op = &at(day_num);
 
-			for(const core::Time& time : *day_op)
+			for(const Time& time : *day_op)
 			{
 				day_ops2.insert({distance_by_hour(time,base),&time});
 			}
@@ -1525,7 +1546,7 @@ namespace oct::ec::sche
 	{
 		for(const Day& day : times)
 		{
-			for(const core::Time& dt: day)
+			for(const Time& dt: day)
 			{
 				out << std::put_time(&dt, "%a %H:%M");
 				out << " ";

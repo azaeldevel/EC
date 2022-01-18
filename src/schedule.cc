@@ -302,7 +302,7 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week_dispon)
 	if(hours_per_day == 0) hours_per_day = 1;
 	//unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);
 	
-	const core::Time* time;
+	const Time* time;
 	unsigned int day;
 	for(unsigned int i = 0; i < WeekHours::WEEK_SIZE; i++)
 	{//primer dias dsiponible no vacieo

@@ -38,13 +38,13 @@
 
 int main(int argc, const char* argv[])
 {
-	oct::core::Time time1;
-	time1.read("Vie 23:15","%a %H:%M",std::locale("es_MX.utf-8"));
-	time1.print(std::cout,"%c");
+	oct::ec::sche::Time time1;
+	//time1.read("Vie 23:15","%a %H:%M",std::locale("es_MX.utf-8"));
+	//time1.print(std::cout,"%c");
 	
 	std::cout << "\n";
 	
-	oct::core::Time time2;
+	oct::ec::sche::Time time2;
 	time2.print(std::cout,"%c");
 	
 	std::cout << "\n";

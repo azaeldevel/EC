@@ -19,7 +19,7 @@ int schedule_clean(void);
 
 void time_devel()
 {
-	oct::core::Time times1[10];
+	oct::ec::sche::Time times1[10];
 	times1[0].read("Tue 05:00","%a %H:%M");
 	times1[1].read("Tue 05:00","%a %H:%M");
 	times1[2].read("Tue 05:00","%a %H:%M");
@@ -30,12 +30,12 @@ void time_devel()
 	times1[7].read("Tue 05:00","%a %H:%M");
 	times1[8].read("Tue 05:00","%a %H:%M");
 	times1[9].read("Tue 05:00","%a %H:%M");
-	/*for(unsigned int i = 0; i < 10; i++)
+	for(unsigned int i = 0; i < 10; i++)
 	{
 		times1[i].print(std::cout,"%c");		
 		std::cout << "\n";
 	}
-	std::cout << "\n";*/
+	std::cout << "\n";
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		if(times1[0] == times1[i])

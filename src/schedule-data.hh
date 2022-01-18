@@ -22,6 +22,7 @@ namespace oct::core
 	{
 	public:
 		Time();
+		Time(std::time_t);
 		Time(const tm&);
 		Time(const Time&);
 
@@ -81,12 +82,23 @@ namespace oct::core
 
 namespace oct::ec::sche
 {
+	static const std::time_t FIRST_SUNDAY = 259200;
 
 	class Enviroment;
 	struct Data;
 	class Configuration;
 	class Subject;
 	class WeekHours;
+
+	class Time : public oct::core::Time
+	{
+	
+	public:
+		Time();
+		Time(const std::tm&);
+		Time(const Time&);
+
+	};
 
 	template<typename T> typename std::list<T>::const_iterator random(const std::list<T>& ls)
 	{
@@ -137,12 +149,12 @@ namespace oct::ec::sche
 	*\brief Tomando como referencia el valor second, verifica se sucede a first
 	*\return true en caso de que la relacion se cumpla, falso en caso de que no
 	*/
-	bool is_post_hour(const core::Time& first,const core::Time& second, const Configuration&);
+	bool is_post_hour(const Time& first,const Time& second, const Configuration&);
 	/**
 	*\brief Tomando como referencia el valor second, verifica si a first antesede
 	*\return true en caso de que la relacion se cumpla, falso en caso de que no
 	*/
-	bool is_prev_hour(const core::Time& first,const core::Time& second, const Configuration&);
+	bool is_prev_hour(const Time& first,const Time& second, const Configuration&);
 	//void add_hours(core::Time& first,unsigned int hours, const Configuration& config);
 	//void rest_hours(core::Time& first,unsigned int hours, const Configuration& config);
 	//void add_hours(core::Time& first,unsigned int hours, unsigned int);
@@ -154,10 +166,10 @@ namespace oct::ec::sche
 		HOURS_DIFFERENT_DAY,
 		BLOCK_CONTENT_SIZE_FAIL,
 	};
-	class Day : public std::list<core::Time>
+	class Day : public std::list<Time>
 	{
 	public:
-		typedef std::list<const core::Time*> Block;
+		typedef std::list<const Time*> Block;
 		typedef std::list<Block> Blocks;
 
 	public:
@@ -208,13 +220,13 @@ namespace oct::ec::sche
 		/**
 		*\brief Agrega al bloques las horas solicitas, lo mas cercanas possibles a la hora indicada
 		*/
-		void get_hours_around(const core::Time&, unsigned int count,Block& )const;
+		void get_hours_around(const Time&, unsigned int count,Block& )const;
 		/**
 		*\brief Agrega al bloques 1 hora, lo mas cercanas possibles a la hora indicada
 		*/
-		void get_hours_around(const core::Time&,Block& )const;
+		void get_hours_around(const Time&,Block& )const;
 
-		static bool is_continue(const core::Time& first, const core::Time& second, const Data&);
+		static bool is_continue(const Time& first, const Time& second, const Data&);
 
 		void clear();
 
@@ -256,7 +268,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Optiene para el dia numero 'day' la canitad de 'hours' en la hora 'base' si encuentra coloca el resultado en 'result' y retorna true
 		**/
-		bool get_day(unsigned int day,unsigned int hours,const core::Time& at,const Configuration& ,Day& result)const;
+		bool get_day(unsigned int day,unsigned int hours,const Time& at,const Configuration& ,Day& result)const;
 
 		void sort(const Configuration&);
 	private:
@@ -326,7 +338,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Optiene para el dia numero 'day' la canitad de 'hours' en la hora 'base' si encuentra coloca el resultado en 'result' y retorna true
 		**/
-		bool get_day(unsigned int day,unsigned int hours,const core::Time& at,const Configuration& ,Day& result)const;
+		bool get_day(unsigned int day,unsigned int hours,const Time& at,const Configuration& ,Day& result)const;
 
 
 	private:
@@ -336,8 +348,8 @@ namespace oct::ec::sche
 
 	struct IntervalTime
 	{
-		core::Time begin;
-		core::Time end;
+		Time begin;
+		Time end;
 
 		IntervalTime();
 		IntervalTime(const std::string&,const std::string&);
@@ -402,7 +414,7 @@ namespace oct::ec::sche
 		*\param hours cantiad de horas a agregar a dt
 		*\param result variable de retorno, donde se coloca el resultado de la operacion
 		*/
-		void add(const core::Time& dt, unsigned int hours, core::Time& result);
+		void add(const Time& dt, unsigned int hours, Time& result);
 
 		/**
 		*\brief Resta a la hora indicada, la cantidad de horas indicas y coloca el resultado el variable de retorno
@@ -410,7 +422,7 @@ namespace oct::ec::sche
 		*\param hours cantiad de horas a restar a dt
 		*\param result variable de retorno, donde se coloca el resultado de la operacion
 		*/
-		void rest(const core::Time& dt, unsigned int hours, core::Time& result);
+		void rest(const Time& dt, unsigned int hours, Time& result);
 
 		//
 		unsigned int _id;

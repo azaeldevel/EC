@@ -287,7 +287,7 @@ void schedule_devel()
 		std::cout << "day2.size() = " << day2.size() << "\n";
 		CU_ASSERT(false);
 	}
-	for(const oct::core::Time& dt : day2)
+	for(const oct::ec::sche::Time& dt : day2)
 	{
 		//std::cout << std::put_time(&dt, "%a %H:%M") << "\n";
 		if(dt.tm_wday == 2)
@@ -428,7 +428,7 @@ void schedule_devel()
 	}
 	else
 	{
-		for(const oct::core::Time& time : day5)
+		for(const oct::ec::sche::Time& time : day5)
 		{
 			time.print(std::cout,"%a %H:%M");
 			std::cout << "\n";
@@ -548,7 +548,7 @@ void schedule_devel()
 	unsigned int day6_count = 0;
 	for(const Day::Block& block : day6.get_blocks())
 	{
-		for(const oct::core::Time* dt : block)
+		for(const oct::ec::sche::Time* dt : block)
 		{
 			day6_count++;
 		}
@@ -776,7 +776,7 @@ void schedule_devel()
 	//week3.print(std::cout);
 	
 	Day day_base;
-	oct::core::Time time_base;
+	oct::ec::sche::Time time_base;
 	for(const Day& day_op : week3)
 	{
 		if(not day_op.empty())
@@ -859,7 +859,7 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}*/
 
-	oct::core::Time dt1[10];
+	oct::ec::sche::Time dt1[10];
 	dt1[0].read("Tue 05:00","%a %H:%M");
 	dt1[1].read("Tue 06:00","%a %H:%M");
 	dt1[2].read("Tue 07:00","%a %H:%M");
@@ -884,7 +884,7 @@ void schedule_devel()
 		}
 	}
 
-	oct::core::Time dt2[10];	
+	oct::ec::sche::Time dt2[10];	
 	dt2[0].read("Tue 06:35","%a %H:%M");
 	dt2[1].read("Tue 06:35","%a %H:%M");
 	dt2[2].read("Tue 06:35","%a %H:%M");
