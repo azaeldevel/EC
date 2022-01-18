@@ -284,17 +284,36 @@ namespace oct::core
 
 	bool Time::operator <=(const Time& o)const
 	{
-		if(operator <(o)) return true;
-		if(operator ==(o)) return true;
+		if(tm_year < o.tm_year) return true;
+		else if(tm_year > o.tm_year) return false;
+		else if(tm_mon < o.tm_mon) return true;
+		else if(tm_mon > o.tm_mon) return false;
+		else if(tm_mday < o.tm_mday) return true;
+		else if(tm_mday > o.tm_mday) return false;
+		else if(tm_hour < o.tm_hour) return true;
+		else if(tm_hour > o.tm_hour) return false;
+		else if(tm_min < o.tm_min) return true;
+		else if(tm_min > o.tm_min) return false;
+		else if(tm_sec < o.tm_sec) return true;
+		else if(tm_sec > o.tm_sec) return false;
 
-		return false;
+		return true;
 	}
 	bool Time::operator <=(const tm& o)const
-	{
-		if(operator <(o)) return true;
-		if(operator ==(o)) return true;
+	{if(tm_year < o.tm_year) return true;
+		else if(tm_year > o.tm_year) return false;
+		else if(tm_mon < o.tm_mon) return true;
+		else if(tm_mon > o.tm_mon) return false;
+		else if(tm_mday < o.tm_mday) return true;
+		else if(tm_mday > o.tm_mday) return false;
+		else if(tm_hour < o.tm_hour) return true;
+		else if(tm_hour > o.tm_hour) return false;
+		else if(tm_min < o.tm_min) return true;
+		else if(tm_min > o.tm_min) return false;
+		else if(tm_sec < o.tm_sec) return true;
+		else if(tm_sec > o.tm_sec) return false;
 
-		return false;
+		return true;
 	}
 	bool Time::operator <=(std::time_t t_o)const
 	{
@@ -306,17 +325,37 @@ namespace oct::core
 
 	bool Time::operator >=(const Time& o)const
 	{
-		if(operator >(o)) return true;
-		if(operator ==(o)) return true;
+		if(tm_year < o.tm_year) return false;
+		else if(tm_year > o.tm_year) return true;
+		else if(tm_mon < o.tm_mon) return false;
+		else if(tm_mon > o.tm_mon) return true;
+		else if(tm_mday < o.tm_mday) return false;
+		else if(tm_mday > o.tm_mday) return true;
+		else if(tm_hour < o.tm_hour) return false;
+		else if(tm_hour > o.tm_hour) return true;
+		else if(tm_min < o.tm_min) return false;
+		else if(tm_min > o.tm_min) return true;
+		else if(tm_sec < o.tm_sec) return false;
+		else if(tm_sec > o.tm_sec) return true;
 
-		return false;
+		return true;
 	}
 	bool Time::operator >=(const tm& o)const
 	{
-		if(operator >(o)) return true;
-		if(operator ==(o)) return true;
+		if(tm_year < o.tm_year) return false;
+		else if(tm_year > o.tm_year) return true;
+		else if(tm_mon < o.tm_mon) return false;
+		else if(tm_mon > o.tm_mon) return true;
+		else if(tm_mday < o.tm_mday) return false;
+		else if(tm_mday > o.tm_mday) return true;
+		else if(tm_hour < o.tm_hour) return false;
+		else if(tm_hour > o.tm_hour) return true;
+		else if(tm_min < o.tm_min) return false;
+		else if(tm_min > o.tm_min) return true;
+		else if(tm_sec < o.tm_sec) return false;
+		else if(tm_sec > o.tm_sec) return true;
 
-		return false;
+		return true;
 	}
 	bool Time::operator >=(std::time_t t_o)const
 	{
@@ -438,7 +477,7 @@ namespace oct::ec::sche
 		core::Time::read(d,f);
 		if(tm_wday == 0) return;
 		
-		time_t t = (tm_wday + 1) * 24 * 60 * 60;
+		time_t t = (tm_wday + 1) * 24 * 60 * 60;//sincorniza la informacion de el dia de
 		add(t);
 	}
 	
