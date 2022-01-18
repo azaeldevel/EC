@@ -424,14 +424,23 @@ namespace oct::ec::sche
 		//std::time_t t = 0;
 		//*this = *std::localtime(&t);
 	}
-	Time::Time(const std::tm& t) : oct::core::Time(t)
+	Time::Time(const std::tm& t) : core::Time(t)
 	{
 	}
-	Time::Time(const Time& t) : oct::core::Time(t)
+	Time::Time(const Time& t) : core::Time(t)
 	{
 	}
 	
 	
+	
+	void Time::read(const std::string& d,const std::string& f)
+	{
+		core::Time::read(d,f);
+		if(tm_wday == 0) return;
+		
+		time_t t = (tm_wday + 1) * 24 * 60 * 60;
+		add(t);
+	}
 	
 	
 	

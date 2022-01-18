@@ -92,12 +92,14 @@ namespace oct::ec::sche
 
 	class Time : public oct::core::Time
 	{
-	
+	public:
+		
 	public:
 		Time();
 		Time(const std::tm&);
 		Time(const Time&);
 
+		void read(const std::string&,const std::string&);
 	};
 
 	template<typename T> typename std::list<T>::const_iterator random(const std::list<T>& ls)

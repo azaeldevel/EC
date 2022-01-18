@@ -688,7 +688,7 @@ void schedule_devel()
 	}
 
 	//este valor puede cambiar comforme mejore el algoritmo, esta a que por propositos de desarrollo
-	if(week_opt.count() == 4919376)
+	if(week_opt.count() == 447216)
 	{
 		CU_ASSERT(true);
 	}
@@ -747,7 +747,7 @@ void schedule_devel()
 	std::cout << "\n";
 	//std::cout << "Interseccion \n";*/
 	//week3.print(std::cout);
-	if(week_opt2.count() == 708750)
+	if(week_opt2.count() == 210)
 	{
 		CU_ASSERT(true);
 	}
