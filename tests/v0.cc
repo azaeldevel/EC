@@ -30,12 +30,12 @@ void time_devel()
 	times1[7].read("Tue 05:00","%a %H:%M");
 	times1[8].read("Tue 05:00","%a %H:%M");
 	times1[9].read("Tue 05:00","%a %H:%M");
-	for(unsigned int i = 0; i < 10; i++)
+	/*for(unsigned int i = 0; i < 10; i++)
 	{
 		times1[i].print(std::cout,"%c");		
 		std::cout << "\n";
-	}
-	std::cout << "\n";
+	}*/
+	//std::cout << "\n";
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		if(times1[0] == times1[i])

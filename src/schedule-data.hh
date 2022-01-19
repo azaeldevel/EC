@@ -358,7 +358,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Convirte el valor time en elementos de la clase Day
 		**/
-		void granulate(const Configuration*, Day& out);
+		void granulate(const Configuration&, Day& out);
 		/**
 		*\brief Convirte el valor time en elementos de la clase Day, crea los bloques de tiempo.
 		**/

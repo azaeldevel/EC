@@ -218,7 +218,7 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}
 	oct::ec::sche::Day day;
-	time1.granulate(&data.config,day);
+	time1.granulate(data.config,day);
 	day.sort(data.config);
 	if(day.size() == 16)
 	{
@@ -231,6 +231,11 @@ void schedule_devel()
 	}
 	//typedef oct::ec::sche::Day::iterator iterator_day;
 
+	/*for(const Time& time : day)
+	{
+		time.print(std::cout,"%c");
+		std::cout << "\n";
+	}*/
 	/*int i = 0;
 	for(iterator_day it = day.begin(); it != day.end(); it++, i++)
 	{
@@ -276,7 +281,7 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}
 	oct::ec::sche::Day day2;
-	time2.granulate(&data.config,day2);
+	time2.granulate(data.config,day2);
 	day2.sort(data.config);
 	if(day2.size() == 16)
 	{
@@ -384,7 +389,7 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}
 	oct::ec::sche::Day day4;
-	time4.granulate(&data.config,day4);
+	time4.granulate(data.config,day4);
 	day4.sort(data.config);
 	if(day4.size() == 14)
 	{
@@ -441,9 +446,9 @@ void schedule_devel()
 	IntervalTime time7("Mon 13:00", "Mon 16:00");
 	IntervalTime time8("Mon 17:00", "Mon 23:00");
 	oct::ec::sche::Day day6;
-	time8.granulate(&data.config,day6);
-	time6.granulate(&data.config,day6);
-	time7.granulate(&data.config,day6);
+	time8.granulate(data.config,day6);
+	time6.granulate(data.config,day6);
+	time7.granulate(data.config,day6);
 	day6.sort(data.config);
 	/*for(const oct::core::Time& dt : day6)
 	{
@@ -963,6 +968,62 @@ void schedule_devel()
 	for(unsigned int i = 0; i < 100; i++)
 	{
 		std::cout << i << ":" << distrib(oct::ec::dre) << "\n";
+	}*/
+	IntervalTime time9;
+	time9.set_begin("Sun 08:00");
+	if(time9.begin.tm_hour == 8)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time9.begin.tm_hour = " << time9.begin.tm_hour << "\n";
+		CU_ASSERT(false);
+	}
+	if(time9.begin.tm_wday == 0)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time9.begin.tm_wday = " << time9.begin.tm_wday << "\n";
+		CU_ASSERT(false);
+	}
+	if(time9.begin.tm_mday == 4)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time9.begin.tm_mday = " << time9.begin.tm_mday << "\n";
+		CU_ASSERT(false);
+	}
+	time9.set_end("Sun 20:00");
+	if(time9.end.tm_hour == 20)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time9.end.tm_hour = " << time9.end.tm_hour << "\n";
+		CU_ASSERT(false);
+	}
+	oct::ec::sche::Day day9;
+	time9.granulate(data.config,day9);
+	day9.sort(data.config);
+	if(day9.size() == 16)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "day9.size() = " << day9.size() << "\n";
+		CU_ASSERT(false);
+	}
+	/*for(const Time time : day9)
+	{
+		time.print(std::cout,"%c");		
+		std::cout << "\n";
 	}*/
 }
 

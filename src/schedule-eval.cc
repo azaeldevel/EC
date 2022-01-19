@@ -51,13 +51,13 @@ namespace oct::ec::sche
 	{
 		unsigned int count = 0;
 		WeekHours week_actual;
-		for(unsigned int i = 0; i < size(); i++)
+		for(unsigned int i = 0; i < size() - 1; i++)//horaios
 		{
-			for(unsigned int j = 0; j < at(i).size() - 1; j++)
+			for(unsigned int j = 0; j < at(i).size(); j++)//dias de la semana
 			{			
-				for(unsigned int k = 1; k < size(); k++)
+				for(unsigned int k = i; k < size(); k++)//horaios
 				{
-					for(unsigned int l = 0; l < at(k).size(); l++)
+					for(unsigned int l = j + 1; l < at(k).size(); l++)//dias de la semana
 					{
 						week_actual.inters(at(i)[j].week,at(k)[l].week);
 						count += week_actual.count_hours();

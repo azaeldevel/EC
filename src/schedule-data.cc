@@ -475,7 +475,6 @@ namespace oct::ec::sche
 	void Time::read(const std::string& d,const std::string& f)
 	{
 		core::Time::read(d,f);
-		if(tm_wday == 0) return;
 		
 		time_t t = (tm_wday + 1) * 24 * 60 * 60;//sincorniza la informacion de el dia de
 		add(t);
@@ -1157,39 +1156,11 @@ namespace oct::ec::sche
 		if(size() != WEEK_SIZE) throw core::Exception("La cantidad de dias en la semana incorrecto",__FILE__,__LINE__);
 
 
-		/*
-		unsigned int disp = days_disp();
-		unsigned int mean_hours,diff_hours,botton_hours,floor_hours;
-		mean_hours = subject.get_time() / disp;
-		if(mean_hours == 0)
-		{
-			mean_hours = 1;
-			diff_hours = 0;
-			botton_hours = 0;
-			floor_hours = 0;
-		}
-		else
-		{
-			diff_hours = subject.get_time() - (mean_hours * disp);
-			botton_hours = mean_hours + diff_hours;
-			floor_hours = mean_hours - diff_hours;
-		}
-
-		for(unsigned int day = 0; day < size(); day++)
-		{
-			if(at(day).haveDisponible())
-			{
-				at(day).combns(week_combs[day],mean_hours);
-				if(botton_hours > mean_hours) at(day).combns(week_combs[day],botton_hours);
-				if(floor_hours > 0) at(day).combns(week_combs[day],floor_hours);
-			}
-		}
-		*/
 		for(unsigned int day = 0; day < size(); day++)
 		{
 			for(unsigned int hours = 1; hours <= subject.get_time(); hours++)
 			{
-				if(at(day).haveDisponible()) at(day).combns(week_combs[day],hours);
+				if(not at(day).empty()) at(day).combns(week_combs[day],hours);
 			}
 		}
 
@@ -1363,12 +1334,12 @@ namespace oct::ec::sche
 		set_begin(b);
 		set_end(e);
 	}
-	void IntervalTime::granulate(const Configuration* config, Day& out)
+	void IntervalTime::granulate(const Configuration& config, Day& out)
 	{
 		if(begin.tm_wday != end.tm_wday) throw core::Exception("El intervalo de tiempo deve especificar el mismos dia.",__FILE__,__LINE__);
 		if(begin.tm_hour >= end.tm_hour) throw core::Exception("La hora de inicio deve ser meno que lahora final.",__FILE__,__LINE__);
 
-		int hours = config->to_hours(begin.diff(end));
+		int hours = config.to_hours(begin.diff(end));
 
 		if(hours < 1) return;
 
@@ -1380,7 +1351,7 @@ namespace oct::ec::sche
 		//std::cout << "t = " << t << "\n";
 		for(int i = 1; i < hours; i++)
 		{
-			t += config->get_seconds_per_hour(); // 60 segundos por 60 minutos = una hora
+			t += config.get_seconds_per_hour(); // 60 segundos por 60 minutos = una hora
 			//std::cout << "t = " << t << "\n";
 			newt = localtime(&t);
 			newt->tm_wday = begin.tm_wday;
@@ -1753,7 +1724,8 @@ namespace oct::ec::sche
 				throw core::Exception(msg, __FILE__,__LINE__);
 			}
 			Day day;
-			time.granulate(&dataObject->config,day);
+			time.granulate(dataObject->config,day);
+			day.sort(dataObject->config);
 			target.get_week()[day.front().tm_wday] = day;
 			timeDay++;
 		}
@@ -2494,21 +2466,21 @@ namespace oct::ec::sche
 			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
 			unsigned int iday = distrib(gen);
 			Day* day = &this->week[iday];
-			day->sort(data->config);
+			//day->sort(data->config);
 			week_opt[iday].random(*day);
 	}
 	void Lesson::mutate_time()
 	{
-			WeekHours week;
-			WeekOptions week_opt;
-			week.inters(room->get_week (),teacher->get_week());
-			week.combns(*subject,week_opt);
+		WeekHours week;
+		WeekOptions week_opt;
+		week.inters(room->get_week (),teacher->get_week());
+		week.combns(*subject,week_opt);
 
-			std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
-			unsigned int iday = distrib(gen);
-			Day* day = &this->week[iday];
-			day->sort(data->config);
-			week_opt[iday].random(*day);
+		std::uniform_int_distribution<int> distrib(0,WeekHours::WEEK_SIZE - 1);
+		unsigned int iday = distrib(gen);
+		Day* day = &this->week[iday];
+		//day->sort(data->config);
+		week_opt[iday].random(*day);
 	}
 	void Lesson::mutate_empty_day()
 	{
