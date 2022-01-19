@@ -78,6 +78,15 @@ namespace oct::ec::sche
 		*\brief Asegura que si la clase es de mas de una horas sean continuas
 		*/
 		void unique_class();//TODO: implementar
+
+		/**
+		*\brief Cuando los horaios no son continuos la interseccion no produce los resutados esperados, esta funcion esta pensada realizar una verificacion de esta situacion
+		*/
+		// un ejemplo seria el horario de un salon con una hora de receso difernete al la hora de una clase nommal,
+		// en esta caso al asignar un profeso que puede cubir desde el inico del dia hasta un horario cualquiere que sobrepase el recreo
+		// el horario del maestro despues de recreo no coincidira con el horario del salon despues del recreo al no condicerar en el horario
+		// del maestro este salto en el tiempo.
+		bool bound_schedule()const; //TODO:implemetar
 	private:
 
 
@@ -129,7 +138,7 @@ namespace oct::ec::sche
 		virtual void initial();
 
 		void select_times(Lesson&,const WeekHours&);
-		void random_complete_times(Lesson&,const WeekOptions&);
+		//void random_complete_times(Lesson&,const WeekOptions&);
 
 		//unsigned int counter()const;
 

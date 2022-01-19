@@ -571,13 +571,13 @@ void schedule_devel()
 	//std::cout << ">>>>>>>>>>>>>>Day6.\n";
 	std::list<Day> combsList;
 	day6.combns(combsList,2);
-	if(combsList.size() == 11)
+	if(combsList.size() == 8)
 	{
 		CU_ASSERT(true);
 	}
 	else
 	{
-		std::cout << "combsList.size() = " << combsList.size() << "\n";
+		std::cout << "combsList.size() 2 = " << combsList.size() << "\n";
 		CU_ASSERT(false);
 	}
 	//std::cout << "<<<<<<<<<<<<<<Day6.\n";
@@ -600,13 +600,13 @@ void schedule_devel()
 	}*/
 	//std::cout << "Step 1\n";
 	day6.combns(combsList,3);
-	if(combsList.size() == 18)
+	if(combsList.size() == 15)
 	{
 		CU_ASSERT(true);
 	}
 	else
 	{
-		std::cout << "combsList.size() = " << combsList.size() << "\n";
+		std::cout << "combsList.size() 3 = " << combsList.size() << "\n";
 		CU_ASSERT(false);
 	}
 	//std::cout << "Step 2\n";
@@ -641,6 +641,10 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}
 	oct::ec::sche::WeekHours week2 = teacher2->get_week();
+	
+	week2.print(std::cout);
+	std::cout << "\n";
+
 	if(week2[1].size() > 1)
 	{
 		oct::ec::sche::Day::const_iterator it_day_1 = oct::ec::sche::random(week2[1]);
@@ -691,9 +695,13 @@ void schedule_devel()
 		std::cout << "week_opt.size() = " << week_opt.size() << "\n";
 		CU_ASSERT(false);
 	}
+	WeekHours week2_select;
+	week_opt.random(week2_select);
+	//week2_select.print(std::cout);
+	//std::cout << "\n";
 
 	//este valor puede cambiar comforme mejore el algoritmo, esta a que por propositos de desarrollo
-	if(week_opt.count() == 447216)
+	if(week_opt.count() == 342732)
 	{
 		CU_ASSERT(true);
 	}
@@ -752,7 +760,7 @@ void schedule_devel()
 	std::cout << "\n";
 	//std::cout << "Interseccion \n";*/
 	//week3.print(std::cout);
-	if(week_opt2.count() == 210)
+	if(week_opt2.count() == 9)
 	{
 		CU_ASSERT(true);
 	}
@@ -819,50 +827,6 @@ void schedule_devel()
 	//day_selected.print_day(std::cout);
 	//std::cout << "\n";
 
-
-
-
-	/*Enviroment sche ("logs/schedule",DATA_DIR,"logs/schedule");
-	try
-	{
-		sche.initial();
-	}
-	catch(std::exception& ex)
-	{
-		std::cout << ex.what() << "\n";
-		CU_ASSERT(false);
-	}
-	if(sche.getInitPopulation() == sche.size())
-	{
-		CU_ASSERT(true);
-	}
-	else
-	{
-		std::cout << "sche.getInitPopulation() = " << sche.getInitPopulation() << "\n";
-		CU_ASSERT(false);
-	}
-	Enviroment::iterator it_sche = sche.begin();
-	const Single& single_shce = (const Single&)**it_sche;
-	if(single_shce.size() == data.groups.get_list().size())
-	{
-		CU_ASSERT(true);
-	}
-	else
-	{
-		std::cout << "single_shce.size() = " << single_shce.size() << "\n";
-		CU_ASSERT(false);
-	}
-	std::vector<const Lesson*> sche_teachers;
-	single_shce.search_teachers("Monica Perez Ortencia",sche_teachers);
-	if(sche_teachers.size() == 8)
-	{
-		CU_ASSERT(true);
-	}
-	else
-	{
-		std::cout << "sche_teachers.size() = " << sche_teachers.size()<< "\n";
-		CU_ASSERT(false);
-	}*/
 
 	oct::ec::sche::Time dt1[10];
 	dt1[0].read("Tue 05:00","%a %H:%M");
@@ -1024,6 +988,138 @@ void schedule_devel()
 	{
 		time.print(std::cout,"%c");		
 		std::cout << "\n";
+	}*/
+	IntervalTime time10;
+	time10.set_begin("Sat 08:00");
+	if(time10.begin.tm_hour == 8)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time10.begin.tm_hour = " << time10.begin.tm_hour << "\n";
+		CU_ASSERT(false);
+	}
+	if(time10.begin.tm_wday == 6)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time10.begin.tm_wday = " << time10.begin.tm_wday << "\n";
+		CU_ASSERT(false);
+	}
+	if(time10.begin.tm_mday == 10)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time10.begin.tm_mday = " << time10.begin.tm_mday << "\n";
+		CU_ASSERT(false);
+	}
+	time10.set_end("Sat 20:00");
+	if(time10.end.tm_hour == 20)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time10.end.tm_hour = " << time10.end.tm_hour << "\n";
+		CU_ASSERT(false);
+	}
+	oct::ec::sche::Day day10;
+	time9.granulate(data.config,day10);
+	day10.sort(data.config);
+	if(day10.size() == 16)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "Sat.size() = " << day10.size() << "\n";
+		CU_ASSERT(false);
+	}
+	
+	IntervalTime time11;
+	time11.set_begin("Wed 08:00");
+	if(time11.begin.tm_hour == 8)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time11.begin.tm_hour = " << time11.begin.tm_hour << "\n";
+		CU_ASSERT(false);
+	}
+	if(time11.begin.tm_wday == 3)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time11.begin.tm_wday = " << time11.begin.tm_wday << "\n";
+		CU_ASSERT(false);
+	}
+	if(time11.begin.tm_mday == 7)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time11.begin.tm_mday = " << time11.begin.tm_mday << "\n";
+		CU_ASSERT(false);
+	}
+	time11.set_end("Wed 20:00");
+	if(time11.end.tm_hour == 20)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "time11.end.tm_hour = " << time11.end.tm_hour << "\n";
+		CU_ASSERT(false);
+	}
+	oct::ec::sche::Day day11;
+	time11.granulate(data.config,day11);
+	day11.sort(data.config);
+	if(day11.size() == 16)
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "Sat.size() = " << day11.size() << "\n";
+		CU_ASSERT(false);
+	}
+		
+	/*Enviroment enviroment ("logs/schedule",DATA_DIR,"logs/schedule");
+	try
+	{
+		enviroment.initial();
+	}
+	catch(std::exception& ex)
+	{
+		std::cout << ex.what() << "\n";
+		CU_ASSERT(false);
+	}
+	if(enviroment.getInitPopulation() == enviroment.size())
+	{
+		CU_ASSERT(true);
+	}
+	else
+	{
+		std::cout << "sche.getInitPopulation() = " << enviroment.getInitPopulation() << "\n";
+		CU_ASSERT(false);
+	}
+	Single* schedule;
+	oct::ec::SaveIteration saveit("logs/schedule/test");
+	for(const oct::ec::Single* single : enviroment)
+	{
+		schedule = (Single*) single;
+		saveit.open(1);
+		schedule->save(saveit);
+		(*saveit.out) << "\n";
 	}*/
 }
 

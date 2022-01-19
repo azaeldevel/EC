@@ -239,7 +239,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el bloque
 		**/
-		void combns(std::list<Day>&, unsigned int hours, const Block& b,Day&)const;
+		void combns(std::list<Day>&, unsigned int hours, const Block& b)const;
 	private:
 		Blocks blocks;
 		const Configuration* config;

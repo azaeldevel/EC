@@ -53,9 +53,9 @@ namespace oct::ec::sche
 		WeekHours week_actual;
 		for(unsigned int i = 0; i < size() - 1; i++)//horaios
 		{
-			for(unsigned int j = 0; j < at(i).size(); j++)//dias de la semana
+			for(unsigned int j = 0; j < at(i).size() - 1; j++)//dias de la semana
 			{			
-				for(unsigned int k = i; k < size(); k++)//horaios
+				for(unsigned int k = i + 1; k < size(); k++)//horaios
 				{
 					for(unsigned int l = j + 1; l < at(k).size(); l++)//dias de la semana
 					{
