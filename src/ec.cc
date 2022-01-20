@@ -788,18 +788,18 @@ bool Enviroment::run()
 		selection();
 		if(logDirectoryFlag)
 		{
-		SaveSelections saveSelections(logDirectory);
-		saveSelections.open(actualIteration);
-		//std::cout << "\tEnviroment::run - while Step 4\n";
-		if(logDirectoryFlag)
-		{
-			for(Single* s : *this)
+			SaveSelections saveSelections(logDirectory);
+			saveSelections.open(actualIteration);
+			//std::cout << "\tEnviroment::run - while Step 4\n";
+			if(logDirectoryFlag)
 			{
-				s->save(saveSelections);
-				(*saveSelections.out) << "\n";
+				for(Single* s : *this)
+				{
+					s->save(saveSelections);
+					(*saveSelections.out) << "\n";
+				}
 			}
-		}
-		saveSelections.close();
+			saveSelections.close();
 		}
 		//std::cout << "\tEnviroment::run - while Step 5\n";
 		unsigned short removes = countBefore - size();
