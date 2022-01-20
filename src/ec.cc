@@ -409,7 +409,6 @@ void Enviroment::init()
 	newIteration = false;
 	fout = &std::cout;
 	savingDevice = NULL;
-	stopperMinSolutions(1);
 }
 Enviroment::Enviroment()
 {
