@@ -94,7 +94,8 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="tests-v0">
-				<Option output="EC" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/tests-v0" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs/Debug/" />
 				<Option type="1" />
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
