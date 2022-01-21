@@ -82,7 +82,7 @@ namespace oct::core
 
 namespace oct::ec::sche
 {
-	static const std::time_t FIRST_SUNDAY = 288000;
+	
 
 	class Enviroment;
 	struct Data;
@@ -93,6 +93,7 @@ namespace oct::ec::sche
 
 	class Time : public oct::core::Time
 	{
+	
 	public:
 		
 	public:
@@ -101,6 +102,9 @@ namespace oct::ec::sche
 		Time(const Time&);
 
 		void read(const std::string&,const std::string&);
+
+	private:
+		static const std::time_t FIRST_SUNDAY;
 	};
 
 	template<typename T> typename std::list<T>::const_iterator random(const std::list<T>& ls)

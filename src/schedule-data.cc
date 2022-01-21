@@ -388,10 +388,13 @@ namespace oct::core
 	}
 	void Time::add(std::time_t s)
 	{
-		std::time_t t_this = std::mktime(this);
+		//std::cout << "t_this = ?\n";
+		std::time_t t_this = std::mktime(this);		
+		//std::cout << "1 t_this = " << t_this << "\n";
 
 		t_this += s;
-		*this = *std::localtime(&t_this);
+		//std::cout << "2 t_this = " << t_this << "\n";
+		this->operator =(*std::localtime(&t_this));
 	}
 	void Time::rest(std::time_t s)
 	{
@@ -459,6 +462,8 @@ namespace oct::core
 namespace oct::ec::sche
 {
 
+	const std::time_t Time::FIRST_SUNDAY = 288000;
+
 	Time::Time() : core::Time(FIRST_SUNDAY)
 	{
 	}
@@ -475,7 +480,7 @@ namespace oct::ec::sche
 		core::Time::read(d,f);
 		
 		//TODO: el parse de resulta incorrecto, este solucion es temporal
-		//if(tm_mday == 4) tm_mday = tm_mday + tm_wday + 1;		
+		if(tm_mday == 4) tm_mday = tm_mday + tm_wday;		
 	}
 	
 	
