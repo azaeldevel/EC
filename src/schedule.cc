@@ -131,7 +131,7 @@ void Enviroment::init(const std::string& in_dir)
 	//PORTION = 1.0/real(CRITERION);
 	//schedule_max_hours = std::min((unsigned int)data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS/2), Single::WEEK_HOURS2) ;
 	//GAMMA = 1.0/real(SCHEDULE_MAX_HOURS * CRITERION);
-	
+	//epsilon = 1.0 / real(std::pow(data.groups.get_list().size() * data.groups.get_max_lessons() * Single::WEEK_HOURS,2) * CRITERION);
 }
 
 void Enviroment::initial()
@@ -197,25 +197,43 @@ void Enviroment::initial()
 					throw core::Exception(msg,__FILE__,__LINE__);
 				}
 				lessons[subject].data =&data;
-										
 				
-				WeekHours week(data.config);
+				//std::cout << "ID : " << sche->getID() << "\n";
+				WeekHours week;
 				WeekOptions week_opt;
 				//std::cout << "Step 1\n";
 				//std::cout << "lessons[subject].room->get_week() count : " << lessons[subject].room->get_week().count_hours() << "\n";
 				//std::cout << "lessons[subject].teacher->get_week() count : " << lessons[subject].teacher->get_week().count_hours() << "\n";
 				week.inters(lessons[subject].room->get_week(),lessons[subject].teacher->get_week());
+				
+				/*std::cout << "Teacher : ";
+				lessons[subject].teacher->get_week().print(std::cout);	
+				std::cout << "\n";	
+				std::cout << "Room : ";
+				lessons[subject].room->get_week().print(std::cout);	
+				std::cout << "\n";	
+				std::cout << "Inteseccion : ";
+				week.print(std::cout);	
+				std::cout << "\n";*/
+						
 				//std::cout << "Step 2\n";
-				check_codes code = week.check();
+				//check_codes code = week.check();
+				week.sort(data.config);
 				week.combns(*lessons[subject].subject,week_opt);
 				//std::cout << "Step 3\n";
 				
 				//std::cout << "Enviroment::initial step : 2\n";
 				//es un algoritmo que creara los horarios lo mas correctos posibles
 				select_times(lessons[subject],week);
+				if(lessons[subject].week.size() != WeekHours::WEEK_SIZE ) throw core::Exception("La semana no puede tener mas de 7 dias",__FILE__,__LINE__);
 				//std::cout << "Enviroment::initial step : 3\n";
-				//random_complete_times(lessons[subject],week_opt);
-				//std::cout << "Enviroment::initial step : 4\n";
+				//week_opt.random(lessons[subject].week);
+				lessons[subject].week.sort(data.config);
+				//std::cout << "ID : " << sche->getID() << ", week opt " << week_opt.count() << "\n";
+				//std::cout << "ID : " << sche->getID() << ", " << lessons[subject].week.count_hours() << "\n";
+				/*std::cout << "Result : ";
+				lessons[subject].week.print(std::cout);	
+				std::cout << "\n";*/
 				subject++;
 				it_subject++;
 				//std::cout << "Enviroment::initial step : 5 \n";
@@ -226,14 +244,17 @@ void Enviroment::initial()
 		sche->indexing();
 		push_back(sche);
 	}
-	
-	
+		
 	/*for(auto const& [key,value] : data.get_list_hbrs())
 	{
 		std::cout << "(" << key.room->get_name() << "," << key.subject->get_name() << "-->" << value.disp_hours << "\n";
 	}*/
-	
-	std::cout << "\n--------------------------------------------------------------\n";
+		
+	if(echolevel > 0 and fout != NULL)
+	{
+		(*fout) << "\n--------------------------------------------------------------\n";
+		fout->flush();
+	}
 }
 const Data& Enviroment::get_data()const
 {
@@ -302,9 +323,9 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week_dispon)
 	if(hours_per_day == 0) hours_per_day = 1;
 	//unsigned int hours_hat = lesson.subject->get_time() - (hours_per_day * disp);
 	
-	const core::Time* time;
+	const Time* time;
 	unsigned int day;
-	for(unsigned int i = 0; i < WeekHours::WEEK_SIZE; i++)
+	for(unsigned int i = 0; i < WeekHours::WEEK_SIZE - 1; i++)
 	{//primer dias dsiponible no vacieo
 		if(not week_dispon[i].empty()) 
 		{
@@ -313,10 +334,10 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week_dispon)
 		}
 	}
 	time = &*random(week_dispon[day]);//hora base seleccionada
-	for(unsigned int i = day; i < WeekHours::WEEK_SIZE; i++)
+	for(unsigned int i = day; i < WeekHours::WEEK_SIZE - 1; i++)
 	{
 		week_dispon.get_day(i,hours_per_day,*time,data.config,lesson.week[i]);
-		if(lesson.week[i].size() > lesson.subject->get_time()) break;
+		//if(lesson.week[i].size() >= lesson.subject->get_time()) break;
 	}
 	lesson.week.sort(lesson.data->config);
 }
