@@ -49,6 +49,9 @@ namespace oct::core
 		bool operator >=(const tm&)const;
 		bool operator >=(std::time_t)const;
 
+		operator std::time_t();
+		operator std::time_t()const;
+
 		int get_week_day()const;
 		double diff(const Time& dt)const;
 
@@ -95,16 +98,19 @@ namespace oct::ec::sche
 	{
 	
 	public:
+		static const std::time_t FIRST_SUNDAY;
 		
 	public:
 		Time();
 		Time(const std::tm&);
 		Time(const Time&);
 
+		const Time& operator =(const Time&);
+		std::time_t operator =(std::time_t);
+
 		void read(const std::string&,const std::string&);
 
 	private:
-		static const std::time_t FIRST_SUNDAY;
 	};
 
 	template<typename T> typename std::list<T>::const_iterator random(const std::list<T>& ls)
@@ -408,7 +414,7 @@ namespace oct::ec::sche
 		Configuration(const std::string& name);
 		unsigned int to_hours(double )const;
 		//unsigned int get_time_per_hour() const;
-		unsigned int get_seconds_per_hour() const;
+		std::time_t get_seconds_per_hour() const;
 		SchemaWeek get_schema_week()const;
 		Schema get_schema()const;
 		void set_schema(Schema);
@@ -439,7 +445,7 @@ namespace oct::ec::sche
 		unsigned int _id;
 	private:
 		SchemaWeek schema_week;
-		unsigned int seconds_per_hour;//en minutes por hora
+		std::time_t seconds_per_hour;//en segundos por hora
 		Schema schema;
 		FormatDT format;
 		real hours_sigma;

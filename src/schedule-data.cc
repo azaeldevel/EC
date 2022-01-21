@@ -61,75 +61,41 @@ namespace oct::core
 
 
 
-	Time::Time()
+	Time::Time() : tm({0})
 	{
-		//std::time_t t = 0;
-		//*this = *std::localtime(&t);
 	}
 	Time::Time(std::time_t t)
 	{
-		*this = *std::localtime(&t);
+		((tm&)*this) = (*std::localtime(&t));
 	}
 	Time::Time(const tm& t)
 	{
-		tm_sec = t.tm_sec;
-		tm_min = t.tm_min;
-		tm_hour = t.tm_hour;
-		tm_mday = t.tm_mday;
-		tm_mon = t.tm_mon;
-		tm_year = t.tm_year;
-		tm_wday = t.tm_wday;
-		tm_yday = t.tm_yday;
-		tm_isdst = t.tm_isdst;
+		((tm&)*this) = t;
 	}
 	Time::Time(const Time& t)
 	{
-		tm_sec = t.tm_sec;
-		tm_min = t.tm_min;
-		tm_hour = t.tm_hour;
-		tm_mday = t.tm_mday;
-		tm_mon = t.tm_mon;
-		tm_year = t.tm_year;
-		tm_wday = t.tm_wday;
-		tm_yday = t.tm_yday;
-		tm_isdst = t.tm_isdst;
+		((tm&)*this) = t;
 	}
 
 	const std::time_t* Time::operator =(const std::time_t* t)
 	{
-		*this = *std::localtime(t);
+		((tm&)*this) = (*std::localtime(t));
 		return t;
 	}
 	std::time_t Time::operator =(std::time_t t)
 	{
-		*this = *std::localtime(&t);
+		((tm&)*this) = (*std::localtime(&t));
 		return t;
 	}
 	const tm& Time::operator =(const tm& t)
 	{
-		tm_sec = t.tm_sec;
-		tm_min = t.tm_min;
-		tm_hour = t.tm_hour;
-		tm_mday = t.tm_mday;
-		tm_mon = t.tm_mon;
-		tm_year = t.tm_year;
-		tm_wday = t.tm_wday;
-		tm_yday = t.tm_yday;
-		tm_isdst = t.tm_isdst;
+		((tm&)*this) = t;
 
-		return t;
+		return *this;
 	}
 	const Time& Time::operator =(const Time& t)
 	{
-		tm_sec = t.tm_sec;
-		tm_min = t.tm_min;
-		tm_hour = t.tm_hour;
-		tm_mday = t.tm_mday;
-		tm_mon = t.tm_mon;
-		tm_year = t.tm_year;
-		tm_wday = t.tm_wday;
-		tm_yday = t.tm_yday;
-		tm_isdst = t.tm_isdst;
+		((tm&)*this) = t;
 
 		return t;
 	}
@@ -365,6 +331,15 @@ namespace oct::core
 
 		return t_this >= t_o;
 	}
+	Time::operator std::time_t()
+	{
+		return std::mktime(this);
+	}
+	Time::operator std::time_t()const
+	{
+		std::tm tm_this = *this;
+		return std::mktime(&tm_this);
+	}
 
 
 	int Time::get_week_day()const
@@ -388,20 +363,22 @@ namespace oct::core
 	}
 	void Time::add(std::time_t s)
 	{
-		//std::cout << "t_this = ?\n";
+		//print(std::cout,"%c");
+		//std::cout << "\n";
 		std::time_t t_this = std::mktime(this);		
+		if(t_this == -1) throw core::Exception("Fallo de mktime",__FILE__,__LINE__);
 		//std::cout << "1 t_this = " << t_this << "\n";
 
 		t_this += s;
 		//std::cout << "2 t_this = " << t_this << "\n";
-		this->operator =(*std::localtime(&t_this));
+		this->operator = (t_this);
 	}
 	void Time::rest(std::time_t s)
 	{
 		std::time_t t_this = std::mktime(this);
 
 		t_this -= s;
-		*this = *std::localtime(&t_this);
+		this->operator = (t_this);
 	}
 
 	void Time::read(const std::string& time, const std::string& format)
@@ -464,7 +441,7 @@ namespace oct::ec::sche
 
 	const std::time_t Time::FIRST_SUNDAY = 288000;
 
-	Time::Time() : core::Time(FIRST_SUNDAY)
+	Time::Time() : core::Time(0)
 	{
 	}
 	Time::Time(const std::tm& t) : core::Time(t)
@@ -475,12 +452,33 @@ namespace oct::ec::sche
 	}
 	
 	
+	const Time& Time::operator =(const Time& t)
+	{
+		((tm&)*this) = t;
+
+		return *this;
+	}
+	std::time_t Time::operator =(std::time_t t)
+	{
+		((tm&)*this) = *std::localtime(&t);
+		
+		return t;
+	}
+	
 	void Time::read(const std::string& d,const std::string& f)
 	{
 		core::Time::read(d,f);
 		
 		//TODO: el parse de resulta incorrecto, este solucion es temporal
-		if(tm_mday == 4) tm_mday = tm_mday + tm_wday;		
+		//if(tm_mday == 4 and tm_wday > 0) add(tm_wday * 24 * 60 * 60);
+		//operator =(0);
+		//operator =(FIRST_SUNDAY);
+		if(tm_wday < 0 or tm_wday > 6) throw core::Exception("Dia de la semana fuera de rango",__FILE__,__LINE__);
+		std::time_t newtime = FIRST_SUNDAY;
+		newtime += tm_wday * 24 * 60 * 60;
+		newtime += tm_hour * 60 * 60;
+		newtime += tm_min * 60;
+		operator =(newtime);
 	}
 	
 	
@@ -513,7 +511,7 @@ namespace oct::ec::sche
 		std::time_t t_first = std::mktime(&tm_first);
 		t_first += config.get_seconds_per_hour() * hours;
 
-		first = t_first;
+		first /= t_first;
 	}
 	void rest_hours(core::Time& first,unsigned int hours, const Configuration& config)
 	{
@@ -640,8 +638,8 @@ namespace oct::ec::sche
 				std::cout << "\n";*/	
 				
 				//Solo en depuracion
-				if((*it_day1).tm_mday <=3 or (*it_day1).tm_mday>10) throw core::Exception("Dia del mes fuera de rango",__FILE__,__LINE__);
-				if((*it_day2).tm_mday <=3 or (*it_day2).tm_mday>10) throw core::Exception("Dia del mes fuera de rango",__FILE__,__LINE__);
+				if((*it_day1).tm_mday < 4 or (*it_day1).tm_mday > 9) throw core::Exception("Dia del mes fuera de rango",__FILE__,__LINE__);
+				if((*it_day2).tm_mday < 4 or (*it_day2).tm_mday > 9) throw core::Exception("Dia del mes fuera de rango",__FILE__,__LINE__);
 				if((*it_day1).tm_wday>6) throw core::Exception("Dia del semana fuera de rango",__FILE__,__LINE__);
 				if((*it_day2).tm_wday>6) throw core::Exception("Dia del semana fuera de rango",__FILE__,__LINE__);
 				
@@ -1423,11 +1421,16 @@ namespace oct::ec::sche
 		
 		if(hours < 1) return;
 
+		//std::cout << "new time\n";
+		//begin.print(std::cout,"%c");
 		Time newtime = begin;
+		//std::cout << "\n";
 		out.push_back(newtime);
 		for(int i = 1; i < hours; i++)
 		{			
 			newtime.add(config.get_seconds_per_hour());
+			//newtime.print(std::cout,"%c");
+			//std::cout << "\n";
 			if(begin.tm_wday != newtime.tm_wday) 
 			{
 				std::string msg = "Todos los elementos deven tener el mismo dia de semana, '";
@@ -1494,7 +1497,7 @@ namespace oct::ec::sche
 
 	void Configuration::init()
 	{
-		schema_week = SchemaWeek::MS;
+		schema_week = SchemaWeek::MF;
 		seconds_per_hour = 45 * 60;
 		format = FormatDT::DAY_HOUR;
 		hours_sigma = 0.085;
@@ -1514,7 +1517,7 @@ namespace oct::ec::sche
 	{
 		return time_per_hour;
 	}*/
-	unsigned int Configuration::get_seconds_per_hour() const
+	std::time_t Configuration::get_seconds_per_hour() const
 	{
 		return seconds_per_hour;
 	}
