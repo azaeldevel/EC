@@ -38,18 +38,37 @@
 
 int main(int argc, const char* argv[])
 {
-	oct::core::Time time1;
-	time1.read("Tue 23:15","%a %H:%M");
-	time1.print(std::cout,"%c");
-	
+	std::time_t offtime = 0;
+	std::time_t timefull = 0;
+	oct::core::Time time1(0);
+	//time1.read("Tue 23:15","%a %H:%M");
+	time1.print(std::cout,"%c");	
 	std::cout << "\n";
 	
-	oct::ec::sche::Time time2;
-	time2.print(std::cout,"%c");
-	
-	
+	oct::core::Time time2(oct::ec::sche::Time::FIRST_SUNDAY);
+	time2.print(std::cout,"%c");	
 	std::cout << "\n";
 
+	offtime = 1 * 24 * 60 * 60;
+	oct::core::Time time3(oct::ec::sche::Time::FIRST_SUNDAY + offtime);
+	time3.print(std::cout,"%c");	
+	std::cout << "\n";
+	timefull = mktime(&time3);
+	if(timefull != oct::ec::sche::Time::FIRST_SUNDAY + offtime) std::cout << "La marca de tiempo no coincide\n";
+	
+	offtime = 2 * 24 * 60 * 60;
+	oct::core::Time time4(oct::ec::sche::Time::FIRST_SUNDAY + offtime);
+	time4.print(std::cout,"%c");	
+	std::cout << "\n";
+	timefull = mktime(&time4);
+	if(timefull != oct::ec::sche::Time::FIRST_SUNDAY + offtime) std::cout << "La marca de tiempo no coincide\n";
+	
+	offtime = 3 * 24 * 60 * 60;
+	oct::core::Time time5(oct::ec::sche::Time::FIRST_SUNDAY + offtime);
+	time5.print(std::cout,"%c");	
+	std::cout << "\n";
+	timefull = mktime(&time5);
+	if(timefull != oct::ec::sche::Time::FIRST_SUNDAY + offtime) std::cout << "La marca de tiempo no coincide\n";
 
 
 	return EXIT_SUCCESS ;
