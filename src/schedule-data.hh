@@ -82,13 +82,14 @@ namespace oct::core
 
 namespace oct::ec::sche
 {
-	static const std::time_t FIRST_SUNDAY = 259200;
+	static const std::time_t FIRST_SUNDAY = 288000;
 
 	class Enviroment;
 	struct Data;
 	class Configuration;
 	class Subject;
 	class WeekHours;
+	class DaysOptions;
 
 	class Time : public oct::core::Time
 	{
@@ -197,7 +198,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el horario actual
 		**/
-		void combns(std::list<Day>&, unsigned int hours)const;
+		void combns(DaysOptions&, unsigned int hours)const;
 
 		/**
 		*\brief Ordena y crea los bloques de horas
@@ -205,6 +206,8 @@ namespace oct::ec::sche
 		void sort(const Configuration&);
 
 		void add(const Block& );
+		
+		void add(const Day&);
 
 		void print_day(std::ostream&) const;
 		void print_blocks(std::ostream&) const;
@@ -239,7 +242,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Determina las combinaciones possibles para cubir la clase indicada con el bloque
 		**/
-		void combns(std::list<Day>&, unsigned int hours, const Block& b)const;
+		void combns(DaysOptions&, unsigned int hours, const Block& b)const;
 	private:
 		Blocks blocks;
 		const Configuration* config;
@@ -273,6 +276,8 @@ namespace oct::ec::sche
 		bool get_day(unsigned int day,unsigned int hours,const Time& at,const Configuration& ,Day& result)const;
 
 		void sort(const Configuration&);
+
+		unsigned int days_disp() const;
 	private:
 		//std::random_device rd;
 		const Configuration* config;

@@ -70,12 +70,12 @@ void time_devel()
 	{
 		times1[i].add(i*60*60);
 	}	
-	/*for(unsigned int i = 0; i < 10; i++)
+	for(unsigned int i = 0; i < 10; i++)
 	{
 		times1[i].print(std::cout,"%c");		
 		std::cout << "\n";
 	}
-	std::cout << "\n";*/
+	std::cout << "\n";
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		if(times1[i-1] < times1[i])

@@ -292,7 +292,7 @@ void schedule_devel()
 		std::cout << "day2.size() = " << day2.size() << "\n";
 		CU_ASSERT(false);
 	}
-	for(const oct::ec::sche::Time& dt : day2)
+	for(const Time& dt : day2)
 	{
 		//std::cout << std::put_time(&dt, "%a %H:%M") << "\n";
 		if(dt.tm_wday == 2)
@@ -302,6 +302,8 @@ void schedule_devel()
 		else
 		{
 			std::cout << "dt.tm_wday = " << dt.tm_wday << "\n";
+			dt.print(std::cout,"%c");
+			std::cout << "\n";
 			CU_ASSERT(false);
 		}
 	}
@@ -569,7 +571,7 @@ void schedule_devel()
 	}
 	
 	//std::cout << ">>>>>>>>>>>>>>Day6.\n";
-	std::list<Day> combsList;
+	DaysOptions combsList;
 	day6.combns(combsList,2);
 	if(combsList.size() == 8)
 	{
@@ -642,8 +644,8 @@ void schedule_devel()
 	}
 	oct::ec::sche::WeekHours week2 = teacher2->get_week();
 	
-	week2.print(std::cout);
-	std::cout << "\n";
+	/*week2.print(std::cout);
+	std::cout << "\n";*/
 
 	if(week2[1].size() > 1)
 	{
@@ -760,7 +762,7 @@ void schedule_devel()
 	std::cout << "\n";
 	//std::cout << "Interseccion \n";*/
 	//week3.print(std::cout);
-	if(week_opt2.count() == 9)
+	if(week_opt2.count() == 342732)
 	{
 		CU_ASSERT(true);
 	}

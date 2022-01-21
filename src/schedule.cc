@@ -131,7 +131,7 @@ void Enviroment::init(const std::string& in_dir)
 	//PORTION = 1.0/real(CRITERION);
 	//schedule_max_hours = std::min((unsigned int)data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS/2), Single::WEEK_HOURS2) ;
 	//GAMMA = 1.0/real(SCHEDULE_MAX_HOURS * CRITERION);
-	
+	//epsilon = 1.0 / real(std::pow(data.groups.get_list().size() * data.groups.get_max_lessons() * Single::WEEK_HOURS,2) * CRITERION);
 }
 
 void Enviroment::initial()
@@ -225,6 +225,7 @@ void Enviroment::initial()
 				//std::cout << "Enviroment::initial step : 2\n";
 				//es un algoritmo que creara los horarios lo mas correctos posibles
 				select_times(lessons[subject],week);
+				if(lessons[subject].week.size() != WeekHours::WEEK_SIZE ) throw core::Exception("La semana no puede tener mas de 7 dias",__FILE__,__LINE__);
 				//std::cout << "Enviroment::initial step : 3\n";
 				//week_opt.random(lessons[subject].week);
 				lessons[subject].week.sort(data.config);
@@ -324,7 +325,7 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week_dispon)
 	
 	const Time* time;
 	unsigned int day;
-	for(unsigned int i = 0; i < WeekHours::WEEK_SIZE; i++)
+	for(unsigned int i = 0; i < WeekHours::WEEK_SIZE - 1; i++)
 	{//primer dias dsiponible no vacieo
 		if(not week_dispon[i].empty()) 
 		{
@@ -333,7 +334,7 @@ void Enviroment::select_times(Lesson& lesson,const WeekHours& week_dispon)
 		}
 	}
 	time = &*random(week_dispon[day]);//hora base seleccionada
-	for(unsigned int i = day; i < WeekHours::WEEK_SIZE; i++)
+	for(unsigned int i = day; i < WeekHours::WEEK_SIZE - 1; i++)
 	{
 		week_dispon.get_day(i,hours_per_day,*time,data.config,lesson.week[i]);
 		//if(lesson.week[i].size() >= lesson.subject->get_time()) break;
