@@ -119,8 +119,9 @@ struct Save
 	std::ofstream* operator =(std::ofstream*);
 
 	//virtual void save(const Enviroment&);
-	
+
 	std::ofstream* out;
+    bool new_leader;
 };
 
 struct SaveCollection : public Save
@@ -285,7 +286,7 @@ public:
 	//const std::string getLogSubDirectory()const;
 	Iteration getIterationActual()const;
 	const std::string& getLogDirectory()const;
-	
+
 	/**
 	*\brief Devuelve el siguiento ID para un nuevo objeto Single
 	*/
@@ -358,13 +359,13 @@ public:
 	virtual void free();
 
 public:
-	
+
 	//
 	oct::core::Shell shell;
-	
-	
+
+
 private:
-	
+
 	Single* getRandomSingle();
 	Single* getRandomSingleTop();
 	Single* getRandomSingleAny();

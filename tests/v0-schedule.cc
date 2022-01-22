@@ -53,7 +53,7 @@ void schedule_devel()
 	}
 	if(data.rooms.get_list().size() == 8)
 	{
-		
+
 		CU_ASSERT(true);
 	}
 	else
@@ -242,7 +242,7 @@ void schedule_devel()
 		if((*it).tm_hour == i + 8)
 		{
 			CU_ASSERT(true);
-		} 
+		}
 		else
 		{
 			std::cout << "day[i].tm_hour = " << i + 8 << "\n";
@@ -309,7 +309,7 @@ void schedule_devel()
 	}
 
 	//std::cout << "Step 3\n";
-	
+
 	//teacher1->print(std::cout);
 	//subject1->print(std::cout);
 	//room1->print(std::cout);
@@ -467,7 +467,7 @@ void schedule_devel()
 			std::cout << "\n";
 		}
 	}*/
-	
+
 	if(day6.get_blocks().size() == 3) //12 horas de clase, 9 hora de tiempo
 	{
 		CU_ASSERT(true);
@@ -569,7 +569,7 @@ void schedule_devel()
 		std::cout << "Contenido de bloques es " << day6_count << ", pero el dia contine : " << day6.size() << "\n";
 		CU_ASSERT(false);
 	}
-	
+
 	//std::cout << ">>>>>>>>>>>>>>Day6.\n";
 	DaysOptions combsList;
 	day6.combns(combsList,2);
@@ -643,7 +643,7 @@ void schedule_devel()
 		CU_ASSERT(false);
 	}
 	oct::ec::sche::WeekHours week2 = teacher2->get_week();
-	
+
 	/*week2.print(std::cout);
 	std::cout << "\n";*/
 
@@ -683,10 +683,10 @@ void schedule_devel()
 	//week2.print(std::cout);
 	//std::list<oct::ec::sche::WeekHours> weeks_combs;
 	oct::ec::sche::WeekOptions week_opt;
-	
+
 	//std::cout << "Step 3\n";
 	week2.sort(data.config);
-	week2.combns(*subject1,week_opt);	
+	week2.combns(*subject1,week_opt);
 	//std::cout << "Step 4\n";
 	if(week_opt.size() == 7)
 	{
@@ -789,7 +789,7 @@ void schedule_devel()
 	//WeekHours week3;
 	//week_opt.random(week3);
 	//week3.print(std::cout);
-	
+
 	Day day_base;
 	oct::ec::sche::Time time_base;
 	for(const Day& day_op : week3)
@@ -855,7 +855,7 @@ void schedule_devel()
 		}
 	}
 
-	oct::ec::sche::Time dt2[10];	
+	oct::ec::sche::Time dt2[10];
 	dt2[0].read("Tue 06:35","%a %H:%M");
 	dt2[1].read("Tue 06:35","%a %H:%M");
 	dt2[2].read("Tue 06:35","%a %H:%M");
@@ -894,9 +894,9 @@ void schedule_devel()
 		std::cout << "dt2[i].tm_hour = " << dt2[1].tm_hour << ", dt2[i].tm_min ="  << dt2[1].tm_min << "\n";
 		CU_ASSERT(false);
 	}
-	
-	
-	
+
+
+
 	bool ret_dt2;
 	for(unsigned int i = 1; i < 10; i++)
 	{
@@ -988,7 +988,7 @@ void schedule_devel()
 	}
 	/*for(const Time time : day9)
 	{
-		time.print(std::cout,"%c");		
+		time.print(std::cout,"%c");
 		std::cout << "\n";
 	}*/
 	IntervalTime time10;
@@ -1042,7 +1042,7 @@ void schedule_devel()
 		std::cout << "Sat.size() = " << day10.size() << "\n";
 		CU_ASSERT(false);
 	}
-	
+
 	IntervalTime time11;
 	time11.set_begin("Wed 08:00");
 	if(time11.begin.tm_hour == 8)
@@ -1094,7 +1094,7 @@ void schedule_devel()
 		std::cout << "Sat.size() = " << day11.size() << "\n";
 		CU_ASSERT(false);
 	}
-		
+
 	/*Enviroment enviroment ("logs/schedule",DATA_DIR,"logs/schedule");
 	try
 	{

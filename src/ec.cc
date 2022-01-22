@@ -193,6 +193,7 @@ void Junction::randFill(TypeJuntion t)
 	Save::Save()
 	{
 		out = NULL;
+		new_leader = false;
 	}
 	Save::Save(std::ofstream& o)
 	{
@@ -674,6 +675,7 @@ bool Enviroment::run()
 		}
 		leaderPrev = front();
 		sort(comparer);
+		leader = front();
 
 		media = 0.0;
 		sigma = 0.0;
@@ -699,10 +701,11 @@ bool Enviroment::run()
 		sigma /= real(size());
 
 		//std::cout << "\tEnviroment::run - while Step 3\n";
-		if(logDirectoryFlag or leaderPrev != leader)
+		if(logDirectoryFlag)
 		{
 			SaveIteration saveit(logDirectory);
 			saveit.open(actualIteration);
+			if(leaderPrev != leader) saveit.new_leader = true;
 			for(ec::Single* s : *this)
 			{
 				s->save(saveit);
@@ -815,7 +818,6 @@ bool Enviroment::run()
 
 
 		//std::cout << "\tStep C10\n";
-		ec::Single* leader = *begin();
 		if(echolevel > 1 and fout != NULL)
 		{
 			std::cout <<std::setprecision(20)<< "\tLider : " << leader->getFitness() << "\n";
