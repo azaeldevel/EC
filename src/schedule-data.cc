@@ -973,7 +973,7 @@ namespace oct::ec::sche
 
 		return NULL;
 	}
-	void Day::get_hours_around(const Time& hour, unsigned int count,Day::Block& block)const
+	/*void Day::get_hours_around(const Time& hour, unsigned int count,Day::Block& block)const
 	{
 		if(count == 0) return;
 		else if(count == 1)
@@ -988,7 +988,7 @@ namespace oct::ec::sche
 		{
 
 		}
-	}
+	}*/
 	void Day::get_hours_around(const Time& hour,Day::Block& block)const
 	{
 		const_iterator it = std::find(begin(),end(),hour);
@@ -1063,8 +1063,7 @@ namespace oct::ec::sche
 		unsigned int totals = 0;
 		unsigned int actual_combs;
 		std::list<WeekHours>::iterator it_last;
-		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE
-		; day_actual++)
+		for(unsigned int day_actual = 0; day_actual < WeekHours::WEEK_SIZE; day_actual++)
 		{
 			if(at(day_actual).size() == 0 ) continue;//si no hay elementosa en elk dia actual omitir
 
@@ -1340,12 +1339,14 @@ namespace oct::ec::sche
 		if(days_disp() == 0) return NULL;
 
 		const Day* day = NULL;
+		unsigned int count = 0;
 		std::uniform_int_distribution<> distrib(0, 6);
 		do
 		{
 			day = &at(distrib(gen));
+			count++;
 		}
-		while(day->size() > 0);
+		while(day->size() > 0 and count < 14);
 
 		return day;
 	}

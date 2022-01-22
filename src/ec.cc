@@ -216,9 +216,9 @@ void Junction::randFill(TypeJuntion t)
 		out = o;
 		return o;
 	}
-	
-	
-	
+
+
+
 	SaveCollection::SaveCollection(const std::string& dir) : directory(dir)
 	{
 	}
@@ -226,14 +226,14 @@ void Junction::randFill(TypeJuntion t)
 	{
 		if(out) close();
 	}
-	
+
 	void SaveCollection::open(const std::string& filename)
 	{
 		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
-		
-		std::string strfn = directory + "/" + filename;		
+
+		std::string strfn = directory + "/" + filename;
 		out = new std::ofstream(strfn);
-		if(not out->is_open()) 
+		if(not out->is_open())
 		{
 			std::string msg = "Fallo apertura de archivo '";
 			msg = strfn + "'";
@@ -250,20 +250,20 @@ void Junction::randFill(TypeJuntion t)
 			out = NULL;
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 
 	SaveCollectionByIteration::SaveCollectionByIteration(const std::string& dir,const std::string& p) : SaveCollection(dir),prefix(p)
 	{
 	}
-	
+
 	void SaveCollectionByIteration::open(Iteration it)
 	{
 		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
-		
-		std::string strfn = prefix + "-" + std::to_string(it) + ".csv";		
+
+		std::string strfn = prefix + "-" + std::to_string(it) + ".csv";
 		SaveCollection::open(strfn);
 	}
 
@@ -284,15 +284,15 @@ void Junction::randFill(TypeJuntion t)
 	SaveChilds::SaveChilds(const std::string& dir) : SaveCollectionByIteration(dir,"childs")
 	{
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	SaveSelections::SaveSelections(const std::string& dir) : SaveCollectionByIteration(dir,"selections")
 	{
 	}
-	
+
 
 
 
@@ -302,8 +302,8 @@ void Junction::randFill(TypeJuntion t)
 	SaveSolutions::SaveSolutions(const std::string& dir) : SaveCollectionByIteration(dir,"solutions")
 	{
 	}
-	
-	
+
+
 
 
 
@@ -638,13 +638,14 @@ bool Enviroment::run()
 	//std::mt19937 gen(rd());
 	//Iteration maxRepeat = 10 + minSolutions;
 	//bool triggerRepeatEnable = true;
-	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;	
-	//double triggerJam2 = 1.0e-20;	
+	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;
+	//double triggerJam2 = 1.0e-20;
 	std::bernoulli_distribution mutation_distr(mutableProb);
-	
+	const ec::Single *leaderPrev, *leader;
+	real fitness;
 	if(echolevel > 0 and fout != NULL) (*fout) << "\n";
-	
-	if(size() < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);	
+
+	if(size() < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
 	if(maxProgenitor  < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
 	while(true)
 	{
@@ -665,21 +666,22 @@ bool Enviroment::run()
 			else (*fout) << "Iteracion : " << actualIteration << "\n";
 		}
 		//std::cout << "\tEnviroment::run - while Step 1\n";
-		
+
 		//std::cout << "\tEnviroment::run - while Step 2\n";
 		if(not comparer)
 		{
 			throw oct::core::Exception("No se a asignado el creterio de coparacion.",__FILE__,__LINE__);
 		}
+		leaderPrev = front();
 		sort(comparer);
-		
+
 		media = 0.0;
 		sigma = 0.0;
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Adaptabilidad : " << s->getFitness() << "\n";
-			real fitness = s->getFitness();
-			if(fitness > 1 or fitness < 0) 
+			fitness = s->getFitness();
+			if(fitness > 1 or fitness < 0)
 			{
 				std::string msg = "El fitness de cada individio deve estar en el intervalo [0,1], se encontro ";
 				msg += std::to_string(fitness);
@@ -693,11 +695,11 @@ bool Enviroment::run()
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
 			sigma += pow(s->getFitness() - media,2);
-		}		
+		}
 		sigma /= real(size());
-		
+
 		//std::cout << "\tEnviroment::run - while Step 3\n";
-		if(logDirectoryFlag)
+		if(logDirectoryFlag or leaderPrev != leader)
 		{
 			SaveIteration saveit(logDirectory);
 			saveit.open(actualIteration);
@@ -715,7 +717,7 @@ bool Enviroment::run()
 			{
 				auto t = std::time(nullptr);
 				auto tm = *std::localtime(&t);
-				
+
 				history  << std::setprecision(echoPrecision);
 				history  << std::put_time(&tm,"%d/%m/%Y %H:%M:%S");
 				history  << ",";
@@ -733,7 +735,7 @@ bool Enviroment::run()
 				history  << ",";
 				history  << mutableProb;
 				history  << "\n";
-				
+
 				history.flush();
 			}
 		}
@@ -774,16 +776,16 @@ bool Enviroment::run()
 		else if(solutions.size() >= minSolutions and stopMinSolutions)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			
+
 			return true;
 		}
 		else if(solutions.size() == maxPopulation)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			
+
 			return true;
 		}
-		
+
 		ec::ID countBefore = size();
 		selection();
 		if(logDirectoryFlag)
@@ -811,7 +813,7 @@ bool Enviroment::run()
 		}
 		//std::cout << "\tEnviroment::run - while Step 6\n";
 
-		
+
 		//std::cout << "\tStep C10\n";
 		ec::Single* leader = *begin();
 		if(echolevel > 1 and fout != NULL)
@@ -822,16 +824,16 @@ bool Enviroment::run()
 			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
 			//(*fout) << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "\tAtasco(Repeticiones)\n" : "\tNo Atasco(Repeticiones)\n");
 		}
-		
+
 		//std::cout << "\tEnviroment::run - while Step 7\n";
 
 
 		//std::cout << "\tEnviroment::run - while Step 8\n";
-		
+
 		//std::cout << "\tEnviroment::run - while Step 9\n";
-		juncting();				
+		juncting();
 		SaveChilds savechilds(logDirectory);
-		//std::cout << "\tEnviroment::run - while Step 10\n";	
+		//std::cout << "\tEnviroment::run - while Step 10\n";
 		if(logDirectoryFlag) savechilds.open(actualIteration);
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
@@ -839,7 +841,7 @@ bool Enviroment::run()
 			//if(triggerRepeatEnable and triggerRepeatMin > sigma) s->mutate();
 			s->eval();
 			if(logDirectoryFlag)
-			{				
+			{
 				s->save(savechilds);
 				(*savechilds.out) << "\n";
 			}
@@ -922,7 +924,7 @@ ec::Single* Enviroment::getProxSolution()
 	return *begin();
 }
 
-Single* Enviroment::getRandomSingle() 
+Single* Enviroment::getRandomSingle()
 {
 	//std::mt19937 gen(rd());
 	std::bernoulli_distribution distrib(0.8);
@@ -938,18 +940,18 @@ Single* Enviroment::getRandomSingle()
 Single* Enviroment::getRandomSingleAny()
 {
 	const_iterator it = begin();
-	
+
     std::uniform_int_distribution<int> distrib(0, size() - 1);
 	std::advance(it,distrib(gen));
-	
+
 	return *it;
 }
 Single* Enviroment::getRandomSingleFirst()
-{	
+{
 	return front();
 }
 Single* Enviroment::getRandomSingleSecond()
-{	
+{
 	const_iterator it = begin();
 	it++;
 	return *it;
@@ -957,13 +959,13 @@ Single* Enviroment::getRandomSingleSecond()
 Single* Enviroment::getRandomSingleTop()
 {
 	const_iterator it = begin();
-	
+
     std::lognormal_distribution<double> distrib(0.0,1.0);
-    unsigned int offset;    
+    unsigned int offset;
     do
     {
     	offset = std::abs(distrib(gen));
-    }   
+    }
     while(offset >= size());
 	std::advance(it,offset);
 	return *it;
@@ -980,10 +982,10 @@ void Enviroment::juncting()
 		single1 = getRandomSingleFirst();
 		do
 		{
-			single2 = getRandomSingleSecond();	
+			single2 = getRandomSingleSecond();
 		}
 		while(single1 == single2);
-		
+
 		single1->juncting(newschils,single2);
 	}
 	while(newschils.size() + size() <= maxPopulation);
