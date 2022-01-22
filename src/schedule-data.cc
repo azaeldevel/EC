@@ -61,7 +61,7 @@ namespace oct::core
 
 
 
-	Time::Time() : tm({0})
+	Time::Time() // : tm({0})
 	{
 	}
 	Time::Time(std::time_t t)
@@ -363,10 +363,11 @@ namespace oct::core
 	}
 	void Time::add(std::time_t s)
 	{
-		//print(std::cout,"%c");
-		//std::cout << "\n";
-		std::time_t t_this = std::mktime(this);		
-		if(t_this == -1) throw core::Exception("Fallo de mktime",__FILE__,__LINE__);
+		/*print(std::cout,"%c");
+        std::cout << ", " << this;
+		std::cout << "\n";*/
+		std::time_t t_this = std::mktime(this);
+		if(t_this == (std::time_t)-1) throw core::Exception("Fallo de mktime",__FILE__,__LINE__);
 		//std::cout << "1 t_this = " << t_this << "\n";
 
 		t_this += s;
@@ -441,7 +442,7 @@ namespace oct::ec::sche
 
 	const std::time_t Time::FIRST_SUNDAY = 288000;
 
-	Time::Time() : core::Time(0)
+	Time::Time() //: core::Time(0)
 	{
 	}
 	Time::Time(const std::tm& t) : core::Time(t)
@@ -450,8 +451,8 @@ namespace oct::ec::sche
 	Time::Time(const Time& t) : core::Time(t)
 	{
 	}
-	
-	
+
+
 	const Time& Time::operator =(const Time& t)
 	{
 		((tm&)*this) = t;
@@ -461,18 +462,15 @@ namespace oct::ec::sche
 	std::time_t Time::operator =(std::time_t t)
 	{
 		((tm&)*this) = *std::localtime(&t);
-		
+
 		return t;
 	}
-	
+
 	void Time::read(const std::string& d,const std::string& f)
 	{
 		core::Time::read(d,f);
-		
+
 		//TODO: el parse de resulta incorrecto, este solucion es temporal
-		//if(tm_mday == 4 and tm_wday > 0) add(tm_wday * 24 * 60 * 60);
-		//operator =(0);
-		//operator =(FIRST_SUNDAY);
 		if(tm_wday < 0 or tm_wday > 6) throw core::Exception("Dia de la semana fuera de rango",__FILE__,__LINE__);
 		std::time_t newtime = FIRST_SUNDAY;
 		newtime += tm_wday * 24 * 60 * 60;
@@ -480,10 +478,10 @@ namespace oct::ec::sche
 		newtime += tm_min * 60;
 		operator =(newtime);
 	}
-	
-	
-	
-	
+
+
+
+
 
 	bool is_post_hour(const Time& first,const Time& second, const Configuration& config)
 	{
@@ -542,7 +540,7 @@ namespace oct::ec::sche
 	{
 		//std::cout << "Day::Day(const Day& d) - Step 1.0\n";
 		if(size() > 24) throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
-		
+
 		for(const Time& dt : d)
 		{
 			push_back(dt);
@@ -635,14 +633,14 @@ namespace oct::ec::sche
 				/*(*it_day1).print(std::cout,"%a %H:%M");
 				std::cout << " == ";
 				(*it_day2).print(std::cout,"%a %H:%M");
-				std::cout << "\n";*/	
-				
+				std::cout << "\n";*/
+
 				//Solo en depuracion
 				if((*it_day1).tm_mday < 4 or (*it_day1).tm_mday > 9) throw core::Exception("Dia del mes fuera de rango",__FILE__,__LINE__);
 				if((*it_day2).tm_mday < 4 or (*it_day2).tm_mday > 9) throw core::Exception("Dia del mes fuera de rango",__FILE__,__LINE__);
 				if((*it_day1).tm_wday>6) throw core::Exception("Dia del semana fuera de rango",__FILE__,__LINE__);
 				if((*it_day2).tm_wday>6) throw core::Exception("Dia del semana fuera de rango",__FILE__,__LINE__);
-				
+
 				if((*it_day1) == (*it_day2))
 				{
 					push_back(*it_day1);
@@ -662,14 +660,14 @@ namespace oct::ec::sche
 			Day::const_iterator it_day2 = std::find(day2.begin(),day2.end(),*it_day1);
 			for(;it_day1 != day1.end() and it_day2 != day2.end(); it_day1++,it_day2++)
 			{
-				/**/	
-				
-				//Solo en depuracion				
+				/**/
+
+				//Solo en depuracion
 				if((*it_day1).tm_mday <=3 or (*it_day1).tm_mday>10) throw core::Exception("Dia del mes fuera de rango",__FILE__,__LINE__);
-				if((*it_day2).tm_mday <=3 or (*it_day2).tm_mday>10) throw core::Exception("Dia del mes fuera de rango",__FILE__,__LINE__);				
+				if((*it_day2).tm_mday <=3 or (*it_day2).tm_mday>10) throw core::Exception("Dia del mes fuera de rango",__FILE__,__LINE__);
 				if((*it_day1).tm_wday>6) throw core::Exception("Dia del semana fuera de rango",__FILE__,__LINE__);
 				if((*it_day2).tm_wday>6) throw core::Exception("Dia del semana fuera de rango",__FILE__,__LINE__);
-				
+
 				if((*it_day1) == (*it_day2))
 				{
 
@@ -743,7 +741,7 @@ namespace oct::ec::sche
 	void Day::add(const Block& b)
 	{
 		if(b.size() == 0) throw core::Exception("El bloque esta vacio",__FILE__,__LINE__);
-		
+
 		int tm_day = b.front()->tm_wday;
 		for(const Time* dt : b)
 		{
@@ -763,13 +761,13 @@ namespace oct::ec::sche
 		if(hours < 1) throw core::Exception("No esta permitido bloques de 0",__FILE__,__LINE__);
 		if(size() > 24)  throw core::Exception("El dia tiene un maximo de 24 horas",__FILE__,__LINE__);
 		if(size() == 0) throw core::Exception("El dia esta vacio",__FILE__,__LINE__);
-		
+
 		int tm_day = front().tm_wday;
 		for(const Time& time : *this)
 		{
 			if(time.tm_wday != tm_day)  throw core::Exception("Los dias de la semana deve ser igaules",__FILE__,__LINE__);
 		}
-		
+
 		//std::cout << "Day::combns - Step 1\n";
 		unsigned int countHB = 0;
 		for(const Block& b : blocks)
@@ -801,7 +799,7 @@ namespace oct::ec::sche
 				continue;//estas horas ya fueron repartidas
 			}
 			//bloques equivalentes al numero de horas pedidos
-			
+
 			//days.push_back(d);
 			//Day& day = days.back();
 
@@ -812,7 +810,7 @@ namespace oct::ec::sche
 			{
 				//std::cout << "mult > 0\n";
 				block_mult.clear();
-				it_hour = block.begin();				
+				it_hour = block.begin();
 				for(unsigned int i = 0; i < mult; i++)
 				{
 					//std::cout << "\t"<< i <<"\n";
@@ -855,7 +853,7 @@ namespace oct::ec::sche
 
 		if(free == 0) return;
 		if(block.size() < 3) return;
-		
+
 		Block block_mult;
 		Day d;
 		Day* day;
@@ -865,7 +863,7 @@ namespace oct::ec::sche
 			std::advance(it_hour,k);
 			block_mult.clear();
 			for(unsigned int i = 0; i < mult; i++)
-			{				
+			{
 				for(unsigned int j = 0; j < hours; j++)
 				{
 					if(it_hour == block.end()) break;
@@ -901,7 +899,7 @@ namespace oct::ec::sche
 				out << " ";
 			}
 			out << "\n";
-		} 
+		}
 	}
 	void Day::print_intevals_csv(std::ostream& out, const Configuration& config) const
 	{
@@ -911,7 +909,7 @@ namespace oct::ec::sche
 		{
 			if((*it).size() == 0)
 			{
-				
+
 			}
 			else if((*it).size() == 1)
 			{
@@ -1053,10 +1051,10 @@ namespace oct::ec::sche
 		{
 			//std::cout << "day_actual = " << day_actual << "\n";
 			if(at(day_actual).empty()) continue;//si no hay elementos a en el dia actual omitir
-			
+
 			it = sche::random(at(day_actual));//no esta vacio
 			//std::cout << "day_actual asignado\n";
-			
+
 			week[day_actual] = *it;
 		}
 	}
@@ -1089,7 +1087,7 @@ namespace oct::ec::sche
 			}
 		}
 	}
-	
+
 	unsigned int WeekOptions::days_disp() const
 	{
 		unsigned int count = 0;
@@ -1208,8 +1206,8 @@ namespace oct::ec::sche
 		if(size() != WeekHours::WEEK_SIZE ) throw core::Exception("La semana no puede tener mas de 7 dias",__FILE__,__LINE__);
 		if(comp1.size() != WeekHours::WEEK_SIZE ) throw core::Exception("La semana no puede tener mas de 7 dias",__FILE__,__LINE__);
 		if(comp2.size() != WeekHours::WEEK_SIZE ) throw core::Exception("La semana no puede tener mas de 7 dias",__FILE__,__LINE__);
-		
-		
+
+
 		for(unsigned int i = 0; i < size(); i++)
 		{
 			at(i).inters(comp1[i],comp2[i]);
@@ -1418,7 +1416,7 @@ namespace oct::ec::sche
 
 		int hours = config.to_hours(begin.diff(end));
 		//std::cout << "hours = " << hours<< "\n";
-		
+
 		if(hours < 1) return;
 
 		//std::cout << "new time\n";
@@ -1427,11 +1425,11 @@ namespace oct::ec::sche
 		//std::cout << "\n";
 		out.push_back(newtime);
 		for(int i = 1; i < hours; i++)
-		{			
+		{
 			newtime.add(config.get_seconds_per_hour());
 			//newtime.print(std::cout,"%c");
 			//std::cout << "\n";
-			if(begin.tm_wday != newtime.tm_wday) 
+			if(begin.tm_wday != newtime.tm_wday)
 			{
 				std::string msg = "Todos los elementos deven tener el mismo dia de semana, '";
 				msg = msg + std::to_string(begin.tm_wday) + "' con '" + std::to_string(newtime.tm_wday) + "'";

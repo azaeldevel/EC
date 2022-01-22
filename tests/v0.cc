@@ -19,25 +19,17 @@ int schedule_clean(void);
 
 void time_devel()
 {
-	
+
 	oct::ec::sche::Time times1[10];
-	times1[0].read("Tue 05:00","%a %H:%M");
-	times1[1].read("Tue 05:00","%a %H:%M");
-	times1[2].read("Tue 05:00","%a %H:%M");
-	times1[3].read("Tue 05:00","%a %H:%M");
-	times1[4].read("Tue 05:00","%a %H:%M");
-	times1[5].read("Tue 05:00","%a %H:%M");
-	times1[6].read("Tue 05:00","%a %H:%M");
-	times1[7].read("Tue 05:00","%a %H:%M");
-	times1[8].read("Tue 05:00","%a %H:%M");
-	times1[9].read("Tue 05:00","%a %H:%M");
 	for(unsigned int i = 0; i < 10; i++)
 	{
-		times1[i].print(std::cout,"%c");
-		std::cout << ", " << (std::time_t)times1[i];			
-		std::cout << "\n";
+	    times1[i].read("Tue 05:00","%a %H:%M");
+		/*times1[i].print(std::cout,"%c");
+		std::cout << ", " << (std::time_t)times1[i];
+		std::cout << ", " << &times1[i];
+		std::cout << "\n";*/
 	}
-	std::cout << "\n";
+	//std::cout << "\n";
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		if(times1[0] == times1[i])
@@ -48,7 +40,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times1[i].tm_wday = 2)
+		if(times1[i].tm_wday == 2)
 		{
 			CU_ASSERT(true);
 		}
@@ -56,7 +48,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times1[i].tm_mday = 6)
+		if(times1[i].tm_mday == 6)
 		{
 			CU_ASSERT(true);
 		}
@@ -64,7 +56,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times1[i].tm_year = 1970)
+		if(times1[i].tm_year == 70)
 		{
 			CU_ASSERT(true);
 		}
@@ -94,15 +86,15 @@ void time_devel()
 	}
 	for(unsigned int i = 1; i < 10; i++)
 	{
-		times1[i].add(i*45*60);
-	}	
-	for(unsigned int i = 0; i < 10; i++)
+		times1[i].add(i * 45 * 60);
+	}
+	/*for(unsigned int i = 0; i < 10; i++)
 	{
 		times1[i].print(std::cout,"%c");
-		std::cout << ", " << (std::time_t)times1[i];			
+		std::cout << ", " << (std::time_t)times1[i];
 		std::cout << "\n";
 	}
-	std::cout << "\n";
+	std::cout << "\n";*/
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		if(times1[i-1] < times1[i])
@@ -116,7 +108,7 @@ void time_devel()
 			times1[i].print(std::cout,"%a %H:%M");
 			CU_ASSERT(false);
 		}
-		if(times1[i].tm_wday = 2)
+		if(times1[i].tm_wday == 2)
 		{
 			CU_ASSERT(true);
 		}
@@ -124,7 +116,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times1[i].tm_mday = 6)
+		if(times1[i].tm_mday == 6)
 		{
 			CU_ASSERT(true);
 		}
@@ -132,7 +124,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times1[i].tm_year = 1970)
+		if(times1[i].tm_year == 70)
 		{
 			CU_ASSERT(true);
 		}
@@ -174,24 +166,15 @@ void time_devel()
 			CU_ASSERT(false);
 		}
 	}
-	
-	
+
+
 	oct::ec::sche::Time times2[10];
-	times2[0].read("Wed 05:00","%a %H:%M");
-	times2[1].read("Wed 05:00","%a %H:%M");
-	times2[2].read("Wed 05:00","%a %H:%M");
-	times2[3].read("Wed 05:00","%a %H:%M");
-	times2[4].read("Wed 05:00","%a %H:%M");
-	times2[5].read("Wed 05:00","%a %H:%M");
-	times2[6].read("Wed 05:00","%a %H:%M");
-	times2[7].read("Wed 05:00","%a %H:%M");
-	times2[8].read("Wed 05:00","%a %H:%M");
-	times2[9].read("Wed 05:00","%a %H:%M");
 	for(unsigned int i = 0; i < 10; i++)
 	{
-		times2[i].print(std::cout,"%c");
-		std::cout << ", " << (std::time_t)times2[i];			
-		std::cout << "\n";
+	    times2[i].read("Wed 05:00","%a %H:%M");
+		/*times2[i].print(std::cout,"%c");
+		std::cout << ", " << (std::time_t)times2[i];
+		std::cout << "\n";*/
 	}
 	for(unsigned int i = 1; i < 10; i++)
 	{
@@ -203,7 +186,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times2[i].tm_wday = 3)
+		if(times2[i].tm_wday == 3)
 		{
 			CU_ASSERT(true);
 		}
@@ -211,7 +194,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times2[i].tm_mday = 7)
+		if(times2[i].tm_mday == 7)
 		{
 			CU_ASSERT(true);
 		}
@@ -219,7 +202,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times2[i].tm_year = 1970)
+		if(times2[i].tm_year == 70)
 		{
 			CU_ASSERT(true);
 		}
@@ -227,14 +210,14 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-	}	
+	}
 	for(unsigned int i = 1; i < 10; i++)
 	{
 		times2[i].add(i*45*60);
 	}
 	for(unsigned int i = 1; i < 10; i++)
 	{
-		if(times2[i].tm_wday = 3)
+		if(times2[i].tm_wday == 3)
 		{
 			CU_ASSERT(true);
 		}
@@ -242,7 +225,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times2[i].tm_mday = 7)
+		if(times2[i].tm_mday == 7)
 		{
 			CU_ASSERT(true);
 		}
@@ -250,7 +233,7 @@ void time_devel()
 		{
 			CU_ASSERT(false);
 		}
-		if(times2[i].tm_year = 1970)
+		if(times2[i].tm_year == 70)
 		{
 			CU_ASSERT(true);
 		}
@@ -259,13 +242,13 @@ void time_devel()
 			CU_ASSERT(false);
 		}
 	}
-	std::cout << "\n";
+	/*std::cout << "\n";
 	for(unsigned int i = 0; i < 10; i++)
 	{
 		times2[i].print(std::cout,"%c");
-		std::cout << ", " << (std::time_t)times2[i];		
+		std::cout << ", " << (std::time_t)times2[i];
 		std::cout << "\n";
-	}
+	}*/
 }
 
 int main(int argc, char *argv[])
