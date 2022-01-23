@@ -410,6 +410,7 @@ void Enviroment::init()
 	newIteration = false;
 	fout = &std::cout;
 	savingDevice = NULL;
+	junting_sigma = 1.0;
 }
 Enviroment::Enviroment()
 {
@@ -963,7 +964,7 @@ Single* Enviroment::getRandomSingleTop()
 {
 	const_iterator it = begin();
 
-    std::lognormal_distribution<double> distrib(0.0,1.0);
+    std::lognormal_distribution<double> distrib(0.0,junting_sigma);
     unsigned int offset;
     do
     {

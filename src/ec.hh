@@ -441,6 +441,12 @@ protected:
 	bool echoSteps;
 
 	Save* savingDevice;
+
+    /**
+	*\brief Desviacion estandar usada para generar la seleccion en la operacion de apareo
+	*/
+	real junting_sigma;
+
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion
