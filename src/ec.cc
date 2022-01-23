@@ -982,10 +982,10 @@ void Enviroment::juncting()
 	Single *single1,*single2;
 	do
 	{
-		single1 = getRandomSingleFirst();
+		single1 = getRandomSingleTop();
 		do
 		{
-			single2 = getRandomSingleSecond();
+			single2 = getRandomSingleTop();
 		}
 		while(single1 == single2);
 
