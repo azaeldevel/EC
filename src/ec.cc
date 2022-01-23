@@ -590,6 +590,13 @@ void Enviroment::enableEcho(std::ostream* f, unsigned short level)
 {
 	logFile = log;
 }*/
+
+const std::list<ec::Single*> Enviroment::getSolutions()const
+{
+	return solutions;
+}
+
+
 bool Enviroment::run()
 {
 	if(stopMinSolutions and minSolutions == 0) throw octetos::core::Exception("La cantida minima de soluciones requeridad deve ser mayor que 0",__FILE__,__LINE__);

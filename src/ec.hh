@@ -287,6 +287,7 @@ public:
 	//const std::string getLogSubDirectory()const;
 	Iteration getIterationActual()const;
 	const std::string& getLogDirectory()const;
+	const std::list<ec::Single*> getSolutions()const;
 
 	/**
 	*\brief Devuelve el siguiento ID para un nuevo objeto Single
