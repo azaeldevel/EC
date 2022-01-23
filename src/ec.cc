@@ -316,14 +316,15 @@ Single::Single(const Single& obj)
 	id = env->nextID();
 	age = 0;
 	fitness = obj.fitness;
-	junction = obj.junction;
+	std::uniform_real_distribution<double> distr(1, 9);
+	childs = distr(gen);
 }
 Single::Single(ec::ID id,Enviroment& e) : env(&e)
 {
 	this->id = id;
 	init();
 }
-Single::Single(ec::ID id,Enviroment& e,const Junction& j) : junction(j),env(&e)
+Single::Single(ec::ID id,Enviroment& e,unsigned int c) : childs(c),env(&e)
 {
 	this->id = id;
 	init();
@@ -345,9 +346,13 @@ double Single::getFitness() const
 {
 	return fitness;
 }
-const Junction& Single::getJunction()const
+/*const Junction& Single::getJunction()const
 {
 	return junction;
+}*/
+unsigned int Single::getChilds()const
+{
+	return childs;
 }
 Enviroment& Single::getEnviroment()const
 {

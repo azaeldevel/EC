@@ -314,7 +314,7 @@ void Single::save(Save& fn)
 }
 void Single::juncting(std::list<oct::ec::Single*>& childs,const oct::ec::Single* single)
 {
-	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
+	for(ec::geneUS i = 0; i < getChilds(); i++)
 	{
 		childs.push_back(new Single(env->nextID(),(Enviroment&)*env));
 		Single* newSingle = (Single*)childs.back();

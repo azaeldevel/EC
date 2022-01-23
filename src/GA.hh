@@ -16,7 +16,7 @@ class Single : public ec::Single
 {
 public:
 	Single(const Single&);
-	Single(ID id,Enviroment&,const Junction& junction);
+	Single(ID id,Enviroment&,unsigned int);
 	Single(ID id,Enviroment&);
 };
 

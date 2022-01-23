@@ -18,7 +18,7 @@ namespace oct::ec::sche
 	{
 
 	public:
-		Single(ID id,Enviroment& env,const Junction& junction);
+		Single(ID id,Enviroment& env,unsigned int);
 		/**
 		*\brief Constructor que recive el ID del Individuo y el Ambiente
 		*/
@@ -87,6 +87,12 @@ namespace oct::ec::sche
 		// el horario del maestro despues de recreo no coincidira con el horario del salon despues del recreo al no condicerar en el horario
 		// del maestro este salto en el tiempo.
 		bool bound_schedule()const; //TODO:implemetar
+
+
+		void juncting_mesh_lessons(const Single&,const Single&);
+		void juncting_mesh_classroom(const Single&,const Single&);
+		void juncting_half(const Single&,const Single&);
+		void juncting_chop(const Single&,const Single&);
 	private:
 
 

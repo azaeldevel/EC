@@ -198,7 +198,7 @@ Single::~Single()
 	}
 	delete[] tabla;
 }
-Single::Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome init[][3],const Junction& junction) : ec::Single(id,e,junction)
+Single::Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome init[][3],unsigned int c) : ec::Single(id,e,c)
 {
 	tabla = newData;
 	intiVals = init;
@@ -364,7 +364,7 @@ void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* 
 {
 	//std::cout << "\t" << idCount << " puede tener " << getJunction().get_number() << " hijos\n";
 	ID idCount;
-	for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
+	for(ec::geneUS i = 0; i < getChilds(); i++)
 	{
 		idCount = getEnviroment().nextID();
 
@@ -400,7 +400,7 @@ void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* 
 			}
 		}
 
-		Single* s = new Single(idCount,(Enviroment&)*env,newtabla,intiVals,getJunction());
+		Single* s = new Single(idCount,(Enviroment&)*env,newtabla,intiVals,getChilds());
 		chils.push_back(s);
 		if(env->getEchoLevel() > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n";
 	}

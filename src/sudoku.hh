@@ -57,7 +57,7 @@ class Single : public oct::ec::Single
 public:
 	Single(const Single&);
 	Single(unsigned int id,Enviroment& e,Chromosome init[][3]);
-	Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome init[][3], const Junction& junction);
+	Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome init[][3], unsigned int);
 	virtual ~Single();
 
 	const Chromosome& getTalba(unsigned short i,unsigned short j)const;

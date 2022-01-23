@@ -178,14 +178,15 @@ public:
 	*\brief Constructor que recive el ID del Individuo y el Ambiente
 	*/
 	Single(ID id,Enviroment&);
-	Single(ID id,Enviroment&,const Junction& junction);
+	Single(ID id,Enviroment&,unsigned int);
 	virtual ~Single();
 
 	ID getID()const;
 	//const std::vector<Chromosome*>& getChromosome()const;
 	unsigned short getAge() const;
 	double getFitness() const;
-	const Junction& getJunction()const;
+	//const Junction& getJunction()const;
+	unsigned int getChilds()const;
 	Enviroment& getEnviroment()const;
 
 	void add(Chromosome&);
@@ -233,7 +234,7 @@ private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
 	unsigned short age;
-	Junction junction;
+	unsigned short childs;
 };
 
 /**

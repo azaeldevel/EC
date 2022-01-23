@@ -17,7 +17,7 @@ namespace oct::ec::sche
 
 	unsigned int Single::jump_saver = 10;
 
-	Single::Single(ID id,Enviroment& env,const Junction& j) : ec::Single(id,env,j)
+	Single::Single(ID id,Enviroment& env,unsigned int c) : ec::Single(id,env,c)
 	{
 	}
 	Single::Single(ID id,Enviroment& env, const Schedule& s) : ec::Single(id,env), Schedule(s)
@@ -52,9 +52,9 @@ namespace oct::ec::sche
 	}
 	void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{
-		for(ec::geneUS i = 0; i < getJunction().get_number(); i++)
+		for(ec::geneUS i = 0; i < getChilds(); i++)
 		{
-			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,getJunction());
+			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,getChilds());
 			newsingle->resize(size());
 			((Schedule*)newsingle)->juncting(*this,((const Single&)*single));
 			chils.push_back(newsingle);
