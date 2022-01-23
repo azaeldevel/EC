@@ -706,6 +706,7 @@ bool Enviroment::run()
 			SaveIteration saveit(logDirectory);
 			saveit.open(actualIteration);
 			if(leaderPrev != leader) saveit.new_leader = true;
+			else saveit.new_leader = false;
 			for(ec::Single* s : *this)
 			{
 				s->save(saveit);
