@@ -969,7 +969,7 @@ Single* Enviroment::getRandomSingleTop()
     {
     	offset = std::abs(distrib(gen));
     }
-    while(offset >= size());
+    while(offset >= size());//deja de repetirse si elo valor esta en el rango
 	std::advance(it,offset);
 	return *it;
 }
