@@ -92,10 +92,10 @@ namespace oct::ec::sche
 		void juncting_mesh_lessons(const Single&,const Single&);
 		void juncting_mesh_classroom(const Single&,const Single&);
 		void juncting_half(const Single&,const Single&);
-		void juncting_chop(const Single&,const Single&);
 	private:
 
-
+		void (Single::* algorit)(const Single&,const Single&);
+		void random_algorit();
 	};
 
 	/**
