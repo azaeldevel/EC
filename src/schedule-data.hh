@@ -1,5 +1,4 @@
 
-
 #ifndef EC_SCHEDULE_DATA_HH
 #define EC_SCHEDULE_DATA_HH
 
@@ -791,7 +790,7 @@ namespace oct::ec::sche
 
 		ClassRoom& operator =(const ClassRoom&);
 
-		void juncting(const ClassRoom&,const ClassRoom&);
+		void juncting_mesh_lessons(const ClassRoom&,const ClassRoom&);
 
 		void mutate();
 
@@ -817,7 +816,9 @@ namespace oct::ec::sche
 
 		void indexing();
 
-		void juncting(const Schedule&,const Schedule&);
+		void juncting_mesh_lessons(const Schedule&,const Schedule&);
+		void juncting_mesh_classroom(const Schedule&,const Schedule&);
+		void juncting_half(const Schedule&,const Schedule&);
 
 		void mutate();
 

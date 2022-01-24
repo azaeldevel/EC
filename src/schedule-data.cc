@@ -2616,7 +2616,7 @@ namespace oct::ec::sche
 
 		return *this;
 	}
-	void ClassRoom::juncting(const ClassRoom& g1,const ClassRoom& g2)
+	void ClassRoom::juncting_mesh_lessons(const ClassRoom& g1,const ClassRoom& g2)
 	{
 		if(g1.size() != g2.size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
 		if(g1.size() == 0) throw core::Exception("No hay lecciones",__FILE__,__LINE__);
@@ -2714,7 +2714,7 @@ namespace oct::ec::sche
 			result.push_back(it->second);
 		}
 	}
-	void Schedule::juncting(const Schedule& s1,const Schedule& s2)
+	void Schedule::juncting_mesh_lessons(const Schedule& s1,const Schedule& s2)
 	{
 		//std::cout << "Size 1 = " << s1.size() << "\n";
 		//std::cout << "Size 2 = " << s2.size() << "\n";
@@ -2724,7 +2724,47 @@ namespace oct::ec::sche
 
 		for(unsigned int i = 0; i < size(); i++)
 		{
-			at(i).juncting(s1[i],s2[i]);
+			at(i).juncting_mesh_lessons(s1[i],s2[i]);
+		}
+	}
+	void Schedule::juncting_mesh_classroom(const Schedule& s1,const Schedule& s2)
+	{
+		//std::cout << "Size 1 = " << s1.size() << "\n";
+		//std::cout << "Size 2 = " << s2.size() << "\n";
+		if(s1.size() != s2.size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
+		if(s1.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+		if(s2.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+
+		std::bernoulli_distribution distrib(0.6);
+		for(unsigned int i = 0; i < s1.size(); i++)
+		{
+			if(distrib(gen))
+			{
+				at(i) = s1.at(i);
+			}
+			else
+			{
+				at(i) = s2.at(i);
+			}
+		}
+	}
+	void Schedule::juncting_half(const Schedule& s1,const Schedule& s2)
+	{
+		//std::cout << "Size 1 = " << s1.size() << "\n";
+		//std::cout << "Size 2 = " << s2.size() << "\n";
+		if(s1.size() != s2.size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
+		if(s1.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+		if(s2.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+		
+		unsigned int step = s1.size()/2;
+		unsigned int i;
+		for(i = 0; i < step; i++)
+		{
+			at(i) = s1.at(i);
+		}
+		for(; i < s1.size(); i++)
+		{
+			at(i) = s2.at(i);
 		}
 	}
 	void Schedule::mutate()
