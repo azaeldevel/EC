@@ -17,14 +17,14 @@ namespace oct::ec::sche
 
 	unsigned int Single::jump_saver = 10;
 
-	Single::Single(ID id,Enviroment& env,unsigned int c) : ec::Single(id,env,c)
+	Single::Single(Enviroment& env,unsigned int c) : ec::Single(env,c)
 	{
 	}
 	/*Single::Single(ID id,Enviroment& env, const Schedule& s) : ec::Single(id,env), Schedule(s)
 	{
 		random_algorit();
 	}*/
-	Single::Single(ID id,Enviroment& env) : ec::Single(id,env)
+	Single::Single(Enviroment& env) : ec::Single(env)
 	{
 	}
 	
@@ -72,25 +72,12 @@ namespace oct::ec::sche
 	}
 	void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{
-		const Single *s1;
-		const Single *s2;
 		std::bernoulli_distribution distrib(0.5);
 		for(unsigned int i = 0; i < getChilds(); i++)
 		{
-			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,getChilds());
-			newsingle->resize(size());
-			
-			if(distrib(gen))
-			{
-				s1 = this;
-				s2 = (const Single*) single;
-			}
-			else			
-			{
-				s2 = this;
-				s1 = (const Single*) single;
-			}			
-			(newsingle->*(random_algorit()))(*s1,*s2);//llama a un algoritmo de mezclado al azar
+			Single* newsingle = new Single((Enviroment&)*env,getChilds());
+			newsingle->resize(size());			
+			(newsingle->*(random_algorit()))(*this,*(const Single*)single);//llama a un algoritmo de mezclado al azar
 			chils.push_back(newsingle);
 		}
 	}
@@ -201,7 +188,7 @@ void Enviroment::initial()
 			(*fout) << ".";
 			fout->flush();
 		}
-		Single* sche = new Single(nextID(),*this);
+		Single* sche = new Single(*this);
 		sche->resize(data.groups.get_list().size());
 		Groups::const_iterator itGroup = data.groups.get_list().begin();
 		for(ClassRoom& lessons : *sche)

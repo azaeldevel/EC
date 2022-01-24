@@ -11,10 +11,10 @@ Single::Single(const Single& obj) : ec::Single(obj)
 {
 	
 }
-Single::Single(ID id,Enviroment& e) : ec::Single(id,e)
+Single::Single(Enviroment& e) : ec::Single(e)
 {
 }
-Single::Single(ID id,Enviroment& e,unsigned int c) : ec::Single(id,e,c)
+Single::Single(Enviroment& e,unsigned int c) : ec::Single(e,c)
 {
 }
 

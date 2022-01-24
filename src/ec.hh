@@ -177,8 +177,8 @@ public:
 	/**
 	*\brief Constructor que recive el ID del Individuo y el Ambiente
 	*/
-	Single(ID id,Enviroment&);
-	Single(ID id,Enviroment&,unsigned int);
+	Single(Enviroment&);
+	Single(Enviroment&,unsigned int);
 	virtual ~Single();
 
 	ID getID()const;
@@ -231,11 +231,11 @@ protected:
 	//static std::random_device rd;
 	//static std::mt19937 gen;
 
-	unsigned short childs;
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
 	unsigned short age;
+	unsigned short childs;
 };
 
 /**

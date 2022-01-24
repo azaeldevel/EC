@@ -318,16 +318,16 @@ Single::Single(const Single& obj)
 	fitness = obj.fitness;
 	childs = obj.childs;
 }
-Single::Single(ec::ID id,Enviroment& e) : env(&e)
+Single::Single(Enviroment& e) : env(&e)
 {
-	this->id = id;
+	id = env->nextID();
 	init();
 	std::uniform_int_distribution<> distr(1, 9);
 	childs = distr(gen);
 }
-Single::Single(ec::ID id,Enviroment& e,unsigned int c) : childs(c),env(&e)
+Single::Single(Enviroment& e,unsigned int c) : childs(c),env(&e)
 {
-	this->id = id;
+	id = env->nextID();
 	init();
 }
 Single::~Single()

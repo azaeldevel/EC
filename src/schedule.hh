@@ -10,7 +10,11 @@
 
 namespace oct::ec::sche
 {
-	
+	class Enviroment;
+
+
+	typedef unsigned int Child;
+
 	/**
 	*\brief Representa una posible solucion a nuestro problema
 	*/
@@ -18,12 +22,12 @@ namespace oct::ec::sche
 	{
 
 	public:
-		Single(ID id,Enviroment& env,unsigned int);
+		Single(Enviroment& env,unsigned int);
 		/**
 		*\brief Constructor que recive el ID del Individuo y el Ambiente
 		*/
 		//Single(ID id,Enviroment& env, const Schedule&);
-		Single(ID id,Enviroment& env);
+		Single(Enviroment& env);
 		
 		/**
 		*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)

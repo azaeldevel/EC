@@ -51,11 +51,11 @@ namespace oct::ec::max
 	{
 	public:
 		//Single(const Chromosome& ch);
-		Single(ID, Enviroment&, geneUS g,Chromosome::pfnCombine f);
+		Single(Enviroment&, geneUS g,Chromosome::pfnCombine f);
 		/**
 		*\brief Constructor recive el ID del Individuo y el Ambiente
 		*/
-		Single(ID id,Enviroment& e);
+		Single(Enviroment& e);
 		
 		/**
 		*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
