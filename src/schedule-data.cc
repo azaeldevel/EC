@@ -2587,6 +2587,21 @@ namespace oct::ec::sche
 		day->clear();
 		if(this->week.size() != WeekHours::WEEK_SIZE ) throw core::Exception("La semana no puede tener mas de 7 dias",__FILE__,__LINE__);
 	}
+	void Lesson::clear()
+	{
+		group = NULL;
+		subject = NULL;
+		teacher = NULL;
+		room = NULL;
+		data = NULL;
+		week.clear_days();
+	}
+	
+	
+	
+	
+	
+	
 
 	ClassRoom::ClassRoom()
 	{
@@ -2635,6 +2650,15 @@ namespace oct::ec::sche
 				at(i) = g2.at(i);
 			}
 		}
+	}
+	void ClassRoom::juncting_choose_one_lesson(const ClassRoom& g2)
+	{
+		if(g2.size() == 0) throw core::Exception("No hay lecciones",__FILE__,__LINE__);
+		
+		std::uniform_int_distribution<> distrib(0,g2.size() - 1); 
+		unsigned int i = distrib(gen);
+		at(i).clear();
+		at(i) = g2[i];
 	}
 	void ClassRoom::mutate()
 	{
@@ -2766,6 +2790,24 @@ namespace oct::ec::sche
 		{
 			at(i) = s2.at(i);
 		}
+	}	
+	void Schedule::juncting_choose_one_lesson(const Schedule& s1,const Schedule& s2)
+	{
+		//std::cout << "Size 1 = " << s1.size() << "\n";
+		//std::cout << "Size 2 = " << s2.size() << "\n";
+		if(s1.size() != s2.size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
+		if(s1.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+		if(s2.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+
+		std::bernoulli_distribution distrib(0.6);
+		for(unsigned int i = 0; i < s1.size(); i++)
+		{
+			at(i) = s1.at(i);
+		}
+		
+		std::uniform_int_distribution<> distribChoose(0,s2.size() - 1); 
+		unsigned int i = distribChoose(gen);
+		at(i).juncting_choose_one_lesson(s2[i]);
 	}
 	void Schedule::mutate()
 	{

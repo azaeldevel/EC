@@ -96,6 +96,7 @@ namespace oct::ec::sche
 		void juncting_mesh_lessons(const Single&,const Single&);
 		void juncting_mesh_classroom(const Single&,const Single&);
 		void juncting_half(const Single&,const Single&);
+		void juncting_choose_one_lesson(const Single&,const Single&);
 	private:
 		typedef void (Single::*algorit)(const Single&,const Single&);
 
