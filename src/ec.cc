@@ -322,7 +322,7 @@ Single::Single(ec::ID id,Enviroment& e) : env(&e)
 {
 	this->id = id;
 	init();
-	std::uniform_real_distribution<double> distr(1, 9);
+	std::uniform_int_distribution<> distr(1, 9);
 	childs = distr(gen);
 }
 Single::Single(ec::ID id,Enviroment& e,unsigned int c) : childs(c),env(&e)
