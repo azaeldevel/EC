@@ -93,9 +93,9 @@ namespace oct::ec::sche
 		void juncting_mesh_classroom(const Single&,const Single&);
 		void juncting_half(const Single&,const Single&);
 	private:
+		typedef void (Single::*algorit)(const Single&,const Single&);
 
-		void (Single::* algorit)(const Single&,const Single&);
-		void random_algorit();
+		algorit random_algorit();
 	};
 
 	/**

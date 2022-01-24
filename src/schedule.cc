@@ -26,26 +26,27 @@ namespace oct::ec::sche
 	}*/
 	Single::Single(ID id,Enviroment& env) : ec::Single(id,env)
 	{
-		random_algorit();
 	}
 	
-	void Single::random_algorit()
+	Single::algorit Single::random_algorit()
 	{
 		std::uniform_int_distribution<> distrib(1,3);
 		switch(distrib(gen))
 		{
 			case 1:
-				algorit = &Single::juncting_mesh_lessons;
+				return &Single::juncting_mesh_lessons;
 			break;
 			case 2:
-				algorit = &Single::juncting_mesh_classroom;
+				return &Single::juncting_mesh_classroom;
 			break;
 			case 3:
-				algorit = &Single::juncting_half;
+				return &Single::juncting_half;
 			break;
 			default:
 				throw core::Exception("Funcion de apareo desconocida",__FILE__,__LINE__);
 		}
+		
+		return NULL;
 	}
 	void Single::save(Save& fn)
 	{
@@ -71,12 +72,25 @@ namespace oct::ec::sche
 	}
 	void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{
+		const Single *s1;
+		const Single *s2;
+		std::bernoulli_distribution distrib(0.5);
 		for(unsigned int i = 0; i < getChilds(); i++)
 		{
 			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,getChilds());
 			newsingle->resize(size());
-			newsingle->algorit = algorit;
-			(newsingle->*algorit)(*this,*(Single*)single);
+			
+			if(distrib(gen))
+			{
+				s1 = this;
+				s2 = (const Single*) single;
+			}
+			else			
+			{
+				s2 = this;
+				s1 = (const Single*) single;
+			}			
+			(newsingle->*(random_algorit()))(*s1,*s2);//llama a un algoritmo de mezclado al azar
 			chils.push_back(newsingle);
 		}
 	}
