@@ -316,13 +316,14 @@ Single::Single(const Single& obj)
 	id = env->nextID();
 	age = 0;
 	fitness = obj.fitness;
-	std::uniform_real_distribution<double> distr(1, 9);
-	childs = distr(gen);
+	childs = obj.childs;
 }
 Single::Single(ec::ID id,Enviroment& e) : env(&e)
 {
 	this->id = id;
 	init();
+	std::uniform_real_distribution<double> distr(1, 9);
+	childs = distr(gen);
 }
 Single::Single(ec::ID id,Enviroment& e,unsigned int c) : childs(c),env(&e)
 {
@@ -331,7 +332,6 @@ Single::Single(ec::ID id,Enviroment& e,unsigned int c) : childs(c),env(&e)
 }
 Single::~Single()
 {
-
 }
 
 ID Single::getID()const
