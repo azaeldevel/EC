@@ -22,7 +22,7 @@ namespace oct::ec::sche
 		/**
 		*\brief Constructor que recive el ID del Individuo y el Ambiente
 		*/
-		Single(ID id,Enviroment& env, const Schedule&);
+		//Single(ID id,Enviroment& env, const Schedule&);
 		Single(ID id,Enviroment& env);
 		
 		/**

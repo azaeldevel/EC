@@ -19,12 +19,11 @@ namespace oct::ec::sche
 
 	Single::Single(ID id,Enviroment& env,unsigned int c) : ec::Single(id,env,c)
 	{
-		random_algorit();
 	}
-	Single::Single(ID id,Enviroment& env, const Schedule& s) : ec::Single(id,env), Schedule(s)
+	/*Single::Single(ID id,Enviroment& env, const Schedule& s) : ec::Single(id,env), Schedule(s)
 	{
 		random_algorit();
-	}
+	}*/
 	Single::Single(ID id,Enviroment& env) : ec::Single(id,env)
 	{
 		random_algorit();
@@ -76,7 +75,7 @@ namespace oct::ec::sche
 		{
 			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,getChilds());
 			newsingle->resize(size());
-			//((Schedule*)newsingle)->juncting(*this,((const Single&)*single));
+			newsingle->algorit = algorit;
 			(newsingle->*algorit)(*this,*(Single*)single);
 			chils.push_back(newsingle);
 		}

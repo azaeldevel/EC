@@ -230,11 +230,12 @@ protected:
 
 	//static std::random_device rd;
 	//static std::mt19937 gen;
+
+	unsigned short childs;
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
 	unsigned short age;
-	unsigned short childs;
 };
 
 /**
