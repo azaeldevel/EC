@@ -393,8 +393,9 @@ namespace oct::ec::sche
 		{
 			MF,//Monday - Fraday
 			MS,//Monday - Saturday
+			DS,//Sunday - Saturday
 		};
-		enum Schema
+		/*enum Schema
 		{
 			UNKNOW,
 			NORMAL,
@@ -405,7 +406,7 @@ namespace oct::ec::sche
 			NONE,
 			HOUR,
 			DAY_HOUR,
-		};
+		};*/
 
 	public:
 		void init();
@@ -415,11 +416,11 @@ namespace oct::ec::sche
 		//unsigned int get_time_per_hour() const;
 		std::time_t get_seconds_per_hour() const;
 		SchemaWeek get_schema_week()const;
-		Schema get_schema()const;
-		void set_schema(Schema);
+		//Schema get_schema()const;
+		//void set_schema(Schema);
 		//const std::string& get_format_string_datatime()const;
 		//static const std::string& get_format_string_datatime(FormatDT);
-		FormatDT get_format_dt()const;
+		//FormatDT get_format_dt()const;
 		int get_begin_day() const;
 		real get_hours_sigma()const;
 		const std::string get_out_directory()const;
@@ -445,8 +446,8 @@ namespace oct::ec::sche
 	private:
 		SchemaWeek schema_week;
 		std::time_t seconds_per_hour;//en segundos por hora
-		Schema schema;
-		FormatDT format;
+		//Schema schema;
+		//FormatDT format;
 		real hours_sigma;
 		std::string out_dir;
 	public:

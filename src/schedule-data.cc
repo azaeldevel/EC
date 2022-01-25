@@ -1496,10 +1496,11 @@ namespace oct::ec::sche
 
 	void Configuration::init()
 	{
+		hours_sigma = 0.085;
+		
+		
 		schema_week = SchemaWeek::MF;
 		seconds_per_hour = 45 * 60;
-		format = FormatDT::DAY_HOUR;
-		hours_sigma = 0.085;
 		out_dir = "logs/schedule";
 	}
 	Configuration::Configuration()
@@ -1524,10 +1525,10 @@ namespace oct::ec::sche
 	{
 		return schema_week;
 	}
-	Configuration::Schema Configuration::get_schema()const
+	/*Configuration::Schema Configuration::get_schema()const
 	{
 		return schema;
-	}
+	}*/
 	real Configuration::get_hours_sigma()const
 	{
 		return hours_sigma;
@@ -1560,10 +1561,10 @@ namespace oct::ec::sche
 				throw core::Exception("Formato de tiempo desconocido",__FILE__,__LINE__);
 		}
 	}*/
-	void Configuration::set_schema(Schema s)
+	/*void Configuration::set_schema(Schema s)
 	{
 		schema = s;
-	}
+	}*/
 	unsigned int Configuration::to_hours(double t)const
 	{
 		return t/seconds_per_hour;
@@ -1580,10 +1581,10 @@ namespace oct::ec::sche
 				throw core::Exception("Esquema de semana desconocido.",__FILE__,__LINE__);
 		}
 	}
-	Configuration::FormatDT Configuration::get_format_dt()const
+	/*Configuration::FormatDT Configuration::get_format_dt()const
 	{
 		return format;
-	}
+	}*/
 	/*void Configuration::add(const core::Time& dt, unsigned int hours, core::Time& result)
 	{
 		tm tm_dt = dt;
@@ -1815,6 +1816,16 @@ namespace oct::ec::sche
 			//std::cout << "\n\n";
 			if(not day.empty()) target.get_week()[day.front().tm_wday].add(day);
 			//timeDay++;
+		}
+		switch(dataObject->config.get_schema_week())
+		{
+			case Configuration::SchemaWeek::MF:
+				if(not target.get_week()[0].empty()) throw core::Exception("El horario no coincide con el esquema de la semana", __FILE__,__LINE__);
+				if(not target.get_week()[6].empty()) throw core::Exception("El horario no coincide con el esquema de la semana", __FILE__,__LINE__);
+				break;
+			case Configuration::SchemaWeek::MS:
+				if(not target.get_week()[0].empty()) throw core::Exception("El horario no coincide con el esquema de la semana", __FILE__,__LINE__);
+				break;
 		}
 		target.get_week().sort(dataObject->config);
 	}
