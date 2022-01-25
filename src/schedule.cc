@@ -17,31 +17,32 @@ namespace oct::ec::sche
 
 	unsigned int Single::jump_saver = 10;
 
-	Single::Single(ID id,Enviroment& env,unsigned int c) : ec::Single(id,env,c)
+	Single::Single(Enviroment& env,unsigned int c) : ec::Single(env,c)
 	{
 	}
 	/*Single::Single(ID id,Enviroment& env, const Schedule& s) : ec::Single(id,env), Schedule(s)
 	{
 		random_algorit();
 	}*/
-	Single::Single(ID id,Enviroment& env) : ec::Single(id,env)
+	Single::Single(Enviroment& env) : ec::Single(env)
 	{
 	}
 	
 	Single::algorit Single::random_algorit()
 	{
-		std::uniform_int_distribution<> distrib(1,3);
+		std::uniform_int_distribution<> distrib(1,4);
 		switch(distrib(gen))
 		{
 			case 1:
 				return &Single::juncting_mesh_lessons;
-			break;
 			case 2:
 				return &Single::juncting_mesh_classroom;
-			break;
 			case 3:
 				return &Single::juncting_half;
-			break;
+			case 4:
+				return &Single::juncting_choose_one_lesson;
+			case 5:
+				return &Single::juncting_choose_one_lesson;
 			default:
 				throw core::Exception("Funcion de apareo desconocida",__FILE__,__LINE__);
 		}
@@ -72,25 +73,12 @@ namespace oct::ec::sche
 	}
 	void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* single)
 	{
-		const Single *s1;
-		const Single *s2;
 		std::bernoulli_distribution distrib(0.5);
 		for(unsigned int i = 0; i < getChilds(); i++)
 		{
-			Single* newsingle = new Single(env->nextID(),(Enviroment&)*env,getChilds());
-			newsingle->resize(size());
-			
-			if(distrib(gen))
-			{
-				s1 = this;
-				s2 = (const Single*) single;
-			}
-			else			
-			{
-				s2 = this;
-				s1 = (const Single*) single;
-			}			
-			(newsingle->*(random_algorit()))(*s1,*s2);//llama a un algoritmo de mezclado al azar
+			Single* newsingle = new Single((Enviroment&)*env,getChilds());
+			newsingle->resize(size());			
+			(newsingle->*(random_algorit()))(*this,*(const Single*)single);//llama a un algoritmo de mezclado al azar
 			chils.push_back(newsingle);
 		}
 	}
@@ -105,6 +93,14 @@ namespace oct::ec::sche
 	void Single::juncting_half(const Single& s1,const Single& s2)
 	{
 		Schedule::juncting_half(s1,s2);
+	}
+	void Single::juncting_choose_one_lesson(const Single& s1,const Single& s2)
+	{
+		Schedule::juncting_choose_one_lesson(s1,s2);
+	}
+	void Single::juncting_choose_random_lesson(const Single& s1,const Single& s2)
+	{
+		Schedule::juncting_choose_random_lesson(s1,s2);
 	}
 	void Single::print(std::ostream&) const
 	{
@@ -127,6 +123,7 @@ Enviroment::Enviroment(const std::string& log,const std::string& in_dir,const st
 {
 	if(echolevel > 0 and fout != NULL) (*fout) << "Creando Ambiente..\n";
 	logDirectoryHistory = log;
+	logDirectorySolutions = log;
 
 	//if(not shell.exists(in_dir)) shell.mkdir(in_dir,true);
 	if(not shell.exists(out_dir)) shell.mkdir(out_dir,true);
@@ -201,7 +198,7 @@ void Enviroment::initial()
 			(*fout) << ".";
 			fout->flush();
 		}
-		Single* sche = new Single(nextID(),*this);
+		Single* sche = new Single(*this);
 		sche->resize(data.groups.get_list().size());
 		Groups::const_iterator itGroup = data.groups.get_list().begin();
 		for(ClassRoom& lessons : *sche)

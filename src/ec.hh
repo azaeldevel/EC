@@ -114,22 +114,32 @@ struct Save
 	Save();
 	Save(std::ofstream&);
 	Save(std::ofstream*);
-	operator std::ofstream&();
+	/*operator std::ofstream&();
 	std::ofstream& operator =(std::ofstream&);
-	std::ofstream* operator =(std::ofstream*);
+	std::ofstream* operator =(std::ofstream*);*/
+	bool getNewLeader()const;
 
-	//virtual void save(const Enviroment&);
-
-	std::ofstream* out;
+	//
     bool new_leader;
+	std::ofstream* out;
 };
 
-struct SaveCollection : public Save
+class SaveCollection : public Save
 {
+public:
+	SaveCollection();
 	SaveCollection(const std::string&);
 	~SaveCollection();
 
-	void open(const std::string&);
+	/**
+	*\brief abre un archivo cuando se a especificado previamente el directorio
+	*/
+	void open(const std::string& fn);
+
+	/**
+	*\brief abre un archivo especificado el nombre y directorio
+	*/
+	void open(const std::string& fn,const std::string& dir);
 	void close();
 
 protected:
@@ -158,8 +168,9 @@ struct SaveSelections : public SaveCollectionByIteration
 {
 	SaveSelections(const std::string&);
 };
-struct SaveSolutions : public SaveCollectionByIteration
+struct SaveSolutions : public SaveCollection
 {
+	SaveSolutions();
 	SaveSolutions(const std::string&);
 };
 
@@ -177,8 +188,8 @@ public:
 	/**
 	*\brief Constructor que recive el ID del Individuo y el Ambiente
 	*/
-	Single(ID id,Enviroment&);
-	Single(ID id,Enviroment&,unsigned int);
+	Single(Enviroment&);
+	Single(Enviroment&,unsigned int);
 	virtual ~Single();
 
 	ID getID()const;
@@ -231,11 +242,11 @@ protected:
 	//static std::random_device rd;
 	//static std::mt19937 gen;
 
-	unsigned short childs;
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
 	unsigned short age;
+	unsigned short childs;
 };
 
 /**
@@ -378,6 +389,7 @@ private:
 protected:
 	std::string logDirectory;
 	std::string logDirectoryHistory;
+	std::string logDirectorySolutions;
 	std::string basedir;
 	Population initPopulation;
 	Population maxPopulation;
@@ -389,6 +401,7 @@ protected:
 	unsigned int echoPrecision;
 	bool logDirectoryFlag;
 	bool logDirectoryHistoryFlag;
+	bool logDirectorySolutionsFlag;
 	double sigma;
 	double media;
 

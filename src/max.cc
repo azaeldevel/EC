@@ -283,10 +283,10 @@ void Chromosome::mutate()
 
 
 
-Single::Single(ID id,Enviroment& e) : oct::ec::Single(id,e)
+Single::Single(Enviroment& e) : oct::ec::Single(e)
 {
 }
-Single::Single(ID id,Enviroment& e,geneUS g,Chromosome::pfnCombine f) : oct::ec::Single(id,e),chromo(g,f)
+Single::Single(Enviroment& e,geneUS g,Chromosome::pfnCombine f) : oct::ec::Single(e),chromo(g,f)
 {
 }
 
@@ -304,19 +304,19 @@ void Single::eval()
 void Single::save(Save& fn)
 {
 	//std::cout << "\tSingle::save 1\n";
-	(*fn.out) << getID();
-	(*fn.out) << ",";
-	(*fn.out) << getFitness();
-	(*fn.out) << ",";
-	(*fn.out) << chromo.getNumber();
+	(std::ofstream&)(fn) << getID();
+	(std::ofstream&)(fn) << ",";
+	(std::ofstream&)(fn) << getFitness();
+	(std::ofstream&)(fn) << ",";
+	(std::ofstream&)(fn) << chromo.getNumber();
 	//std::cout << "\tSingle::save 2\n";
-	(*fn.out).flush();
+	((std::ofstream&)(fn)).flush();
 }
 void Single::juncting(std::list<oct::ec::Single*>& childs,const oct::ec::Single* single)
 {
 	for(ec::geneUS i = 0; i < getChilds(); i++)
 	{
-		childs.push_back(new Single(env->nextID(),(Enviroment&)*env));
+		childs.push_back(new Single((Enviroment&)*env));
 		Single* newSingle = (Single*)childs.back();
 		
 		geneUS newGen = chromo.combination(((Single*)single)->chromo.getNumber());
@@ -376,7 +376,7 @@ void Enviroment::initial()
 {
 	for(unsigned short i = 0; i < initPopulation; i++)
 	{
-		Single* single = new Single(nextID(),*this);
+		Single* single = new Single(*this);
 		push_back(single);
 	}
 }

@@ -168,7 +168,7 @@ Single::Single(const Single& obj) : oct::ec::Single(obj)
 {
 
 }
-Single::Single(unsigned int id,Enviroment& e,Chromosome init[][3]) : oct::ec::Single(id,e)
+Single::Single(Enviroment& e,Chromosome init[][3]) : oct::ec::Single(e)
 {
 	//std::cout << "Step 1.2.1\n";
 	//std::cout << "init = " << init << "\n";
@@ -198,7 +198,7 @@ Single::~Single()
 	}
 	delete[] tabla;
 }
-Single::Single(unsigned int id,Enviroment& e,Chromosome** newData,Chromosome init[][3],unsigned int c) : ec::Single(id,e,c)
+Single::Single(Enviroment& e,Chromosome** newData,Chromosome init[][3],unsigned int c) : ec::Single(e,c)
 {
 	tabla = newData;
 	intiVals = init;
@@ -400,22 +400,22 @@ void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* 
 			}
 		}
 
-		Single* s = new Single(idCount,(Enviroment&)*env,newtabla,intiVals,getChilds());
+		Single* s = new Single((Enviroment&)*env,newtabla,intiVals,getChilds());
 		chils.push_back(s);
 		if(env->getEchoLevel() > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n";
 	}
 }
 void Single::save(Save& s)
 {
-	(*s.out) << getID();
-	(*s.out) << ",";
-	(*s.out) << getFitness();
-	(*s.out) << ",";
-	(*s.out) << getErros();
+	(std::ofstream&)(s) << getID();
+	(std::ofstream&)(s) << ",";
+	(std::ofstream&)(s) << getFitness();
+	(std::ofstream&)(s) << ",";
+	(std::ofstream&)(s) << getErros();
 	//fn << ",";
 	//fn << getMD5();
-	(*s.out) << ",";
-	(*s.out) << getAge();
+	(std::ofstream&)(s) << ",";
+	(std::ofstream&)(s) << getAge();
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -424,8 +424,8 @@ void Single::save(Save& s)
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{
-					(*s.out) << ",";
-					(*s.out) << tabla[i][k].getNumber(j,l);
+					(std::ofstream&)(s) << ",";
+					(std::ofstream&)(s) << tabla[i][k].getNumber(j,l);
 				}
 			}
 		}
@@ -642,7 +642,7 @@ void Enviroment::initial()
 	//std::cout << "sudokuInit = " << sudokuInit << "\n";
 	for(Population i = 0; i < initPopulation; i++,idCount++)
 	{
-		Single* s = new Single(nextID(),*this,sudokuInit);
+		Single* s = new Single(*this,sudokuInit);
 		s->randFill();
 		push_back(s);
 	}

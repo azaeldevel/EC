@@ -203,7 +203,7 @@ void Junction::randFill(TypeJuntion t)
 	{
 		out = o;
 	}
-	Save::operator std::ofstream&()
+	/*Save::operator std::ofstream&()
 	{
 		return *out;
 	}
@@ -216,10 +216,19 @@ void Junction::randFill(TypeJuntion t)
 	{
 		out = o;
 		return o;
+	}*/
+	bool Save::getNewLeader()const
+	{
+		return new_leader;
 	}
+	
+	
+	
 
 
-
+	SaveCollection::SaveCollection() : Save(NULL)
+	{
+	}
 	SaveCollection::SaveCollection(const std::string& dir) : directory(dir)
 	{
 	}
@@ -233,6 +242,19 @@ void Junction::randFill(TypeJuntion t)
 		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
 
 		std::string strfn = directory + "/" + filename;
+		out = new std::ofstream(strfn);
+		if(not out->is_open())
+		{
+			std::string msg = "Fallo apertura de archivo '";
+			msg = strfn + "'";
+			throw oct::core::Exception(msg,__FILE__,__LINE__);
+		}
+	}
+	void SaveCollection::open(const std::string& fn,const std::string& dir)
+	{
+		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
+
+		std::string strfn = dir + "/" + fn;
 		out = new std::ofstream(strfn);
 		if(not out->is_open())
 		{
@@ -299,8 +321,10 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-
-	SaveSolutions::SaveSolutions(const std::string& dir) : SaveCollectionByIteration(dir,"solutions")
+	SaveSolutions::SaveSolutions()
+	{
+	}
+	SaveSolutions::SaveSolutions(const std::string& dir) : SaveCollection(dir)
 	{
 	}
 
@@ -318,16 +342,16 @@ Single::Single(const Single& obj)
 	fitness = obj.fitness;
 	childs = obj.childs;
 }
-Single::Single(ec::ID id,Enviroment& e) : env(&e)
+Single::Single(Enviroment& e) : env(&e)
 {
-	this->id = id;
+	id = env->nextID();
 	init();
 	std::uniform_int_distribution<> distr(1, 9);
 	childs = distr(gen);
 }
-Single::Single(ec::ID id,Enviroment& e,unsigned int c) : childs(c),env(&e)
+Single::Single(Enviroment& e,unsigned int c) : childs(c),env(&e)
 {
-	this->id = id;
+	id = env->nextID();
 	init();
 }
 Single::~Single()
@@ -391,7 +415,7 @@ void Enviroment::init()
 	maxIteration = 0;
 	echolevel = 0;
 	echoPrecision = 20;
-	logDirectoryFlag = false;
+	//logDirectoryFlag = false;
 	//sigmaReduction = 1.0;
 	//minSolutions = 0;
 	//stopMinSolutions = false;
@@ -642,6 +666,7 @@ bool Enviroment::run()
 			std::string strhistory = logDirectoryHistory + "/historial.csv";
 			history.open(strhistory);
 		}
+		logDirectorySolutionsFlag = not logDirectorySolutions.empty();
 	}
 	//std::cout << "\tStep 4\n";
 
@@ -762,31 +787,33 @@ bool Enviroment::run()
 			if( 1.0 - (*it)->getFitness() < epsilon) solutions.push_back(*it);
 			else break;//si no fuen solucio las siguientes tampoco
 		}
-		if(solutions.size() >= minSolutions and logDirectoryFlag and stopMinSolutions)//se definion una cantidad minima de soluciones
+		if(solutions.size() >= minSolutions and (logDirectoryFlag or logDirectorySolutionsFlag) and stopMinSolutions)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			SaveSolutions saveColl(logDirectory);
-			//saveColl.open("solutions.cvs");
+			SaveSolutions saveSols;			
+			if(logDirectoryFlag) saveSols.open(logDirectory,"solutions.cvs");
+			else if(logDirectorySolutionsFlag) saveSols.open(logDirectorySolutions,"solutions.cvs");
 			for(Single* s : solutions)
 			{
-				s->save(saveColl);
-				(*saveColl.out) << "\n";
+				s->save(saveSols);
+				(*saveSols.out) << "\n";
 			}
-			saveColl.close();
+			saveSols.close();
 			history.close();
 			return true;
 		}
-		else if(solutions.size() == maxPopulation and logDirectoryFlag)//se definion una cantidad minima de soluciones
+		else if(solutions.size() == maxPopulation and (logDirectoryFlag or logDirectorySolutionsFlag))//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
-			SaveSolutions saveColl(logDirectory);
-			//saveColl.open("solutions.cvs");
+			SaveSolutions saveSols;
+			if(logDirectoryFlag) saveSols.open(logDirectory,"solutions.cvs");
+			else if(logDirectorySolutionsFlag) saveSols.open(logDirectorySolutions,"solutions.cvs");
 			for(Single* s : solutions)
 			{
-				s->save(saveColl);
-				(*saveColl.out) << "\n";
+				s->save(saveSols);
+				(*saveSols.out) << "\n";
 			}
-			saveColl.close();
+			saveSols.close();
 			history.close();
 			return true;
 		}

@@ -16,8 +16,8 @@ class Single : public ec::Single
 {
 public:
 	Single(const Single&);
-	Single(ID id,Enviroment&,unsigned int);
-	Single(ID id,Enviroment&);
+	Single(Enviroment&,unsigned int);
+	Single(Enviroment&);
 };
 
 
