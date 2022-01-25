@@ -2652,13 +2652,31 @@ namespace oct::ec::sche
 		}
 	}
 	void ClassRoom::juncting_choose_one_lesson(const ClassRoom& g2)
-	{
+	{	
+		if(g2.size() != size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
 		if(g2.size() == 0) throw core::Exception("No hay lecciones",__FILE__,__LINE__);
 		
 		std::uniform_int_distribution<> distrib(0,g2.size() - 1); 
 		unsigned int i = distrib(gen);
 		at(i).clear();
 		at(i) = g2[i];
+	}
+	void ClassRoom::juncting_choose_random_lesson(const ClassRoom& g2)
+	{
+		if(g2.size() != size()) throw core::Exception("EL tamano de los registros no coincide.",__FILE__,__LINE__);
+		if(g2.size() == 0) throw core::Exception("No hay lecciones",__FILE__,__LINE__);
+		
+		std::uniform_int_distribution<> distrib_choose(0,g2.size() - 1); 
+		unsigned int choose = distrib_choose(gen);	
+		real prob = 1.0/real(choose);	
+		std::bernoulli_distribution distrib_selection(prob);
+		for(unsigned int i = 0; i < g2.size(); i++)
+		{
+			if(distrib_selection(gen))
+			{
+				at(i) = g2.at(i);
+			}
+		}
 	}
 	void ClassRoom::mutate()
 	{
@@ -2793,21 +2811,41 @@ namespace oct::ec::sche
 	}	
 	void Schedule::juncting_choose_one_lesson(const Schedule& s1,const Schedule& s2)
 	{
-		//std::cout << "Size 1 = " << s1.size() << "\n";
-		//std::cout << "Size 2 = " << s2.size() << "\n";
 		if(s1.size() != s2.size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
 		if(s1.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
 		if(s2.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
 
-		std::bernoulli_distribution distrib(0.6);
 		for(unsigned int i = 0; i < s1.size(); i++)
 		{
 			at(i) = s1.at(i);
 		}
 		
-		std::uniform_int_distribution<> distribChoose(0,s2.size() - 1); 
-		unsigned int i = distribChoose(gen);
+		std::uniform_int_distribution<> distrib(0,s2.size() - 1); 
+		unsigned int i = distrib(gen);
 		at(i).juncting_choose_one_lesson(s2[i]);
+	}	
+	void Schedule::juncting_choose_random_lesson(const Schedule& s1,const Schedule& s2)
+	{
+		if(s1.size() != s2.size()) throw core::Exception("Los tamanos de horaios no coincide",__FILE__,__LINE__);
+		if(s1.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+		if(s2.size() == 0) throw core::Exception("Hoario vacio",__FILE__,__LINE__);
+
+		std::uniform_int_distribution<> distrib_choose(0,size() - 1); 
+		unsigned int choose = distrib_choose(gen);		
+		real prob = 1.0/real(choose);
+		std::bernoulli_distribution distrib(prob);
+		for(unsigned int i = 0; i < s1.size(); i++)
+		{
+			if(distrib(gen))
+			{
+				at(i) = s1.at(i);
+			}
+			else
+			{
+				at(i) = s2.at(i);
+				at(i).juncting_choose_random_lesson(s2[i]);
+			}
+		}
 	}
 	void Schedule::mutate()
 	{

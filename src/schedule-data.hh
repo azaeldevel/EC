@@ -793,6 +793,7 @@ namespace oct::ec::sche
 
 		void juncting_mesh_lessons(const ClassRoom&,const ClassRoom&);
 		void juncting_choose_one_lesson(const ClassRoom&);
+		void juncting_choose_random_lesson(const ClassRoom&);
 
 		void mutate();
 
@@ -822,6 +823,7 @@ namespace oct::ec::sche
 		void juncting_mesh_classroom(const Schedule&,const Schedule&);
 		void juncting_half(const Schedule&,const Schedule&);
 		void juncting_choose_one_lesson(const Schedule&,const Schedule&);
+		void juncting_choose_random_lesson(const Schedule&,const Schedule&);
 
 		void mutate();
 
