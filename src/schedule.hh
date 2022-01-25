@@ -28,17 +28,17 @@ namespace oct::ec::sche
 		*/
 		//Single(ID id,Enviroment& env, const Schedule&);
 		Single(Enviroment& env);
-		
+
 		/**
 		*\brief Evalua al individuo y asigna su valor de adaptabilidad(fitness)
 		*/
 		virtual void eval();
 
-		
+
 		/**
 		*\brief Crea un arcivo CSV con los datos relevantes del individuo
 		*/
-		virtual void save(Save& fn);		
+		virtual void save(Save& fn);
 		/**
 		*\brief Realiza el apareo entre dos individuos
 		*/
@@ -58,7 +58,7 @@ namespace oct::ec::sche
 		static unsigned int jump_saver;
 
 	private:
-		
+
 		/**
 		*\brief Retorna la cantiad de traslapes que tiene los maestros
 		*/
@@ -93,14 +93,14 @@ namespace oct::ec::sche
 		bool bound_schedule()const; //TODO:implemetar
 
 
-		void juncting_mesh_lessons(const Single&,const Single&);
+		/*void juncting_mesh_lessons(const Single&,const Single&);
 		void juncting_mesh_classroom(const Single&,const Single&);
 		void juncting_half(const Single&,const Single&);
 		void juncting_choose_one_lesson(const Single&,const Single&);
-		void juncting_choose_random_lesson(const Single&,const Single&);
+		void juncting_choose_random_lesson(const Single&,const Single&);*/
 
 	private:
-		typedef void (Single::*algorit)(const Single&,const Single&);
+		typedef void (Schedule::*algorit)(const Schedule&,const Schedule&);
 
 		algorit random_algorit();
 	};
@@ -120,9 +120,9 @@ namespace oct::ec::sche
 		*\brief Inicia las variables
 		*/
 		void init(const std::string&);
-		
+
 		~Enviroment();
-		
+
 		const Data& get_data()const;
 
 		unsigned int get_criterion()const;
@@ -138,7 +138,7 @@ namespace oct::ec::sche
 		//real get_gamma() const;
 		//double get_portion() const;
 		//unsigned int get_schedule_max_hours() const;
-		
+
 
 		/**
 		*\brief Inicia el proceso de apareo, sobecragada devido a que deve distigir entre grupo para realizar el apareoa
@@ -157,9 +157,9 @@ namespace oct::ec::sche
 
 	private:
 		std::string input_directory;
-		Data data;	
+		Data data;
 		std::string strid;
-		
+
 		unsigned int CRITERION;
 		//real PORTION;
 		//real GAMMA;

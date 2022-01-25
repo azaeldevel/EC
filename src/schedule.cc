@@ -27,26 +27,26 @@ namespace oct::ec::sche
 	Single::Single(Enviroment& env) : ec::Single(env)
 	{
 	}
-	
+
 	Single::algorit Single::random_algorit()
 	{
 		std::uniform_int_distribution<> distrib(1,4);
 		switch(distrib(gen))
 		{
 			case 1:
-				return &Single::juncting_mesh_lessons;
+				return &Schedule::juncting_mesh_lessons;
 			case 2:
-				return &Single::juncting_mesh_classroom;
+				return &Schedule::juncting_mesh_classroom;
 			case 3:
-				return &Single::juncting_half;
+				return &Schedule::juncting_half;
 			case 4:
-				return &Single::juncting_choose_one_lesson;
+				return &Schedule::juncting_choose_one_lesson;
 			case 5:
-				return &Single::juncting_choose_one_lesson;
+				return &Schedule::juncting_choose_random_lesson;
 			default:
 				throw core::Exception("Funcion de apareo desconocida",__FILE__,__LINE__);
 		}
-		
+
 		return NULL;
 	}
 	void Single::save(Save& fn)
@@ -77,12 +77,12 @@ namespace oct::ec::sche
 		for(unsigned int i = 0; i < getChilds(); i++)
 		{
 			Single* newsingle = new Single((Enviroment&)*env,getChilds());
-			newsingle->resize(size());			
+			newsingle->resize(size());
 			(newsingle->*(random_algorit()))(*this,*(const Single*)single);//llama a un algoritmo de mezclado al azar
 			chils.push_back(newsingle);
 		}
 	}
-	void Single::juncting_mesh_lessons(const Single& s1,const Single& s2)
+	/*void Single::juncting_mesh_lessons(const Single& s1,const Single& s2)
 	{
 		Schedule::juncting_mesh_lessons(s1,s2);
 	}
@@ -101,7 +101,7 @@ namespace oct::ec::sche
 	void Single::juncting_choose_random_lesson(const Single& s1,const Single& s2)
 	{
 		Schedule::juncting_choose_random_lesson(s1,s2);
-	}
+	}*/
 	void Single::print(std::ostream&) const
 	{
 	}
