@@ -30,7 +30,7 @@ namespace oct::ec::sche
 	
 	Single::algorit Single::random_algorit()
 	{
-		std::uniform_int_distribution<> distrib(1,5);
+		std::uniform_int_distribution<> distrib(1,4);
 		switch(distrib(gen))
 		{
 			case 1:
@@ -123,6 +123,7 @@ Enviroment::Enviroment(const std::string& log,const std::string& in_dir,const st
 {
 	if(echolevel > 0 and fout != NULL) (*fout) << "Creando Ambiente..\n";
 	logDirectoryHistory = log;
+	logDirectorySolutions = log;
 
 	//if(not shell.exists(in_dir)) shell.mkdir(in_dir,true);
 	if(not shell.exists(out_dir)) shell.mkdir(out_dir,true);

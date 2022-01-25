@@ -407,15 +407,15 @@ void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* 
 }
 void Single::save(Save& s)
 {
-	(*s.out) << getID();
-	(*s.out) << ",";
-	(*s.out) << getFitness();
-	(*s.out) << ",";
-	(*s.out) << getErros();
+	(std::ofstream&)(s) << getID();
+	(std::ofstream&)(s) << ",";
+	(std::ofstream&)(s) << getFitness();
+	(std::ofstream&)(s) << ",";
+	(std::ofstream&)(s) << getErros();
 	//fn << ",";
 	//fn << getMD5();
-	(*s.out) << ",";
-	(*s.out) << getAge();
+	(std::ofstream&)(s) << ",";
+	(std::ofstream&)(s) << getAge();
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -424,8 +424,8 @@ void Single::save(Save& s)
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{
-					(*s.out) << ",";
-					(*s.out) << tabla[i][k].getNumber(j,l);
+					(std::ofstream&)(s) << ",";
+					(std::ofstream&)(s) << tabla[i][k].getNumber(j,l);
 				}
 			}
 		}
