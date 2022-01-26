@@ -27,6 +27,9 @@ if test "x$with_tests" = "xyes"; then
 	PKG_CHECK_MODULES(CUNIT,cunit)
 fi
 
+PKG_CHECK_MODULES(LIBCONFIG,libconfig++)
+
+
 AC_OUTPUT([
 Makefile
 src/Makefile

@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <algorithm>
+#include <libconfig.h++>
 
 
 #include "schedule.hh"
@@ -1507,11 +1508,11 @@ namespace oct::ec::sche
 	{
 		init();
 	}
-	Configuration::Configuration(const std::string& dir)
+	/*Configuration::Configuration(const std::string& dir)
 	{
 		init();
 		out_dir = dir;
-	}
+	}*/
 
 	/*unsigned int Configuration::get_time_per_hour() const
 	{
@@ -1603,6 +1604,58 @@ namespace oct::ec::sche
 	{
 		return out_dir;
 	}
+	
+	void Configuration::load_file(const std::string& proyect)
+	{
+		libconfig::Config config;
+		
+		config.readFile(proyect.c_str());
+	  	
+	  	
+	  	std::string schema_week = config.lookup("schema_week");
+		if(schema_week.compare("MF") == 0)
+		{
+			this->schema_week = SchemaWeek::MF;
+		}
+		else if(schema_week.compare("MS") == 0)
+		{
+			this->schema_week = SchemaWeek::MS;
+		}
+		else if(schema_week.compare("SD") == 0)
+		{
+			this->schema_week = SchemaWeek::DS;
+		}
+		else
+		{
+			throw core::Exception("El valor de schema_week es desconocido.",__FILE__,__LINE__); 
+		}
+		
+		int seconds_per_hour;
+		config.lookupValue("seconds",seconds_per_hour);
+		this->seconds_per_hour = seconds_per_hour;
+		
+		std::string out_dir = config.lookup("out");
+		this->out_dir = out_dir;
+		
+		int trys;
+		config.lookupValue("trys",trys);
+		this->trys = trys;
+	}
+	void Configuration::load_file(const std::string& proyect,const std::string& out_dir)
+	{
+		load_file(proyect);
+		this->out_dir = out_dir;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 
 	Target::Target() : config(NULL)
@@ -1838,7 +1891,7 @@ namespace oct::ec::sche
 
 	Teachers::Teachers(const std::string& fn)
 	{
-		loadFile(fn);
+		load_file(fn);
 	}
 	Teachers::Teachers()
 	{
@@ -1848,7 +1901,7 @@ namespace oct::ec::sche
 	{
 		return teachers;
 	}
-	void Teachers::loadFile(const std::string& fn)
+	void Teachers::load_file(const std::string& fn)
 	{
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
 
@@ -1916,12 +1969,12 @@ namespace oct::ec::sche
 
 	Subjects::Subjects(const std::string& fn, const Data* d) : Targets(d)
 	{
-		loadFile(fn);
+		load_file(fn);
 	}
 	Subjects::Subjects()
 	{
 	}
-	void Subjects::loadFile(const std::string& fn)
+	void Subjects::load_file(const std::string& fn)
 	{
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
 
@@ -2024,7 +2077,7 @@ namespace oct::ec::sche
 	}
 	Teachers_Subjects::Teachers_Subjects(const std::string& fn,const Data* d) : Targets(d)
 	{
-		loadFile(fn);
+		load_file(fn);
 	}
 	Teachers_Subjects::Teachers_Subjects()
 	{
@@ -2034,7 +2087,7 @@ namespace oct::ec::sche
 	{
 		return teachers_subjects;
 	}
-	void Teachers_Subjects::loadFile(const std::string& fn)
+	void Teachers_Subjects::load_file(const std::string& fn)
 	{
 
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
@@ -2154,7 +2207,7 @@ namespace oct::ec::sche
 
 	Rooms::Rooms(const std::string& fn)
 	{
-		loadFile(fn);
+		load_file(fn);
 	}
 	Rooms::Rooms()
 	{
@@ -2165,7 +2218,7 @@ namespace oct::ec::sche
 		return rooms;
 	}
 
-	void Rooms::loadFile(const std::string& fn)
+	void Rooms::load_file(const std::string& fn)
 	{
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
 
@@ -2252,7 +2305,7 @@ namespace oct::ec::sche
 	}
 	Groups::Groups(const std::string& fn,const Data* d) : Targets(d)
 	{
-		loadFile(fn);
+		load_file(fn);
 	}
 	Groups::Groups()
 	{
@@ -2268,7 +2321,7 @@ namespace oct::ec::sche
 	}
 
 
-	void Groups::loadFile(const std::string& fn)
+	void Groups::load_file(const std::string& fn)
 	{
 
 		if(not dataObject) throw core::Exception("dataObject no asignado.", __FILE__,__LINE__);
@@ -2383,8 +2436,12 @@ namespace oct::ec::sche
 	Data::Data()
 	{
 	}
-	Data::Data(const std::string& in_dir,const std::string& out_dir) : config(out_dir)
+	Data::Data(const std::string& in_dir,const std::string& out_dir)
 	{
+		std::string proy_dir= in_dir;
+		proy_dir += "/schedule.cfg";
+		config.load_file(proy_dir,out_dir);
+		
 		load(in_dir);
 	}
 	const std::map<Data::key_hbs, Data::HBRS>& Data::get_list_hbrs() const
@@ -2399,16 +2456,16 @@ namespace oct::ec::sche
 	{
 		//TODO:validacion estricta delas entredas
 		((Targets&)teachers) = this;
-		teachers.loadFile(dir + "/teachers.csv");
+		teachers.load_file(dir + "/teachers.csv");
 		((Targets&)subjects) = this;
-		subjects.loadFile(dir + "/subjects.csv");
+		subjects.load_file(dir + "/subjects.csv");
 		((Targets&)rooms) = this;
-		rooms.loadFile(dir + "/rooms.csv");
+		rooms.load_file(dir + "/rooms.csv");
 		//
 		((Targets&)teachers_subjects) = this;
-		teachers_subjects.loadFile(dir + "/teachers-subjects.csv");
+		teachers_subjects.load_file(dir + "/teachers-subjects.csv");
 		((Targets&)groups) = this;
-		groups.loadFile(dir + "/groups.csv");
+		groups.load_file(dir + "/groups.csv");
 
 		build();
 	}

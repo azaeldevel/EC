@@ -411,7 +411,7 @@ namespace oct::ec::sche
 	public:
 		void init();
 		Configuration();
-		Configuration(const std::string& name);
+		//Configuration(const std::string& name);
 		unsigned int to_hours(double )const;
 		//unsigned int get_time_per_hour() const;
 		std::time_t get_seconds_per_hour() const;
@@ -441,6 +441,9 @@ namespace oct::ec::sche
 		*/
 		void rest(const Time& dt, unsigned int hours, Time& result);
 
+		void load_file(const std::string& project);
+		void load_file(const std::string& project,const std::string& out_dir);
+
 		//
 		unsigned int _id;
 	private:
@@ -450,6 +453,7 @@ namespace oct::ec::sche
 		//FormatDT format;
 		real hours_sigma;
 		std::string out_dir;
+		unsigned int trys;
 	public:
 		static const std::string formats_dt_hour;
 		static const std::string formats_dt_day_hour;
@@ -560,7 +564,7 @@ namespace oct::ec::sche
 		Teachers(const std::string& fn);
 		const std::list<Teacher>& get_list() const;
 
-		void loadFile(const std::string& fn);
+		void load_file(const std::string& fn);
 		void print(std::ostream&);
 		const Teacher* search(const std::string&) const;
 
@@ -580,7 +584,7 @@ namespace oct::ec::sche
 	public:
 		Subjects(const std::string& fn, const Data* );
 		Subjects();
-		void loadFile(const std::string& fn);
+		void load_file(const std::string& fn);
 		void print(std::ostream&)const;
 		const Subject* search(const std::string&) const;
 		const std::list<Subject>& get_list() const;
@@ -608,7 +612,7 @@ namespace oct::ec::sche
 	public:
 		Teachers_Subjects();
 		Teachers_Subjects(const std::string& fn,const Data* data);
-		void loadFile(const std::string& fn);
+		void load_file(const std::string& fn);
 		void print(std::ostream&)const;
 
 		const std::list<Row>& get_list() const;
@@ -641,7 +645,7 @@ namespace oct::ec::sche
 		Rooms(const std::string& fn);
 		const std::list<Room>& get_list() const;
 
-		void loadFile(const std::string& fn);
+		void load_file(const std::string& fn);
 		void print(std::ostream&)const;
 
 		const Room* search(const std::string&)const;
@@ -684,7 +688,7 @@ namespace oct::ec::sche
 		std::list<Group>& get_list();
 		unsigned int get_max_lessons()const;
 
-		void loadFile(const std::string& fn);
+		void load_file(const std::string& fn);
 		void print(std::ostream&)const;
 
 		const Group* search_name(const std::string&)const;
