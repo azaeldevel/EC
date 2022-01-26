@@ -93,11 +93,13 @@ namespace oct::ec::sche
 		bool bound_schedule()const; //TODO:implemetar
 
 
-		/*void juncting_mesh_lessons(const Single&,const Single&);
+		/*
+		void juncting_mesh_lessons(const Single&,const Single&);
 		void juncting_mesh_classroom(const Single&,const Single&);
 		void juncting_half(const Single&,const Single&);
 		void juncting_choose_one_lesson(const Single&,const Single&);
-		void juncting_choose_random_lesson(const Single&,const Single&);*/
+		void juncting_choose_random_lesson(const Single&,const Single&);
+		*/
 
 	private:
 		typedef void (Schedule::*algorit)(const Schedule&,const Schedule&);
