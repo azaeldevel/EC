@@ -27,7 +27,10 @@
 //#include <octetos/coreutils/shell.hh>
 #include "sudoku.hh"
 
-
+void echo(const char* text)
+{
+	std::cout << text;
+}
 int main(int argc, const char* argv[])
 {
 	if(argc < 3) 
@@ -39,7 +42,7 @@ int main(int argc, const char* argv[])
 			
 	//std::cout << "Step 0.0\n";	
 	oct::ec::sudoku::Enviroment* sudoku = new oct::ec::sudoku::Enviroment(argc,argv);
-	sudoku->enableEcho(&std::cout,2);
+	sudoku->enableEcho(&echo,2);
 	bool check = sudoku->run();
 	
 	delete sudoku; 
