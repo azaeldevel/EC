@@ -263,7 +263,7 @@ typedef void (*echo)(const char*);
 /**
 *\brief Pricipales variables de control y proceso
 */
-class Enviroment : public std::list<ec::Single*>
+class Enviroment : protected std::list<ec::Single*>
 {
 public:
 	//
