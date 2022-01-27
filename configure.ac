@@ -1,6 +1,6 @@
 
 
-AC_INIT(octetos-ec, 0.4.0-alpha, azael.devel@gmail.com)
+AC_INIT(octetos-ec, 0.6.0-alpha, azael.devel@gmail.com)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -21,6 +21,7 @@ LT_INIT
 
 PKG_CHECK_MODULES(OCTETOS_CORE,octetos-core)
 
+
 AM_CONDITIONAL(WITH_TESTS, test x"$with_tests" = "xyes")
 AC_ARG_WITH([tests], AS_HELP_STRING([--with-tests], [Compilando con soporte para Tests]))
 if test "x$with_tests" = "xyes"; then 
@@ -34,4 +35,5 @@ AC_OUTPUT([
 Makefile
 src/Makefile
 tests/Makefile
+src/octetos-EC.pc
 ])
