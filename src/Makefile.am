@@ -9,11 +9,11 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-bin_PROGRAMS = ec-sudoku ec-trans ec-max ec-schedule
+bin_PROGRAMS = ec-sudoku ec-trans ec-max
 noinst_PROGRAMS = develop
 lib_LTLIBRARIES = liboctetos-EC.la
 
-liboctetos_EC_la_SOURCES = ec.cc GA.cc sudoku.cc trans.cc trans-region.cc max.cc schedule.cc schedule-data.cc schedule-eval.cc schedule-output.cc
+liboctetos_EC_la_SOURCES = ec.cc sudoku.cc trans.cc trans-region.cc max.cc 
 liboctetos_EC_la_LDFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS)
 liboctetos_EC_la_LIBADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS)
 
@@ -32,10 +32,6 @@ ec_max_LDFLAGS =
 ec_max_CXXFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS) $(ZLIB_CFLAGS)
 ec_max_LDADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS) $(ZLIB_LIBS) liboctetos-EC.la
 
-ec_schedule_SOURCES = ec-schedule.cc
-ec_schedule_LDFLAGS = 
-ec_schedule_CXXFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS) $(ZLIB_CFLAGS)
-ec_schedule_LDADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS) $(ZLIB_LIBS) liboctetos-EC.la
 
 develop_SOURCES = main.cc 
 develop_LDFLAGS = 
@@ -43,7 +39,7 @@ develop_CXXFLAGS = $(OCTETOS_CORE_CFLAGS) $(OCTETOS_COREUTILS_CFLAGS) $(ZLIB_CFL
 develop_LDADD = $(OCTETOS_CORE_LIBS) $(OCTETOS_COREUTILS_LIBS) $(ZLIB_LIBS) liboctetos-EC.la
 
 octetos_EC_includedir = $(includedir)/octetos/EC
-octetos_EC_include_HEADERS = ec.hh max.hh sudoku.hh schedule.hh
+octetos_EC_include_HEADERS = ec.hh max.hh sudoku.hh
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = octetos-EC.pc
