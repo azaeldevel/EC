@@ -121,10 +121,10 @@ namespace oct::ec::sche
 
 Enviroment::Enviroment(const std::string& log,const std::string& in_dir,const std::string& out_dir) : data(in_dir,out_dir)
 {
-	if(echolevel > 0 and fout != NULL) (*fout) << "Creando Ambiente..\n";
 	logDirectoryHistory = log;
 	logDirectorySolutions = log;
-
+	//logDirectory = log;
+	
 	//if(not shell.exists(in_dir)) shell.mkdir(in_dir,true);
 	if(not shell.exists(out_dir)) shell.mkdir(out_dir,true);
 
@@ -136,15 +136,14 @@ Enviroment::~Enviroment()
 }
 void Enviroment::init(const std::string& in_dir)
 {
-	if(echolevel > 0 and fout != NULL) (*fout) << "Inicializacion..\n";
 	mutableProb = 0.05;
 
 	if(not in_dir.empty())
 	{
 		input_directory = in_dir;
-		initPopulation = data.groups.get_list().size() * data.groups.get_max_lessons();
+		initPopulation = data.config.get_trys() / 10;
 		maxProgenitor = initPopulation;
-		maxPopulation = initPopulation * 10;
+		maxPopulation = data.config.get_trys();
 	}
 	else
 	{
@@ -166,10 +165,12 @@ void Enviroment::init(const std::string& in_dir)
 	schedule_sigma_hours_max = sigma;
 	schedule_sigma_hours_max2 = std::pow(schedule_sigma_hours_max,2.0);
 
-	/*for(unsigned int i = 0; i < CRITERION; i++)
+	/*
+	for(unsigned int i = 0; i < CRITERION; i++)
 	{
 		SCHEDULE_ERROR += 1.0/real(CRITERION);
-	}*/
+	}
+	*/
 	//SCHEDULE_ERROR = 1.0 - SCHEDULE_ERROR;
 	//PORTION = 1.0/real(CRITERION);
 	//schedule_max_hours = std::min((unsigned int)data.groups.get_list().size() * data.groups.get_max_lessons() * (Single::WEEK_HOURS/2), Single::WEEK_HOURS2) ;
@@ -179,34 +180,34 @@ void Enviroment::init(const std::string& in_dir)
 
 void Enviroment::initial()
 {
-	if(echolevel > 0 and fout != NULL) (*fout) << "Poblando ambiente..";
+	if(echolevel > 0 and echoF != NULL) echoF("Poblando ambiente..");
 	Schedules inits;
 	inits.resize(initPopulation);
 
 	if(initPopulation < data.groups.get_list().size() * 2) throw core::Exception("El tamano de la poblacion inicial es muy bajo",__FILE__,__LINE__);
 	if((initPopulation % data.groups.get_list().size()) != 0 and (initPopulation / data.groups.get_list().size() ) < 2 ) throw core::Exception("La poblacion inicial deve ser multiplos de la cantida de grupos.",__FILE__,__LINE__);
 
-	if(echolevel > 0 and fout != NULL)
+	if(echolevel > 0 and echoF != NULL)
 	{
-		(*fout) << ".";
-		fout->flush();
+		echoF(".");
+		//fout->flush();
 	}
 	for(unsigned int i = 0; i < initPopulation; i++)
 	{
-		if(echolevel > 0 and fout != NULL)
+		if(echolevel > 0 and echoF != NULL)
 		{
-			(*fout) << ".";
-			fout->flush();
+		echoF(".");
+		//fout->flush();
 		}
 		Single* sche = new Single(*this);
 		sche->resize(data.groups.get_list().size());
 		Groups::const_iterator itGroup = data.groups.get_list().begin();
 		for(ClassRoom& lessons : *sche)
 		{
-			if(echolevel > 0 and fout != NULL)
+			if(echolevel > 0 and echoF != NULL)
 			{
-				(*fout) << ".";
-				fout->flush();
+				echoF(".");
+				//fout->flush();
 			}
 			lessons.resize((*itGroup).size());
 			std::vector<const Subject*>::const_iterator it_subject = (*itGroup).begin();
@@ -214,10 +215,10 @@ void Enviroment::initial()
 			//std::cout << (&*itGroup)->room->get_name() << " : ";
 			for(const Subject* subjectGroup : *itGroup)
 			{
-				if(echolevel > 0 and fout != NULL)
+				if(echolevel > 0 and echoF != NULL)
 				{
-					(*fout) << ".";
-					fout->flush();
+					echoF(".");
+					//fout->flush();
 				}
 				//std::cout << "Enviroment::initial step : 1 \n";
 				lessons[subject].group = &*itGroup;
@@ -293,10 +294,10 @@ void Enviroment::initial()
 		std::cout << "(" << key.room->get_name() << "," << key.subject->get_name() << "-->" << value.disp_hours << "\n";
 	}*/
 
-	if(echolevel > 0 and fout != NULL)
+	if(echolevel > 0 and echoF != NULL)
 	{
-		(*fout) << "\n--------------------------------------------------------------\n";
-		fout->flush();
+		echoF("\n--------------------------------------------------------------\n");
+		//fout->flush();
 	}
 }
 const Data& Enviroment::get_data()const

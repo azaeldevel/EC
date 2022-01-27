@@ -33,6 +33,10 @@
 
 #include "schedule.hh"
 
+void echo(const char* text)
+{
+	std::cout << text;
+}
 int main(int argc, const char* argv[])
 {
     #if defined(__GNUC__) && defined(__linux__)
@@ -50,7 +54,7 @@ int main(int argc, const char* argv[])
 	std::string log_dir = "logs/schedule/";
 	log_dir += strid;
 	oct::ec::sche::Enviroment* sche = new oct::ec::sche::Enviroment(log_dir,"tests/en",log_dir);
-	sche->enableEcho(&std::cout,2);
+	sche->enableEcho(&echo,2);
 
 	bool ret;
 	ret = sche->run();

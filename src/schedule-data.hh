@@ -424,6 +424,7 @@ namespace oct::ec::sche
 		int get_begin_day() const;
 		real get_hours_sigma()const;
 		const std::string get_out_directory()const;
+		unsigned int get_trys()const;
 
 		/**
 		*\brief Agrega a la hora indicada, la cantidad de horas indicas y coloca el resultado el variable de retorno

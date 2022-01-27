@@ -259,6 +259,7 @@ bool cmpStrength(const Single* f,const Single* s);
 bool cmpStrength1(const Single* f,const Single* s);
 
 
+typedef void (*echo)(const char*);
 /**
 *\brief Pricipales variables de control y proceso
 */
@@ -295,7 +296,7 @@ public:
 	unsigned long getSession()const;
 	//static unsigned long getDayID();
 	//static unsigned long getTimeID();
-	std::ostream* getFout();
+	echo getFout();
 	//const std::string getLogSubDirectory()const;
 	Iteration getIterationActual()const;
 	const std::string& getLogDirectory()const;
@@ -312,7 +313,7 @@ public:
 
 
 	void compress(const std::string& in, const std::string& out);
-	void enableEcho(std::ostream* f, unsigned short level);
+	void enableEcho(echo f, unsigned short level);
 	//void enableLogFile(bool log);
 	unsigned short getEchoLevel()const;
 	void write_archive(const char *outname, const char **filename);
@@ -421,8 +422,6 @@ protected:
 	*/
 	double mutableProb;
 
-	std::ostream* fout;
-
 	//unsigned long session;
 
 	/**
@@ -455,6 +454,8 @@ protected:
 	bool (*comparer)(const Single* f,const Single* s);
 
 	bool echoSteps;
+
+	echo echoF;
 
 	Save* savingDevice;
 

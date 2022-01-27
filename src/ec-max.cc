@@ -27,7 +27,10 @@
 
 #include "max.hh"
 
-
+void echo(const char* text)
+{
+	std::cout << text;
+}
 int main(int argc, const char* argv[])
 {
 	/*if(argc < 2)
@@ -38,7 +41,7 @@ int main(int argc, const char* argv[])
 	}*/
 
 	oct::ec::max::Enviroment* max = new oct::ec::max::Enviroment(argc,argv);
-	max->enableEcho(&std::cout,2);
+	max->enableEcho(&echo,2);
 
 	bool ret = max->run();
 	delete max;//no es necesario delete en mian ya que se llama automaticamente

@@ -437,7 +437,7 @@ void Enviroment::init()
 	media = 0;
 	actualSerie = 0;
 	newIteration = false;
-	fout = &std::cout;
+	echoF = NULL;
 	savingDevice = NULL;
 	junting_sigma = 1.0;
 }
@@ -580,9 +580,9 @@ ID Enviroment::getCountID()
 {
 	return idCount;
 }
-std::ostream* Enviroment::getFout()
+echo Enviroment::getFout()
 {
-	return fout;
+	return echoF;
 }
 unsigned short Enviroment::getEchoLevel()const
 {
@@ -605,9 +605,9 @@ ID Enviroment::nextID()
 {
 	return ++idCount;
 }
-void Enviroment::enableEcho(std::ostream* f, unsigned short level)
+void Enviroment::enableEcho(echo f, unsigned short level)
 {
-	fout = f;
+	echoF = f;
 	echolevel = level;
 }
 /*void Enviroment::enableLogFile(bool log)
@@ -682,7 +682,7 @@ bool Enviroment::run()
 	std::bernoulli_distribution mutation_distr(mutableProb);
 	const ec::Single *leaderPrev, *leader;
 	real fitness;
-	if(echolevel > 0 and fout != NULL) (*fout) << "\n";
+	if(echolevel > 0 and echoF != NULL) echoF("\n");
 
 	if(size() < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
 	if(maxProgenitor  < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
@@ -692,17 +692,32 @@ bool Enviroment::run()
 		{
 			if(actualIteration > maxIteration)
 			{
-				if(fout) (*fout) << "Se alacanzo el limite maximo de iteraciones\n";
+				if(echoF) echoF("Se alacanzo el limite maximo de iteraciones\n");
 				history.close();
 				return false;
 			}
 		}
-		if(echolevel > 0 and fout != NULL)
+		if(echolevel > 0 and echoF != NULL)
 		{
-			if(maxSerie > 0 and stopMaxSerie) (*fout) << ">>> Serie : " << actualSerie << "/" << maxSerie << " - ";
-			else ">>> ";
-			if(maxIteration > 0) (*fout) << "Iteracion : " << actualIteration << "/" << maxIteration << "\n";
-			else (*fout) << "Iteracion : " << actualIteration << "\n";
+			if(maxSerie > 0 and stopMaxSerie) 
+			{
+				std::string log = ">>> Serie : ";
+				log += std::to_string(actualSerie) + "/" + std::to_string(maxSerie) + " - ";
+				echoF(log.c_str());
+			}
+			echoF(">>> ");
+			if(maxIteration > 0) 
+			{
+				std::string log = "Iteracion : ";
+				log += std::to_string(actualIteration) + "/" + std::to_string(maxIteration) + "\n";
+				echoF(log.c_str());
+			}
+			else 
+			{
+				std::string log = "Iteracion : ";
+				log += std::to_string(actualIteration) + "\n";
+				echoF(log.c_str());
+			}
 		}
 		//std::cout << "\tEnviroment::run - while Step 1\n";
 
@@ -753,15 +768,17 @@ bool Enviroment::run()
 			saveit.close();
 		}
 		//std::cout << "\tEnviroment::run - while Step 3.5\n";
+		std::time_t t;
+		tm time;
 		if(logDirectoryFlag or logDirectoryHistoryFlag)
 		{
 			if(history.is_open())
 			{
-				auto t = std::time(nullptr);
-				auto tm = *std::localtime(&t);
+				t = std::time(nullptr);
+				time = *std::localtime(&t);
 
 				history  << std::setprecision(echoPrecision);
-				history  << std::put_time(&tm,"%d/%m/%Y %H:%M:%S");
+				history  << std::put_time(&time,"%d/%m/%Y %H:%M:%S");
 				history  << ",";
 				history  << actualIteration;
 				history  << ",";
@@ -789,7 +806,12 @@ bool Enviroment::run()
 		}
 		if(solutions.size() >= minSolutions and (logDirectoryFlag or logDirectorySolutionsFlag) and stopMinSolutions)//se definion una cantidad minima de soluciones
 		{
-			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
+			if(echolevel > 0 and echoF != NULL) 
+			{
+				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
+				log += std::to_string(solutions.size()) + "\n";
+				echoF(log.c_str());
+			}
 			SaveSolutions saveSols;			
 			if(logDirectoryFlag) saveSols.open(logDirectory,"solutions.cvs");
 			else if(logDirectorySolutionsFlag) saveSols.open(logDirectorySolutions,"solutions.cvs");
@@ -804,7 +826,11 @@ bool Enviroment::run()
 		}
 		else if(solutions.size() == maxPopulation and (logDirectoryFlag or logDirectorySolutionsFlag))//se definion una cantidad minima de soluciones
 		{
-			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
+			if(echolevel > 0 and echoF != NULL) 
+			{
+				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
+				log += std::to_string(solutions.size()) + "\n";
+			}
 			SaveSolutions saveSols;
 			if(logDirectoryFlag) saveSols.open(logDirectory,"solutions.cvs");
 			else if(logDirectorySolutionsFlag) saveSols.open(logDirectorySolutions,"solutions.cvs");
@@ -819,13 +845,21 @@ bool Enviroment::run()
 		}
 		else if(solutions.size() >= minSolutions and stopMinSolutions)//se definion una cantidad minima de soluciones
 		{
-			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
+			if(echolevel > 0 and echoF != NULL) 
+			{
+				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
+				log += std::to_string(solutions.size()) + "\n";
+			}
 
 			return true;
 		}
 		else if(solutions.size() == maxPopulation)//se definion una cantidad minima de soluciones
 		{
-			if(echolevel > 0 and fout != NULL) (*fout) << "\n\tSe completo el conjunto de solucion minimo : " << solutions.size() << "\n";
+			if(echolevel > 0 and echoF != NULL) 			
+			{
+				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
+				log += std::to_string(solutions.size()) + "\n";
+			}
 
 			return true;
 		}
@@ -850,22 +884,25 @@ bool Enviroment::run()
 		//std::cout << "\tEnviroment::run - while Step 5\n";
 		unsigned short removes = countBefore - size();
 		//deletes == 0 ? counUndelete++ : counUndelete = 0;
-		if(echolevel > 1 and fout != NULL)
+		if(echolevel > 1 and echoF != NULL)
 		{
-			(*fout) << "\tProgenitores selecionados, total : " << size() << "\n";
-			(*fout) << "\tEliminados : " << removes << "\n";
+			std::string log = "\tProgenitores selecionados, total : ";
+			log += std::to_string(size()) + "\n";
+			log += "\tEliminados : ";
+			log += std::to_string(removes) + "\n";
+			echoF(log.c_str());
 		}
 		//std::cout << "\tEnviroment::run - while Step 6\n";
 
 
 		//std::cout << "\tStep C10\n";
-		if(echolevel > 1 and fout != NULL)
+		if(echolevel > 1 and echoF != NULL)
 		{
-			std::cout <<std::setprecision(20)<< "\tLider : " << leader->getFitness() << "\n";
-			(*fout) <<std::setprecision(echoPrecision) << "\tmedia : " << media << "\n";
-			(*fout) <<std::setprecision(echoPrecision) << "\tDesviacion estandar : " << sigma << "\n";
-			//(*fout) << "\tVariables faltantes : " << getFaltantes() << "\n";
-			//(*fout) << ((triggerRepeatEnable and triggerRepeatMin > sigma) ? "\tAtasco(Repeticiones)\n" : "\tNo Atasco(Repeticiones)\n");
+			std::string log = "\tLider : ";
+			log += std::to_string(leader->getFitness()) + "\n";
+			log += "\tDesviacion estandar : ";
+			log += std::to_string(sigma) + "\n";
+			echoF(log.c_str()); 			
 		}
 
 		//std::cout << "\tEnviroment::run - while Step 7\n";
@@ -886,14 +923,16 @@ bool Enviroment::run()
 			if(logDirectoryFlag)
 			{
 				s->save(savechilds);
-				(*savechilds.out) << "\n";
+				(*savechilds.out) << "\n";;
 			}
 			push_front(s);
 		}
 		if(logDirectoryFlag) savechilds.close();
-		if(echolevel > 1 and fout != NULL)
+		if(echolevel > 1 and echoF != NULL)
 		{
-			(*fout) << "\tNuevos Hijos : " << newschils.size() << "\n";
+			std::string log = "\tNuevos Hijos : ";
+			log += std::to_string(newschils.size()) + "\n";
+			echoF(log.c_str());
 		}
 		newschils.clear();
 		//std::cout << "\tEnviroment::run - while Step 11\n";

@@ -402,7 +402,12 @@ void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* 
 
 		Single* s = new Single((Enviroment&)*env,newtabla,intiVals,getChilds());
 		chils.push_back(s);
-		if(env->getEchoLevel() > 2 and getEnviroment().getFout() != NULL) (*(getEnviroment().getFout())) << "\tSe crea a " << s->getID() << "\n";
+		if(env->getEchoLevel() > 2 and getEnviroment().getFout() != NULL) 
+		{
+			std::string log = "\tSe crea a ";
+			log += std::to_string(s->getID()) + "\n";
+			getEnviroment().getFout()(log.c_str());
+		}
 	}
 }
 void Single::save(Save& s)

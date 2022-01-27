@@ -1498,11 +1498,10 @@ namespace oct::ec::sche
 	void Configuration::init()
 	{
 		hours_sigma = 0.085;
-		
-		
-		schema_week = SchemaWeek::MF;
+				
+		/*schema_week = SchemaWeek::MF;
 		seconds_per_hour = 45 * 60;
-		out_dir = "logs/schedule";
+		out_dir = "logs/schedule";*/
 	}
 	Configuration::Configuration()
 	{
@@ -1604,13 +1603,16 @@ namespace oct::ec::sche
 	{
 		return out_dir;
 	}
+	unsigned int Configuration::get_trys()const
+	{
+		return trys;
+	}
 	
 	void Configuration::load_file(const std::string& proyect)
 	{
 		libconfig::Config config;
 		
-		config.readFile(proyect.c_str());
-	  	
+		config.readFile(proyect.c_str());	  	
 	  	
 	  	std::string schema_week = config.lookup("schema_week");
 		if(schema_week.compare("MF") == 0)
