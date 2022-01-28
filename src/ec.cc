@@ -221,9 +221,9 @@ void Junction::randFill(TypeJuntion t)
 	{
 		return new_leader;
 	}
-	
-	
-	
+
+
+
 
 
 	SaveCollection::SaveCollection() : Save(NULL)
@@ -699,20 +699,20 @@ bool Enviroment::run()
 		}
 		if(echolevel > 0 and echoF != NULL)
 		{
-			if(maxSerie > 0 and stopMaxSerie) 
+			if(maxSerie > 0 and stopMaxSerie)
 			{
 				std::string log = ">>> Serie : ";
 				log += std::to_string(actualSerie) + "/" + std::to_string(maxSerie) + " - ";
 				echoF(log.c_str());
 			}
 			echoF(">>> ");
-			if(maxIteration > 0) 
+			if(maxIteration > 0)
 			{
 				std::string log = "Iteracion : ";
 				log += std::to_string(actualIteration) + "/" + std::to_string(maxIteration) + "\n";
 				echoF(log.c_str());
 			}
-			else 
+			else
 			{
 				std::string log = "Iteracion : ";
 				log += std::to_string(actualIteration) + "\n";
@@ -777,7 +777,6 @@ bool Enviroment::run()
 				t = std::time(nullptr);
 				time = *std::localtime(&t);
 
-				history  << std::setprecision(echoPrecision);
 				history  << std::put_time(&time,"%d/%m/%Y %H:%M:%S");
 				history  << ",";
 				history  << actualIteration;
@@ -786,11 +785,11 @@ bool Enviroment::run()
 				history  << ",";
 				history  << maxProgenitor;
 				history  << ",";
-				history  << media;
+				history  << std::setprecision(echoPrecision) << media;
 				history  << ",";
-				history  << sigma;
+				history  << std::setprecision(echoPrecision) << sigma;
 				history  << ",";
-				history  << (size() > 0 ? (*front()).getFitness() : 0);//fitness lider
+				history  << std::setprecision(echoPrecision) << (size() > 0 ? (*front()).getFitness() : 0);//fitness lider
 				history  << ",";
 				history  << mutableProb;
 				history  << "\n";
@@ -806,13 +805,13 @@ bool Enviroment::run()
 		}
 		if(solutions.size() >= minSolutions and (logDirectoryFlag or logDirectorySolutionsFlag) and stopMinSolutions)//se definion una cantidad minima de soluciones
 		{
-			if(echolevel > 0 and echoF != NULL) 
+			if(echolevel > 0 and echoF != NULL)
 			{
 				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
 				log += std::to_string(solutions.size()) + "\n";
 				echoF(log.c_str());
 			}
-			SaveSolutions saveSols;			
+			SaveSolutions saveSols;
 			if(logDirectoryFlag) saveSols.open(logDirectory,"solutions.cvs");
 			else if(logDirectorySolutionsFlag) saveSols.open(logDirectorySolutions,"solutions.cvs");
 			for(Single* s : solutions)
@@ -826,7 +825,7 @@ bool Enviroment::run()
 		}
 		else if(solutions.size() == maxPopulation and (logDirectoryFlag or logDirectorySolutionsFlag))//se definion una cantidad minima de soluciones
 		{
-			if(echolevel > 0 and echoF != NULL) 
+			if(echolevel > 0 and echoF != NULL)
 			{
 				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
 				log += std::to_string(solutions.size()) + "\n";
@@ -845,7 +844,7 @@ bool Enviroment::run()
 		}
 		else if(solutions.size() >= minSolutions and stopMinSolutions)//se definion una cantidad minima de soluciones
 		{
-			if(echolevel > 0 and echoF != NULL) 
+			if(echolevel > 0 and echoF != NULL)
 			{
 				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
 				log += std::to_string(solutions.size()) + "\n";
@@ -855,7 +854,7 @@ bool Enviroment::run()
 		}
 		else if(solutions.size() == maxPopulation)//se definion una cantidad minima de soluciones
 		{
-			if(echolevel > 0 and echoF != NULL) 			
+			if(echolevel > 0 and echoF != NULL)
 			{
 				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
 				log += std::to_string(solutions.size()) + "\n";
@@ -902,7 +901,7 @@ bool Enviroment::run()
 			log += std::to_string(leader->getFitness()) + "\n";
 			log += "\tDesviacion estandar : ";
 			log += std::to_string(sigma) + "\n";
-			echoF(log.c_str()); 			
+			echoF(log.c_str());
 		}
 
 		//std::cout << "\tEnviroment::run - while Step 7\n";
