@@ -897,10 +897,17 @@ bool Enviroment::run()
 		//std::cout << "\tStep C10\n";
 		if(echolevel > 1 and echoF != NULL)
 		{
+		    std::stringstream stream;
+		    stream.precision(echoPrecision);
+		    stream << std::fixed;
+		    stream << leader->getFitness();
 			std::string log = "\tLider : ";
-			log += std::to_string(leader->getFitness()) + "\n";
+			log += stream.str() + "\n";
 			log += "\tDesviacion estandar : ";
-			log += std::to_string(sigma) + "\n";
+			stream.clear();
+			stream.str("");
+			stream << sigma;
+			log += stream.str() + "\n";
 			echoF(log.c_str());
 		}
 
