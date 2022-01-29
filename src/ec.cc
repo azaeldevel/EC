@@ -1212,19 +1212,23 @@ void Enviroment::commands(int argc, const char* argv[])
 		}*/
 		if(strcmp("--create-session",argv[i]) == 0)
 		{
-			std::string strDay = std::to_string(oct::core::getDayID());
-			std::string strTime = std::to_string(oct::core::getTimeID());
-			logDirectory = logDirectory + "/" + strDay + strTime;
-			if(not shell.exists(logDirectory))
-			{
-				shell.mkdir(logDirectory);
-			}
+            create_session();
 		}
 		if(strcmp("--solutions",argv[i]) == 0)
 		{
 			minSolutions = std::stoi(argv[++i]);
 		}
 	}
+}
+void Enviroment::create_session()
+{
+    std::string strDay = std::to_string(oct::core::getDayID());
+    std::string strTime = std::to_string(oct::core::getTimeID());
+    logDirectory = logDirectory + "/" + strDay + strTime;
+    if(not shell.exists(logDirectory))
+    {
+        shell.mkdir(logDirectory);
+    }
 }
 void Enviroment::free()
 {

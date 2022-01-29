@@ -373,6 +373,7 @@ public:
 	*/
 	virtual void free();
 
+    void create_session();
 public:
 
 	//
