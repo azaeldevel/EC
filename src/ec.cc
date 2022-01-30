@@ -643,7 +643,6 @@ bool Enviroment::run()
 	logDirectoryFlag = not logDirectory.empty();
 	if(logDirectoryFlag)
 	{
-        std::cout << "Directorio run : " << logDirectory << "\n";
 		if(not std::filesystem::exists(logDirectory))
         {
             std::string msg = "No existe el directorio de logs '";
@@ -822,8 +821,8 @@ bool Enviroment::run()
 				echoF(log.c_str());
 			}
 			SaveSolutions saveSols;
-			if(logDirectoryFlag) saveSols.open(logDirectory,"solutions.cvs");
-			else if(logDirectorySolutionsFlag) saveSols.open(logDirectorySolutions,"solutions.cvs");
+			if(logDirectoryFlag) saveSols.open("solutions.cvs",logDirectory);
+			else if(logDirectorySolutionsFlag) saveSols.open("solutions.cvs",logDirectorySolutions);
 			for(Single* s : solutions)
 			{
 				s->save(saveSols);
@@ -841,8 +840,8 @@ bool Enviroment::run()
 				log += std::to_string(solutions.size()) + "\n";
 			}
 			SaveSolutions saveSols;
-			if(logDirectoryFlag) saveSols.open(logDirectory,"solutions.cvs");
-			else if(logDirectorySolutionsFlag) saveSols.open(logDirectorySolutions,"solutions.cvs");
+			if(logDirectoryFlag) saveSols.open("solutions.cvs",logDirectory);
+			else if(logDirectorySolutionsFlag) saveSols.open("solutions.cvs",logDirectorySolutions);
 			for(Single* s : solutions)
 			{
 				s->save(saveSols);

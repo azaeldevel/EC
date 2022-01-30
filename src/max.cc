@@ -221,58 +221,58 @@ void Chromosome::mutate()
 {
 	if(sizeof(caret_2B_16b) != sizeof(geneUS)) throw octetos::core::Exception("No coincide los tipos de datos",__LINE__,__FILE__);
 
-	caret_2B_16b gene = *reinterpret_cast<const caret_2B_16b*>((const geneUS*)&gennumber);
+	caret_2B_16b& gene = *reinterpret_cast<caret_2B_16b*>(&gennumber);
 	std::uniform_int_distribution<> distribution(1,16);
 
 	switch(distribution(gen))
 	{
 		case 1:
-			gene.a = !gene.b;
+			gene.a = !gene.a;
 			break;
 		case 2:
 			gene.b = !gene.b;
 			break;
 		case 3:
-			gene.c = !gene.b;
+			gene.c = !gene.c;
 			break;
 		case 4:
-			gene.d = !gene.b;
+			gene.d = !gene.d;
 			break;
 		case 5:
-			gene.e = !gene.b;
+			gene.e = !gene.e;
 			break;
 		case 6:
-			gene.f = !gene.b;
+			gene.f = !gene.f;
 			break;
 		case 7:
-			gene.g = !gene.b;
+			gene.g = !gene.g;
 			break;
 		case 8:
-			gene.h = !gene.b;
+			gene.h = !gene.h;
 			break;
 		case 9:
-			gene.i = !gene.b;
+			gene.i = !gene.i;
 			break;
 		case 10:
-			gene.j = !gene.b;
+			gene.j = !gene.j;
 			break;
 		case 11:
-			gene.k = !gene.b;
+			gene.k = !gene.k;
 			break;
 		case 12:
-			gene.l = !gene.b;
+			gene.l = !gene.l;
 			break;
 		case 13:
-			gene.m = !gene.b;
+			gene.m = !gene.m;
 			break;
 		case 14:
-			gene.n = !gene.b;
+			gene.n = !gene.n;
 			break;
 		case 15:
-			gene.o = !gene.b;
+			gene.o = !gene.o;
 			break;
 		case 16:
-			gene.p = !gene.b;
+			gene.p = !gene.p;
 			break;
 	}
 }
@@ -358,9 +358,9 @@ Enviroment::Enviroment(int argc, const char* argv[]) : oct::ec::Enviroment(argc,
 
 void Enviroment::init()
 {
-	initPopulation = 16*16 * 16;
-	maxPopulation = 16*16 * 16;
-	maxProgenitor = 16*2;
+	initPopulation = 100;
+	maxPopulation = 5000;
+	maxProgenitor = 100;
 	//echoSteps = false;
 	stopperMinSolutions(1);
 	stopperMaxIterations(1000);
@@ -368,6 +368,7 @@ void Enviroment::init()
 	//std::cout << "epsilon = " << epsilon << "\n";
 	comparer = &oct::ec::cmpStrength;
 	mutableProb = 0.2;
+	create_session();
 }
 
 
