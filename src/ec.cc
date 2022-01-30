@@ -643,6 +643,7 @@ bool Enviroment::run()
 	logDirectoryFlag = not logDirectory.empty();
 	if(logDirectoryFlag)
 	{
+        std::cout << "Directorio run : " << logDirectory << "\n";
 		if(not std::filesystem::exists(logDirectory))
         {
             std::string msg = "No existe el directorio de logs '";
@@ -756,18 +757,27 @@ bool Enviroment::run()
 		//std::cout << "\tEnviroment::run - while Step 3\n";
 		if(logDirectoryFlag)
 		{
+		    //std::cout << "\tEnviroment::run - while Step 3.1\n";
 			SaveIteration saveit(logDirectory);
+			//std::cout << "\tEnviroment::run - while Step 3.2\n";
 			saveit.open(actualIteration);
+			//std::cout << "\tEnviroment::run - while Step 3.3\n";
 			if(leaderPrev != leader) saveit.new_leader = true;
 			else saveit.new_leader = false;
+			//std::cout << "\tEnviroment::run - while Step 3.4\n";
 			for(ec::Single* s : *this)
 			{
+			    //std::cout << "\tEnviroment::run - while Step 3.4.1\n";
 				s->save(saveit);
+				//std::cout << "\tEnviroment::run - while Step 3.4.2\n";
 				(*saveit.out) << "\n";
+				//std::cout << "\tEnviroment::run - while Step 3.4.3\n";
 			}
+			//std::cout << "\tEnviroment::run - while Step 3.5\n";
 			saveit.close();
+			//std::cout << "\tEnviroment::run - while Step 3.6\n";
 		}
-		//std::cout << "\tEnviroment::run - while Step 3.5\n";
+		//std::cout << "\tEnviroment::run - while Step 3.7\n";
 		std::time_t t;
 		tm time;
 		if(logDirectoryFlag or logDirectoryHistoryFlag)
@@ -862,14 +872,14 @@ bool Enviroment::run()
 
 			return true;
 		}
-
+        //std::cout << "\tEnviroment::run - while Step 4\n";
 		ec::ID countBefore = size();
 		selection();
 		if(logDirectoryFlag)
 		{
 			SaveSelections saveSelections(logDirectory);
 			saveSelections.open(actualIteration);
-			//std::cout << "\tEnviroment::run - while Step 4\n";
+
 			if(logDirectoryFlag)
 			{
 				for(Single* s : *this)
@@ -1169,10 +1179,7 @@ void Enviroment::commands(int argc, const char* argv[])
 		{
 			logDirectory = argv[++i];
 			basedir = logDirectory;
-			if(not std::filesystem::exists(logDirectory))
-			{
-				std::filesystem::create_directory(logDirectory);
-			}
+			if(not std::filesystem::exists(logDirectory)) if(not std::filesystem::create_directory(logDirectory)) throw core::Exception("Fallo la creacion del directorio",__FILE__,__LINE__);
 		}
 		if(strcmp("--directory-history-logs",argv[i]) == 0)
 		{

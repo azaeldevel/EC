@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1643500658 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
+1643522891 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
 	<cfloat>
 	<random>
 	<iostream>
@@ -59,7 +59,7 @@
 	<map>
 	"ec.hh"
 
-1643151712 source:c:\users\azael\documents\develop\octetos\ec\src\max.cc
+1643521936 source:c:\users\azael\documents\develop\octetos\ec\src\max.cc
 	<iostream>
 	<limits.h>
 	"max.hh"
@@ -87,7 +87,7 @@
 	<string>
 	"defines.hh"
 
-1639204074 source:c:\users\azael\documents\develop\octetos\ec\src\ec-max.cc
+1643522803 source:c:\users\azael\documents\develop\octetos\ec\src\ec-max.cc
 	<fstream>
 	"max.hh"
 

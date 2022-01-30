@@ -32,13 +32,13 @@ Chromosome::Chromosome(geneUS numb,pfnCombine fn): oct::ec::Chromosome("max")
 Chromosome::Chromosome(const Chromosome& chromo): oct::ec::Chromosome("max")
 {
 	gennumber = chromo.gennumber;
-	combine = chromo.combine; 
+	combine = chromo.combine;
 }
 const Chromosome& Chromosome::operator =(const Chromosome& chromo)
 {
 	gennumber = chromo.gennumber;
-	combine = chromo.combine; 
-	
+	combine = chromo.combine;
+
 	return chromo;
 }
 geneUS Chromosome::getNumber()const
@@ -134,7 +134,7 @@ geneUS Chromosome::combination(geneUS g)
 		case 4:
 			return combine4(g);
 	}
-	
+
 	return 0;
 }
 geneUS Chromosome::combine1(geneUS gene)
@@ -304,13 +304,13 @@ void Single::eval()
 void Single::save(Save& fn)
 {
 	//std::cout << "\tSingle::save 1\n";
-	(std::ofstream&)(fn) << getID();
-	(std::ofstream&)(fn) << ",";
-	(std::ofstream&)(fn) << getFitness();
-	(std::ofstream&)(fn) << ",";
-	(std::ofstream&)(fn) << chromo.getNumber();
+	(*fn.out) << getID();
+	(*fn.out) << ",";
+	(*fn.out) << getFitness();
+	(*fn.out) << ",";
+	(*fn.out) << chromo.getNumber();
 	//std::cout << "\tSingle::save 2\n";
-	((std::ofstream&)(fn)).flush();
+	(*fn.out).flush();
 }
 void Single::juncting(std::list<oct::ec::Single*>& childs,const oct::ec::Single* single)
 {
@@ -318,11 +318,11 @@ void Single::juncting(std::list<oct::ec::Single*>& childs,const oct::ec::Single*
 	{
 		childs.push_back(new Single((Enviroment&)*env));
 		Single* newSingle = (Single*)childs.back();
-		
+
 		geneUS newGen = chromo.combination(((Single*)single)->chromo.getNumber());
-		Chromosome newChromo(newGen,chromo.getCombine());		
+		Chromosome newChromo(newGen,chromo.getCombine());
 		newSingle->set(newChromo);
-		
+
 	}
 }
 void Single::print(std::ostream& fn) const
@@ -363,7 +363,7 @@ void Enviroment::init()
 	maxProgenitor = 16*2;
 	//echoSteps = false;
 	stopperMinSolutions(1);
-	stopperMaxIterations(200);
+	stopperMaxIterations(1000);
 	//epsilon = 1.0/double(USHRT_MAX);
 	//std::cout << "epsilon = " << epsilon << "\n";
 	comparer = &oct::ec::cmpStrength;

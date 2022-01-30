@@ -33,12 +33,12 @@ void echo(const char* text)
 }
 int main(int argc, const char* argv[])
 {
-	/*if(argc < 2)
+	if(argc != 3)
 	{
 		std::cerr << "Indique el parametro necesarion\n";
-		std::cerr << "ec-max --directory-history-logs dir\n";
+		std::cerr << "ec-max --directory-logs dir\n";
 		return EXIT_SUCCESS;
-	}*/
+	}
 
 	oct::ec::max::Enviroment* max = new oct::ec::max::Enviroment(argc,argv);
 	max->enableEcho(&echo,2);

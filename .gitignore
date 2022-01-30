@@ -23,3 +23,5 @@ github-pull
 github-push
 .objs/
 bin
+tests/max
+tests/sudoku
