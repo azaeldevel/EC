@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1643330020 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
+1643500658 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
 	<cfloat>
 	<random>
 	<iostream>
@@ -13,13 +13,14 @@
 	<fstream>
 	"ec.hh"
 
-1643323923 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
+1643500792 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
 	<list>
 	<string>
 	<vector>
 	<iostream>
 	<fstream>
 	<random>
+	<filesystem>
 	<octetos/core/Error.hh>
 	<octetos/core/shell.hh>
 	<Error.hh>
@@ -30,17 +31,17 @@
 	<exception>
 	"Exception.hh"
 
-1638684512 c:\users\azael\documents\develop\octetos\core\src\exception.hh
+1643435805 c:\users\azael\documents\develop\octetos\core\src\exception.hh
 	<exception>
 	"core.hh"
 
-1642896357 c:\users\azael\documents\develop\octetos\core\src\core.hh
+1643435805 c:\users\azael\documents\develop\octetos\core\src\core.hh
 	<string>
 	"defines.hh"
 
 1639195621 c:\users\azael\documents\develop\octetos\core\src\defines.hh
 
-1639105865 c:\users\azael\documents\develop\octetos\core\src\shell.hh
+1643435805 c:\users\azael\documents\develop\octetos\core\src\shell.hh
 	<string>
 	<list>
 	<stdlib.h>

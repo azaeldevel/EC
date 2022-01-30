@@ -229,7 +229,7 @@ void Junction::randFill(TypeJuntion t)
 	SaveCollection::SaveCollection() : Save(NULL)
 	{
 	}
-	SaveCollection::SaveCollection(const std::string& dir) : directory(dir)
+	SaveCollection::SaveCollection(const std::filesystem::path& dir) : directory(dir)
 	{
 	}
 	SaveCollection::~SaveCollection()
@@ -237,29 +237,29 @@ void Junction::randFill(TypeJuntion t)
 		if(out) close();
 	}
 
-	void SaveCollection::open(const std::string& filename)
+	void SaveCollection::open(const std::filesystem::path& filename)
 	{
 		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
 
-		std::string strfn = directory + "/" + filename;
+		std::filesystem::path strfn = directory / filename;
 		out = new std::ofstream(strfn);
 		if(not out->is_open())
 		{
 			std::string msg = "Fallo apertura de archivo '";
-			msg = strfn + "'";
+			msg = strfn.string() + "'";
 			throw oct::core::Exception(msg,__FILE__,__LINE__);
 		}
 	}
-	void SaveCollection::open(const std::string& fn,const std::string& dir)
+	void SaveCollection::open(const std::filesystem::path& fn,const std::filesystem::path& dir)
 	{
 		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
 
-		std::string strfn = dir + "/" + fn;
+		std::filesystem::path strfn = dir / fn;
 		out = new std::ofstream(strfn);
 		if(not out->is_open())
 		{
 			std::string msg = "Fallo apertura de archivo '";
-			msg = strfn + "'";
+			msg = strfn.string() + "'";
 			throw oct::core::Exception(msg,__FILE__,__LINE__);
 		}
 	}
@@ -278,7 +278,7 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-	SaveCollectionByIteration::SaveCollectionByIteration(const std::string& dir,const std::string& p) : SaveCollection(dir),prefix(p)
+	SaveCollectionByIteration::SaveCollectionByIteration(const std::filesystem::path& dir,const std::string& p) : SaveCollection(dir),prefix(p)
 	{
 	}
 
@@ -286,7 +286,7 @@ void Junction::randFill(TypeJuntion t)
 	{
 		if(out) throw oct::core::Exception("Aun existe el archivo de iteracion anterior",__FILE__,__LINE__);
 
-		std::string strfn = prefix + "-" + std::to_string(it) + ".csv";
+		std::filesystem::path strfn = prefix + "-" + std::to_string(it) + ".csv";
 		SaveCollection::open(strfn);
 	}
 
@@ -295,7 +295,7 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-	SaveIteration::SaveIteration(const std::string& dir) : SaveCollectionByIteration(dir,"iterations")
+	SaveIteration::SaveIteration(const std::filesystem::path& dir) : SaveCollectionByIteration(dir,"iterations")
 	{
 	}
 
@@ -304,7 +304,7 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-	SaveChilds::SaveChilds(const std::string& dir) : SaveCollectionByIteration(dir,"childs")
+	SaveChilds::SaveChilds(const std::filesystem::path& dir) : SaveCollectionByIteration(dir,"childs")
 	{
 	}
 
@@ -312,7 +312,7 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-	SaveSelections::SaveSelections(const std::string& dir) : SaveCollectionByIteration(dir,"selections")
+	SaveSelections::SaveSelections(const std::filesystem::path& dir) : SaveCollectionByIteration(dir,"selections")
 	{
 	}
 
@@ -324,7 +324,7 @@ void Junction::randFill(TypeJuntion t)
 	SaveSolutions::SaveSolutions()
 	{
 	}
-	SaveSolutions::SaveSolutions(const std::string& dir) : SaveCollection(dir)
+	SaveSolutions::SaveSolutions(const std::filesystem::path& dir) : SaveCollection(dir)
 	{
 	}
 
@@ -460,43 +460,43 @@ Enviroment::Enviroment(Iteration m,Iteration ms) : maxIteration(m),maxSerie(ms)
 {
 	init();
 }
-Enviroment::Enviroment(const std::string& logDir,bool subtree)
+Enviroment::Enviroment(const std::filesystem::path& logDir,bool subtree)
 {
 	init();
-	if(subtree) logDirectory = logDir + "/" + std::to_string(oct::core::getDayID());
+	if(subtree) logDirectory = logDir / std::to_string(oct::core::getDayID());
 	else logDirectory = logDir;
-	if(not shell.exists(logDirectory)) shell.mkdir(logDirectory,true);
+	if(not std::filesystem::exists(logDirectory)) std::filesystem::create_directory(logDirectory);
 }
-Enviroment::Enviroment(const std::string& logDir,Iteration m) : maxIteration(m)
+Enviroment::Enviroment(const std::filesystem::path& logDir,Iteration m) : maxIteration(m)
 {
-	if(not shell.exists(logDir))
+	if(not std::filesystem::exists(logDir))
 	{
 		std::string msg = "El directorio '";
-		msg += logDir + "' no existe.";
+		msg += logDir.string() + "' no existe.";
 		throw oct::core::Exception(msg,__FILE__,__LINE__);
 	}
 	init();
 	logDirectory = logDir;
 	//if(not shell.exists(logDirectory)) shell.mkdir(logDirectory,true);
 }
-Enviroment::Enviroment(const std::string& logDir,Iteration mi,Iteration ms) : maxIteration(mi),maxSerie(ms)
+Enviroment::Enviroment(const std::filesystem::path& logDir,Iteration mi,Iteration ms) : maxIteration(mi),maxSerie(ms)
 {
-	if(not shell.exists(logDir))
+	if(not std::filesystem::exists(logDir))
 	{
 		std::string msg = "El directorio '";
-		msg += logDir + "' no existe.";
+		msg += logDir.string() + "' no existe.";
 		throw oct::core::Exception(msg,__FILE__,__LINE__);
 	}
 	init();
-	logDirectory = logDir + "/serie-" + std::to_string(oct::core::getDayID());//para iteracion
-	if(not shell.exists(logDirectory))
+	logDirectory = logDir / std::filesystem::path("serie-" + std::to_string(oct::core::getDayID()));//para iteracion
+	if(not std::filesystem::exists(logDirectory))
 	{
-		shell.mkdir(logDirectory,true);
+		std::filesystem::create_directory(logDirectory);
 	}
 	else
 	{
 		std::string msg = "El directorio '";
-		msg += logDir + "' no existe.";
+		msg += logDir.string() + "' no existe.";
 		throw oct::core::Exception(msg,__FILE__,__LINE__);
 	}
 }
@@ -596,7 +596,7 @@ bool Enviroment::getEchoSteps()const
 {
 	return echoSteps;
 }
-const std::string& Enviroment::getLogDirectory()const
+const std::filesystem::path& Enviroment::getLogDirectory()const
 {
 	return logDirectory;
 }
@@ -643,13 +643,13 @@ bool Enviroment::run()
 	logDirectoryFlag = not logDirectory.empty();
 	if(logDirectoryFlag)
 	{
-		if(not shell.exists(logDirectory))
+		if(not std::filesystem::exists(logDirectory))
         {
             std::string msg = "No existe el directorio de logs '";
-            msg += logDirectory + "'";
+            msg += logDirectory.string() + "'";
             throw core::Exception(msg,__FILE__,__LINE__);
         }
-		std::string strhistory = logDirectory + "/historial.csv";
+		std::filesystem::path strhistory = logDirectory / "historial.csv";
 		history.open(strhistory);
 	}
 	else
@@ -657,13 +657,13 @@ bool Enviroment::run()
 		logDirectoryHistoryFlag = not logDirectoryHistory.empty();
 		if(logDirectoryHistoryFlag)
 		{
-			if(not shell.exists(logDirectoryHistory))
+			if(not std::filesystem::exists(logDirectoryHistory))
 		    {
 		        std::string msg = "No existe el directorio de logs '";
-		        msg += logDirectory + "'";
+		        msg += logDirectory.string() + "'";
 		        throw core::Exception(msg,__FILE__,__LINE__);
 		    }
-			std::string strhistory = logDirectoryHistory + "/historial.csv";
+			std::filesystem::path strhistory = logDirectoryHistory / "historial.csv";
 			history.open(strhistory);
 		}
 		logDirectorySolutionsFlag = not logDirectorySolutions.empty();
@@ -1095,7 +1095,7 @@ void Enviroment::eval()
 */
 void Enviroment::save()
 {
-	std::string strfn = logDirectory +  "/solutions-" + std::to_string(actualIteration) + ".csv";
+	std::filesystem::path strfn = logDirectory / std::filesystem::path("solutions-" + std::to_string(actualIteration) + ".csv");
 	std::ofstream fn(strfn);
 	for(ec::Single* s : *this)
 	{
@@ -1147,9 +1147,9 @@ void Enviroment::selection()
 	}
 }
 
-void Enviroment::save(const std::list<ec::Single*>& lst, const std::string& file)
+void Enviroment::save(const std::list<ec::Single*>& lst, const std::filesystem::path& file)
 {
-	std::string strfn = logDirectory +  "/" + file;
+	std::filesystem::path strfn = logDirectory / file;
 	std::ofstream fn(strfn);
 	for(ec::Single* s : lst)
 	{
@@ -1169,16 +1169,16 @@ void Enviroment::commands(int argc, const char* argv[])
 		{
 			logDirectory = argv[++i];
 			basedir = logDirectory;
-			if(not shell.exists(logDirectory))
+			if(not std::filesystem::exists(logDirectory))
 			{
-				shell.mkdir(logDirectory);
+				std::filesystem::create_directory(logDirectory);
 			}
 		}
 		if(strcmp("--directory-history-logs",argv[i]) == 0)
 		{
 			logDirectoryHistory = argv[++i];
 			basedir = logDirectoryHistory;
-			if(not shell.exists(logDirectoryHistory)) shell.mkdir(logDirectoryHistory);
+			if(not std::filesystem::exists(logDirectoryHistory)) std::filesystem::create_directory(logDirectoryHistory);
 		}
 		if(strcmp("--iterations",argv[i]) == 0)
 		{
@@ -1190,10 +1190,10 @@ void Enviroment::commands(int argc, const char* argv[])
 
 			//serieName = argv[++i];
 			std::string strDay = std::to_string(oct::core::getDayID());
-			logDirectory = logDirectory + "/" + strDay;
-			if(not shell.exists(logDirectory))
+			logDirectory = logDirectory / strDay;
+			if(not std::filesystem::exists(logDirectory))
 			{
-				shell.mkdir(logDirectory);
+				std::filesystem::create_directory(logDirectory);
 			}
 
 			stopperMaxSerie(std::stoi(argv[++i]));
@@ -1224,10 +1224,10 @@ void Enviroment::create_session()
 {
     std::string strDay = std::to_string(oct::core::getDayID());
     std::string strTime = std::to_string(oct::core::getTimeID());
-    logDirectory = logDirectory + "/" + strDay + strTime;
-    if(not shell.exists(logDirectory))
+    logDirectory = logDirectory / (strDay + strTime);
+    if(not std::filesystem::exists(logDirectory))
     {
-        shell.mkdir(logDirectory);
+        std::filesystem::create_directory(logDirectory);
     }
 }
 void Enviroment::free()

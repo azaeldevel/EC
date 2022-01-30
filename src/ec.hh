@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <random>
-
+#include <filesystem>
 #if defined(__GNUC__) && defined(__linux__)
     #include <octetos/core/Error.hh>
     #include <octetos/core/shell.hh>
@@ -128,27 +128,27 @@ class SaveCollection : public Save
 {
 public:
 	SaveCollection();
-	SaveCollection(const std::string&);
+	SaveCollection(const std::filesystem::path&);
 	~SaveCollection();
 
 	/**
 	*\brief abre un archivo cuando se a especificado previamente el directorio
 	*/
-	void open(const std::string& fn);
+	void open(const std::filesystem::path& fn);
 
 	/**
 	*\brief abre un archivo especificado el nombre y directorio
 	*/
-	void open(const std::string& fn,const std::string& dir);
+	void open(const std::filesystem::path& fn,const std::filesystem::path& dir);
 	void close();
 
 protected:
-	std::string directory;
+	std::filesystem::path directory;
 };
 
 struct SaveCollectionByIteration : public SaveCollection
 {
-	SaveCollectionByIteration(const std::string&,const std::string&);
+	SaveCollectionByIteration(const std::filesystem::path&,const std::string&);
 
 	void open(Iteration it);
 
@@ -158,20 +158,20 @@ private:
 
 struct SaveIteration : public SaveCollectionByIteration
 {
-	SaveIteration(const std::string&);
+	SaveIteration(const std::filesystem::path&);
 };
 struct SaveChilds : public SaveCollectionByIteration
 {
-	SaveChilds(const std::string&);
+	SaveChilds(const std::filesystem::path&);
 };
 struct SaveSelections : public SaveCollectionByIteration
 {
-	SaveSelections(const std::string&);
+	SaveSelections(const std::filesystem::path&);
 };
 struct SaveSolutions : public SaveCollection
 {
 	SaveSolutions();
-	SaveSolutions(const std::string&);
+	SaveSolutions(const std::filesystem::path&);
 };
 
 
@@ -274,9 +274,9 @@ public:
 	*/
 	void init();
 	Enviroment();
-	Enviroment(const std::string& log, bool subtree);
-	Enviroment(const std::string& log,Iteration maxIteration);
-	Enviroment(const std::string& log,Iteration maxIteration,Iteration maxSerie);
+	Enviroment(const std::filesystem::path& log, bool subtree);
+	Enviroment(const std::filesystem::path& log,Iteration maxIteration);
+	Enviroment(const std::filesystem::path& log,Iteration maxIteration,Iteration maxSerie);
 	Enviroment(Iteration maxIteration);
 	Enviroment(Iteration maxIteration,Iteration maxSerie);
 	Enviroment(int argc, const char* argv[]);
@@ -299,7 +299,7 @@ public:
 	echo getFout();
 	//const std::string getLogSubDirectory()const;
 	Iteration getIterationActual()const;
-	const std::string& getLogDirectory()const;
+	const std::filesystem::path& getLogDirectory()const;
 	const std::list<ec::Single*> getSolutions()const;
 
 	/**
@@ -350,7 +350,7 @@ public:
 	*\param ls lista de objetos para guardar
 	*\param file nombre de archivo que se genera
 	*/
-	virtual void save(const std::list<ec::Single*>& ls, const std::string& file);
+	virtual void save(const std::list<ec::Single*>& ls, const std::filesystem::path& file);
 	/**
 	*\brief Inicia el proceso de seleccion de individuos
 	*/
@@ -377,7 +377,6 @@ public:
 public:
 
 	//
-	oct::core::Shell shell;
 
 
 private:
@@ -389,10 +388,10 @@ private:
 	Single* getRandomSingleSecond();
 
 protected:
-	std::string logDirectory;
-	std::string logDirectoryHistory;
-	std::string logDirectorySolutions;
-	std::string basedir;
+	std::filesystem::path logDirectory;
+	std::filesystem::path logDirectoryHistory;
+	std::filesystem::path logDirectorySolutions;
+	std::filesystem::path basedir;
 	Population initPopulation;
 	Population maxPopulation;
 
