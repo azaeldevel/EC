@@ -33,10 +33,10 @@ void echo(const char* text)
 }
 int main(int argc, const char* argv[])
 {
-	if(argc != 3)
+	if(argc == 1)
 	{
 		std::cerr << "Indique el parametro necesarion\n";
-		std::cerr << "ec-max --directory-logs dir\n";
+		std::cerr << "ec-max --directory-history-logs dir --directory-history-logs dir\n";
 		return EXIT_SUCCESS;
 	}
 
