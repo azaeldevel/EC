@@ -464,8 +464,7 @@ Enviroment::Enviroment(const std::filesystem::path& logDir,bool subtree)
 {
 	init();
 	if(subtree) logDirectory = logDir / std::to_string(oct::core::getDayID());
-	else logDirectory = logDir;
-	if(not std::filesystem::exists(logDirectory)) std::filesystem::create_directory(logDirectory);
+	else logDirectory = logDir;	
 }
 Enviroment::Enviroment(const std::filesystem::path& logDir,Iteration m) : maxIteration(m)
 {
@@ -489,16 +488,6 @@ Enviroment::Enviroment(const std::filesystem::path& logDir,Iteration mi,Iteratio
 	}
 	init();
 	logDirectory = logDir / std::filesystem::path("serie-" + std::to_string(oct::core::getDayID()));//para iteracion
-	if(not std::filesystem::exists(logDirectory))
-	{
-		std::filesystem::create_directory(logDirectory);
-	}
-	else
-	{
-		std::string msg = "El directorio '";
-		msg += logDir.string() + "' no existe.";
-		throw oct::core::Exception(msg,__FILE__,__LINE__);
-	}
 }
 Enviroment::Enviroment(int argc, const char* argv[])
 {
@@ -640,9 +629,13 @@ bool Enviroment::run()
 	unsigned short counUndelete = 0;
 	std::ofstream history;
 	//std::cout << "\tEnviroment::run : Step 3\n";
+	//std::cout << "logDirectory = " << logDirectory << "\n";
+	//std::cout << "logDirectoryHistory  = " << logDirectoryHistory  << "\n";
+	//std::cout << "logDirectorySolutions = " << logDirectorySolutions << "\n";
 	logDirectoryFlag = not logDirectory.empty();
 	if(logDirectoryFlag)
 	{
+		if(not std::filesystem::exists(logDirectory)) std::filesystem::create_directory(logDirectory);
 		if(not std::filesystem::exists(logDirectory))
         {
             std::string msg = "No existe el directorio de logs '";
@@ -651,22 +644,25 @@ bool Enviroment::run()
         }
 		std::filesystem::path strhistory = logDirectory / "historial.csv";
 		history.open(strhistory);
+		logDirectoryHistory = logDirectory;
+		logDirectorySolutions = logDirectory;
+		logDirectoryHistoryFlag = true;
+		logDirectorySolutionsFlag = true;
 	}
 	else
 	{
+		//std::cout << "\tStep 3.0\n";
 		logDirectoryHistoryFlag = not logDirectoryHistory.empty();
+		//std::cout << "\tStep 3.1\n";
+		if(not std::filesystem::exists(logDirectoryHistory)) std::filesystem::create_directories(logDirectoryHistory);
+		logDirectorySolutionsFlag = not logDirectorySolutions.empty();
+		if(not std::filesystem::exists(logDirectorySolutions)) std::filesystem::create_directories(logDirectorySolutions);
 		if(logDirectoryHistoryFlag)
 		{
-			if(not std::filesystem::exists(logDirectoryHistory))
-		    {
-		        std::string msg = "No existe el directorio de logs '";
-		        msg += logDirectory.string() + "'";
-		        throw core::Exception(msg,__FILE__,__LINE__);
-		    }
 			std::filesystem::path strhistory = logDirectoryHistory / "historial.csv";
 			history.open(strhistory);
 		}
-		logDirectorySolutionsFlag = not logDirectorySolutions.empty();
+		//std::cout << "\tStep 3.2\n";
 	}
 	//std::cout << "\tStep 4\n";
 
@@ -779,7 +775,7 @@ bool Enviroment::run()
 		//std::cout << "\tEnviroment::run - while Step 3.7\n";
 		std::time_t t;
 		tm time;
-		if(logDirectoryFlag or logDirectoryHistoryFlag)
+		if(logDirectoryHistoryFlag)
 		{
 			if(history.is_open())
 			{
@@ -812,7 +808,7 @@ bool Enviroment::run()
 			if( 1.0 - (*it)->getFitness() < epsilon) solutions.push_back(*it);
 			else break;//si no fuen solucio las siguientes tampoco
 		}
-		if(solutions.size() >= minSolutions and (logDirectoryFlag or logDirectorySolutionsFlag) and stopMinSolutions)//se definion una cantidad minima de soluciones
+		if(solutions.size() >= minSolutions and logDirectorySolutionsFlag and stopMinSolutions)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and echoF != NULL)
 			{
@@ -821,8 +817,7 @@ bool Enviroment::run()
 				echoF(log.c_str());
 			}
 			SaveSolutions saveSols;
-			if(logDirectoryFlag) saveSols.open("solutions.cvs",logDirectory);
-			else if(logDirectorySolutionsFlag) saveSols.open("solutions.cvs",logDirectorySolutions);
+			saveSols.open("solutions.cvs",logDirectorySolutions);
 			for(Single* s : solutions)
 			{
 				s->save(saveSols);
@@ -832,7 +827,7 @@ bool Enviroment::run()
 			history.close();
 			return true;
 		}
-		else if(solutions.size() == maxPopulation and (logDirectoryFlag or logDirectorySolutionsFlag))//se definion una cantidad minima de soluciones
+		else if(solutions.size() == maxPopulation and logDirectorySolutionsFlag)//se definion una cantidad minima de soluciones
 		{
 			if(echolevel > 0 and echoF != NULL)
 			{
@@ -840,8 +835,7 @@ bool Enviroment::run()
 				log += std::to_string(solutions.size()) + "\n";
 			}
 			SaveSolutions saveSols;
-			if(logDirectoryFlag) saveSols.open("solutions.cvs",logDirectory);
-			else if(logDirectorySolutionsFlag) saveSols.open("solutions.cvs",logDirectorySolutions);
+			saveSols.open("solutions.cvs",logDirectorySolutions);
 			for(Single* s : solutions)
 			{
 				s->save(saveSols);
@@ -1158,7 +1152,7 @@ void Enviroment::selection()
 
 void Enviroment::save(const std::list<ec::Single*>& lst, const std::filesystem::path& file)
 {
-	std::filesystem::path strfn = logDirectory / file;
+	std::filesystem::path strfn = logDirectorySolutions / file;
 	std::ofstream fn(strfn);
 	for(ec::Single* s : lst)
 	{
@@ -1176,65 +1170,73 @@ void Enviroment::commands(int argc, const char* argv[])
 	{
 		if(strcmp("--directory-logs",argv[i]) == 0)
 		{
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			logDirectory = argv[++i];
-			basedir = logDirectory;
-			if(not std::filesystem::exists(logDirectory)) if(not std::filesystem::create_directory(logDirectory)) throw core::Exception("Fallo la creacion del directorio",__FILE__,__LINE__);
+			basedir = logDirectory;			
 		}
-		if(strcmp("--directory-history-logs",argv[i]) == 0)
+		else if(strcmp("--directory-history-logs",argv[i]) == 0)
 		{
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			logDirectoryHistory = argv[++i];
-			basedir = logDirectoryHistory;
-			if(not std::filesystem::exists(logDirectoryHistory)) std::filesystem::create_directory(logDirectoryHistory);
 		}
-		if(strcmp("--iterations",argv[i]) == 0)
+		else if(strcmp("--directory-solutions",argv[i]) == 0)
 		{
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
+			logDirectorySolutions= argv[++i];
+		}
+		else if(strcmp("--iterations",argv[i]) == 0)
+		{
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			stopperMaxIterations(std::stoi(argv[++i]));
 		}
-		if(strcmp("--serie",argv[i]) == 0)
+		else if(strcmp("--serie",argv[i]) == 0)
 		{
 			if(logDirectory.empty()) throw oct::core::Exception("Asigne primero el directorio de ejecucion",__FILE__,__LINE__);
 
 			//serieName = argv[++i];
 			std::string strDay = std::to_string(oct::core::getDayID());
 			logDirectory = logDirectory / strDay;
-			if(not std::filesystem::exists(logDirectory))
-			{
-				std::filesystem::create_directory(logDirectory);
-			}
-
+			if(i + 1 < argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			stopperMaxSerie(std::stoi(argv[++i]));
 			//std::cout << "serie = " << argv[i] << "\n";
 		}
-		if(strcmp("--max-treat",argv[i]) == 0)
+		else if(strcmp("--max-treat",argv[i]) == 0)
 		{
 		}
-		if(strcmp("--mutation-probability",argv[i]) == 0)
+		else if(strcmp("--mutation-probability",argv[i]) == 0)
 		{
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			mutableProb = std::stod(argv[++i]);
 		}
-		/*if(strcmp("--mutation-gene",argv[i]) == 0)
-		{
-			pMutableGene = std::stod(argv[++i]);
-		}*/
-		if(strcmp("--create-session",argv[i]) == 0)
+		else if(strcmp("--create-session",argv[i]) == 0)
 		{
             create_session();
 		}
-		if(strcmp("--solutions",argv[i]) == 0)
+		else if(strcmp("--solutions",argv[i]) == 0)
 		{
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			minSolutions = std::stoi(argv[++i]);
+		}
+		else
+		{
+			std::cout << "Opcion desconocida : " << argv[i] << "\n";
 		}
 	}
 }
 void Enviroment::create_session()
 {
     std::string strDay = std::to_string(oct::core::getDayID());
-    std::string strTime = std::to_string(oct::core::getTimeID());
-    logDirectory = logDirectory / (strDay + strTime);
-    if(not std::filesystem::exists(logDirectory))
+    std::string strTime = std::to_string(oct::core::getTimeID());    
+    if(not logDirectory.empty())
     {
-        std::filesystem::create_directory(logDirectory);
+        logDirectory = logDirectory / strDay / strTime;
     }
+    else
+    {        
+        if(not logDirectoryHistory.empty())  logDirectoryHistory = logDirectoryHistory /strDay / strTime;
+        if(not logDirectorySolutions.empty())  logDirectorySolutions = logDirectorySolutions /strDay / strTime;
+    }
+    
 }
 void Enviroment::free()
 {

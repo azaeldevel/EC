@@ -355,11 +355,17 @@ Enviroment::Enviroment(int argc, const char* argv[]) : oct::ec::Enviroment(argc,
 {
 	init();
 }
+Enviroment::Enviroment(const std::filesystem::path& dir)
+{
+	init();
+	logDirectoryHistory = dir;
+	logDirectorySolutions = dir;
+}
 
 void Enviroment::init()
 {
 	initPopulation = 100;
-	maxPopulation = 5000;
+	maxPopulation = 1000;
 	maxProgenitor = 100;
 	//echoSteps = false;
 	stopperMinSolutions(1);

@@ -13,13 +13,14 @@
 
 
 void sudoku_devel();
+void max_devel();
 int init(void)
 {
-
+	return 0;
 }
 int clean(void)
 {
-
+	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -35,6 +36,12 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 
+	if ((NULL == CU_add_test(pSuite, "Developing Max..", max_devel)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+	
 	if ((NULL == CU_add_test(pSuite, "Developing Sudoku", sudoku_devel)))
 	{
 		CU_cleanup_registry();
