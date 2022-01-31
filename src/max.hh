@@ -101,6 +101,7 @@ namespace oct::ec::max
 		/**
 		*\brief Inicia las variables
 		*/
+		Enviroment(const std::filesystem::path& dir);
 		void init();
 		~Enviroment();
 

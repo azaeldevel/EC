@@ -15,4 +15,4 @@ TESTS= $(check_PROGRAMS)
 v0_LDFLAGS =
 v0_LDADD = $(CUNIT_LIBS) $(top_builddir)/src/liboctetos-EC.la
 v0_CPPFLAGS = $(CUNIT_CFLAGS) -I$(top_srcdir)/src -I$(top_builddir)/src 
-v0_SOURCES = v0.cc v0-sudoku.cc
+v0_SOURCES = v0.cc v0-sudoku.cc v0-max.cc

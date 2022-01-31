@@ -629,9 +629,9 @@ bool Enviroment::run()
 	unsigned short counUndelete = 0;
 	std::ofstream history;
 	//std::cout << "\tEnviroment::run : Step 3\n";
-	std::cout << "logDirectory = " << logDirectory << "\n";
-	std::cout << "logDirectoryHistory  = " << logDirectoryHistory  << "\n";
-	std::cout << "logDirectorySolutions = " << logDirectorySolutions << "\n";
+	//std::cout << "logDirectory = " << logDirectory << "\n";
+	//std::cout << "logDirectoryHistory  = " << logDirectoryHistory  << "\n";
+	//std::cout << "logDirectorySolutions = " << logDirectorySolutions << "\n";
 	logDirectoryFlag = not logDirectory.empty();
 	if(logDirectoryFlag)
 	{
@@ -651,15 +651,18 @@ bool Enviroment::run()
 	}
 	else
 	{
+		//std::cout << "\tStep 3.0\n";
 		logDirectoryHistoryFlag = not logDirectoryHistory.empty();
+		//std::cout << "\tStep 3.1\n";
+		if(not std::filesystem::exists(logDirectoryHistory)) std::filesystem::create_directories(logDirectoryHistory);
+		logDirectorySolutionsFlag = not logDirectorySolutions.empty();
+		if(not std::filesystem::exists(logDirectorySolutions)) std::filesystem::create_directories(logDirectorySolutions);
 		if(logDirectoryHistoryFlag)
 		{
-			if(not std::filesystem::exists(logDirectoryHistory)) std::filesystem::create_directory(logDirectoryHistory);
 			std::filesystem::path strhistory = logDirectoryHistory / "historial.csv";
 			history.open(strhistory);
 		}
-		logDirectorySolutionsFlag = not logDirectorySolutions.empty();
-		if(not std::filesystem::exists(logDirectorySolutions)) std::filesystem::create_directory(logDirectorySolutions);
+		//std::cout << "\tStep 3.2\n";
 	}
 	//std::cout << "\tStep 4\n";
 
@@ -1167,23 +1170,23 @@ void Enviroment::commands(int argc, const char* argv[])
 	{
 		if(strcmp("--directory-logs",argv[i]) == 0)
 		{
-			if(i + 1 < argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			logDirectory = argv[++i];
 			basedir = logDirectory;			
 		}
 		else if(strcmp("--directory-history-logs",argv[i]) == 0)
 		{
-			if(i + 1 < argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			logDirectoryHistory = argv[++i];
 		}
 		else if(strcmp("--directory-solutions",argv[i]) == 0)
 		{
-			if(i + 1 < argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			logDirectorySolutions= argv[++i];
 		}
 		else if(strcmp("--iterations",argv[i]) == 0)
 		{
-			if(i + 1 < argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			stopperMaxIterations(std::stoi(argv[++i]));
 		}
 		else if(strcmp("--serie",argv[i]) == 0)
@@ -1202,7 +1205,7 @@ void Enviroment::commands(int argc, const char* argv[])
 		}
 		else if(strcmp("--mutation-probability",argv[i]) == 0)
 		{
-			if(i + 1 < argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			mutableProb = std::stod(argv[++i]);
 		}
 		else if(strcmp("--create-session",argv[i]) == 0)
@@ -1211,7 +1214,7 @@ void Enviroment::commands(int argc, const char* argv[])
 		}
 		else if(strcmp("--solutions",argv[i]) == 0)
 		{
-			if(i + 1 < argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
+			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			minSolutions = std::stoi(argv[++i]);
 		}
 		else
@@ -1231,7 +1234,7 @@ void Enviroment::create_session()
     else
     {        
         if(not logDirectoryHistory.empty())  logDirectoryHistory = logDirectoryHistory /strDay / strTime;
-        if(not logDirectorySolutions.empty())  logDirectoryHistory = logDirectorySolutions /strDay / strTime;
+        if(not logDirectorySolutions.empty())  logDirectorySolutions = logDirectorySolutions /strDay / strTime;
     }
     
 }
