@@ -440,6 +440,7 @@ void Enviroment::init()
 	echoF = NULL;
 	savingDevice = NULL;
 	junting_sigma = 1.0;
+	running = false;
 }
 Enviroment::Enviroment()
 {
@@ -679,10 +680,12 @@ bool Enviroment::run()
 	const ec::Single *leaderPrev, *leader;
 	real fitness;
 	if(echolevel > 0 and echoF != NULL) echoF("\n");
+	bool ret = false;
 
 	if(size() < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
 	if(maxProgenitor  < 3) throw oct::core::Exception("Deve haber mas de dos individuos para ejecutar el programa",__FILE__,__LINE__);
-	while(true)
+	running = true;
+	while(running)
 	{
 		if(stopMaxIterations)
 		{
@@ -690,6 +693,7 @@ bool Enviroment::run()
 			{
 				if(echoF) echoF("Se alacanzo el limite maximo de iteraciones\n");
 				history.close();
+				running = false;
 				return false;
 			}
 		}
@@ -825,6 +829,7 @@ bool Enviroment::run()
 			}
 			saveSols.close();
 			history.close();
+			running = false;
 			return true;
 		}
 		else if(solutions.size() == maxPopulation and logDirectorySolutionsFlag)//se definion una cantidad minima de soluciones
@@ -843,6 +848,7 @@ bool Enviroment::run()
 			}
 			saveSols.close();
 			history.close();
+			running = false;
 			return true;
 		}
 		else if(solutions.size() >= minSolutions and stopMinSolutions)//se definion una cantidad minima de soluciones
@@ -862,7 +868,7 @@ bool Enviroment::run()
 				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
 				log += std::to_string(solutions.size()) + "\n";
 			}
-
+			running = false;
 			return true;
 		}
         //std::cout << "\tEnviroment::run - while Step 4\n";
@@ -915,11 +921,11 @@ bool Enviroment::run()
 		}
 
 		//std::cout << "\tEnviroment::run - while Step 7\n";
-
-
+		
 		//std::cout << "\tEnviroment::run - while Step 8\n";
-
+		
 		//std::cout << "\tEnviroment::run - while Step 9\n";
+		
 		juncting();
 		SaveChilds savechilds(logDirectory);
 		//std::cout << "\tEnviroment::run - while Step 10\n";
@@ -949,7 +955,7 @@ bool Enviroment::run()
 		actualIteration++;
 		//std::cout << "\tEnviroment::run - while Step 12\n";
 	}
-
+	running = false;
 	return false;
 }
 bool Enviroment::run(int argc, const char* argv[])
@@ -1246,5 +1252,26 @@ void Enviroment::free()
 	}
 
 	clear();
+}
+void Enviroment::stop()
+{
+	running = false;
+}
+bool Enviroment::isRunning()
+{
+	return running;
+}
+bool Enviroment::getBetters(unsigned int count, std::list<ec::Single*>& list)
+{
+	if(count > size()) return false;
+	iterator it = begin();
+	
+	for(unsigned int i = 0; i < count; i++)
+	{
+		list.push_back(*it);
+		std::advance(it,1);
+	}
+	
+	return true;
 }
 }
