@@ -621,7 +621,7 @@ bool Enviroment::run()
 
 	actualIteration = 1;
 	//std::cout << "\tEnviroment::run : Step 1\n";
-	initial();
+	if(size() == 0) initial();
     //std::cout << "\tEnviroment::run : Step 2\n";
 	for(ec::Single* single : *this)
 	{
@@ -1269,9 +1269,25 @@ bool Enviroment::getBetters(unsigned int count, std::list<ec::Single*>& list)
 	for(unsigned int i = 0; i < count; i++)
 	{
 		list.push_back(*it);
-		std::advance(it,1);
+		it++;
 	}
 	
 	return true;
+}
+real Enviroment::getProgress()const
+{
+	if(size() < minSolutions) throw core::Exception("Esta solicitando mas elementos de los existentes",__FILE__,__LINE__);;
+	
+	if(minSolutions == 1) return front()->getFitness();
+	
+	real prog = 0;
+	const_iterator it = begin();
+	for(unsigned int i = 0; i < minSolutions; i++)
+	{
+		prog += (*it)->getFitness();
+		it++;
+	}
+	prog /= real(minSolutions);
+	return prog;
 }
 }

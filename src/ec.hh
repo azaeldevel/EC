@@ -391,7 +391,7 @@ public:
 	*/
 	bool getBetters(unsigned int count, std::list<ec::Single*>& list);
 
-
+	real getProgress()const;
 public:
 
 	//

@@ -357,9 +357,9 @@ Enviroment::Enviroment(int argc, const char* argv[]) : oct::ec::Enviroment(argc,
 }
 Enviroment::Enviroment(const std::filesystem::path& dir)
 {
-	init();
 	logDirectoryHistory = dir;
 	logDirectorySolutions = dir;
+	init();
 }
 
 void Enviroment::init()
