@@ -374,6 +374,24 @@ public:
 	virtual void free();
 
     void create_session();
+
+	/**
+	*\brief Detine la funcion run
+	*/
+	void stop();
+
+	/**
+	*\brief Verifica si la funcion run esta en ejecucion
+	*/
+	bool isRunning();
+
+	/**
+	*\brief Coloca en list los mejeros elemento encontrados al momento 
+	*\return true si logra colocar los elementos solicitados, false si count > tamano de la lista
+	*/
+	bool getBetters(unsigned int count, std::list<ec::Single*>& list);
+
+	real getProgress()const;
 public:
 
 	//
@@ -502,6 +520,8 @@ private:
 	//std::string serieName;
 
 	unsigned short maxChilds;
+
+	bool running;
 };
 
 }
