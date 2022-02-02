@@ -139,11 +139,10 @@
 	<stdio.h>
 	<time.h>
 
-1642812465 source:c:\users\azael\documents\develop\octetos\ec\tests\v0.cc
+1643670180 source:c:\users\azael\documents\develop\octetos\ec\tests\v0.cc
 	<CUnit/Basic.h>
 	<iostream>
 	<cstdlib>
-	<schedule.hh>
 	<locale>
 	<ctime>
 	<iomanip>
@@ -158,4 +157,7 @@
 
 1641711117 source:c:\users\azael\documents\develop\octetos\ec\src\schedule-output.cc
 	"schedule-data.hh"
+
+1643323923 source:c:\users\azael\documents\develop\octetos\ec\tests\v0-sudoku.cc
+	<CUnit/Basic.h>
 
