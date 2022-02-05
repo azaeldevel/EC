@@ -386,7 +386,7 @@ public:
 	bool isRunning();
 
 	/**
-	*\brief Coloca en list los mejeros elemento encontrados al momento 
+	*\brief Coloca en list los mejeros elemento encontrados al momento
 	*\return true si logra colocar los elementos solicitados, false si count > tamano de la lista
 	*/
 	bool getBetters(unsigned int count, std::list<ec::Single*>& list);
@@ -482,6 +482,7 @@ protected:
 	*/
 	real junting_sigma;
 
+    unsigned int maxMutation;
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion

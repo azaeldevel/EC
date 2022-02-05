@@ -441,6 +441,7 @@ void Enviroment::init()
 	savingDevice = NULL;
 	junting_sigma = 1.0;
 	running = false;
+	maxMutation = 0;
 }
 Enviroment::Enviroment()
 {
@@ -465,7 +466,7 @@ Enviroment::Enviroment(const std::filesystem::path& logDir,bool subtree)
 {
 	init();
 	if(subtree) logDirectory = logDir / std::to_string(oct::core::getDayID());
-	else logDirectory = logDir;	
+	else logDirectory = logDir;
 }
 Enviroment::Enviroment(const std::filesystem::path& logDir,Iteration m) : maxIteration(m)
 {
@@ -617,6 +618,7 @@ bool Enviroment::run()
 	if(initPopulation == 0) throw oct::core::Exception("La poblacion inicial deve ser mayor que 0",__FILE__,__LINE__);
 	if(maxProgenitor > maxPopulation) throw oct::core::Exception("La catidad de progenitores deve ser menor que la popblacion",__FILE__,__LINE__);
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
+	if(maxMutation == 0) throw oct::core::Exception("La cantiad de Mutacion deve ser mayor que 0",__FILE__,__LINE__);
 	//if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
 
 	actualIteration = 1;
@@ -921,19 +923,23 @@ bool Enviroment::run()
 		}
 
 		//std::cout << "\tEnviroment::run - while Step 7\n";
-		
+
 		//std::cout << "\tEnviroment::run - while Step 8\n";
-		
+
 		//std::cout << "\tEnviroment::run - while Step 9\n";
-		
+
 		juncting();
 		SaveChilds savechilds(logDirectory);
 		//std::cout << "\tEnviroment::run - while Step 10\n";
 		if(logDirectoryFlag) savechilds.open(actualIteration);
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
-			if(mutation_distr(rd)) s->mutate();
-			//if(triggerRepeatEnable and triggerRepeatMin > sigma) s->mutate();
+		    if(mutation_distr(rd))
+		    {
+                std::uniform_int_distribution<int> distrib_maxm(1,maxMutation);
+                unsigned int i = (maxMutation == 1)? i = 0 : i = distrib_maxm(gen);
+                for(; i < maxMutation; i++) s->mutate();
+			}
 			s->eval();
 			if(logDirectoryFlag)
 			{
@@ -1178,7 +1184,7 @@ void Enviroment::commands(int argc, const char* argv[])
 		{
 			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			logDirectory = argv[++i];
-			basedir = logDirectory;			
+			basedir = logDirectory;
 		}
 		else if(strcmp("--directory-history-logs",argv[i]) == 0)
 		{
@@ -1232,17 +1238,17 @@ void Enviroment::commands(int argc, const char* argv[])
 void Enviroment::create_session()
 {
     std::string strDay = std::to_string(oct::core::getDayID());
-    std::string strTime = std::to_string(oct::core::getTimeID());    
+    std::string strTime = std::to_string(oct::core::getTimeID());
     if(not logDirectory.empty())
     {
         logDirectory = logDirectory / strDay / strTime;
     }
     else
-    {        
+    {
         if(not logDirectoryHistory.empty())  logDirectoryHistory = logDirectoryHistory /strDay / strTime;
         if(not logDirectorySolutions.empty())  logDirectorySolutions = logDirectorySolutions /strDay / strTime;
     }
-    
+
 }
 void Enviroment::free()
 {
@@ -1265,21 +1271,21 @@ bool Enviroment::getBetters(unsigned int count, std::list<ec::Single*>& list)
 {
 	if(count > size()) return false;
 	iterator it = begin();
-	
+
 	for(unsigned int i = 0; i < count; i++)
 	{
 		list.push_back(*it);
 		it++;
 	}
-	
+
 	return true;
 }
 real Enviroment::getProgress()const
 {
 	if(size() < minSolutions) throw core::Exception("Esta solicitando mas elementos de los existentes",__FILE__,__LINE__);;
-	
+
 	if(minSolutions == 1) return front()->getFitness();
-	
+
 	real prog = 0;
 	const_iterator it = begin();
 	for(unsigned int i = 0; i < minSolutions; i++)

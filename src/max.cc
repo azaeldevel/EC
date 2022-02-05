@@ -374,6 +374,7 @@ void Enviroment::init()
 	//std::cout << "epsilon = " << epsilon << "\n";
 	comparer = &oct::ec::cmpStrength;
 	mutableProb = 0.2;
+	maxMutation = 1;
 	create_session();
 }
 

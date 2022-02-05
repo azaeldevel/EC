@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1643840855 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
+1644099759 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
 	<cfloat>
 	<random>
 	<iostream>
@@ -13,7 +13,7 @@
 	<fstream>
 	"ec.hh"
 
-1643840855 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
+1644098821 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
 	<list>
 	<string>
 	<vector>
@@ -160,4 +160,8 @@
 
 1643323923 source:c:\users\azael\documents\develop\octetos\ec\tests\v0-sudoku.cc
 	<CUnit/Basic.h>
+
+1643670180 source:c:\users\azael\documents\develop\octetos\ec\tests\v0-max.cc
+	<CUnit/Basic.h>
+	<max.hh>
 
