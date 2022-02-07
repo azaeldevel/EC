@@ -404,9 +404,7 @@ void Single::init()
 
 real table_reglog::predict_x(real y)const
 {
-	real p = (y - b)/a;
-	
-	return std::exp(p);
+	return std::exp((y - b)/a);
 }
 real table_reglog::predict_finally() const
 {
