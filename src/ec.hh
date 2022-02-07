@@ -258,6 +258,26 @@ bool cmpStrength(const Single* f,const Single* s);
 */
 bool cmpStrength1(const Single* f,const Single* s);
 
+struct data_reglog
+{
+	Iteration x;
+	real y;
+};
+
+typedef std::list<data_reglog> list_reglog;
+
+struct table_reglog
+{
+	//list_reglog datas;
+	real sum_ln_x;
+	real sum_ln2_x;
+	real sum_ln_xy;
+	real sum_y2;
+	real a;
+	real b;
+	real x_mean;
+	real y_mean;
+};
 
 typedef void (*echo)(const char*);
 /**
@@ -483,6 +503,12 @@ protected:
 	real junting_sigma;
 
     unsigned int maxMutation;
+
+	/**
+	*\brief Activa el modulo de prediccion
+	*/
+	bool prediction;
+
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion
@@ -523,6 +549,9 @@ private:
 	unsigned short maxChilds;
 
 	bool running;
+
+	
+	table_reglog prediction_table;
 };
 
 }

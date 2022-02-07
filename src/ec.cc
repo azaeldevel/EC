@@ -442,6 +442,11 @@ void Enviroment::init()
 	junting_sigma = 1.0;
 	running = false;
 	maxMutation = 0;
+	prediction = true;
+	prediction_table.sum_ln_x = 0;
+	prediction_table.sum_ln2_x = 0;
+	prediction_table.sum_ln_xy = 0;
+	prediction_table.sum_y2 = 0;
 }
 Enviroment::Enviroment()
 {
@@ -754,7 +759,24 @@ bool Enviroment::run()
 			sigma += pow(s->getFitness() - media,2);
 		}
 		sigma /= real(size());
-
+		if(leaderPrev != leader)
+		{//hay un nuevo lider
+			//TODO:optener una promedio a partir de una progresion
+			//https://es.wikipedia.org/wiki/Regresi%C3%B3n_no_lineal
+			//Note:Regirion Logaritmica : pendiente en cuaderno
+			if(prediction)
+			{
+				prediction_table.sum_ln_x += log(real(actualIteration));
+				prediction_table.sum_ln2_x += std::pow(prediction_table.sum_ln_x,real(2));
+				prediction_table.sum_ln_xy += prediction_table.sum_ln_x * leader->getFitness();
+				prediction_table.sum_y2 += std::pow(leader->getFitness(),real(2));
+				real a1 = prediction_table.sum_ln_x * leader->getFitness();
+				real a2 = media * prediction_table.sum_ln_x;
+				real a3 = prediction_table.sum_ln2_x - prediction_table.sum_ln_x;//TODO:se deve usar la media del logaritmo
+				prediction_table.a = (a1 - a2) / a3;
+				prediction_table.b = prediction_table.a * prediction_table.sum_ln_x;//TODO:se deve usar la media del logaritmo
+			}
+		}
 		//std::cout << "\tEnviroment::run - while Step 3\n";
 		if(logDirectoryFlag)
 		{
