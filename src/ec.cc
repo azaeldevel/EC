@@ -450,6 +450,7 @@ void Enviroment::init()
 	running = false;
 	maxMutation = 0;
 	prediction = true;
+	
 	prediction_table.sum_ln_x = 0;
 	prediction_table.sum_ln2_x = 0;
 	prediction_table.sum_ln_xy = 0;
@@ -685,7 +686,7 @@ bool Enviroment::run()
 		}
 		//std::cout << "\tStep 3.2\n";
 	}
-	std::cout << "\tStep 4\n";
+	//std::cout << "\tStep 4\n";
 
 	//ID oldleaderID = 0;
 	//double oldLeaderFitness = 0.0;
