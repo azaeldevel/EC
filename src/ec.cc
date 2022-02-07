@@ -402,13 +402,13 @@ void Single::init()
 
 
 
-real table_reglog::predict_x(real y)const
+real table_reglog::getPredictX(real y)const
 {
 	return std::exp((y - b)/a);
 }
-real table_reglog::predict_finally() const
+real table_reglog::getPredictFinally() const
 {
-	return predict_x(1.0);
+	return getPredictX(1.0);
 }
 
 
@@ -581,6 +581,10 @@ unsigned long Enviroment::getTimeID()
     return v;
 }
 */
+real  Enviroment::getPredictFinally() const
+{
+	return prediction_table.getPredictFinally();
+}
 ID Enviroment::getCountID()
 {
 	return idCount;
@@ -933,7 +937,7 @@ bool Enviroment::run()
 			log += std::to_string(size()) + "\n";
 			log += "\tEliminados : ";
 			log += std::to_string(removes) + "\n";
-			if(prediction) log += "\tPrediccion : " + std::to_string(prediction_table.predict_finally()) + "\n";
+			if(prediction) log += "\tPrediccion : " + std::to_string(prediction_table.getPredictFinally()) + "\n";
 			echoF(log.c_str());
 		}
 		//std::cout << "\tEnviroment::run - while Step 6\n";

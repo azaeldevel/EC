@@ -278,8 +278,8 @@ struct table_reglog
 	real b;
 	real y_mean;
 
-	real predict_x(real y) const;
-	real predict_finally() const;
+	real getPredictX(real y) const;
+	real getPredictFinally() const;
 };
 
 typedef void (*echo)(const char*);
@@ -415,6 +415,8 @@ public:
 	bool getBetters(unsigned int count, std::list<ec::Single*>& list);
 
 	real getProgress()const;
+
+	real getPredictFinally() const;
 public:
 
 	//
