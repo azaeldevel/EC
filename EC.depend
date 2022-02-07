@@ -13,7 +13,7 @@
 	<fstream>
 	"ec.hh"
 
-1644098821 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
+1644272580 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
 	<list>
 	<string>
 	<vector>
@@ -59,7 +59,7 @@
 	<map>
 	"ec.hh"
 
-1643840855 source:c:\users\azael\documents\develop\octetos\ec\src\max.cc
+1644100273 source:c:\users\azael\documents\develop\octetos\ec\src\max.cc
 	<iostream>
 	<limits.h>
 	"max.hh"
