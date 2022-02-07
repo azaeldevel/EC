@@ -270,13 +270,16 @@ struct table_reglog
 {
 	//list_reglog datas;
 	real sum_ln_x;
+	real sum_ln_x_mean;
 	real sum_ln2_x;
 	real sum_ln_xy;
 	real sum_y2;
 	real a;
 	real b;
-	real x_mean;
 	real y_mean;
+
+	real predict_x(real y) const;
+	real predict_finally() const;
 };
 
 typedef void (*echo)(const char*);

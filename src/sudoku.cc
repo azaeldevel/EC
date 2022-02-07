@@ -412,15 +412,15 @@ void Single::juncting(std::list<oct::ec::Single*>& chils,const oct::ec::Single* 
 }
 void Single::save(Save& s)
 {
-	(std::ofstream&)(s) << getID();
-	(std::ofstream&)(s) << ",";
-	(std::ofstream&)(s) << getFitness();
-	(std::ofstream&)(s) << ",";
-	(std::ofstream&)(s) << getErros();
+	(*s.out) << getID();
+	(*s.out) << ",";
+	(*s.out) << getFitness();
+	(*s.out) << ",";
+	(*s.out) << getErros();
 	//fn << ",";
 	//fn << getMD5();
-	(std::ofstream&)(s) << ",";
-	(std::ofstream&)(s) << getAge();
+	(*s.out) << ",";
+	(*s.out) << getAge();
 	for(unsigned short i = 0; i < 3; i++)
 	{
 		for(unsigned short j = 0; j < 3; j++)
@@ -429,8 +429,8 @@ void Single::save(Save& s)
 			{
 				for(unsigned short l = 0; l < 3; l++)
 				{
-					(std::ofstream&)(s) << ",";
-					(std::ofstream&)(s) << tabla[i][k].getNumber(j,l);
+					(*s.out) << ",";
+					(*s.out) << tabla[i][k].getNumber(j,l);
 				}
 			}
 		}
@@ -580,6 +580,7 @@ void Enviroment::init()
 	//addTerminator(ae::Terminations::JAM);
 	//sliceJam = iterJam /10;
 	comparer = &cmpStrength;
+	maxMutation = 5;
 }
 void Enviroment::initBoard(const std::string& initTable)
 {

@@ -402,7 +402,16 @@ void Single::init()
 
 
 
-
+real table_reglog::predict_x(real y)const
+{
+	real p = (y - b)/a;
+	
+	return std::exp(p);
+}
+real table_reglog::predict_finally() const
+{
+	return predict_x(1.0);
+}
 
 
 //std::random_device Enviroment::rd;
@@ -447,6 +456,8 @@ void Enviroment::init()
 	prediction_table.sum_ln2_x = 0;
 	prediction_table.sum_ln_xy = 0;
 	prediction_table.sum_y2 = 0;
+	prediction_table.sum_ln_x_mean = 0;
+	prediction_table.y_mean = 0;
 }
 Enviroment::Enviroment()
 {
@@ -672,7 +683,7 @@ bool Enviroment::run()
 		}
 		//std::cout << "\tStep 3.2\n";
 	}
-	//std::cout << "\tStep 4\n";
+	std::cout << "\tStep 4\n";
 
 	//ID oldleaderID = 0;
 	//double oldLeaderFitness = 0.0;
@@ -728,7 +739,6 @@ bool Enviroment::run()
 		}
 		//std::cout << "\tEnviroment::run - while Step 1\n";
 
-		//std::cout << "\tEnviroment::run - while Step 2\n";
 		if(not comparer)
 		{
 			throw oct::core::Exception("No se a asignado el creterio de coparacion.",__FILE__,__LINE__);
@@ -736,6 +746,7 @@ bool Enviroment::run()
 		leaderPrev = front();
 		sort(comparer);
 		leader = front();
+		//std::cout << "\tEnviroment::run - while Step 2\n";
 
 		media = 0.0;
 		sigma = 0.0;
@@ -765,16 +776,18 @@ bool Enviroment::run()
 			//https://es.wikipedia.org/wiki/Regresi%C3%B3n_no_lineal
 			//Note:Regirion Logaritmica : pendiente en cuaderno
 			if(prediction)
-			{
+			{//x=actualIteration, y = leader->getFitness()
 				prediction_table.sum_ln_x += log(real(actualIteration));
 				prediction_table.sum_ln2_x += std::pow(prediction_table.sum_ln_x,real(2));
-				prediction_table.sum_ln_xy += prediction_table.sum_ln_x * leader->getFitness();
+				prediction_table.sum_ln_xy += log(real(actualIteration)) * leader->getFitness();
 				prediction_table.sum_y2 += std::pow(leader->getFitness(),real(2));
-				real a1 = prediction_table.sum_ln_x * leader->getFitness();
-				real a2 = media * prediction_table.sum_ln_x;
-				real a3 = prediction_table.sum_ln2_x - prediction_table.sum_ln_x;//TODO:se deve usar la media del logaritmo
-				prediction_table.a = (a1 - a2) / a3;
 				prediction_table.b = prediction_table.a * prediction_table.sum_ln_x;//TODO:se deve usar la media del logaritmo
+				prediction_table.sum_ln_x_mean = ((real(actualIteration - 1) * prediction_table.sum_ln_x_mean) + prediction_table.sum_ln_x)/real(actualIteration);
+				prediction_table.y_mean = ((real(actualIteration - 1) * prediction_table.y_mean) + prediction_table.y_mean)/real(actualIteration);
+				
+				real a1 = prediction_table.sum_ln_xy - (prediction_table.y_mean * prediction_table.sum_ln_x);
+				real a2 = prediction_table.sum_ln2_x - (prediction_table.sum_ln_x_mean * prediction_table.sum_ln_x);				
+				prediction_table.a = a1 / a2;
 			}
 		}
 		//std::cout << "\tEnviroment::run - while Step 3\n";
@@ -922,6 +935,7 @@ bool Enviroment::run()
 			log += std::to_string(size()) + "\n";
 			log += "\tEliminados : ";
 			log += std::to_string(removes) + "\n";
+			if(prediction) log += "\tPrediccion : " + std::to_string(prediction_table.predict_finally()) + "\n";
 			echoF(log.c_str());
 		}
 		//std::cout << "\tEnviroment::run - while Step 6\n";
@@ -1251,10 +1265,10 @@ void Enviroment::commands(int argc, const char* argv[])
 			if(i + 1 > argc) throw core::Exception("No se agrego el parametro solicitado",__FILE__,__LINE__);
 			minSolutions = std::stoi(argv[++i]);
 		}
-		else
+		/*else
 		{
 			std::cout << "Opcion desconocida : " << argv[i] << "\n";
-		}
+		}*/
 	}
 }
 void Enviroment::create_session()
