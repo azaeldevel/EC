@@ -402,11 +402,11 @@ void Single::init()
 
 
 
-real table_reglog::getPredictX(real y)const
+unsigned int table_reglog::getPredictX(real y)const
 {
 	return std::exp((y - b)/a);
 }
-real table_reglog::getPredictFinally() const
+unsigned int table_reglog::getPredictFinally() const
 {
 	return getPredictX(1.0);
 }
@@ -582,7 +582,7 @@ unsigned long Enviroment::getTimeID()
     return v;
 }
 */
-real  Enviroment::getPredictFinally() const
+unsigned int  Enviroment::getPredictFinally() const
 {
 	return prediction_table.getPredictFinally();
 }

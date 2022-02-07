@@ -278,8 +278,8 @@ struct table_reglog
 	real b;
 	real y_mean;
 
-	real getPredictX(real y) const;
-	real getPredictFinally() const;
+	unsigned int getPredictX(real y) const;
+	unsigned int getPredictFinally() const;
 };
 
 typedef void (*echo)(const char*);
@@ -416,7 +416,7 @@ public:
 
 	real getProgress()const;
 
-	real getPredictFinally() const;
+	unsigned int getPredictFinally() const;
 public:
 
 	//
