@@ -402,11 +402,11 @@ void Single::init()
 
 
 
-real table_reglog::getPredictX(real y)const
+unsigned int table_reglog::getPredictX(real y)const
 {
 	return std::exp((y - b)/a);
 }
-real table_reglog::getPredictFinally() const
+unsigned int table_reglog::getPredictFinally() const
 {
 	return getPredictX(1.0);
 }
@@ -450,6 +450,7 @@ void Enviroment::init()
 	running = false;
 	maxMutation = 0;
 	prediction = true;
+	
 	prediction_table.sum_ln_x = 0;
 	prediction_table.sum_ln2_x = 0;
 	prediction_table.sum_ln_xy = 0;
@@ -581,7 +582,7 @@ unsigned long Enviroment::getTimeID()
     return v;
 }
 */
-real  Enviroment::getPredictFinally() const
+unsigned int  Enviroment::getPredictFinally() const
 {
 	return prediction_table.getPredictFinally();
 }
@@ -685,7 +686,7 @@ bool Enviroment::run()
 		}
 		//std::cout << "\tStep 3.2\n";
 	}
-	std::cout << "\tStep 4\n";
+	//std::cout << "\tStep 4\n";
 
 	//ID oldleaderID = 0;
 	//double oldLeaderFitness = 0.0;
