@@ -773,7 +773,7 @@ bool Enviroment::run()
 			sigma += pow(s->getFitness() - media,2);
 		}
 		sigma /= real(size());
-		if(leaderPrev != leader)
+		/*if(leaderPrev != leader)
 		{//hay un nuevo lider
 			//TODO:optener una promedio a partir de una progresion
 			//https://es.wikipedia.org/wiki/Regresi%C3%B3n_no_lineal
@@ -792,7 +792,7 @@ bool Enviroment::run()
 				real a2 = prediction_table.sum_ln2_x - (prediction_table.sum_ln_x_mean * prediction_table.sum_ln_x);				
 				prediction_table.a = a1 / a2;
 			}
-		}
+		}*/
 		//std::cout << "\tEnviroment::run - while Step 3\n";
 		if(logDirectoryFlag)
 		{
