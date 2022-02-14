@@ -450,7 +450,7 @@ void Enviroment::init()
 	running = false;
 	maxMutation = 0;
 	prediction = true;
-	
+
 	prediction_table.sum_ln_x = 0;
 	prediction_table.sum_ln2_x = 0;
 	prediction_table.sum_ln_xy = 0;
@@ -787,9 +787,9 @@ bool Enviroment::run()
 				prediction_table.b = prediction_table.a * prediction_table.sum_ln_x;//TODO:se deve usar la media del logaritmo
 				prediction_table.sum_ln_x_mean = ((real(actualIteration - 1) * prediction_table.sum_ln_x_mean) + prediction_table.sum_ln_x)/real(actualIteration);
 				prediction_table.y_mean = ((real(actualIteration - 1) * prediction_table.y_mean) + prediction_table.y_mean)/real(actualIteration);
-				
+
 				real a1 = prediction_table.sum_ln_xy - (prediction_table.y_mean * prediction_table.sum_ln_x);
-				real a2 = prediction_table.sum_ln2_x - (prediction_table.sum_ln_x_mean * prediction_table.sum_ln_x);				
+				real a2 = prediction_table.sum_ln2_x - (prediction_table.sum_ln_x_mean * prediction_table.sum_ln_x);
 				prediction_table.a = a1 / a2;
 			}
 		}*/
@@ -938,7 +938,7 @@ bool Enviroment::run()
 			log += std::to_string(size()) + "\n";
 			log += "\tEliminados : ";
 			log += std::to_string(removes) + "\n";
-			if(prediction) log += "\tPrediccion : " + std::to_string(prediction_table.getPredictFinally()) + "\n";
+			//if(prediction) log += "\tPrediccion : " + std::to_string(prediction_table.getPredictFinally()) + "\n";
 			echoF(log.c_str());
 		}
 		//std::cout << "\tEnviroment::run - while Step 6\n";
