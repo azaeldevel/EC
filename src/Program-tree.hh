@@ -149,4 +149,84 @@ namespace oct::ec::prog::expr
     };
 
 }
+namespace oct::ec::prog::exprr
+{
+    template<typename T> class Operation : public std::vector<expr::Operation<T>*>
+    {
+    public:
+        Operation(unsigned int ops) : std::vector<expr::Operation<T>*>(ops)
+        {
+        }
+
+        virtual operator T() const = 0;
+    };
+
+    template<typename T> class Plus : public Operation<T>
+    {
+    public:
+        Plus(expr::Operation<T>& a, expr::Operation<T>& b) : Operation<T>(2)
+        {
+            std::vector<expr::Operation<T>*>::at(0) = &a;
+            std::vector<expr::Operation<T>*>::at(1) = &b;
+        }
+        Plus(expr::Operation<T>& a, ops::Operation<T>& b) : Operation<T>(2)
+        {
+            std::vector<expr::Operation<T>*>::at(0) = &a;
+            std::vector<expr::Operation<T>*>::at(1) = &b;
+        }
+        Plus(ops::Operation<T>& a, expr::Operation<T>& b) : Operation<T>(2)
+        {
+            std::vector<expr::Operation<T>*>::at(0) = &a;
+            std::vector<expr::Operation<T>*>::at(1) = &b;
+        }
+
+        virtual operator T() const
+        {
+            return *std::vector<expr::Operation<T>*>::front() + *std::vector<expr::Operation<T>*>::back();
+        }
+    };
+    template<typename T> class Rest : public Operation<T>
+    {
+    public:
+        Rest(expr::Operation<T>& a, expr::Operation<T>& b) : Operation<T>(2)
+        {
+            std::vector<expr::Operation<T>*>::at(0) = &a;
+            std::vector<expr::Operation<T>*>::at(1) = &b;
+        }
+
+        virtual operator T() const
+        {
+            return *std::vector<expr::Operation<T>*>::front() - *std::vector<expr::Operation<T>*>::back();
+        }
+    };
+    template<typename T> class Mult : public Operation<T>
+    {
+    public:
+        Mult(expr::Operation<T>& a, expr::Operation<T>& b) : Operation<T>(2)
+        {
+            std::vector<expr::Operation<T>*>::at(0) = &a;
+            std::vector<expr::Operation<T>*>::at(1) = &b;
+        }
+
+        virtual operator T() const
+        {
+            return *std::vector<expr::Operation<T>*>::front() * *std::vector<expr::Operation<T>*>::back();
+        }
+    };
+    template<typename T> class Div : public Operation<T>
+    {
+    public:
+        Div(expr::Operation<T>& a, expr::Operation<T>& b) : Operation<T>(2)
+        {
+            std::vector<expr::Operation<T>*>::at(0) = &a;
+            std::vector<expr::Operation<T>*>::at(1) = &b;
+        }
+
+        virtual operator T() const
+        {
+            return *std::vector<expr::Operation<T>*>::front() / *std::vector<expr::Operation<T>*>::back();
+        }
+    };
+
+}
 #endif
