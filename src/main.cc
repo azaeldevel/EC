@@ -26,8 +26,8 @@ using namespace oct::ec::prog;
 int main(int argc, const char* argv[])
 {
 
-    ops::Plus plus1(10,25);
-    /*ops::Rest rest1(11,9);
+    /*ops::Plus plus1(10,25);
+    ops::Rest rest1(11,9);
     ops::Plus plus2(3,9);
     ops::Rest rest2(15,9);
     ops::Mult mult1(10,9);
