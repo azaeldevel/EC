@@ -2,29 +2,14 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="tests-v0-r" />
-	<File name="src\sudoku.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1692" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="src\sudoku.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="3874" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\max.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src\main.cc" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2353" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="src\ec.cc" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="23560" topLine="497" />
-		</Cursor>
-	</File>
-	<File name="src\max.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7612" topLine="348" />
+			<Cursor1 position="759" topLine="16" />
 		</Cursor>
 	</File>
 	<File name="src\ec-max.cc" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -37,14 +22,29 @@
 			<Cursor1 position="8879" topLine="111" />
 		</Cursor>
 	</File>
+	<File name="src\max.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7612" topLine="348" />
+		</Cursor>
+	</File>
+	<File name="src\ec.cc" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="32041" topLine="1269" />
+		</Cursor>
+	</File>
 	<File name="tests\v0.cc" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="607" topLine="16" />
 		</Cursor>
 	</File>
-	<File name="src\main.cc" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src\max.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="759" topLine="16" />
+			<Cursor1 position="2353" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="src\sudoku.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1692" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

@@ -17,29 +17,20 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ #include <iostream>
+
+#include "Program-tree.hh"
 
 
-
-
-
-
-#include <fstream>
-
-#if defined(__GNUC__) && defined(__linux__)
-	#include <octetos/core/shell.hh>
-#elif defined(__GNUC__) && (defined(_WIN32) || defined(_WIN64))
-    #include <shell.hh>
-#else
-    #error "Pltaforma desconocida"
-#endif
-
-
-
-
+using namespace oct::ec::prog;
 int main(int argc, const char* argv[])
 {
 
+    Plus plus1(10,25);
+    Rest rest1(11,9);
 
+    std::cout << "Suma : " << plus1 << std::endl;
+    std::cout << "Rest : " << rest1 << std::endl;
 
 	return EXIT_SUCCESS ;
 }

@@ -13,7 +13,7 @@
 	<fstream>
 	"ec.hh"
 
-1644272580 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
+1644275118 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
 	<list>
 	<string>
 	<vector>
@@ -164,4 +164,22 @@
 1643670180 source:c:\users\azael\documents\develop\octetos\ec\tests\v0-max.cc
 	<CUnit/Basic.h>
 	<max.hh>
+
+1645065404 source:c:\users\azael\documents\develop\octetos\ec\src\main.cc
+	<iostream>
+	"Program-tree.hh"
+
+1645057820 c:\users\azael\documents\develop\octetos\ec\src\program.hh
+	"ec.hh"
+
+1645064094 source:c:\users\azael\documents\develop\octetos\ec\src\program.cc
+	"Program-tree.hh"
+
+1645057766 source:c:\users\azael\documents\develop\octetos\ec\src\program-tree.cc
+	"Program-tree.hh"
+
+1645065463 c:\users\azael\documents\develop\octetos\ec\src\program-tree.hh
+	<list>
+	<vector>
+	"ec.hh"
 
