@@ -30,16 +30,24 @@ int main(int argc, const char* argv[])
     ops::Rest rest1(11,9);
     ops::Plus plus2(3,9);
     ops::Rest rest2(15,9);
+    ops::Mult mult1(10,9);
+    ops::Div div1(30,2);
 
     std::cout << "Suma 1: " << plus1 << std::endl;
     std::cout << "Rest 1: " << rest1 << std::endl;
     std::cout << "Suma 2: " << plus2 << std::endl;
     std::cout << "Rest 2: " << rest2 << std::endl;
+    std::cout << "Mult 1: " << mult1 << std::endl;
+    std::cout << "Div 1: " << div1 << std::endl;
 
     expr::Plus expre_plus1(rest1,rest2);
     std::cout << "Expresion 1: " << expre_plus1 << std::endl;
     expr::Rest expre_rest1(rest1,rest2);
     std::cout << "Expresion 2: " << expre_rest1 << std::endl;
+    expr::Mult expre_mult1(plus1,rest1);
+    std::cout << "Expresion 3: " << expre_mult1 << std::endl;
+    expr::Div expre_div1(plus2,rest2);
+    std::cout << "Expresion 4: " << expre_div1 << std::endl;
 
 	return EXIT_SUCCESS ;
 }

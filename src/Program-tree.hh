@@ -49,6 +49,34 @@ namespace oct::ec::prog::ops
             return std::vector<T>::front() - std::vector<T>::back();
         }
     };
+    template<typename T> class Mult : public Operation<T>
+    {
+    public:
+        Mult(const T& a, const T& b) : Operation<T>(2)
+        {
+            std::vector<T>::at(0) = a;
+            std::vector<T>::at(1) = b;
+        }
+
+        virtual operator T() const
+        {
+            return std::vector<T>::front() * std::vector<T>::back();
+        }
+    };
+    template<typename T> class Div : public Operation<T>
+    {
+    public:
+        Div(const T& a, const T& b) : Operation<T>(2)
+        {
+            std::vector<T>::at(0) = a;
+            std::vector<T>::at(1) = b;
+        }
+
+        virtual operator T() const
+        {
+            return std::vector<T>::front() / std::vector<T>::back();
+        }
+    };
 
 }
 namespace oct::ec::prog::expr
@@ -89,6 +117,34 @@ namespace oct::ec::prog::expr
         virtual operator T() const
         {
             return *std::vector<ops::Operation<T>*>::front() - *std::vector<ops::Operation<T>*>::back();
+        }
+    };
+    template<typename T> class Mult : public Operation<T>
+    {
+    public:
+        Mult(ops::Operation<T>& a, ops::Operation<T>& b) : Operation<T>(2)
+        {
+            std::vector<ops::Operation<T>*>::at(0) = &a;
+            std::vector<ops::Operation<T>*>::at(1) = &b;
+        }
+
+        virtual operator T() const
+        {
+            return *std::vector<ops::Operation<T>*>::front() * *std::vector<ops::Operation<T>*>::back();
+        }
+    };
+    template<typename T> class Div : public Operation<T>
+    {
+    public:
+        Div(ops::Operation<T>& a, ops::Operation<T>& b) : Operation<T>(2)
+        {
+            std::vector<ops::Operation<T>*>::at(0) = &a;
+            std::vector<ops::Operation<T>*>::at(1) = &b;
+        }
+
+        virtual operator T() const
+        {
+            return *std::vector<ops::Operation<T>*>::front() / *std::vector<ops::Operation<T>*>::back();
         }
     };
 
