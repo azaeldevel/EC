@@ -512,7 +512,7 @@ protected:
 	/**
 	*\brief Activa el modulo de prediccion
 	*/
-	bool prediction;
+	//bool prediction;
 
 private:
 	/**
@@ -554,9 +554,7 @@ private:
 	unsigned short maxChilds;
 
 	bool running;
-
-	
-	table_reglog prediction_table;
+	//table_reglog prediction_table;
 };
 
 }

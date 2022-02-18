@@ -449,14 +449,14 @@ void Enviroment::init()
 	junting_sigma = 1.0;
 	running = false;
 	maxMutation = 0;
-	prediction = true;
 
+	/*prediction = true;
 	prediction_table.sum_ln_x = 0;
 	prediction_table.sum_ln2_x = 0;
 	prediction_table.sum_ln_xy = 0;
 	prediction_table.sum_y2 = 0;
 	prediction_table.sum_ln_x_mean = 0;
-	prediction_table.y_mean = 0;
+	prediction_table.y_mean = 0;*/
 }
 Enviroment::Enviroment()
 {
@@ -581,11 +581,10 @@ unsigned long Enviroment::getTimeID()
 
     return v;
 }
-*/
 unsigned int  Enviroment::getPredictFinally() const
 {
 	return prediction_table.getPredictFinally();
-}
+}*/
 ID Enviroment::getCountID()
 {
 	return idCount;
@@ -648,7 +647,7 @@ bool Enviroment::run()
 	{
 		single->eval();
 	}
-	unsigned short counUndelete = 0;
+	//unsigned short counUndelete = 0;
 	std::ofstream history;
 	//std::cout << "\tEnviroment::run : Step 3\n";
 	//std::cout << "logDirectory = " << logDirectory << "\n";
