@@ -752,8 +752,7 @@ bool Enviroment::run()
 		leader = front();
 		//std::cout << "\tEnviroment::run - while Step 2\n";
 
-		media = oct::sta::mean<ec::Single,real>(*this,[](const ec::Single* s)->const real{return s->getFitness();});
-		sigma = 0.0;
+		media = oct::sta::mean<ec::Single,real>(*this,[](const ec::Single* s)->real{return s->getFitness();});
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Adaptabilidad : " << s->getFitness() << "\n";
@@ -767,13 +766,14 @@ bool Enviroment::run()
 			media += s->getFitness();*/
 			s->deltaAge();
 		}
-		media /= real(size());
-		for(ec::Single* s : *this)
+		//media /= real(size());
+		/*for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
 			sigma += pow(s->getFitness() - media,2);
 		}
-		sigma /= real(size());
+		sigma /= real(size());*/
+		sigma = oct::sta::variation<ec::Single,real>(*this,[](const ec::Single* s)->real{return s->getFitness();});
 		/*if(leaderPrev != leader)
 		{//hay un nuevo lider
 			//TODO:optener una promedio a partir de una progresion
