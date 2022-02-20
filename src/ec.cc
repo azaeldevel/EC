@@ -773,7 +773,7 @@ bool Enviroment::run()
 			sigma += pow(s->getFitness() - media,2);
 		}
 		sigma /= real(size());*/
-		sigma = oct::sta::variation<ec::Single*,real>(*this,[](ec::Single* s)->real{return s->getFitness();});
+		sigma = oct::sta::variation<ec::Single*,real>(*this,media,[](ec::Single* s)->real{return s->getFitness();});
 		/*if(leaderPrev != leader)
 		{//hay un nuevo lider
 			//TODO:optener una promedio a partir de una progresion
