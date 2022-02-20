@@ -752,7 +752,7 @@ bool Enviroment::run()
 		leader = front();
 		//std::cout << "\tEnviroment::run - while Step 2\n";
 
-		media = oct::sta::mean<ec::Single,real>(*this,[](const ec::Single* s)->const real&{return s->getFitness();});
+		media = oct::sta::mean<ec::Single,real>(*this,[](const ec::Single* s)->const real{return s->getFitness();});
 		sigma = 0.0;
 		for(ec::Single* s : *this)
 		{
