@@ -39,15 +39,35 @@ typedef ID Population;
 typedef unsigned int Iteration;
 typedef double real;
 
+/*
 double randNumber();
 double randNumber(double max);
 double randNumber(double min, double max);
+*/
+
+//static std::random_device rd;
+//static std::default_random_engine dre;
+//static std::mt19937 gen;
 
 
-static std::random_device rd;
-static std::default_random_engine dre;
-static std::mt19937 gen;
+class Exception : public std::exception
+{
+public:
+	enum Code
+	{
+		UNKNOW,
+	};
 
+	Exception();
+	Exception(Code code,const char* filename, unsigned int line);
+	
+	virtual const char* what() const throw();
+	
+private:
+	Code code;
+	const char* filename;
+	unsigned int line;
+};
 /**
 *\brief Representa nuestro conjunto de variables
 */
@@ -60,14 +80,14 @@ public:
 	const Chromosome& operator = (const Chromosome&);
 
 protected:
-	//static std::random_device rd;
-	//static std::mt19937 gen;
+	static std::random_device rd;
+	static std::mt19937 gen;
 private:
 	std::string name;
 };
 
 
-
+/*
 class Junction : public Chromosome
 {
 public:
@@ -106,7 +126,10 @@ private:
 	geneUS number;
 	geneUS algorit;
 	TypeJuntion type;
-};
+	static std::uniform_int_distribution<int> randChild;
+	static std::uniform_int_distribution<int> randAlg;
+	static std::uniform_int_distribution<int> randN;
+};*/
 
 
 struct Save
@@ -239,8 +262,8 @@ protected:
 
 	Enviroment* env;
 
-	//static std::random_device rd;
-	//static std::mt19937 gen;
+	static std::random_device rd;
+	static std::mt19937 gen;
 
 private:
 	ID id;
@@ -513,6 +536,9 @@ protected:
 	*\brief Activa el modulo de prediccion
 	*/
 	bool prediction;
+
+	static std::random_device rd;
+	static std::mt19937 gen;
 
 private:
 	/**

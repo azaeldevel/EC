@@ -30,6 +30,7 @@ bool cmpStrength1(const Single* f,const Single* s)
 {
 	return std::abs(f->getFitness() - 1.0) > std::abs(s->getFitness() - 1.0);
 }
+/*
 double randNumber()
 {
 	//std::random_device rd;
@@ -54,16 +55,35 @@ double randNumber(double min,double max)
 
 	return distr(gen);
 }
+*/
+
+
+Exception::Exception() : code(UNKNOW)
+{
+}
+Exception::Exception(Code c,const char* fn, unsigned int l) : code(c),filename(fn),line(l)
+{
+}
+
+
+const char* Exception::what() const throw()
+{
+	switch(code)
+	{
+		case UNKNOW:
+			return "Error desconocido";
+			
+		default:
+			return "Error desconocido";		
+	}
+}
 
 
 
 
 
-
-
-
-//std::random_device Chromosome::rd;
-//std::mt19937 Chromosome::gen(rd());
+std::random_device Chromosome::rd;
+std::mt19937 Chromosome::gen(rd());
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
@@ -88,7 +108,10 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 
 
 
-
+/*
+std::uniform_int_distribution<int> Junction::randChild(1,10);
+std::uniform_int_distribution<int> Junction::randAlg(1,10);
+std::uniform_int_distribution<int> Junction::randN(1,9);
 
 Junction::Junction(const Junction& obj): Chromosome("Junction")
 {
@@ -98,7 +121,7 @@ Junction::Junction(const Junction& obj): Chromosome("Junction")
 }
 Junction::Junction(): Chromosome("Junction")
 {
-	number = randNumber(1.0,10.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	type = TypeJuntion::BINARY;//backward compatible
 }
@@ -110,13 +133,13 @@ Junction::Junction(unsigned short max): Chromosome("Junction")
 }
 Junction::Junction(geneUS n,geneUS a): Chromosome("Junction")
 {
-	number = randNumber(1.0,9.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	type = TypeJuntion::BINARY;//backward compatible
 }
 Junction::Junction(TypeJuntion t): Chromosome("Junction")
 {
-	number = randNumber(1.0,9.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	type = t;//backward compatible
 }
@@ -147,6 +170,7 @@ void Junction::copy(const Chromosome& P)
 	algorit = ((Junction&)P).algorit;
 	type = ((Junction&)P).type;
 }
+
 void Junction::mutate(float p)
 {
 	double numrd1 = randNumber(0.0,1.0);
@@ -169,23 +193,23 @@ geneUS Junction::randType()
 
 	return TypeJuntion::BINARY;
 }
-/*geneUS Junction::randChild()
+geneUS Junction::randChild()
 {
 	return randNumber(1.0, maxChilds);
-}*/
+}
 void Junction::randFill(bool favor)
 {
-	number = randNumber(1.0,9.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	if(type == TypeJuntion::NOT_TYPE) type = TypeJuntion::BINARY;//backward compatible
 }
 void Junction::randFill(TypeJuntion t)
 {
-	number = randNumber(1.0,9.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	type = t;//backward compatible
 }
-
+*/
 
 
 
@@ -333,8 +357,8 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-//std::random_device Single::rd;
-//std::mt19937 Single::gen(rd());
+std::random_device Single::rd;
+std::mt19937 Single::gen(rd());
 Single::Single(const Single& obj)
 {
 	env = obj.env;
@@ -413,8 +437,8 @@ unsigned int table_reglog::getPredictFinally() const
 }
 
 
-//std::random_device Enviroment::rd;
-//std::mt19937 Enviroment::gen(rd());
+std::random_device Enviroment::rd;
+std::mt19937 Enviroment::gen(rd());
 
 void Enviroment::init()
 {
