@@ -756,14 +756,16 @@ bool Enviroment::run()
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Adaptabilidad : " << s->getFitness() << "\n";
-			/*fitness = s->getFitness();
+			/*
+			fitness = s->getFitness();
 			if(fitness > 1 or fitness < 0)
 			{
 				std::string msg = "El fitness de cada individio deve estar en el intervalo [0,1], se encontro ";
 				msg += std::to_string(fitness);
 				throw oct::core::Exception(msg,__FILE__,__LINE__);
 			}
-			media += s->getFitness();*/
+			media += s->getFitness();
+			*/
 			s->deltaAge();
 		}
 		//media /= real(size());
