@@ -1,6 +1,6 @@
 
 
-AC_INIT(octetos-ec, 0.14.0-alpha, azael.devel@gmail.com)
+AC_INIT(octetos-ec, 0.16.0-alpha, azael.devel@gmail.com)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -19,7 +19,7 @@ AC_PROG_CXX
 
 LT_INIT
 
-PKG_CHECK_MODULES(OCTETOS_CORE,octetos-core)
+PKG_CHECK_MODULES(OCTETOS_EC,octetos-core octetos-math)
 
 
 AM_CONDITIONAL(WITH_TESTS, test x"$with_tests" = "xyes")

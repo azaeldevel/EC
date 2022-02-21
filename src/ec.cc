@@ -13,6 +13,7 @@
 //#include <ctime>
 
 #include <fstream>
+#include <octetos/math/sta-ops.hh>
 
 #include "ec.hh"
 
@@ -29,6 +30,7 @@ bool cmpStrength1(const Single* f,const Single* s)
 {
 	return std::abs(f->getFitness() - 1.0) > std::abs(s->getFitness() - 1.0);
 }
+/*
 double randNumber()
 {
 	//std::random_device rd;
@@ -53,16 +55,36 @@ double randNumber(double min,double max)
 
 	return distr(gen);
 }
+*/
+
+
+Exception::Exception() : code(UNKNOW)
+{
+}
+Exception::Exception(Code c,const char* fn, unsigned int l) : code(c),filename(fn),line(l)
+{
+}
+const char* Exception::what() const throw()
+{
+	switch(code)
+	{
+		case UNKNOW:
+			return "Error desconocido";
+		case BAD_VALUE_maxProgenitor:
+			return "Valor incorrecto de maxProgenitor";	
+		case BAD_VALUE_size:
+			return "No hay elementos listados";		
+		default:
+			return "Error desconocido";		
+	}
+}
 
 
 
 
 
-
-
-
-//std::random_device Chromosome::rd;
-//std::mt19937 Chromosome::gen(rd());
+std::random_device Chromosome::rd;
+std::mt19937 Chromosome::gen(rd());
 Chromosome::Chromosome(const std::string n) : name(n)
 {
 }
@@ -87,7 +109,10 @@ const Chromosome& Chromosome::operator = (const Chromosome& obj)
 
 
 
-
+/*
+std::uniform_int_distribution<int> Junction::randChild(1,10);
+std::uniform_int_distribution<int> Junction::randAlg(1,10);
+std::uniform_int_distribution<int> Junction::randN(1,9);
 
 Junction::Junction(const Junction& obj): Chromosome("Junction")
 {
@@ -97,7 +122,7 @@ Junction::Junction(const Junction& obj): Chromosome("Junction")
 }
 Junction::Junction(): Chromosome("Junction")
 {
-	number = randNumber(1.0,10.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	type = TypeJuntion::BINARY;//backward compatible
 }
@@ -109,13 +134,13 @@ Junction::Junction(unsigned short max): Chromosome("Junction")
 }
 Junction::Junction(geneUS n,geneUS a): Chromosome("Junction")
 {
-	number = randNumber(1.0,9.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	type = TypeJuntion::BINARY;//backward compatible
 }
 Junction::Junction(TypeJuntion t): Chromosome("Junction")
 {
-	number = randNumber(1.0,9.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	type = t;//backward compatible
 }
@@ -146,6 +171,7 @@ void Junction::copy(const Chromosome& P)
 	algorit = ((Junction&)P).algorit;
 	type = ((Junction&)P).type;
 }
+
 void Junction::mutate(float p)
 {
 	double numrd1 = randNumber(0.0,1.0);
@@ -168,23 +194,23 @@ geneUS Junction::randType()
 
 	return TypeJuntion::BINARY;
 }
-/*geneUS Junction::randChild()
+geneUS Junction::randChild()
 {
 	return randNumber(1.0, maxChilds);
-}*/
+}
 void Junction::randFill(bool favor)
 {
-	number = randNumber(1.0,9.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	if(type == TypeJuntion::NOT_TYPE) type = TypeJuntion::BINARY;//backward compatible
 }
 void Junction::randFill(TypeJuntion t)
 {
-	number = randNumber(1.0,9.0);
+	number = randChild(gen);
 	algorit = randAlgt();
 	type = t;//backward compatible
 }
-
+*/
 
 
 
@@ -332,8 +358,8 @@ void Junction::randFill(TypeJuntion t)
 
 
 
-//std::random_device Single::rd;
-//std::mt19937 Single::gen(rd());
+std::random_device Single::rd;
+std::mt19937 Single::gen(rd());
 Single::Single(const Single& obj)
 {
 	env = obj.env;
@@ -412,8 +438,8 @@ unsigned int table_reglog::getPredictFinally() const
 }
 
 
-//std::random_device Enviroment::rd;
-//std::mt19937 Enviroment::gen(rd());
+std::random_device Enviroment::rd;
+std::mt19937 Enviroment::gen(rd());
 
 void Enviroment::init()
 {
@@ -450,13 +476,29 @@ void Enviroment::init()
 	running = false;
 	maxMutation = 0;
 
-	/*prediction = true;
+	prediction = true;
 	prediction_table.sum_ln_x = 0;
 	prediction_table.sum_ln2_x = 0;
 	prediction_table.sum_ln_xy = 0;
 	prediction_table.sum_y2 = 0;
 	prediction_table.sum_ln_x_mean = 0;
-	prediction_table.y_mean = 0;*/
+	prediction_table.y_mean = 0;
+	
+	juntion_progenitor = NULL;
+	//juntion_variety = NULL;
+	//juntion_any = NULL;
+	juntion_type = NULL;
+}
+void Enviroment::init2()
+{
+	if(maxProgenitor < 2) throw Exception(Exception::BAD_VALUE_maxProgenitor,__FILE__,__LINE__);
+	if(size() == 0) throw Exception(Exception::BAD_VALUE_size,__FILE__,__LINE__);
+	
+	juntion_progenitor = new std::uniform_int_distribution<int>(0,maxProgenitor - 1);
+	//juntion_variety = new std::uniform_int_distribution<int>(maxProgenitor - 1, maxPopulation - 1);
+	//juntion_any = new std::uniform_int_distribution<int>(0, maxPopulation - 1);
+	juntion_type = new std::uniform_int_distribution<int>(1, 4);
+
 }
 Enviroment::Enviroment()
 {
@@ -465,8 +507,11 @@ Enviroment::Enviroment()
 Enviroment::~Enviroment()
 {
 	if(size() > 0) free();
-	delete savingDevice;
-	savingDevice = NULL;
+	if(savingDevice) delete savingDevice;
+	if(juntion_progenitor) delete juntion_progenitor;
+	//if(juntion_variety) delete juntion_variety;
+	//if(juntion_any) delete juntion_any;
+	//if(juntion_any) delete juntion_type;
 }
 
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
@@ -638,10 +683,11 @@ bool Enviroment::run()
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
 	if(maxMutation == 0) throw oct::core::Exception("La cantiad de Mutacion deve ser mayor que 0",__FILE__,__LINE__);
 	//if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
-
+	
 	actualIteration = 1;
 	//std::cout << "\tEnviroment::run : Step 1\n";
-	if(size() == 0) initial();
+	if(size() == 0) initial();	
+	init2();
     //std::cout << "\tEnviroment::run : Step 2\n";
 	for(ec::Single* single : *this)
 	{
@@ -697,8 +743,9 @@ bool Enviroment::run()
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;
 	//double triggerJam2 = 1.0e-20;
 	std::bernoulli_distribution mutation_distr(mutableProb);
+	std::uniform_int_distribution<int> distrib_maxm(1,maxMutation);
 	const ec::Single *leaderPrev, *leader;
-	real fitness;
+	//real fitness;
 	if(echolevel > 0 and echoF != NULL) echoF("\n");
 	bool ret = false;
 
@@ -750,11 +797,11 @@ bool Enviroment::run()
 		leader = front();
 		//std::cout << "\tEnviroment::run - while Step 2\n";
 
-		media = 0.0;
-		sigma = 0.0;
+		media = oct::sta::mean<ec::Single*,real>(*this,[](ec::Single* s)->real{return s->getFitness();});
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Adaptabilidad : " << s->getFitness() << "\n";
+			/*
 			fitness = s->getFitness();
 			if(fitness > 1 or fitness < 0)
 			{
@@ -763,15 +810,17 @@ bool Enviroment::run()
 				throw oct::core::Exception(msg,__FILE__,__LINE__);
 			}
 			media += s->getFitness();
+			*/
 			s->deltaAge();
 		}
-		media /= real(size());
-		for(ec::Single* s : *this)
+		//media /= real(size());
+		/*for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
 			sigma += pow(s->getFitness() - media,2);
 		}
-		sigma /= real(size());
+		sigma /= real(size());*/
+		sigma = oct::sta::variation<ec::Single*,real>(*this,media,[](ec::Single* s)->real{return s->getFitness();});
 		/*if(leaderPrev != leader)
 		{//hay un nuevo lider
 			//TODO:optener una promedio a partir de una progresion
@@ -973,8 +1022,7 @@ bool Enviroment::run()
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 		    if(mutation_distr(rd))
-		    {
-                std::uniform_int_distribution<int> distrib_maxm(1,maxMutation);
+		    {                
                 unsigned int i = (maxMutation == 1)? i = 0 : i = distrib_maxm(gen);
                 for(; i < maxMutation; i++) s->mutate();
 			}
@@ -1081,9 +1129,7 @@ Single* Enviroment::getRandomSingle()
 Single* Enviroment::getRandomSingleAny()
 {
 	const_iterator it = begin();
-
-    std::uniform_int_distribution<int> distrib(0, size() - 1);
-	std::advance(it,distrib(gen));
+	std::advance(it,juntion_progenitor->operator()(gen));
 
 	return *it;
 }
@@ -1097,18 +1143,12 @@ Single* Enviroment::getRandomSingleSecond()
 	it++;
 	return *it;
 }
+
 Single* Enviroment::getRandomSingleTop()
 {
 	const_iterator it = begin();
+	std::advance(it,juntion_progenitor->operator()(gen));
 
-    std::lognormal_distribution<double> distrib(0.0,junting_sigma);
-    unsigned int offset;
-    do
-    {
-    	offset = std::abs(distrib(gen));
-    }
-    while(offset >= size());//deja de repetirse si elo valor esta en el rango
-	std::advance(it,offset);
 	return *it;
 }
 Iteration Enviroment::getIterationActual()const
@@ -1120,12 +1160,12 @@ void Enviroment::juncting()
 	Single *single1,*single2;
 	do
 	{
-		single1 = getRandomSingleTop();
+		single1 = getRandomSingleFirst();
 		do
 		{
 			single2 = getRandomSingleTop();
 		}
-		while(single1 == single2);
+		while(single1 == single2);//repeat until diferent
 
 		single1->juncting(newschils,single2);
 	}

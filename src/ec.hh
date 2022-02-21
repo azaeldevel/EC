@@ -39,15 +39,37 @@ typedef ID Population;
 typedef unsigned int Iteration;
 typedef double real;
 
+/*
 double randNumber();
 double randNumber(double max);
 double randNumber(double min, double max);
+*/
+
+//static std::random_device rd;
+//static std::default_random_engine dre;
+//static std::mt19937 gen;
 
 
-static std::random_device rd;
-static std::default_random_engine dre;
-static std::mt19937 gen;
+class Exception : public std::exception
+{
+public:
+	enum Code
+	{
+		UNKNOW,
+		BAD_VALUE_maxProgenitor,
+		BAD_VALUE_size,
+	};
 
+	Exception();
+	Exception(Code code,const char* filename, unsigned int line);
+	
+	virtual const char* what() const throw();
+	
+private:
+	Code code;
+	const char* filename;
+	unsigned int line;
+};
 /**
 *\brief Representa nuestro conjunto de variables
 */
@@ -60,14 +82,14 @@ public:
 	const Chromosome& operator = (const Chromosome&);
 
 protected:
-	//static std::random_device rd;
-	//static std::mt19937 gen;
+	static std::random_device rd;
+	static std::mt19937 gen;
 private:
 	std::string name;
 };
 
 
-
+/*
 class Junction : public Chromosome
 {
 public:
@@ -106,7 +128,10 @@ private:
 	geneUS number;
 	geneUS algorit;
 	TypeJuntion type;
-};
+	static std::uniform_int_distribution<int> randChild;
+	static std::uniform_int_distribution<int> randAlg;
+	static std::uniform_int_distribution<int> randN;
+};*/
 
 
 struct Save
@@ -239,8 +264,8 @@ protected:
 
 	Enviroment* env;
 
-	//static std::random_device rd;
-	//static std::mt19937 gen;
+	static std::random_device rd;
+	static std::mt19937 gen;
 
 private:
 	ID id;
@@ -296,6 +321,7 @@ public:
 	*\brief Inizializa las variables
 	*/
 	void init();
+	void init2();
 	Enviroment();
 	Enviroment(const std::filesystem::path& log, bool subtree);
 	Enviroment(const std::filesystem::path& log,Iteration maxIteration);
@@ -429,6 +455,8 @@ private:
 	Single* getRandomSingleAny();
 	Single* getRandomSingleFirst();
 	Single* getRandomSingleSecond();
+	//Single* getRandomSingleDiversity();
+	//Single* getRandomSingleVariety();
 
 protected:
 	std::filesystem::path logDirectory;
@@ -514,6 +542,9 @@ protected:
 	*/
 	//bool prediction;
 
+	static std::random_device rd;
+	static std::mt19937 gen;
+
 private:
 	/**
 	*\brief Siguiente individiuo que aun no es una solucion
@@ -554,7 +585,14 @@ private:
 	unsigned short maxChilds;
 
 	bool running;
-	//table_reglog prediction_table;
+
+	
+	table_reglog prediction_table;
+
+	std::uniform_int_distribution<int>* juntion_type;
+	std::uniform_int_distribution<int>* juntion_progenitor;
+	//std::uniform_int_distribution<int>* juntion_variety;
+	//std::uniform_int_distribution<int>* juntion_any;
 };
 
 }
