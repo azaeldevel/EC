@@ -452,6 +452,8 @@ private:
 	Single* getRandomSingleAny();
 	Single* getRandomSingleFirst();
 	Single* getRandomSingleSecond();
+	Single* getRandomSingleDiversity();
+	Single* getRandomSingleVariety();
 
 protected:
 	std::filesystem::path logDirectory;
@@ -583,6 +585,8 @@ private:
 
 	
 	table_reglog prediction_table;
+
+	std::uniform_int_distribution<int> juntion_type;
 };
 
 }

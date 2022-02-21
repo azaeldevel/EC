@@ -482,8 +482,9 @@ void Enviroment::init()
 	prediction_table.sum_y2 = 0;
 	prediction_table.sum_ln_x_mean = 0;
 	prediction_table.y_mean = 0;
+	
 }
-Enviroment::Enviroment()
+Enviroment::Enviroment() : juntion_type(1,4)
 {
 	init();
 }
@@ -1125,18 +1126,38 @@ Single* Enviroment::getRandomSingleSecond()
 	it++;
 	return *it;
 }
+Single* Enviroment::getRandomSingleDiversity()
+{
+	switch(juntion_type(gen))
+	{
+	case 1:
+		return getRandomSingleSecond();
+	case 2:
+		return getRandomSingleVariety();
+	case 3:
+		return getRandomSingleAny();
+	case 4:
+		return getRandomSingleTop();
+	}
+	
+	return getRandomSingleTop();
+}
+Single* Enviroment::getRandomSingleVariety()
+{
+	const_iterator it = begin();
+
+    std::uniform_int_distribution<int> distrib(maxProgenitor, size() - 1);
+	std::advance(it,distrib(gen));
+
+	return *it;
+}
 Single* Enviroment::getRandomSingleTop()
 {
 	const_iterator it = begin();
 
-    std::lognormal_distribution<double> distrib(0.0,junting_sigma);
-    unsigned int offset;
-    do
-    {
-    	offset = std::abs(distrib(gen));
-    }
-    while(offset >= size());//deja de repetirse si elo valor esta en el rango
-	std::advance(it,offset);
+    std::uniform_int_distribution<int> distrib(0,maxProgenitor - 1);
+	std::advance(it,distrib(gen));
+
 	return *it;
 }
 Iteration Enviroment::getIterationActual()const
@@ -1148,12 +1169,12 @@ void Enviroment::juncting()
 	Single *single1,*single2;
 	do
 	{
-		single1 = getRandomSingleTop();
+		single1 = getRandomSingleFirst();
 		do
 		{
-			single2 = getRandomSingleTop();
+			single2 = getRandomSingleDiversity();
 		}
-		while(single1 == single2);
+		while(single1 == single2);//repeat until diferent
 
 		single1->juncting(newschils,single2);
 	}
