@@ -723,8 +723,9 @@ bool Enviroment::run()
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;
 	//double triggerJam2 = 1.0e-20;
 	std::bernoulli_distribution mutation_distr(mutableProb);
+	std::uniform_int_distribution<int> distrib_maxm(1,maxMutation);
 	const ec::Single *leaderPrev, *leader;
-	real fitness;
+	//real fitness;
 	if(echolevel > 0 and echoF != NULL) echoF("\n");
 	bool ret = false;
 
@@ -1001,8 +1002,7 @@ bool Enviroment::run()
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 		    if(mutation_distr(rd))
-		    {
-                std::uniform_int_distribution<int> distrib_maxm(1,maxMutation);
+		    {                
                 unsigned int i = (maxMutation == 1)? i = 0 : i = distrib_maxm(gen);
                 for(; i < maxMutation; i++) s->mutate();
 			}
