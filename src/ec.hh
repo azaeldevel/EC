@@ -56,6 +56,8 @@ public:
 	enum Code
 	{
 		UNKNOW,
+		BAD_VALUE_maxProgenitor,
+		BAD_VALUE_size,
 	};
 
 	Exception();
@@ -319,6 +321,7 @@ public:
 	*\brief Inizializa las variables
 	*/
 	void init();
+	void init2();
 	Enviroment();
 	Enviroment(const std::filesystem::path& log, bool subtree);
 	Enviroment(const std::filesystem::path& log,Iteration maxIteration);
@@ -452,8 +455,8 @@ private:
 	Single* getRandomSingleAny();
 	Single* getRandomSingleFirst();
 	Single* getRandomSingleSecond();
-	Single* getRandomSingleDiversity();
-	Single* getRandomSingleVariety();
+	//Single* getRandomSingleDiversity();
+	//Single* getRandomSingleVariety();
 
 protected:
 	std::filesystem::path logDirectory;
@@ -586,7 +589,10 @@ private:
 	
 	table_reglog prediction_table;
 
-	std::uniform_int_distribution<int> juntion_type;
+	std::uniform_int_distribution<int>* juntion_type;
+	std::uniform_int_distribution<int>* juntion_progenitor;
+	//std::uniform_int_distribution<int>* juntion_variety;
+	//std::uniform_int_distribution<int>* juntion_any;
 };
 
 }

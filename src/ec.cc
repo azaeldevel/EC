@@ -64,15 +64,16 @@ Exception::Exception() : code(UNKNOW)
 Exception::Exception(Code c,const char* fn, unsigned int l) : code(c),filename(fn),line(l)
 {
 }
-
-
 const char* Exception::what() const throw()
 {
 	switch(code)
 	{
 		case UNKNOW:
 			return "Error desconocido";
-			
+		case BAD_VALUE_maxProgenitor:
+			return "Valor incorrecto de maxProgenitor";	
+		case BAD_VALUE_size:
+			return "No hay elementos listados";		
 		default:
 			return "Error desconocido";		
 	}
@@ -483,16 +484,33 @@ void Enviroment::init()
 	prediction_table.sum_ln_x_mean = 0;
 	prediction_table.y_mean = 0;
 	
+	juntion_progenitor = NULL;
+	//juntion_variety = NULL;
+	//juntion_any = NULL;
+	juntion_type = NULL;
 }
-Enviroment::Enviroment() : juntion_type(1,4)
+void Enviroment::init2()
+{
+	if(maxProgenitor < 2) throw Exception(Exception::BAD_VALUE_maxProgenitor,__FILE__,__LINE__);
+	if(size() == 0) throw Exception(Exception::BAD_VALUE_size,__FILE__,__LINE__);
+	
+	juntion_progenitor = new std::uniform_int_distribution<int>(0,maxProgenitor - 1);
+	//juntion_variety = new std::uniform_int_distribution<int>(maxProgenitor - 1, maxPopulation - 1);
+	//juntion_any = new std::uniform_int_distribution<int>(0, maxPopulation - 1);
+	juntion_type = new std::uniform_int_distribution<int>(1, 4);
+}
+Enviroment::Enviroment()
 {
 	init();
 }
 Enviroment::~Enviroment()
 {
 	if(size() > 0) free();
-	delete savingDevice;
-	savingDevice = NULL;
+	if(savingDevice) delete savingDevice;
+	if(juntion_progenitor) delete juntion_progenitor;
+	//if(juntion_variety) delete juntion_variety;
+	//if(juntion_any) delete juntion_any;
+	//if(juntion_any) delete juntion_type;
 }
 
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
@@ -665,10 +683,11 @@ bool Enviroment::run()
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
 	if(maxMutation == 0) throw oct::core::Exception("La cantiad de Mutacion deve ser mayor que 0",__FILE__,__LINE__);
 	//if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
-
+	
 	actualIteration = 1;
 	//std::cout << "\tEnviroment::run : Step 1\n";
-	if(size() == 0) initial();
+	if(size() == 0) initial();	
+	init2();
     //std::cout << "\tEnviroment::run : Step 2\n";
 	for(ec::Single* single : *this)
 	{
@@ -1110,9 +1129,7 @@ Single* Enviroment::getRandomSingle()
 Single* Enviroment::getRandomSingleAny()
 {
 	const_iterator it = begin();
-
-    std::uniform_int_distribution<int> distrib(0, size() - 1);
-	std::advance(it,distrib(gen));
+	std::advance(it,juntion_progenitor->operator()(gen));
 
 	return *it;
 }
@@ -1126,37 +1143,11 @@ Single* Enviroment::getRandomSingleSecond()
 	it++;
 	return *it;
 }
-Single* Enviroment::getRandomSingleDiversity()
-{
-	switch(juntion_type(gen))
-	{
-	case 1:
-		return getRandomSingleSecond();
-	case 2:
-		return getRandomSingleVariety();
-	case 3:
-		return getRandomSingleAny();
-	case 4:
-		return getRandomSingleTop();
-	}
-	
-	return getRandomSingleTop();
-}
-Single* Enviroment::getRandomSingleVariety()
-{
-	const_iterator it = begin();
 
-    std::uniform_int_distribution<int> distrib(maxProgenitor, size() - 1);
-	std::advance(it,distrib(gen));
-
-	return *it;
-}
 Single* Enviroment::getRandomSingleTop()
 {
 	const_iterator it = begin();
-
-    std::uniform_int_distribution<int> distrib(0,maxProgenitor - 1);
-	std::advance(it,distrib(gen));
+	std::advance(it,juntion_progenitor->operator()(gen));
 
 	return *it;
 }
@@ -1172,7 +1163,7 @@ void Enviroment::juncting()
 		single1 = getRandomSingleFirst();
 		do
 		{
-			single2 = getRandomSingleDiversity();
+			single2 = getRandomSingleTop();
 		}
 		while(single1 == single2);//repeat until diferent
 
