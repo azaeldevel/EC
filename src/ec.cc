@@ -476,13 +476,13 @@ void Enviroment::init()
 	running = false;
 	maxMutation = 0;
 
-	prediction = true;
+	/*prediction = true;
 	prediction_table.sum_ln_x = 0;
 	prediction_table.sum_ln2_x = 0;
 	prediction_table.sum_ln_xy = 0;
 	prediction_table.sum_y2 = 0;
 	prediction_table.sum_ln_x_mean = 0;
-	prediction_table.y_mean = 0;
+	prediction_table.y_mean = 0;*/
 	
 	juntion_progenitor = NULL;
 	//juntion_variety = NULL;
