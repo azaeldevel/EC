@@ -13,7 +13,14 @@
 //#include <ctime>
 
 #include <fstream>
-#include <octetos/math/sta-ops.hh>
+
+#if defined(__linux__)
+    #include <octetos/math/sta-ops.hh>
+#elif (defined(_WIN32) || defined(_WIN64))
+    #include <sta-ops.hh>
+#else
+    #error "Pltaforma desconocida"
+#endif
 
 #include "ec.hh"
 
@@ -71,11 +78,11 @@ const char* Exception::what() const throw()
 		case UNKNOW:
 			return "Error desconocido";
 		case BAD_VALUE_maxProgenitor:
-			return "Valor incorrecto de maxProgenitor";	
+			return "Valor incorrecto de maxProgenitor";
 		case BAD_VALUE_size:
-			return "No hay elementos listados";		
+			return "No hay elementos listados";
 		default:
-			return "Error desconocido";		
+			return "Error desconocido";
 	}
 }
 
@@ -476,14 +483,14 @@ void Enviroment::init()
 	running = false;
 	maxMutation = 0;
 
-	prediction = true;
+	/*prediction = true;
 	prediction_table.sum_ln_x = 0;
 	prediction_table.sum_ln2_x = 0;
 	prediction_table.sum_ln_xy = 0;
 	prediction_table.sum_y2 = 0;
 	prediction_table.sum_ln_x_mean = 0;
-	prediction_table.y_mean = 0;
-	
+	prediction_table.y_mean = 0;*/
+
 	juntion_progenitor = NULL;
 	//juntion_variety = NULL;
 	//juntion_any = NULL;
@@ -493,7 +500,7 @@ void Enviroment::init2()
 {
 	if(maxProgenitor < 2) throw Exception(Exception::BAD_VALUE_maxProgenitor,__FILE__,__LINE__);
 	if(size() == 0) throw Exception(Exception::BAD_VALUE_size,__FILE__,__LINE__);
-	
+
 	juntion_progenitor = new std::uniform_int_distribution<int>(0,maxProgenitor - 1);
 	//juntion_variety = new std::uniform_int_distribution<int>(maxProgenitor - 1, maxPopulation - 1);
 	//juntion_any = new std::uniform_int_distribution<int>(0, maxPopulation - 1);
@@ -683,10 +690,10 @@ bool Enviroment::run()
 	if(maxProgenitor == 0) throw oct::core::Exception("La cantiad de progenitore deve er mayor que 0",__FILE__,__LINE__);
 	if(maxMutation == 0) throw oct::core::Exception("La cantiad de Mutacion deve ser mayor que 0",__FILE__,__LINE__);
 	//if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
-	
+
 	actualIteration = 1;
 	//std::cout << "\tEnviroment::run : Step 1\n";
-	if(size() == 0) initial();	
+	if(size() == 0) initial();
 	init2();
     //std::cout << "\tEnviroment::run : Step 2\n";
 	for(ec::Single* single : *this)
@@ -1022,7 +1029,7 @@ bool Enviroment::run()
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
 		    if(mutation_distr(rd))
-		    {                
+		    {
                 unsigned int i = (maxMutation == 1)? i = 0 : i = distrib_maxm(gen);
                 for(; i < maxMutation; i++) s->mutate();
 			}

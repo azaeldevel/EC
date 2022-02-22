@@ -14,6 +14,7 @@
 				<Compiler>
 					<Add option="-DBUILD_DLL" />
 					<Add directory="../core/src" />
+					<Add directory="../math/src" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -44,6 +45,7 @@
 					<Add option="-O2" />
 					<Add option="-DBUILD_DLL" />
 					<Add directory="../core/src" />
+					<Add directory="../math/src" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -132,6 +134,26 @@
 		<Unit filename="src/GA.hh">
 			<Option target="liboctetos-EC-dbg" />
 			<Option target="liboctetos-EC-r" />
+		</Unit>
+		<Unit filename="src/Program-tree.cc">
+			<Option target="liboctetos-EC-dbg" />
+			<Option target="liboctetos-EC-r" />
+			<Option target="develop" />
+		</Unit>
+		<Unit filename="src/Program-tree.hh">
+			<Option target="liboctetos-EC-dbg" />
+			<Option target="liboctetos-EC-r" />
+			<Option target="develop" />
+		</Unit>
+		<Unit filename="src/Program.cc">
+			<Option target="liboctetos-EC-dbg" />
+			<Option target="liboctetos-EC-r" />
+			<Option target="develop" />
+		</Unit>
+		<Unit filename="src/Program.hh">
+			<Option target="liboctetos-EC-dbg" />
+			<Option target="liboctetos-EC-r" />
+			<Option target="develop" />
 		</Unit>
 		<Unit filename="src/ec-max.cc">
 			<Option target="max" />
