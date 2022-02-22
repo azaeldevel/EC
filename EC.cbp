@@ -94,7 +94,7 @@
 				</Linker>
 			</Target>
 			<Target title="develop">
-				<Option output="EC" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/EC" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".objs/Debug/" />
 				<Option type="1" />
 				<Option compiler="msys2_x86_64_gcc" />
