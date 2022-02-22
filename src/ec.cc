@@ -11,13 +11,11 @@
 #include <fcntl.h>
 #include <iomanip>
 //#include <ctime>
-
 #include <fstream>
-
 #if defined(__linux__)
-    #include <octetos/math/sta-ops.hh>
+    #include <octetos/math/statics.hh>
 #elif (defined(_WIN32) || defined(_WIN64))
-    #include <sta-ops.hh>
+    #include <statics.hh>
 #else
     #error "Pltaforma desconocida"
 #endif
@@ -804,7 +802,7 @@ bool Enviroment::run()
 		leader = front();
 		//std::cout << "\tEnviroment::run - while Step 2\n";
 
-		media = oct::sta::mean<ec::Single*,real>(*this,[](ec::Single* s)->real{return s->getFitness();});
+		media = oct::math::mean<ec::Single*,real>(*this,[](ec::Single* s)->real{return s->getFitness();});
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Adaptabilidad : " << s->getFitness() << "\n";
@@ -827,7 +825,7 @@ bool Enviroment::run()
 			sigma += pow(s->getFitness() - media,2);
 		}
 		sigma /= real(size());*/
-		sigma = oct::sta::variation<ec::Single*,real>(*this,media,[](ec::Single* s)->real{return s->getFitness();});
+		sigma = oct::math::variation<ec::Single*,real>(*this,media,[](ec::Single* s)->real{return s->getFitness();});
 		/*if(leaderPrev != leader)
 		{//hay un nuevo lider
 			//TODO:optener una promedio a partir de una progresion
