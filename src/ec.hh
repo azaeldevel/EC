@@ -34,9 +34,9 @@ typedef unsigned int genUI;
 typedef int genI;
 typedef void* genFC;
 
-typedef unsigned long ID;
+typedef unsigned long long ID;
 typedef ID Population;
-typedef unsigned int Iteration;
+typedef unsigned long Iteration;
 typedef double real;
 
 /*
@@ -62,9 +62,9 @@ public:
 
 	Exception();
 	Exception(Code code,const char* filename, unsigned int line);
-	
+
 	virtual const char* what() const throw();
-	
+
 private:
 	Code code;
 	const char* filename;
@@ -586,7 +586,7 @@ private:
 
 	bool running;
 
-	
+
 	table_reglog prediction_table;
 
 	std::uniform_int_distribution<int>* juntion_type;
