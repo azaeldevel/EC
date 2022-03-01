@@ -350,6 +350,8 @@ public:
 	Iteration getIterationActual()const;
 	const std::filesystem::path& getLogDirectory()const;
 	const std::list<ec::Single*> getSolutions()const;
+	Population get_population_zise()const;
+	const ec::Single* get_single(Population index)const;
 
 	/**
 	*\brief Devuelve el siguiento ID para un nuevo objeto Single
