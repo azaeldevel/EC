@@ -578,7 +578,7 @@ double Enviroment::getSigma() const
 {
 	return sigma;
 }
-double Enviroment::Enviroment::getMedia() const
+double Enviroment::Enviroment::getMean() const
 {
 	return media;
 }

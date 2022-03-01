@@ -337,7 +337,7 @@ public:
 	Population getMaxProgenitor()const;
 	double getSigma() const;
 	//double getSigmaReduction() const;
-	double getMedia() const;
+	double getMean() const;
 	double getEpsilon() const;
 	//double getProbabilityMutableGene()const;
 	real getMutableProbability()const;
