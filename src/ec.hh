@@ -34,7 +34,7 @@ typedef unsigned int genUI;
 typedef int genI;
 typedef void* genFC;
 
-typedef unsigned long long ID;
+typedef unsigned long ID;
 typedef ID Population;
 typedef unsigned long Iteration;
 typedef double real;
@@ -270,7 +270,7 @@ protected:
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
-	unsigned short age;
+	unsigned int age;
 	unsigned short childs;
 };
 
