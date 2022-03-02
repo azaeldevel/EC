@@ -349,6 +349,8 @@ public:
 	//const std::string getLogSubDirectory()const;
 	Iteration getIterationActual()const;
 	const std::filesystem::path& getLogDirectory()const;
+	const std::filesystem::path& getLogDirectoryHistory()const;
+	const std::filesystem::path& getLogDirectorySolutions()const;
 	const std::list<ec::Single*> getSolutions()const;
 	Population get_population_zise()const;
 	const ec::Single* get_single(Population index)const;

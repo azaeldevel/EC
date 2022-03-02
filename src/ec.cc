@@ -659,6 +659,14 @@ const std::filesystem::path& Enviroment::getLogDirectory()const
 {
 	return logDirectory;
 }
+const std::filesystem::path& Enviroment::getLogDirectoryHistory()const
+{
+	return logDirectoryHistory;
+}
+const std::filesystem::path& Enviroment::getLogDirectorySolutions()const
+{
+	return logDirectorySolutions;
+}
 Population Enviroment::get_population_zise()const
 {
 	return size();
