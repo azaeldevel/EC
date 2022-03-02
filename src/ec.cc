@@ -578,7 +578,7 @@ double Enviroment::getSigma() const
 {
 	return sigma;
 }
-double Enviroment::Enviroment::getMedia() const
+double Enviroment::Enviroment::getMean() const
 {
 	return media;
 }
@@ -659,7 +659,25 @@ const std::filesystem::path& Enviroment::getLogDirectory()const
 {
 	return logDirectory;
 }
-
+Population Enviroment::get_population_zise()const
+{
+	return size();
+}
+const ec::Single* Enviroment::get_single(Population i)const
+{
+	if(size() < i) return NULL;
+	
+	
+	const_iterator it = begin();	
+	if(i == 0) return *it;
+	else if(i == 1)
+	{
+		it++;
+	}
+	std::advance(it,i);
+	return *it;
+}
+	
 ID Enviroment::nextID()
 {
 	return ++idCount;

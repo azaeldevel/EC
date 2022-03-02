@@ -34,7 +34,7 @@ typedef unsigned int genUI;
 typedef int genI;
 typedef void* genFC;
 
-typedef unsigned long long ID;
+typedef unsigned long ID;
 typedef ID Population;
 typedef unsigned long Iteration;
 typedef double real;
@@ -270,7 +270,7 @@ protected:
 private:
 	ID id;
 	//std::vector<Chromosome*> chromosomes;
-	unsigned short age;
+	unsigned int age;
 	unsigned short childs;
 };
 
@@ -337,7 +337,7 @@ public:
 	Population getMaxProgenitor()const;
 	double getSigma() const;
 	//double getSigmaReduction() const;
-	double getMedia() const;
+	double getMean() const;
 	double getEpsilon() const;
 	//double getProbabilityMutableGene()const;
 	real getMutableProbability()const;
@@ -350,6 +350,8 @@ public:
 	Iteration getIterationActual()const;
 	const std::filesystem::path& getLogDirectory()const;
 	const std::list<ec::Single*> getSolutions()const;
+	Population get_population_zise()const;
+	const ec::Single* get_single(Population index)const;
 
 	/**
 	*\brief Devuelve el siguiento ID para un nuevo objeto Single
