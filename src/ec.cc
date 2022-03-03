@@ -674,12 +674,20 @@ Population Enviroment::get_population_zise()const
 const ec::Single* Enviroment::get_single(Population i)const
 {
 	if(size() < i) return NULL;
-
-	const_iterator it = begin();
-	if(i == 0) return *it;
-	else if(i == 1) it++;
-	std::advance(it,i);
-	return *it;
+	
+	if(i == 0) return front();
+	else if(i == 1) 
+	{
+		const_iterator it = begin();
+		it++;
+		return *it;
+	}
+	else
+	{
+		const_iterator it = begin();
+		std::advance(it,i);
+		return *it;	
+	}	
 }
 
 ID Enviroment::nextID()
