@@ -455,12 +455,10 @@ public:
 private:
 
 	Single* getRandomSingle();
-	Single* getRandomSingleTop();
 	Single* getRandomSingleAny();
 	Single* getRandomSingleFirst();
 	Single* getRandomSingleSecond();
-	//Single* getRandomSingleDiversity();
-	//Single* getRandomSingleVariety();
+	Single* getRandomSingleRandom();
 
 protected:
 	std::filesystem::path logDirectory;
