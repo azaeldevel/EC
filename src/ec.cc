@@ -667,7 +667,7 @@ const std::filesystem::path& Enviroment::getLogDirectorySolutions()const
 {
 	return logDirectorySolutions;
 }
-Population Enviroment::get_population_zise()const
+Population Enviroment::get_population_size()const
 {
 	return size();
 }
@@ -1193,7 +1193,7 @@ void Enviroment::juncting()
 		single1 = getRandomSingleFirst();
 		do
 		{
-			single2 = getRandomSingleRandom();
+			single2 = getRandomSingleAny();
 		}
 		while(single1 == single2);//repeat until diferent
 
