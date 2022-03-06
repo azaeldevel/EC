@@ -777,9 +777,10 @@ bool Enviroment::run()
 	//bool triggerRepeatEnable = true;
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;
 	//double triggerJam2 = 1.0e-20;
+	const ec::Single *leaderPrev, *leader;
+	std::cout << "mutableProb : " << mutableProb << "\n"; 
 	std::bernoulli_distribution mutation_distr(mutableProb);
 	std::uniform_int_distribution<int> distrib_maxm(1,maxMutation);
-	const ec::Single *leaderPrev, *leader;
 	//real fitness;
 	if(echolevel > 0 and echoF != NULL) echoF("\n");
 	bool ret = false;
