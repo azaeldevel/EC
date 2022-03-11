@@ -499,10 +499,10 @@ void Enviroment::init2()
 	if(maxProgenitor < 2) throw Exception(Exception::BAD_VALUE_maxProgenitor,__FILE__,__LINE__);
 	if(size() == 0) throw Exception(Exception::BAD_VALUE_size,__FILE__,__LINE__);
 
-	juntion_progenitor = new std::uniform_int_distribution<int>(0,maxProgenitor - 1);
+	juntion_progenitor = new std::uniform_int_distribution<int>(2,maxProgenitor - 1);
 	//juntion_variety = new std::uniform_int_distribution<int>(maxProgenitor - 1, maxPopulation - 1);
 	//juntion_any = new std::uniform_int_distribution<int>(0, maxPopulation - 1);
-	juntion_type = new std::uniform_int_distribution<int>(1, 4);
+	juntion_type = new std::uniform_int_distribution<int>(1, 3);
 
 }
 Enviroment::Enviroment()
@@ -667,19 +667,27 @@ const std::filesystem::path& Enviroment::getLogDirectorySolutions()const
 {
 	return logDirectorySolutions;
 }
-Population Enviroment::get_population_zise()const
+Population Enviroment::get_population_size()const
 {
 	return size();
 }
 const ec::Single* Enviroment::get_single(Population i)const
 {
 	if(size() < i) return NULL;
-
-	const_iterator it = begin();
-	if(i == 0) return *it;
-	else if(i == 1) it++;
-	std::advance(it,i);
-	return *it;
+	
+	if(i == 0) return front();
+	else if(i == 1) 
+	{
+		const_iterator it = begin();
+		it++;
+		return *it;
+	}
+	else
+	{
+		const_iterator it = begin();
+		std::advance(it,i);
+		return *it;	
+	}	
 }
 
 ID Enviroment::nextID()
@@ -769,9 +777,10 @@ bool Enviroment::run()
 	//bool triggerRepeatEnable = true;
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;
 	//double triggerJam2 = 1.0e-20;
+	const ec::Single *leaderPrev, *leader;
+	//std::cout << "mutableProb : " << mutableProb << "\n"; 
 	std::bernoulli_distribution mutation_distr(mutableProb);
 	std::uniform_int_distribution<int> distrib_maxm(1,maxMutation);
-	const ec::Single *leaderPrev, *leader;
 	//real fitness;
 	if(echolevel > 0 and echoF != NULL) echoF("\n");
 	bool ret = false;
@@ -1140,19 +1149,6 @@ ec::Single* Enviroment::getProxSolution()
 	return *begin();
 }
 
-Single* Enviroment::getRandomSingle()
-{
-	//std::mt19937 gen(rd());
-	std::bernoulli_distribution distrib(0.8);
-	if(distrib(gen))
-	{
-		return getRandomSingleTop();
-	}
-	else
-	{
-		return getRandomSingleAny();
-	}
-}
 Single* Enviroment::getRandomSingleAny()
 {
 	const_iterator it = begin();
@@ -1171,12 +1167,20 @@ Single* Enviroment::getRandomSingleSecond()
 	return *it;
 }
 
-Single* Enviroment::getRandomSingleTop()
+Single* Enviroment::getRandomSingleRandom()
 {
-	const_iterator it = begin();
-	std::advance(it,juntion_progenitor->operator()(gen));
-
-	return *it;
+	int type = juntion_type->operator()(gen);
+	switch(type)
+	{
+		case 1:
+			return getRandomSingleSecond();
+		case 2:
+			return getRandomSingleAny();
+		default:
+			return getRandomSingleAny();
+	}
+	
+	return getRandomSingleAny();
 }
 Iteration Enviroment::getIterationActual()const
 {
@@ -1190,7 +1194,7 @@ void Enviroment::juncting()
 		single1 = getRandomSingleFirst();
 		do
 		{
-			single2 = getRandomSingleTop();
+			single2 = getRandomSingleAny();
 		}
 		while(single1 == single2);//repeat until diferent
 

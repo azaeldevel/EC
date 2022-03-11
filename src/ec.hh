@@ -307,6 +307,8 @@ struct table_reglog
 	unsigned int getPredictFinally() const;
 };
 
+
+
 typedef void (*echo)(const char*);
 /**
 *\brief Pricipales variables de control y proceso
@@ -315,7 +317,7 @@ class Enviroment : protected std::list<ec::Single*>
 {
 public:
 	//
-
+	
 	//
 	/**
 	*\brief Inizializa las variables
@@ -352,7 +354,7 @@ public:
 	const std::filesystem::path& getLogDirectoryHistory()const;
 	const std::filesystem::path& getLogDirectorySolutions()const;
 	const std::list<ec::Single*> getSolutions()const;
-	Population get_population_zise()const;
+	Population get_population_size()const;
 	const ec::Single* get_single(Population index)const;
 
 	/**
@@ -381,10 +383,12 @@ public:
 	*\brief Inicia la ejecution del algoritmo(funcion de entrada)
 	*/
 	virtual bool run();
+	
 	/**
 	*\brief Inicia la ejecution del algoritmo con los parametro de linea de comando(funcion de entrada)
 	*/
 	virtual bool run(int argc, const char* argv[]);
+	
 	/**
 	*\brief Inicia el proceso de veluacion
 	*/
@@ -417,10 +421,12 @@ public:
 	*\brief Inicia el proceso de serie(funcion de entrada)
 	*/
 	virtual bool series();
+	
 	/**
 	*\brief Inicia el proceso de serie con argumentos de linea de comandos(funcion de entrada)
 	*/
 	virtual bool series(int argc, const char* argv[]);
+	
 	/**
 	*\brief Libera la memoria ocupada por la actual poblacion y vacia la lista
 	*/
@@ -448,20 +454,15 @@ public:
 
 	unsigned int getPredictFinally() const;
 public:
-
 	//
-
-
+	
 private:
-
 	Single* getRandomSingle();
-	Single* getRandomSingleTop();
 	Single* getRandomSingleAny();
 	Single* getRandomSingleFirst();
 	Single* getRandomSingleSecond();
-	//Single* getRandomSingleDiversity();
-	//Single* getRandomSingleVariety();
-
+	Single* getRandomSingleRandom();
+	
 protected:
 	std::filesystem::path logDirectory;
 	std::filesystem::path logDirectoryHistory;
@@ -595,8 +596,6 @@ private:
 
 	std::uniform_int_distribution<int>* juntion_type;
 	std::uniform_int_distribution<int>* juntion_progenitor;
-	//std::uniform_int_distribution<int>* juntion_variety;
-	//std::uniform_int_distribution<int>* juntion_any;
 };
 
 }
