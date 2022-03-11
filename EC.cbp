@@ -158,9 +158,6 @@
 		<Unit filename="src/ec-max.cc">
 			<Option target="max" />
 		</Unit>
-		<Unit filename="src/ec-schedule.cc">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="src/ec.cc">
 			<Option target="liboctetos-EC-dbg" />
 			<Option target="liboctetos-EC-r" />
