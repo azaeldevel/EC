@@ -1236,38 +1236,10 @@ void Enviroment::save()
 void Enviroment::selection()
 {//TODO:se puede mejorar al comenzar a eliminar desde el final hasta maxProgenitor
 	//eliminar duplicados
-	for(iterator i = begin(); i != end(); i++)
+	while(maxProgenitor < size())
 	{
-		//std::cout << "Step 1\n";
-		iterator j = i;
-		//std::cout << "Step 2\n";
-		advance(j,1);
-		//std::cout << "Step 3\n";
-		while(i != j and j != end() and size() >= maxProgenitor)
-		{
-			//std::cout << "Step 3.1\n";
-			if((*i)->getID() == (*j)->getID() )
-			{
-				//std::cout << "Step 3.2\n";
-				delete *j;
-				//std::cout << "Step 3.3\n";
-				j = erase(j);
-				//std::cout << "Step 3.4\n";
-			}
-			else
-			{
-				j++;
-			}
-			///std::cout << "Step 3.5\n";
-		}
-		//std::cout << "Step 4\n";
-	}
-	iterator i = end();
-	while(size() > maxProgenitor)//elimina desde el final hasta alcanzar el conjuto maximo de progenitores
-	{
-		--i;
-		delete *i;
-		i = erase(i);
+		delete back();
+		pop_back();
 	}
 }
 
