@@ -1,6 +1,6 @@
 
 
-AC_INIT(octetos-ec, 0.25.0-alpha, azael.devel@gmail.com)
+AC_INIT(octetos-ec, 0.26.0-alpha, azael.devel@gmail.com)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -9,13 +9,6 @@ AM_INIT_AUTOMAKE([1.11])
 AM_SILENT_RULES([yes])
 
 AC_PROG_CXX
-
-
-
-
-
-
-
 
 LT_INIT
 
@@ -28,7 +21,6 @@ if test "x$with_tests" = "xyes"; then
 	PKG_CHECK_MODULES(CUNIT,cunit)
 fi
 
-PKG_CHECK_MODULES(LIBCONFIG,libconfig++)
 
 
 AC_OUTPUT([
