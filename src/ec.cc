@@ -517,6 +517,7 @@ Enviroment::~Enviroment()
 	//if(juntion_variety) delete juntion_variety;
 	//if(juntion_any) delete juntion_any;
 	//if(juntion_any) delete juntion_type;
+	std::cout << "Enviroment::~Enviroment\n";
 }
 
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
@@ -1241,6 +1242,8 @@ void Enviroment::selection()
 		delete back();
 		pop_back();
 	}
+	
+	std::cout << "Enviroment::selection : " << size() << "\n";
 }
 
 void Enviroment::save(const std::list<ec::Single*>& lst, const std::filesystem::path& file)
