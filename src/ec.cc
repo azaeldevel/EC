@@ -1339,6 +1339,7 @@ void Enviroment::free()
 	}
 
 	clear();
+	std::cout << "Enviroment::free\n";
 }
 void Enviroment::stop()
 {
