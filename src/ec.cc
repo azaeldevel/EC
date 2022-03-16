@@ -519,7 +519,7 @@ Enviroment::~Enviroment()
 	//if(juntion_variety) delete juntion_variety;
 	//if(juntion_any) delete juntion_any;
 	//if(juntion_any) delete juntion_type;
-	std::cout << "Enviroment::~Enviroment\n";
+	std::cout << "\t\tEnviroment::~Enviroment\n";
 }
 
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
