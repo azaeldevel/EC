@@ -722,7 +722,7 @@ bool Enviroment::run()
 	if(maxMutation == 0) throw oct::core::Exception("La cantiad de Mutacion deve ser mayor que 0",__FILE__,__LINE__);
 	//if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
 
-	actualIteration = 1;
+	if(actualIteration == 0) actualIteration = 1;
 	//std::cout << "\tEnviroment::run : Step 1\n";
 	if(size() == 0) initial();
 	init2();
