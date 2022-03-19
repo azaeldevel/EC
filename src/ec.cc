@@ -825,7 +825,7 @@ bool Enviroment::run()
 				echoF(log.c_str());
 			}
 		}
-		std::cout << "\tEnviroment::run - while Step 1 , count : " << size() << "\n";
+		//std::cout << "\tEnviroment::run - while Step 1 , count : " << size() << "\n";
 
 		if(not comparer)
 		{
@@ -834,7 +834,7 @@ bool Enviroment::run()
 		leaderPrev = front();
 		sort(comparer);
 		leader = front();
-		std::cout << "\tEnviroment::run - while Step 2 , count : " << size() << "\n";
+		//std::cout << "\tEnviroment::run - while Step 2 , count : " << size() << "\n";
 
 		media = oct::math::mean<ec::Single*,std::list,real>(*this,[](ec::Single* s)->real{return s->getFitness();});
 		for(ec::Single* s : *this)
@@ -880,7 +880,7 @@ bool Enviroment::run()
 				prediction_table.a = a1 / a2;
 			}
 		}*/
-		std::cout << "\tEnviroment::run - while Step 3 , count : " << size() << "\n";
+		//std::cout << "\tEnviroment::run - while Step 3 , count : " << size() << "\n";
 		if(logDirectoryFlag)
 		{
 		    //std::cout << "\tEnviroment::run - while Step 3.1\n";
@@ -998,7 +998,7 @@ bool Enviroment::run()
 			running = false;
 			return true;
 		}
-        std::cout << "\tEnviroment::run - while Step 4 , count : " << size() << "\n";
+        //std::cout << "\tEnviroment::run - while Step 4 , count : " << size() << "\n";
 		ec::ID countBefore = size();
 		selection();
 		if(logDirectoryFlag)
@@ -1016,7 +1016,7 @@ bool Enviroment::run()
 			}
 			saveSelections.close();
 		}
-		std::cout << "\tEnviroment::run - while Step 5 , count : " << size() << "\n";
+		//std::cout << "\tEnviroment::run - while Step 5 , count : " << size() << "\n";
 		unsigned short removes = countBefore - size();
 		//deletes == 0 ? counUndelete++ : counUndelete = 0;
 		if(echolevel > 1 and echoF != NULL)
@@ -1028,7 +1028,7 @@ bool Enviroment::run()
 			//if(prediction) log += "\tPrediccion : " + std::to_string(prediction_table.getPredictFinally()) + "\n";
 			echoF(log.c_str());
 		}
-		std::cout << "\tEnviroment::run - while Step 6 , count : " << size() << "\n";
+		//std::cout << "\tEnviroment::run - while Step 6 , count : " << size() << "\n";
 
 
 		//std::cout << "\tStep C10\n";
@@ -1048,11 +1048,11 @@ bool Enviroment::run()
 			echoF(log.c_str());
 		}
 
-		std::cout << "\tEnviroment::run - while Step 7 , count : " << size() << "\n";
+		//std::cout << "\tEnviroment::run - while Step 7 , count : " << size() << "\n";
 		
 		juncting();
 		SaveChilds savechilds(logDirectory);
-		std::cout << "\tEnviroment::run - while Step 8 , count : " << size() << "\n";
+		//std::cout << "\tEnviroment::run - while Step 8 , count : " << size() << "\n";
 		if(logDirectoryFlag) savechilds.open(actualIteration);
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
@@ -1077,7 +1077,7 @@ bool Enviroment::run()
 			echoF(log.c_str());
 		}
 		newschils.clear();
-		std::cout << "\tEnviroment::run - while Step 9 , count : " << size() << "\n";
+		//std::cout << "\tEnviroment::run - while Step 9 , count : " << size() << "\n";
 
 		actualIteration++;
 	}
