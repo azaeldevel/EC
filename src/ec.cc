@@ -234,7 +234,8 @@ void Junction::randFill(TypeJuntion t)
 	{
 		out = o;
 	}
-	/*Save::operator std::ofstream&()
+	/*
+	Save::operator std::ofstream&()
 	{
 		return *out;
 	}
@@ -247,7 +248,8 @@ void Junction::randFill(TypeJuntion t)
 	{
 		out = o;
 		return o;
-	}*/
+	}
+	*/
 	bool Save::getNewLeader()const
 	{
 		return new_leader;
@@ -517,6 +519,7 @@ Enviroment::~Enviroment()
 	//if(juntion_variety) delete juntion_variety;
 	//if(juntion_any) delete juntion_any;
 	//if(juntion_any) delete juntion_type;
+	std::cout << "\t\tEnviroment::~Enviroment\n";
 }
 
 Enviroment::Enviroment(Iteration m) : maxIteration(m)
@@ -719,7 +722,7 @@ bool Enviroment::run()
 	if(maxMutation == 0) throw oct::core::Exception("La cantiad de Mutacion deve ser mayor que 0",__FILE__,__LINE__);
 	//if(gamma < 9.0e-38) throw oct::core::Exception("Asigne el valor gamma",__FILE__,__LINE__);
 
-	actualIteration = 1;
+	if(actualIteration == 0) actualIteration = 1;
 	//std::cout << "\tEnviroment::run : Step 1\n";
 	if(size() == 0) initial();
 	init2();
@@ -822,7 +825,7 @@ bool Enviroment::run()
 				echoF(log.c_str());
 			}
 		}
-		//std::cout << "\tEnviroment::run - while Step 1\n";
+		//std::cout << "\tEnviroment::run - while Step 1 , count : " << size() << "\n";
 
 		if(not comparer)
 		{
@@ -831,7 +834,7 @@ bool Enviroment::run()
 		leaderPrev = front();
 		sort(comparer);
 		leader = front();
-		//std::cout << "\tEnviroment::run - while Step 2\n";
+		//std::cout << "\tEnviroment::run - while Step 2 , count : " << size() << "\n";
 
 		media = oct::math::mean<ec::Single*,std::list,real>(*this,[](ec::Single* s)->real{return s->getFitness();});
 		for(ec::Single* s : *this)
@@ -877,7 +880,7 @@ bool Enviroment::run()
 				prediction_table.a = a1 / a2;
 			}
 		}*/
-		//std::cout << "\tEnviroment::run - while Step 3\n";
+		//std::cout << "\tEnviroment::run - while Step 3 , count : " << size() << "\n";
 		if(logDirectoryFlag)
 		{
 		    //std::cout << "\tEnviroment::run - while Step 3.1\n";
@@ -995,7 +998,7 @@ bool Enviroment::run()
 			running = false;
 			return true;
 		}
-        //std::cout << "\tEnviroment::run - while Step 4\n";
+        //std::cout << "\tEnviroment::run - while Step 4 , count : " << size() << "\n";
 		ec::ID countBefore = size();
 		selection();
 		if(logDirectoryFlag)
@@ -1013,7 +1016,7 @@ bool Enviroment::run()
 			}
 			saveSelections.close();
 		}
-		//std::cout << "\tEnviroment::run - while Step 5\n";
+		//std::cout << "\tEnviroment::run - while Step 5 , count : " << size() << "\n";
 		unsigned short removes = countBefore - size();
 		//deletes == 0 ? counUndelete++ : counUndelete = 0;
 		if(echolevel > 1 and echoF != NULL)
@@ -1025,7 +1028,7 @@ bool Enviroment::run()
 			//if(prediction) log += "\tPrediccion : " + std::to_string(prediction_table.getPredictFinally()) + "\n";
 			echoF(log.c_str());
 		}
-		//std::cout << "\tEnviroment::run - while Step 6\n";
+		//std::cout << "\tEnviroment::run - while Step 6 , count : " << size() << "\n";
 
 
 		//std::cout << "\tStep C10\n";
@@ -1045,15 +1048,11 @@ bool Enviroment::run()
 			echoF(log.c_str());
 		}
 
-		//std::cout << "\tEnviroment::run - while Step 7\n";
-
-		//std::cout << "\tEnviroment::run - while Step 8\n";
-
-		//std::cout << "\tEnviroment::run - while Step 9\n";
-
+		//std::cout << "\tEnviroment::run - while Step 7 , count : " << size() << "\n";
+		
 		juncting();
 		SaveChilds savechilds(logDirectory);
-		//std::cout << "\tEnviroment::run - while Step 10\n";
+		//std::cout << "\tEnviroment::run - while Step 8 , count : " << size() << "\n";
 		if(logDirectoryFlag) savechilds.open(actualIteration);
 		for(ec::Single* s : newschils)//agregar los nuevos hijos a la poblacion
 		{
@@ -1078,10 +1077,9 @@ bool Enviroment::run()
 			echoF(log.c_str());
 		}
 		newschils.clear();
-		//std::cout << "\tEnviroment::run - while Step 11\n";
+		//std::cout << "\tEnviroment::run - while Step 9 , count : " << size() << "\n";
 
 		actualIteration++;
-		//std::cout << "\tEnviroment::run - while Step 12\n";
 	}
 	running = false;
 	return false;
@@ -1236,39 +1234,13 @@ void Enviroment::save()
 void Enviroment::selection()
 {//TODO:se puede mejorar al comenzar a eliminar desde el final hasta maxProgenitor
 	//eliminar duplicados
-	for(iterator i = begin(); i != end(); i++)
+	while(maxProgenitor < size())
 	{
-		//std::cout << "Step 1\n";
-		iterator j = i;
-		//std::cout << "Step 2\n";
-		advance(j,1);
-		//std::cout << "Step 3\n";
-		while(i != j and j != end() and size() >= maxProgenitor)
-		{
-			//std::cout << "Step 3.1\n";
-			if((*i)->getID() == (*j)->getID() )
-			{
-				//std::cout << "Step 3.2\n";
-				delete *j;
-				//std::cout << "Step 3.3\n";
-				j = erase(j);
-				//std::cout << "Step 3.4\n";
-			}
-			else
-			{
-				j++;
-			}
-			///std::cout << "Step 3.5\n";
-		}
-		//std::cout << "Step 4\n";
+		delete back();
+		pop_back();
 	}
-	iterator i = end();
-	while(size() > maxProgenitor)//elimina desde el final hasta alcanzar el conjuto maximo de progenitores
-	{
-		--i;
-		delete *i;
-		i = erase(i);
-	}
+	
+	std::cout << "Enviroment::selection : " << size() << "\n";
 }
 
 void Enviroment::save(const std::list<ec::Single*>& lst, const std::filesystem::path& file)
@@ -1367,6 +1339,7 @@ void Enviroment::free()
 	}
 
 	clear();
+	std::cout << "Enviroment::free\n";
 }
 void Enviroment::stop()
 {
