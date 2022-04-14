@@ -17,13 +17,10 @@
 					<Add directory="../math/src" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
 					<Add library="octetos-core" />
+					<Add directory="../core/bin/Debug" />
 					<Add directory="bin/Debug" />
 				</Linker>
-				<ExtraCommands>
-					<Add before="cmd /c copy /y ..\core\bin\Debug\octetos-core.dll bin\Debug\" />
-				</ExtraCommands>
 				<MakeCommands>
 					<Build command="" />
 					<CompileFile command="" />
@@ -47,14 +44,10 @@
 					<Add directory="../math/src" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
-					<Add library="user32" />
 					<Add library="octetos-core" />
+					<Add directory="../core/bin/Release" />
 					<Add directory="bin/Release" />
 				</Linker>
-				<ExtraCommands>
-					<Add before="cmd /c copy /y ..\core\bin\Release\octetos-core.dll bin\Release\" />
-				</ExtraCommands>
 			</Target>
 			<Target title="max">
 				<Option output="bin/Debug/ec-max" prefix_auto="1" extension_auto="1" />
