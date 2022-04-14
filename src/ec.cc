@@ -14,7 +14,7 @@
 #include <fstream>
 #if defined(__linux__)
     #include <octetos/math/statics.hh>
-#elif (defined(_WIN32) || defined(_WIN64))
+#elif defined(_WIN32) || defined(_WIN64)
     #include <statics.hh>
 #else
     #error "Pltaforma desconocida"
