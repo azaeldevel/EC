@@ -38,7 +38,6 @@
 				<Option object_output=".objs/Release/" />
 				<Option type="3" />
 				<Option compiler="msys2_x86_64_gcc" />
-				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-Wall" />

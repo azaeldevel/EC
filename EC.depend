@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1644701625 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
+1646973702 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
 	<cfloat>
 	<random>
 	<iostream>
@@ -11,9 +11,11 @@
 	<fcntl.h>
 	<iomanip>
 	<fstream>
+	<octetos/math/statics.hh>
+	<statics.hh>
 	"ec.hh"
 
-1645655140 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
+1646973702 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
 	<list>
 	<string>
 	<vector>
@@ -26,22 +28,24 @@
 	<Error.hh>
 	<shell.hh>
 
-1638684542 c:\users\azael\documents\develop\octetos\core\src\error.hh
+1648089605 c:\users\azael\documents\develop\octetos\core\src\error.hh
 	<string>
 	<exception>
 	"Exception.hh"
 
-1643435805 c:\users\azael\documents\develop\octetos\core\src\exception.hh
-	<exception>
-	"core.hh"
+1648093716 c:\users\azael\documents\develop\octetos\core\src\exception.hh
+	"Exception-v3.hh"
+	"Exception-v2.hh"
 
-1643435805 c:\users\azael\documents\develop\octetos\core\src\core.hh
+1648093950 c:\users\azael\documents\develop\octetos\core\src\core.hh
 	<string>
+	<execinfo.h>
+	<csignal>
 	"defines.hh"
 
-1639195621 c:\users\azael\documents\develop\octetos\core\src\defines.hh
+1648093439 c:\users\azael\documents\develop\octetos\core\src\defines.hh
 
-1643435805 c:\users\azael\documents\develop\octetos\core\src\shell.hh
+1648090050 c:\users\azael\documents\develop\octetos\core\src\shell.hh
 	<string>
 	<list>
 	<stdlib.h>
@@ -52,22 +56,22 @@
 	<unistd.h>
 	"Exception.hh"
 
-1643151712 source:c:\users\azael\documents\develop\octetos\ec\src\ga.cc
+1643155312 source:c:\users\azael\documents\develop\octetos\ec\src\ga.cc
 	"GA.hh"
 
-1643151712 c:\users\azael\documents\develop\octetos\ec\src\ga.hh
+1643155312 c:\users\azael\documents\develop\octetos\ec\src\ga.hh
 	<map>
 	"ec.hh"
 
-1645483350 source:c:\users\azael\documents\develop\octetos\ec\src\max.cc
+1645486950 source:c:\users\azael\documents\develop\octetos\ec\src\max.cc
 	<iostream>
 	<limits.h>
 	"max.hh"
 
-1643670180 c:\users\azael\documents\develop\octetos\ec\src\max.hh
+1643673780 c:\users\azael\documents\develop\octetos\ec\src\max.hh
 	"GA.hh"
 
-1644272580 source:c:\users\azael\documents\develop\octetos\ec\src\sudoku.cc
+1644276180 source:c:\users\azael\documents\develop\octetos\ec\src\sudoku.cc
 	<list>
 	<math.h>
 	<fstream>
@@ -78,12 +82,12 @@
 	<stdio.h>
 	"sudoku.hh"
 
-1643151712 c:\users\azael\documents\develop\octetos\ec\src\sudoku.hh
+1643155312 c:\users\azael\documents\develop\octetos\ec\src\sudoku.hh
 	<octetos/core/MD5sum.hh>
 	<MD5sum.hh>
 	"GA.hh"
 
-1638326553 c:\users\azael\documents\develop\octetos\core\src\md5sum.hh
+1638330153 c:\users\azael\documents\develop\octetos\core\src\md5sum.hh
 	<string>
 	"defines.hh"
 
@@ -172,14 +176,32 @@
 1645057820 c:\users\azael\documents\develop\octetos\ec\src\program.hh
 	"ec.hh"
 
-1645065747 source:c:\users\azael\documents\develop\octetos\ec\src\program.cc
+1645069347 source:c:\users\azael\documents\develop\octetos\ec\src\program.cc
 	"Program-tree.hh"
 
-1645057766 source:c:\users\azael\documents\develop\octetos\ec\src\program-tree.cc
+1645061366 source:c:\users\azael\documents\develop\octetos\ec\src\program-tree.cc
 	"Program-tree.hh"
 
-1645073116 c:\users\azael\documents\develop\octetos\ec\src\program-tree.hh
+1645076716 c:\users\azael\documents\develop\octetos\ec\src\program-tree.hh
 	<list>
 	<vector>
 	"ec.hh"
+
+1646211231 c:\users\azael\documents\develop\octetos\math\src\statics.hh
+	<list>
+	<vector>
+	<map>
+	<algorithm>
+
+1649886299 c:\users\azael\documents\develop\octetos\core\src\exception-v3.hh
+	<exception>
+	"core.hh"
+
+1649936092 c:\users\azael\documents\develop\octetos\core\src\exception-v2.hh
+	<exception>
+	"core.hh"
+	"Object.hh"
+
+1638688086 c:\users\azael\documents\develop\octetos\core\src\object.hh
+	"defines.hh"
 
