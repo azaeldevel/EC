@@ -26,3 +26,6 @@ github-push
 bin
 tests/max
 tests/sudoku
+
+.vs
+x64

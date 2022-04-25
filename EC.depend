@@ -28,14 +28,14 @@
 	<Error.hh>
 	<shell.hh>
 
-1648089605 c:\users\azael\documents\develop\octetos\core\src\error.hh
+1649991674 c:\users\azael\documents\develop\octetos\core\src\error.hh
 	<string>
 	<exception>
 	"Exception.hh"
 
-1649938479 c:\users\azael\documents\develop\octetos\core\src\exception.hh
-	"Exception-v3.hh"
+1649939132 c:\users\azael\documents\develop\octetos\core\src\exception.hh
 	"Exception-v2.hh"
+	"Exception-v3.hh"
 
 1648093950 c:\users\azael\documents\develop\octetos\core\src\core.hh
 	<string>
@@ -43,9 +43,9 @@
 	<csignal>
 	"defines.hh"
 
-1648093439 c:\users\azael\documents\develop\octetos\core\src\defines.hh
+1649989133 c:\users\azael\documents\develop\octetos\core\src\defines.hh
 
-1648090050 c:\users\azael\documents\develop\octetos\core\src\shell.hh
+1649966839 c:\users\azael\documents\develop\octetos\core\src\shell.hh
 	<string>
 	<list>
 	<stdlib.h>
@@ -193,15 +193,15 @@
 	<map>
 	<algorithm>
 
-1649938429 c:\users\azael\documents\develop\octetos\core\src\exception-v3.hh
+1649989148 c:\users\azael\documents\develop\octetos\core\src\exception-v3.hh
 	<exception>
 	"core.hh"
 
-1649938394 c:\users\azael\documents\develop\octetos\core\src\exception-v2.hh
+1649989143 c:\users\azael\documents\develop\octetos\core\src\exception-v2.hh
 	<exception>
 	"core.hh"
 	"Object.hh"
 
-1638688086 c:\users\azael\documents\develop\octetos\core\src\object.hh
+1649983185 c:\users\azael\documents\develop\octetos\core\src\object.hh
 	"defines.hh"
 

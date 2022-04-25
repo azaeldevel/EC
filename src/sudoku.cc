@@ -4,7 +4,13 @@
 #include <fstream>
 #include <iterator>
 #include <algorithm>
-#include <unistd.h>
+#if defined(__linux__)
+	#include <unistd.h>
+#elif defined(_WIN32) || defined(_WIN64)
+	#include <io.h>
+#else
+#error "Plataforma desconocida"
+#endif
 #include <string.h>
 #include <stdio.h>
 

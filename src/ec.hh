@@ -10,10 +10,25 @@
 #include <fstream>
 #include <random>
 #include <filesystem>
-#if defined(__GNUC__) && defined(__linux__)
+#if EXPORTING_OCTETOS_EC_DLL
+#if _MSC_VER
+#define OCTETOS_EC_DECLSPCE_DLL __declspec(dllexport)
+#elif __GNUG__
+
+#endif
+#elif IMPORTING_OCTETOS_EC_DLL
+#if _MSC_VER
+#define OCTETOS_EC_DECLSPCE_DLL __declspec(dllimport)
+#elif __GNUG__
+
+#endif
+#else
+#define OCTETOS_SATURNO_DECLSPCE_DLL
+#endif
+#if defined(__linux__)
     #include <octetos/core/Error.hh>
     #include <octetos/core/shell.hh>
-#elif defined(__GNUC__) && (defined(_WIN32) || defined(_WIN64))
+#elif defined(_WIN32) || defined(_WIN64)
     #include <Error.hh>
     #include <shell.hh>
 #else
@@ -50,7 +65,7 @@ double randNumber(double min, double max);
 //static std::mt19937 gen;
 
 
-class Exception : public std::exception
+class OCTETOS_EC_DECLSPCE_DLL Exception : public std::exception
 {
 public:
 	enum Code
@@ -73,7 +88,7 @@ private:
 /**
 *\brief Representa nuestro conjunto de variables
 */
-class Chromosome
+class OCTETOS_EC_DECLSPCE_DLL Chromosome
 {
 public:
 	Chromosome(const std::string name);
@@ -134,7 +149,7 @@ private:
 };*/
 
 
-struct Save
+struct OCTETOS_EC_DECLSPCE_DLL Save
 {
 	Save();
 	Save(std::ofstream&);
@@ -149,7 +164,7 @@ struct Save
 	std::ofstream* out;
 };
 
-class SaveCollection : public Save
+class OCTETOS_EC_DECLSPCE_DLL SaveCollection : public Save
 {
 public:
 	SaveCollection();
@@ -171,7 +186,7 @@ protected:
 	std::filesystem::path directory;
 };
 
-struct SaveCollectionByIteration : public SaveCollection
+struct OCTETOS_EC_DECLSPCE_DLL SaveCollectionByIteration : public SaveCollection
 {
 	SaveCollectionByIteration(const std::filesystem::path&,const std::string&);
 
@@ -181,19 +196,19 @@ private:
 	std::string prefix;
 };
 
-struct SaveIteration : public SaveCollectionByIteration
+struct OCTETOS_EC_DECLSPCE_DLL SaveIteration : public SaveCollectionByIteration
 {
 	SaveIteration(const std::filesystem::path&);
 };
-struct SaveChilds : public SaveCollectionByIteration
+struct OCTETOS_EC_DECLSPCE_DLL SaveChilds : public SaveCollectionByIteration
 {
 	SaveChilds(const std::filesystem::path&);
 };
-struct SaveSelections : public SaveCollectionByIteration
+struct OCTETOS_EC_DECLSPCE_DLL SaveSelections : public SaveCollectionByIteration
 {
 	SaveSelections(const std::filesystem::path&);
 };
-struct SaveSolutions : public SaveCollection
+struct OCTETOS_EC_DECLSPCE_DLL SaveSolutions : public SaveCollection
 {
 	SaveSolutions();
 	SaveSolutions(const std::filesystem::path&);
@@ -203,7 +218,7 @@ struct SaveSolutions : public SaveCollection
 /**
 *\brief Representa una posible solucion a nuestro problema
 */
-class Single
+class OCTETOS_EC_DECLSPCE_DLL Single
 {
 public:
 	/**
@@ -277,11 +292,11 @@ private:
 /**
 *\brief Algoritmo de ordenamiento
 */
-bool cmpStrength(const Single* f,const Single* s);
+OCTETOS_EC_DECLSPCE_DLL bool cmpStrength(const Single* f,const Single* s);
 /**
 *\brief Algoritmo de ordenamiento
 */
-bool cmpStrength1(const Single* f,const Single* s);
+OCTETOS_EC_DECLSPCE_DLL bool cmpStrength1(const Single* f,const Single* s);
 
 struct data_reglog
 {
@@ -313,7 +328,7 @@ typedef void (*echo)(const char*);
 /**
 *\brief Pricipales variables de control y proceso
 */
-class Enviroment : protected std::list<ec::Single*>
+class OCTETOS_EC_DECLSPCE_DLL Enviroment : protected std::list<ec::Single*>
 {
 public:
 	//
