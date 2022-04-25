@@ -15,7 +15,7 @@
 #if defined(__linux__)
     #include <octetos/math/statics.hh>
 #elif defined(_WIN32) || defined(_WIN64)
-    #include <statics.hh>
+    #include <math/src/statics.hh>
 #else
     #error "Pltaforma desconocida"
 #endif

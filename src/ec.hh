@@ -29,8 +29,8 @@
     #include <octetos/core/Error.hh>
     #include <octetos/core/shell.hh>
 #elif defined(_WIN32) || defined(_WIN64)
-    #include <Error.hh>
-    #include <shell.hh>
+    #include <core/src/Error.hh>
+    #include <core/src/shell.hh>
 #else
     #error "Pltaforma desconocida"
 #endif
