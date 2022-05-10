@@ -10,20 +10,21 @@
 #include <fstream>
 #include <random>
 #include <filesystem>
+
 #if EXPORTING_OCTETOS_EC_DLL
-#if _MSC_VER
-#define OCTETOS_EC_DECLSPCE_DLL __declspec(dllexport)
-#elif __GNUG__
-
-#endif
+	#if _MSC_VER
+		#define OCTETOS_EC_DECLSPCE_DLL __declspec(dllexport)
+	#elif __GNUG__
+		#define OCTETOS_EC_DECLSPCE_DLL
+	#endif
 #elif IMPORTING_OCTETOS_EC_DLL
-#if _MSC_VER
-#define OCTETOS_EC_DECLSPCE_DLL __declspec(dllimport)
-#elif __GNUG__
-
-#endif
+	#if _MSC_VER
+		#define OCTETOS_EC_DECLSPCE_DLL __declspec(dllimport)
+	#elif __GNUG__
+		#define OCTETOS_EC_DECLSPCE_DLL
+	#endif
 #else
-#define OCTETOS_SATURNO_DECLSPCE_DLL
+	#define OCTETOS_SATURNO_DECLSPCE_DLL
 #endif
 #if defined(__linux__)
     #include <octetos/core/Error.hh>
