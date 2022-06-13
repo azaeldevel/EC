@@ -130,8 +130,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreLinkEvent>
-      <Command>XCOPY /Y /R ..\..\..\core\$(Platform)\$(Configuration)\octetos-core.lib $(SolutionDir)$(Platform)\$(Configuration)\
-XCOPY /Y /R ..\..\..\core\$(Platform)\$(Configuration)\octetos-core.dll $(SolutionDir)$(Platform)\$(Configuration)\</Command>
+      <Command>XCOPY /Y /R ..\..\..\core\vs\dll\$(Platform)\$(Configuration)\octetos-core.lib $(SolutionDir)$(Platform)\$(Configuration)\
+XCOPY /Y /R ..\..\..\core\vs\dll\$(Platform)\$(Configuration)\octetos-core.dll $(SolutionDir)$(Platform)\$(Configuration)\</Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -155,8 +155,8 @@ XCOPY /Y /R ..\..\..\core\$(Platform)\$(Configuration)\octetos-core.dll $(Soluti
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreLinkEvent>
-      <Command>XCOPY /Y /R ..\..\..\core\$(Platform)\$(Configuration)\octetos-core.lib $(SolutionDir)$(Platform)\$(Configuration)\
-XCOPY /Y /R ..\..\..\core\$(Platform)\$(Configuration)\octetos-core.dll $(SolutionDir)$(Platform)\$(Configuration)\</Command>
+      <Command>XCOPY /Y /R ..\..\..\core\vs\dll\$(Platform)\$(Configuration)\octetos-core.lib $(SolutionDir)$(Platform)\$(Configuration)\
+XCOPY /Y /R ..\..\..\core\vs\dll\$(Platform)\$(Configuration)\octetos-core.dll $(SolutionDir)$(Platform)\$(Configuration)\</Command>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

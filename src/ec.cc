@@ -677,9 +677,9 @@ Population Enviroment::get_population_size()const
 const ec::Single* Enviroment::get_single(Population i)const
 {
 	if(size() < i) return NULL;
-	
+
 	if(i == 0) return front();
-	else if(i == 1) 
+	else if(i == 1)
 	{
 		const_iterator it = begin();
 		it++;
@@ -689,8 +689,8 @@ const ec::Single* Enviroment::get_single(Population i)const
 	{
 		const_iterator it = begin();
 		std::advance(it,i);
-		return *it;	
-	}	
+		return *it;
+	}
 }
 
 ID Enviroment::nextID()
@@ -781,7 +781,7 @@ bool Enviroment::run()
 	//double triggerRepeatMin = double(maxPopulation) * 1.0e-5;
 	//double triggerJam2 = 1.0e-20;
 	const ec::Single *leaderPrev, *leader;
-	//std::cout << "mutableProb : " << mutableProb << "\n"; 
+	//std::cout << "mutableProb : " << mutableProb << "\n";
 	std::bernoulli_distribution mutation_distr(mutableProb);
 	std::uniform_int_distribution<int> distrib_maxm(1,maxMutation);
 	//real fitness;
@@ -1049,7 +1049,7 @@ bool Enviroment::run()
 		}
 
 		//std::cout << "\tEnviroment::run - while Step 7 , count : " << size() << "\n";
-		
+
 		juncting();
 		SaveChilds savechilds(logDirectory);
 		//std::cout << "\tEnviroment::run - while Step 8 , count : " << size() << "\n";
@@ -1177,7 +1177,7 @@ Single* Enviroment::getRandomSingleRandom()
 		default:
 			return getRandomSingleAny();
 	}
-	
+
 	return getRandomSingleAny();
 }
 Iteration Enviroment::getIterationActual()const
@@ -1239,7 +1239,7 @@ void Enviroment::selection()
 		delete back();
 		pop_back();
 	}
-	
+
 	//std::cout << "Enviroment::selection : " << size() << "\n";
 }
 

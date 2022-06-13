@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1649937721 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
+1655160066 source:c:\users\azael\documents\develop\octetos\ec\src\ec.cc
 	<cfloat>
 	<random>
 	<iostream>
@@ -15,7 +15,7 @@
 	<statics.hh>
 	"ec.hh"
 
-1646973702 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
+1655160657 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
 	<list>
 	<string>
 	<vector>
@@ -25,8 +25,8 @@
 	<filesystem>
 	<octetos/core/Error.hh>
 	<octetos/core/shell.hh>
-	<Error.hh>
-	<shell.hh>
+	<core/src/Error.hh>
+	<core/src/shell.hh>
 
 1649991674 c:\users\azael\documents\develop\octetos\core\src\error.hh
 	<string>
@@ -71,13 +71,14 @@
 1643673780 c:\users\azael\documents\develop\octetos\ec\src\max.hh
 	"GA.hh"
 
-1644276180 source:c:\users\azael\documents\develop\octetos\ec\src\sudoku.cc
+1650849002 source:c:\users\azael\documents\develop\octetos\ec\src\sudoku.cc
 	<list>
 	<math.h>
 	<fstream>
 	<iterator>
 	<algorithm>
 	<unistd.h>
+	<io.h>
 	<string.h>
 	<stdio.h>
 	"sudoku.hh"

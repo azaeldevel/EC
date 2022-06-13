@@ -11,19 +11,19 @@
 #include <random>
 #include <filesystem>
 #if EXPORTING_OCTETOS_EC_DLL
-#if _MSC_VER
-#define OCTETOS_EC_DECLSPCE_DLL __declspec(dllexport)
-#elif __GNUG__
+    #if _MSC_VER
+        #define OCTETOS_EC_DECLSPCE_DLL __declspec(dllexport)
+    #elif __GNUG__
 
-#endif
+    #endif
 #elif IMPORTING_OCTETOS_EC_DLL
-#if _MSC_VER
-#define OCTETOS_EC_DECLSPCE_DLL __declspec(dllimport)
-#elif __GNUG__
+    #if _MSC_VER
+    #define OCTETOS_EC_DECLSPCE_DLL __declspec(dllimport)
+    #elif __GNUG__
 
-#endif
+    #endif
 #else
-#define OCTETOS_SATURNO_DECLSPCE_DLL
+    #define OCTETOS_EC_DECLSPCE_DLL
 #endif
 #if defined(__linux__)
     #include <octetos/core/Error.hh>
@@ -332,7 +332,7 @@ class OCTETOS_EC_DECLSPCE_DLL Enviroment : protected std::list<ec::Single*>
 {
 public:
 	//
-	
+
 	//
 	/**
 	*\brief Inizializa las variables
@@ -398,12 +398,12 @@ public:
 	*\brief Inicia la ejecution del algoritmo(funcion de entrada)
 	*/
 	virtual bool run();
-	
+
 	/**
 	*\brief Inicia la ejecution del algoritmo con los parametro de linea de comando(funcion de entrada)
 	*/
 	virtual bool run(int argc, const char* argv[]);
-	
+
 	/**
 	*\brief Inicia el proceso de veluacion
 	*/
@@ -436,12 +436,12 @@ public:
 	*\brief Inicia el proceso de serie(funcion de entrada)
 	*/
 	virtual bool series();
-	
+
 	/**
 	*\brief Inicia el proceso de serie con argumentos de linea de comandos(funcion de entrada)
 	*/
 	virtual bool series(int argc, const char* argv[]);
-	
+
 	/**
 	*\brief Libera la memoria ocupada por la actual poblacion y vacia la lista
 	*/
@@ -470,14 +470,14 @@ public:
 	unsigned int getPredictFinally() const;
 public:
 	//
-	
+
 private:
 	Single* getRandomSingle();
 	Single* getRandomSingleAny();
 	Single* getRandomSingleFirst();
 	Single* getRandomSingleSecond();
 	Single* getRandomSingleRandom();
-	
+
 protected:
 	std::filesystem::path logDirectory;
 	std::filesystem::path logDirectoryHistory;
