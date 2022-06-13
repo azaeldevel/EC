@@ -1239,7 +1239,17 @@ void Enviroment::selection()
 		delete back();
 		pop_back();
 	}
+	
+	/*
+	//liberar memorio en el indicie porteror a maxProgenitor hasta el final de la lista
+	for(unsigned int i = maxProgenitor; i < size(); i++)
+	{
+		delete at(i);
+	}
 
+	//eliminar los elemenbtos sobrantes de la lista
+	resize(maxProgenitor);
+	*/
 	//std::cout << "Enviroment::selection : " << size() << "\n";
 }
 

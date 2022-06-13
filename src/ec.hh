@@ -10,6 +10,7 @@
 #include <fstream>
 #include <random>
 #include <filesystem>
+
 #if EXPORTING_OCTETOS_EC_DLL
     #if _MSC_VER
         #define OCTETOS_EC_DECLSPCE_DLL __declspec(dllexport)
