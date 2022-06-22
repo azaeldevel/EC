@@ -12,9 +12,7 @@
 				<Option type="3" />
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
-					<Add option="-DBUILD_DLL" />
-					<Add directory="../core/src" />
-					<Add directory="../math/src" />
+					<Add directory=".." />
 				</Compiler>
 				<Linker>
 					<Add library="octetos-core" />
@@ -40,8 +38,7 @@
 					<Add option="-Wall" />
 					<Add option="-O2" />
 					<Add option="-DBUILD_DLL" />
-					<Add directory="../core/src" />
-					<Add directory="../math/src" />
+					<Add directory=".." />
 				</Compiler>
 				<Linker>
 					<Add library="octetos-core" />
@@ -55,7 +52,7 @@
 				<Option type="1" />
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
-					<Add directory="../core/src" />
+					<Add directory=".." />
 					<Add directory="src" />
 				</Compiler>
 				<Linker>
@@ -75,7 +72,7 @@
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
 					<Add option="-DCODEBLOCKS_IDE" />
-					<Add directory="../core/src" />
+					<Add directory=".." />
 					<Add directory="src" />
 				</Compiler>
 				<Linker>
@@ -91,7 +88,7 @@
 				<Option type="1" />
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
-					<Add directory="../core/src" />
+					<Add directory=".." />
 					<Add directory="src" />
 				</Compiler>
 				<Linker>
@@ -108,7 +105,7 @@
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
 					<Add option="-DCODEBLOCKS_IDE" />
-					<Add directory="../core/src" />
+					<Add directory=".." />
 					<Add directory="src" />
 				</Compiler>
 				<Linker>
