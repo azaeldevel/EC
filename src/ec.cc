@@ -986,7 +986,7 @@ bool Enviroment::run()
 				std::string log = "\n\tSe completo el conjunto de solucion minimo : ";
 				log += std::to_string(solutions.size()) + "\n";
 			}
-
+            running = false;
 			return true;
 		}
 		else if(solutions.size() == maxPopulation)//se definion una cantidad minima de soluciones
