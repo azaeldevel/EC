@@ -15,7 +15,7 @@
 	<statics.hh>
 	"ec.hh"
 
-1655160657 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
+1655922628 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
 	<list>
 	<string>
 	<vector>
@@ -28,7 +28,7 @@
 	<core/src/Error.hh>
 	<core/src/shell.hh>
 
-1649991674 c:\users\azael\documents\develop\octetos\core\src\error.hh
+1655163868 c:\users\azael\documents\develop\octetos\core\src\error.hh
 	<string>
 	<exception>
 	"Exception.hh"
@@ -37,7 +37,7 @@
 	"Exception-v2.hh"
 	"Exception-v3.hh"
 
-1648093950 c:\users\azael\documents\develop\octetos\core\src\core.hh
+1650849765 c:\users\azael\documents\develop\octetos\core\src\core.hh
 	<string>
 	<execinfo.h>
 	<csignal>
@@ -198,7 +198,7 @@
 	<exception>
 	"core.hh"
 
-1649989143 c:\users\azael\documents\develop\octetos\core\src\exception-v2.hh
+1650870124 c:\users\azael\documents\develop\octetos\core\src\exception-v2.hh
 	<exception>
 	"core.hh"
 	"Object.hh"

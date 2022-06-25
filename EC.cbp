@@ -12,13 +12,15 @@
 				<Option type="3" />
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
-					<Add directory=".." />
+					<Add directory="../../octetos" />
 				</Compiler>
 				<Linker>
 					<Add library="octetos-core" />
-					<Add directory="../core/bin/Debug" />
 					<Add directory="bin/Debug" />
 				</Linker>
+				<ExtraCommands>
+					<Add before="xcopy ..\core\bin\Debug\octetos-core.dll bin\Debug /y" />
+				</ExtraCommands>
 				<MakeCommands>
 					<Build command="" />
 					<CompileFile command="" />
@@ -38,13 +40,15 @@
 					<Add option="-Wall" />
 					<Add option="-O2" />
 					<Add option="-DBUILD_DLL" />
-					<Add directory=".." />
+					<Add directory="../../octetos" />
 				</Compiler>
 				<Linker>
 					<Add library="octetos-core" />
-					<Add directory="../core/bin/Release" />
 					<Add directory="bin/Release" />
 				</Linker>
+				<ExtraCommands>
+					<Add before="xcopy ..\core\bin\Release\octetos-core.dll bin\Release /y" />
+				</ExtraCommands>
 			</Target>
 			<Target title="max">
 				<Option output="bin/Debug/ec-max" prefix_auto="1" extension_auto="1" />

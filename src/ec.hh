@@ -554,7 +554,7 @@ protected:
     /**
 	*\brief Desviacion estandar usada para generar la seleccion en la operacion de apareo
 	*/
-	real junting_sigma;
+	//real junting_sigma;
 
     unsigned int maxMutation;
 

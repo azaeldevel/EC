@@ -12,6 +12,7 @@
 #include <iomanip>
 //#include <ctime>
 #include <fstream>
+#include <algorithm>
 #if defined(__linux__)
     #include <octetos/math/statics.hh>
 #elif defined(_WIN32) || defined(_WIN64)
@@ -479,7 +480,7 @@ void Enviroment::init()
 	newIteration = false;
 	echoF = NULL;
 	savingDevice = NULL;
-	junting_sigma = 1.0;
+	//junting_sigma = 1.0;
 	running = false;
 	maxMutation = 0;
 
@@ -836,30 +837,30 @@ bool Enviroment::run()
 		leader = front();
 		//std::cout << "\tEnviroment::run - while Step 2 , count : " << size() << "\n";
 
-		media = oct::math::mean<ec::Single*,std::list,real>(*this,[](ec::Single* s)->real{return s->getFitness();});
+		//media = oct::math::mean<ec::Single*,std::list,real>(*this,[](ec::Single* s)->real{return s->getFitness();});
+		media = 0;
+		sigma = 0;
 		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Adaptabilidad : " << s->getFitness() << "\n";
-			/*
-			fitness = s->getFitness();
-			if(fitness > 1 or fitness < 0)
+			if(s->getFitness() > 1 or s->getFitness() < 0)
 			{
 				std::string msg = "El fitness de cada individio deve estar en el intervalo [0,1], se encontro ";
-				msg += std::to_string(fitness);
+				msg += std::to_string(s->getFitness());
 				throw oct::core::Exception(msg,__FILE__,__LINE__);
 			}
 			media += s->getFitness();
-			*/
+
 			s->deltaAge();
 		}
-		//media /= real(size());
-		/*for(ec::Single* s : *this)
+		media /= real(size());
+		for(ec::Single* s : *this)
 		{
 			//std::cout << "\t" << s->getID() << " Fortaleza : " << s->getStrength() << "\n";
-			sigma += pow(s->getFitness() - media,2);
+			sigma += pow(s->getFitness() - media,real(2));
 		}
-		sigma /= real(size());*/
-		sigma = oct::math::variation<ec::Single*,std::list,real>(*this,media,[](ec::Single* s)->real{return s->getFitness();});
+		sigma /= real(size());
+		//sigma = oct::math::variation<ec::Single*,std::list,real>(*this,media,[](ec::Single* s)->real{return s->getFitness();});
 		/*if(leaderPrev != leader)
 		{//hay un nuevo lider
 			//TODO:optener una promedio a partir de una progresion
@@ -1234,22 +1235,26 @@ void Enviroment::save()
 void Enviroment::selection()
 {//TODO:se puede mejorar al comenzar a eliminar desde el final hasta maxProgenitor
 	//eliminar duplicados
-	while(maxProgenitor < size())
+	/*while(maxProgenitor < size())
 	{
 		delete back();
 		pop_back();
-	}
-	
-	/*
-	//liberar memorio en el indicie porteror a maxProgenitor hasta el final de la lista
-	for(unsigned int i = maxProgenitor; i < size(); i++)
-	{
-		delete at(i);
-	}
+	}*/
 
+
+	//liberar memorio en el indicie porteror a maxProgenitor hasta el final de la lista
+	std::list<ec::Single*>::iterator it = begin();
+	std::advance(it,std::min((int)maxProgenitor,(int)size()));
+	while(it != end())
+	{
+		delete *it;
+
+		//
+		it++;
+	}
 	//eliminar los elemenbtos sobrantes de la lista
 	resize(maxProgenitor);
-	*/
+
 	//std::cout << "Enviroment::selection : " << size() << "\n";
 }
 

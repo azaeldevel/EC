@@ -1,45 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
-	<ActiveTarget name="liboctetos-EC-dbg" />
-	<File name="src\ec-max.cc" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="897" topLine="24" />
-		</Cursor>
-	</File>
-	<File name="tests\v0.cc" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="607" topLine="16" />
-		</Cursor>
-	</File>
-	<File name="src\ec.cc" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="395" topLine="3" />
-		</Cursor>
-	</File>
-	<File name="src\Program.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="238" topLine="42" />
-		</Cursor>
-	</File>
-	<File name="src\Program.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="70" topLine="0" />
-		</Cursor>
-	</File>
+	<ActiveTarget name="liboctetos-EC-r" />
 	<File name="src\sudoku.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1692" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src\max.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7612" topLine="348" />
-		</Cursor>
-	</File>
-	<File name="src\main.cc" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="781" topLine="18" />
 		</Cursor>
 	</File>
 	<File name="src\Program-tree.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
@@ -47,14 +12,29 @@
 			<Cursor1 position="140" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\Program-tree.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="64" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="src\ec.hh" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="656" topLine="12" />
+			<Cursor1 position="514" topLine="429" />
+		</Cursor>
+	</File>
+	<File name="src\ec-max.cc" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="897" topLine="24" />
+		</Cursor>
+	</File>
+	<File name="src\Program.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="238" topLine="42" />
+		</Cursor>
+	</File>
+	<File name="src\max.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7612" topLine="348" />
+		</Cursor>
+	</File>
+	<File name="src\Program.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="70" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="src\sudoku.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -62,9 +42,29 @@
 			<Cursor1 position="3874" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="src\Program-tree.cc" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="64" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\ec.cc" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="27386" topLine="1039" />
+		</Cursor>
+	</File>
+	<File name="tests\v0.cc" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="607" topLine="16" />
+		</Cursor>
+	</File>
 	<File name="src\max.hh" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="2353" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="src\main.cc" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="781" topLine="18" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
