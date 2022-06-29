@@ -708,7 +708,7 @@ void Enviroment::enableEcho(echo f, unsigned short level)
 	logFile = log;
 }*/
 
-const std::list<ec::Single*> Enviroment::getSolutions()const
+const std::list<ec::Single*>& Enviroment::getSolutions()const
 {
 	return solutions;
 }
@@ -1142,7 +1142,7 @@ ec::Single* Enviroment::getProxSolution()
 	for(iterator it = begin(); it != end(); it++)
 	{
 		s = *it;
-		if(1.0 - s->getFitness() > epsilon) return s;
+		if(1.0 - s->getFitness() < epsilon) return s;
 	}
 
 	return *begin();
@@ -1150,7 +1150,7 @@ ec::Single* Enviroment::getProxSolution()
 
 Single* Enviroment::getRandomSingleAny()
 {
-	const_iterator it = begin();
+	iterator it = begin();
 	std::advance(it,juntion_progenitor->operator()(gen));
 
 	return *it;
@@ -1161,7 +1161,7 @@ Single* Enviroment::getRandomSingleFirst()
 }
 Single* Enviroment::getRandomSingleSecond()
 {
-	const_iterator it = begin();
+	iterator it = begin();
 	it++;
 	return *it;
 }
@@ -1234,17 +1234,10 @@ void Enviroment::save()
 */
 void Enviroment::selection()
 {//TODO:se puede mejorar al comenzar a eliminar desde el final hasta maxProgenitor
-	//eliminar duplicados
-	/*while(maxProgenitor < size())
-	{
-		delete back();
-		pop_back();
-	}*/
-
-
 	//liberar memorio en el indicie porteror a maxProgenitor hasta el final de la lista
+	if(size() < maxProgenitor) throw oct::core::Exception("El tamaño de la pobacion es menor que la cantidad de progenitores",__FILE__,__LINE__);
 	std::list<ec::Single*>::iterator it = begin();
-	std::advance(it,std::min((int)maxProgenitor,(int)size()));
+	std::advance(it,maxProgenitor); // es n + 1
 	while(it != end())
 	{
 		delete *it;
@@ -1254,8 +1247,6 @@ void Enviroment::selection()
 	}
 	//eliminar los elemenbtos sobrantes de la lista
 	resize(maxProgenitor);
-
-	//std::cout << "Enviroment::selection : " << size() << "\n";
 }
 
 void Enviroment::save(const std::list<ec::Single*>& lst, const std::filesystem::path& file)

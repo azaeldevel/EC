@@ -15,7 +15,7 @@
 	<statics.hh>
 	"ec.hh"
 
-1655922628 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
+1656360442 c:\users\azael\documents\develop\octetos\ec\src\ec.hh
 	<list>
 	<string>
 	<vector>
@@ -92,7 +92,7 @@
 	<string>
 	"defines.hh"
 
-1643522803 source:c:\users\azael\documents\develop\octetos\ec\src\ec-max.cc
+1643673780 source:c:\users\azael\documents\develop\octetos\ec\src\ec-max.cc
 	<fstream>
 	"max.hh"
 
