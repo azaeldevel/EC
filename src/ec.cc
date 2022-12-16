@@ -502,7 +502,7 @@ void Enviroment::init2()
 	if(maxProgenitor < 2) throw Exception(Exception::BAD_VALUE_maxProgenitor,__FILE__,__LINE__);
 	if(size() == 0) throw Exception(Exception::BAD_VALUE_size,__FILE__,__LINE__);
 
-	juntion_progenitor = new std::uniform_int_distribution<int>(2,maxProgenitor - 1);
+	juntion_progenitor = new std::uniform_int_distribution<int>(1,maxProgenitor - 1);
 	//juntion_variety = new std::uniform_int_distribution<int>(maxProgenitor - 1, maxPopulation - 1);
 	//juntion_any = new std::uniform_int_distribution<int>(0, maxPopulation - 1);
 	juntion_type = new std::uniform_int_distribution<int>(1, 3);
