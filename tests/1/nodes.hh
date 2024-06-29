@@ -22,6 +22,7 @@
  * */
 
 #include <vector>
+#include <iostream>
 
 #ifdef OCTETOS_CORE_V3_TDD
     #include <iostream>
@@ -43,6 +44,7 @@ namespace oct::core::v3
         virtual ~node() = default;
 
         virtual operator T() const = 0;
+        virtual void print(std::ostream&)const = 0;
     };
 
     /**
@@ -90,6 +92,11 @@ namespace oct::core::v3
         {
             number = n;
             return *this;
+        }
+
+        virtual void print(std::ostream& out)const
+        {
+            out << number;
         }
     };
 
@@ -143,6 +150,13 @@ namespace oct::core::v3
             return T(*BASE::at(0)) + T(*BASE::at(1));
         }
 
+        virtual void print(std::ostream& out)const
+        {
+            BASE::at(0)->print(out);
+            out << " + ";
+            BASE::at(1)->print(out);
+        }
+
     };
 
     /**
@@ -165,6 +179,14 @@ namespace oct::core::v3
         virtual operator T() const
         {
             return T(*BASE::at(0)) - T(*BASE::at(1));
+        }
+
+
+        virtual void print(std::ostream& out)const
+        {
+            BASE::at(0)->print(out);
+            out << " - ";
+            BASE::at(1)->print(out);
         }
     };
 

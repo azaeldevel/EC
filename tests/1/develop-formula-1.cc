@@ -1,4 +1,4 @@
-#include <iostream>
+
 
 #include "nodes.hh"
 
@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
     std::cout <<"Result 1 : " << result << "\n";
     std::cout <<"Result 2 : " << result2 << "\n";
     std::cout <<"Result 3 : " << result3 << "\n";
+    op3.print(std::cout);
 
 
     return EXIT_SUCCESS;
