@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <iostream>
+#include <cmath>
 
 #ifdef OCTETOS_CORE_V3_TDD
     #include <iostream>
@@ -191,6 +192,104 @@ namespace oct::core::v3
     };
 
 
+
+    /**
+    *\brief Representa el nodo de un arbol
+    *\param T data type
+    *\param S Selector de clase
+    **/
+    template<class T> class Product : public operation<T>
+    {
+    private:
+        typedef operation<T> BASE;
+
+    public:
+        Product() = default;
+        Product(node<T>& a,node<T>& b) : BASE(a,b)
+        {
+        }
+        virtual ~Product() = default;
+
+        virtual operator T() const
+        {
+            return T(*BASE::at(0)) * T(*BASE::at(1));
+        }
+
+
+        virtual void print(std::ostream& out)const
+        {
+            BASE::at(0)->print(out);
+            out << " * ";
+            BASE::at(1)->print(out);
+        }
+    };
+
+
+    /**
+    *\brief Representa el nodo de un arbol
+    *\param T data type
+    *\param S Selector de clase
+    **/
+    template<class T> class Divition : public operation<T>
+    {
+    private:
+        typedef operation<T> BASE;
+
+    public:
+        Divition() = default;
+        Divition(node<T>& a,node<T>& b) : BASE(a,b)
+        {
+        }
+        virtual ~Divition() = default;
+
+        virtual operator T() const
+        {
+            return T(*BASE::at(0)) / T(*BASE::at(1));
+        }
+
+
+        virtual void print(std::ostream& out)const
+        {
+            BASE::at(0)->print(out);
+            out << " / ";
+            BASE::at(1)->print(out);
+        }
+    };
+
+
+
+
+
+    /**
+    *\brief Representa el nodo de un arbol
+    *\param T data type
+    *\param S Selector de clase
+    **/
+    template<class T> class Pow : public operation<T>
+    {
+    private:
+        typedef operation<T> BASE;
+
+    public:
+        Pow() = default;
+        Pow(node<T>& a,node<T>& b) : BASE(a,b)
+        {
+        }
+        virtual ~Pow() = default;
+
+        virtual operator T() const
+        {
+            return pow(T(*BASE::at(0)), T(*BASE::at(1)));
+        }
+
+
+        virtual void print(std::ostream& out)const
+        {
+            BASE::at(0)->print(out);
+            out << " ^ ";
+            BASE::at(1)->print(out);
+        }
+    };
 }
 
 #endif

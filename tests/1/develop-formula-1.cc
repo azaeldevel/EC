@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     core::Addition<float> op1(num1,num2);
     core::Addition<float> op2(op1,num3);
     core::Subtration<float> op3(op2,num2);
+    core::Divition<float> op4(op1,num2);
     std::cout <<"Developing...\n";
     float result = op1;
     float result2 = op2;
@@ -21,7 +22,11 @@ int main(int argc, char *argv[])
     std::cout <<"Result 1 : " << result << "\n";
     std::cout <<"Result 2 : " << result2 << "\n";
     std::cout <<"Result 3 : " << result3 << "\n";
+    std::cout <<"\n";
     op3.print(std::cout);
+    std::cout << "\n";
+    op4.print(std::cout);
+    std::cout << " = " << (float)op4 << "\n";
 
 
     return EXIT_SUCCESS;
