@@ -8,5 +8,6 @@
 int v1_init(void);
 int v1_clean(void);
 void v1_developing();
+void v1_nodes();
 
 #endif

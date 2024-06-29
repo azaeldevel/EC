@@ -45,6 +45,9 @@
 					<Add option="-g" />
 					<Add option="-DOCTETOS_EC_V1_TDD" />
 				</Compiler>
+				<Linker>
+					<Add library="cunit" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
