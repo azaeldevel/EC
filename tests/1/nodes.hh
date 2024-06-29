@@ -1,6 +1,6 @@
 
-#ifndef OCTETOS_CORE_V3_NODES_HH
-#define OCTETOS_CORE_V3_NODES_HH
+#ifndef OCTETOS_EC_V1_NODES_HH
+#define OCTETOS_EC_V1_NODES_HH
 
 /**
  *  This file is part of octetos-core.
@@ -98,6 +98,44 @@ namespace oct::ec::v1
         virtual void print(std::ostream& out)const
         {
             out << number;
+        }
+    };
+
+
+    /**
+    *\brief Representa el nodo de un arbol
+    *\param T data type
+    *\param S Selector de clase
+    **/
+    template<class T> class Variable : public node<T>
+    {
+    private:
+        T number;
+        std::string name;
+
+    public:
+        Variable() = default;
+        Variable(const T& n,const std::string & l) : number(n),name(l)
+        {
+        }
+        Variable(const std::string & l) : number(T(0)),name(l)
+        {
+        }
+        virtual ~Variable() = default;
+
+        virtual operator T() const
+        {
+            return number;
+        }
+        Variable& operator =(const T& n)
+        {
+            number = n;
+            return *this;
+        }
+
+        virtual void print(std::ostream& out)const
+        {
+            out << name;
         }
     };
 

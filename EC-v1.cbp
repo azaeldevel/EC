@@ -58,6 +58,12 @@
 		<Unit filename="tests/1/develop-formula-1.cc">
 			<Option target="develop-formula-1" />
 		</Unit>
+		<Unit filename="tests/1/formule.cc">
+			<Option target="develop-formula-1" />
+		</Unit>
+		<Unit filename="tests/1/formule.hh">
+			<Option target="develop-formula-1" />
+		</Unit>
 		<Unit filename="tests/1/nodes.cc">
 			<Option target="develop-formula-1" />
 		</Unit>
