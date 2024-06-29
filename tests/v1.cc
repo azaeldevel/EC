@@ -24,10 +24,13 @@ void v1_nodes()
     ec::Number<float> num1(5.0f);
     ec::Number<float> num2(1.9f);
     ec::Number<float> num3(3.9f);
+    ec::Number<float> num4(3.0f);
     ec::Addition<float> op1(num1,num2);
     ec::Addition<float> op2(op1,num3);
     ec::Subtration<float> op3(op2,num2);
     ec::Divition<float> op4(op1,num2);
+    ec::Pow<float> op5(num2,num4);
+    ec::Product<float> op6(num1,num3);
 
 
     CU_ASSERT(core::equal((float)num1, 5.0f))
@@ -39,5 +42,7 @@ void v1_nodes()
     //std::cout << (float) op3 << "\n";
     CU_ASSERT(core::equal((float)op3, 8.9f,1.0e-6f))
     CU_ASSERT(core::equal((float)op4, 3.6315f,1.0e-4f))
+    CU_ASSERT(core::equal((float)op5, 6.859f,1.0e-6f))
+    CU_ASSERT(core::equal((float)op6, 19.5f))
 }
 
