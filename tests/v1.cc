@@ -1,10 +1,61 @@
 
-#include "../../core/3/numbers.hh"
 #include "v1.hh"
-#include "1/nodes.hh"
 
-namespace core = oct::core::v3;
-namespace ec = oct::ec::v1;
+
+//void (*single_operator)(core::array<float>&);
+
+
+Single::Single(size_t size_opers) : opers(size_opers)
+{
+    init_data();
+}
+Single::Single(const core::array<float>& ins) : data(ins)
+{
+    init_data();
+}
+Single::Single(const core::array<float>& ins, size_t size_opers) : data(ins),opers(size_opers)
+{
+    init_data();
+}
+
+float Single::evaluate() const
+{
+    return 0;
+}
+void Single::init_load_operators()
+{
+
+}
+void Single::init_data()
+{
+    if(data.size() == 0) data.resize(3);
+    for(size_t i = 0; i < data.size(); i++) data[i] = 0;
+}
+
+
+void Single::incs1()
+{
+
+}
+
+
+
+
+
+
+
+
+Math::Math(size_t size_opers) : SINGLE_BASE(size_opers)
+{
+}
+Math::Math(const core::array<float>& ins) : SINGLE_BASE(ins)
+{
+}
+Math::Math(const core::array<float>& ins, size_t size_opers) : SINGLE_BASE(ins,size_opers)
+{
+}
+
+
 
 int v1_init(void)
 {
@@ -18,31 +69,5 @@ int v1_clean(void)
 
 void v1_developing()
 {
+    Math single1;
 }
-void v1_nodes()
-{
-    ec::Number<float> num1(5.0f);
-    ec::Number<float> num2(1.9f);
-    ec::Number<float> num3(3.9f);
-    ec::Number<float> num4(3.0f);
-    ec::Addition<float> op1(num1,num2);
-    ec::Addition<float> op2(op1,num3);
-    ec::Subtration<float> op3(op2,num2);
-    ec::Divition<float> op4(op1,num2);
-    ec::Pow<float> op5(num2,num4);
-    ec::Product<float> op6(num1,num3);
-
-
-    CU_ASSERT(core::equal((float)num1, 5.0f))
-    CU_ASSERT(core::equal((float)num2, 1.9f))
-    CU_ASSERT(core::equal((float)num3, 3.9f))
-    CU_ASSERT(core::equal((float)op1, 6.9f))
-    CU_ASSERT(core::equal((float)op2, 10.8f))
-    //op3.print(std::cout);
-    //std::cout << (float) op3 << "\n";
-    CU_ASSERT(core::equal((float)op3, 8.9f,1.0e-6f))
-    CU_ASSERT(core::equal((float)op4, 3.6315f,1.0e-4f))
-    CU_ASSERT(core::equal((float)op5, 6.859f,1.0e-6f))
-    CU_ASSERT(core::equal((float)op6, 19.5f))
-}
-

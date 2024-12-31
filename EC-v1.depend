@@ -1,0 +1,39 @@
+# depslib dependency file v1.0
+1734747283 source:/home/azael/develop/octetos/EC/tests/main.cc
+	<iostream>
+	<CUnit/Basic.h>
+	"v1.hh"
+
+1734751792 /home/azael/develop/octetos/EC/tests/v1.hh
+	<CUnit/Basic.h>
+	"../1/ec.hh"
+
+1734751832 source:/home/azael/develop/octetos/EC/tests/v1.cc
+	"v1.hh"
+
+1734749176 /home/azael/develop/octetos/EC/1/ec.hh
+	<core/3/array.hh>
+
+1732395672 /home/azael/develop/octetos/core/3/array.hh
+	<iostream>
+	<initializer_list>
+	"numbers.hh"
+	"entity.hh"
+	<memory>
+	<string>
+
+1734746260 /home/azael/develop/octetos/core/3/numbers.hh
+	<concepts>
+	<variant>
+	<limits>
+	<cctype>
+	<cmath>
+	<numbers>
+
+1735631086 /home/azael/develop/octetos/numbers
+
+1731726882 /home/azael/develop/octetos/core/3/entity.hh
+	<concepts>
+	<cctype>
+	<cstddef>
+
