@@ -25,6 +25,6 @@ void v1_developing()
     std::uniform_real_distribution<> constant(-1.0e6, 1.0e6);
     std::bernoulli_distribution nesteing(0.7);
 
-    ec::Arithmetic<>* single1 = new ec::Arithmetic<>(ec::Arithmetic<>::populate_generic(generator,operation,nesteing,constant),true);
+    ec::Arithmetic<float>* single1 = new ec::Arithmetic<float>(ec::Arithmetic<float>::create_node(generator,operation,nesteing,constant),true);
 
 }

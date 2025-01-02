@@ -59,7 +59,7 @@ namespace oct::ec::v1
         }
 
 
-        static core::ast::node<N>* populate_generic(std::mt19937& generator,std::uniform_int_distribution<>& operation,std::bernoulli_distribution  nesting,std::uniform_real_distribution<>& constant)
+        static core::ast::node<N>* create_node(std::mt19937& generator,std::uniform_int_distribution<>& operation,std::bernoulli_distribution  nesting,std::uniform_real_distribution<>& constant)
         {
             int opr = operation(generator);
             bool netsa = nesting(generator);
@@ -70,74 +70,30 @@ namespace oct::ec::v1
             case 1:
                 if(netsa and netsb)
                 {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::addition,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                    core::ast::Arithmetic<N>& da = *new core::ast::Arithmetic<N>(core::ast::typen::addition,*new core::ast::Numeric<N>(constant(generator)),*new core::ast::Numeric<N>(constant(generator)));
+                    core::ast::Arithmetic<N>& db = *new core::ast::Arithmetic<N>(core::ast::typen::addition,*new core::ast::Numeric<N>(constant(generator)),*new core::ast::Numeric<N>(constant(generator)));
+                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
                 }
                 else if(netsa and !netsb)
                 {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::addition,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
                 }
                 else if(!netsa and netsb)
                 {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::addition,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+
                 }
                 else if(!netsa and !netsb)
                 {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::addition,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+
                 }
                 break;
             case 2:
-                if(netsa and netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::subtraction,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
-                else if(netsa and !netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::subtraction,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
-                else if(!netsa and netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::subtraction,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
-                else if(!netsa and !netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::subtraction,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
+
                 break;
             case 3:
-                if(netsa and netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::product,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
-                else if(netsa and !netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::product,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
-                else if(!netsa and netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::product,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
-                else if(!netsa and !netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::product,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
+
                 break;
             case 4:
-                if(netsa and netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::quotient,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
-                else if(netsa and !netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::quotient,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
-                else if(!netsa and netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::quotient,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
-                else if(!netsa and !netsb)
-                {
-                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::quotient,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
-                }
+
                 break;
             }
 
@@ -173,8 +129,17 @@ namespace oct::ec::v1
 
     public:
         Town() = default;
-        Town(size_t s) : TOWN_BASE(s),auto_free(false)
+        Town(size_t s) : TOWN_BASE(s),auto_free(true)
         {
+        }
+
+        void populate(size_t s)
+        {
+            this->resize(s);
+            for(size_t i = 0; i < s; i++)
+            {
+
+            }
         }
 
     public:
