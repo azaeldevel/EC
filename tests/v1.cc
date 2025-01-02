@@ -28,6 +28,6 @@ void v1_developing()
 
     ec::Arithmetic<3,float>::init_randsys();
 
-    ec::Arithmetic<3,float>* single1 = new ec::Arithmetic<3,float>(ec::Arithmetic<3,float>::create_node(generator,operation,nesteing,constant,select_varaible),true);
+    ec::Arithmetic<3,float>* single1 = new ec::Arithmetic<3,float>(ec::Arithmetic<3,float>::create_node(),true);
 
 }

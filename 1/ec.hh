@@ -59,7 +59,7 @@ namespace oct::ec::v1
         }
 
 
-        static core::ast::node<N>* create_node(std::mt19937& generator,std::uniform_int_distribution<>& operation,std::bernoulli_distribution  nesting,std::uniform_real_distribution<>& constant,std::uniform_int_distribution<>& svar)
+        static core::ast::node<N>* create_node()
         {
             int opr = operation(generator);
             bool netsa = nesting(generator);
@@ -189,20 +189,19 @@ namespace oct::ec::v1
 
     public:
         static inline std::random_device rd;
-        static inline std::mt19937 generator = std::mt19937(rd());
-        static inline std::uniform_int_distribution<> operation = std::uniform_int_distribution<>(1, 6);
-        static inline std::uniform_real_distribution<> constant = std::uniform_real_distribution<>(-1.0e6, 1.0e6);
-        static inline std::bernoulli_distribution nesteing = std::bernoulli_distribution(0.75);
-        static inline std::uniform_int_distribution<> svariable = std::uniform_int_distribution<>(1, S);
+        static inline std::mt19937 generator;
+        static inline std::uniform_int_distribution<> operation;
+        static inline std::uniform_real_distribution<> constant;
+        static inline std::bernoulli_distribution nesting;
+        static inline std::uniform_int_distribution<> svariable;
 
         static void init_randsys()
         {
-            //rd = std::random_device("una prueva interesantes....");
-            //generator = std::mt19937(rd()); // mersenne_twister_engine seeded with rd()
-            //operation = std::uniform_int_distribution<>(1, 6);
-            //constant = std::uniform_real_distribution<>(-1.0e6, 1.0e6);
-            //nesteing = std::bernoulli_distribution(0.75);
-            //svariable = std::uniform_int_distribution<>(1, 3);
+            generator = std::mt19937(rd()); // mersenne_twister_engine seeded with rd()
+            operation = std::uniform_int_distribution<>(1, 6);
+            constant = std::uniform_real_distribution<>(-1.0e6, 1.0e6);
+            nesting = std::bernoulli_distribution(0.75);
+            svariable = std::uniform_int_distribution<>(1, S);
         }
     };
 
