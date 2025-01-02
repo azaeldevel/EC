@@ -10,8 +10,6 @@ namespace core = oct::core::v3;
 namespace ec = oct::ec::v1;
 
 
-
-
 int v1_init(void);
 int v1_clean(void);
 void v1_developing();

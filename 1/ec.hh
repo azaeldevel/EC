@@ -8,37 +8,48 @@
 namespace oct::ec::v1
 {
     namespace core = oct::core::v3;
+    namespace ec = oct::ec::v1;
 
     /**
     *\brief Inteface para representa un individuo
     *\param N tipo de dato usado para calculos
     */
     template<core::number N = float>
-    struct Single
+    struct single
     {
 
     public:
         virtual N evaluate() const= 0;
     };
 
-
     /**
     *\brief Representa un individuo
     *\param N tipo de dato usado para calculos
     */
     template<core::number N = float>
-    struct Arithmetic : public Single<N>
+    struct arithmetic : public single<N>
     {
     public:
-        typedef Single<N> SINGLE_BASE;
+        typedef single<N> SINGLE_BASE;
 
     public:
-        Arithmetic() = default;
-        Arithmetic(const core::ast::Node<>& nin) : node(nin)
+        arithmetic() = default;
+        arithmetic(core::ast::node<N>& nin) : node(nin),auto_free(false)
         {
         }
-        Arithmetic(core::ast::Node<>&& nin)
+        arithmetic(core::ast::node<N>* nin) : node(nin),auto_free(false)
         {
+        }
+        arithmetic(core::ast::node<N>* nin,bool free) : node(nin),auto_free(free)
+        {
+        }
+        ~arithmetic()
+        {
+            if(auto_free)
+            {
+                delete node;
+                node = NULL;
+            }
         }
 
     public:
@@ -47,28 +58,95 @@ namespace oct::ec::v1
             return 0;
         }
 
-
-        static core::ast::Node<> populate_generic(std::mt19937& generator,std::uniform_int_distribution<>& operation,std::uniform_int_distribution<>& width,std::uniform_int_distribution<>& deep,std::bernoulli_distribution  nesting)
+        static core::ast::node<N>* populate_generic(std::mt19937& generator,std::uniform_int_distribution<>& operation,std::bernoulli_distribution  nesting,std::uniform_real_distribution<>& constant)
         {
-            core::ast::Node<> root;
-            root.resize(width(generator));
-            int tree_deep = deep(generator);
+            int opr = operation(generator);
+            bool netsa = nesting(generator);
+            bool netsb = nesting(generator);
 
-            for(size_t i = 0; i < root.size(); i++)
+            switch(opr)
             {
-                switch(operation(generator))
+            case 1:
+                if(netsa and netsb)
                 {
-                case 1://suma
-                    core::ast::arithmetic<float>(core::ast::typen::addition);
-                    break;
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::addition,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
                 }
+                else if(netsa and !netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::addition,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(!netsa and netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::addition,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(!netsa and !netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::addition,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                break;
+            case 2:
+                if(netsa and netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::subtraction,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(netsa and !netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::subtraction,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(!netsa and netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::subtraction,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(!netsa and !netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::subtraction,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                break;
+            case 3:
+                if(netsa and netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::product,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(netsa and !netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::product,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(!netsa and netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::product,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(!netsa and !netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::product,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                break;
+            case 4:
+                if(netsa and netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::quotient,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(netsa and !netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::quotient,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(!netsa and netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::quotient,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                else if(!netsa and !netsb)
+                {
+                    return (core::ast::node<N>*)new core::ast::arithmetic<N>(core::ast::typen::quotient,new core::ast::numeric<N>(constant(generator)),new core::ast::numeric<N>(constant(generator)));
+                }
+                break;
             }
 
-            return root;
+
+            return NULL;
         }
 
     public:
-        core::ast::Node<> node;
+        core::ast::node<N>* node;
+        bool auto_free;
 
     public:
 
@@ -86,9 +164,12 @@ namespace oct::ec::v1
 
     public:
         Town() = default;
-        Town(size_t s) : TOWN_BASE(s)
+        Town(size_t s) : TOWN_BASE(s),auto_free(false)
         {
         }
+
+    public:
+        bool auto_free;
     };
 
     /**
