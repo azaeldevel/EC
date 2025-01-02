@@ -15,7 +15,7 @@ namespace oct::ec::v1
     *\param N tipo de dato usado para calculos
     */
     template<core::number N = float>
-    struct single
+    struct Single
     {
 
     public:
@@ -27,23 +27,23 @@ namespace oct::ec::v1
     *\param N tipo de dato usado para calculos
     */
     template<core::number N = float>
-    struct arithmetic : public single<N>
+    struct Arithmetic : public Single<N>
     {
     public:
-        typedef single<N> SINGLE_BASE;
+        typedef Single<N> SINGLE_BASE;
 
     public:
-        arithmetic() = default;
-        arithmetic(core::ast::node<N>& nin) : node(nin),auto_free(false)
+        Arithmetic() = default;
+        Arithmetic(core::ast::node<N>& nin) : node(nin),auto_free(false)
         {
         }
-        arithmetic(core::ast::node<N>* nin) : node(nin),auto_free(false)
+        Arithmetic(core::ast::node<N>* nin) : node(nin),auto_free(false)
         {
         }
-        arithmetic(core::ast::node<N>* nin,bool free) : node(nin),auto_free(free)
+        Arithmetic(core::ast::node<N>* nin,bool free) : node(nin),auto_free(free)
         {
         }
-        ~arithmetic()
+        ~Arithmetic()
         {
             if(auto_free)
             {
@@ -57,6 +57,7 @@ namespace oct::ec::v1
         {
             return 0;
         }
+
 
         static core::ast::node<N>* populate_generic(std::mt19937& generator,std::uniform_int_distribution<>& operation,std::bernoulli_distribution  nesting,std::uniform_real_distribution<>& constant)
         {
@@ -151,6 +152,14 @@ namespace oct::ec::v1
     public:
 
     };
+
+    /*
+    template<core::number N = float> std::random_device Arithmetic<N>::rd;
+    template<core::number N = float> std::uniform_int_distribution Arithmetic<N>::generator(rd());
+    template<core::number N = float> std::uniform_real_distribution Arithmetic<N>::operation(T(-1.0e6), T(1.0e6));
+    template<core::number N = float> std::mt19937 Arithmetic<N>::constant(1, 4);
+    template<core::number N = float> std::bernoulli_distribution Arithmetic<N>::nesteing(T(0.7));
+    */
 
 
     /**
