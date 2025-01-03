@@ -34,6 +34,26 @@ namespace oct::ec::v1
 
     public:
         Arithmetic() = default;
+        Arithmetic(const Arithmetic& o) : node(NULL),auto_free(o.auto_free)
+        {
+            if(o.auto_free)
+            {
+                node = NULL;
+                auto_free = false;
+                throw core::exception("Se esta copiando on objeto com memoria en heap, no es posible continuar la operacion");
+            }
+            node = o.node;
+            auto_free = o.auto_free;
+        }
+        Arithmetic(Arithmetic&& o) : node(o.node),auto_free(o.auto_free)
+        {
+            o.node = NULL;
+            o.auto_free = false;
+        }
+        Arithmetic(core::ast::Variable<N> (&variables)[S]) : node(NULL),auto_free(true)
+        {
+            node_op(variables);
+        }
         Arithmetic(core::ast::node<>& nin) : node(nin),auto_free(false)
         {
         }
@@ -43,13 +63,37 @@ namespace oct::ec::v1
         Arithmetic(core::ast::node<>* nin,bool free) : node(nin),auto_free(free)
         {
         }
-        ~Arithmetic()
+        virtual ~Arithmetic()
         {
-            if(auto_free)
+            if(auto_free and node)
             {
                 delete node;
                 node = NULL;
             }
+        }
+
+        Arithmetic& operator =(const Arithmetic& o)
+        {
+            if(o.auto_free)
+            {
+                node = NULL;
+                auto_free = false;
+                throw core::exception("Se esta copiando on objeto com memoria en heap, no es posible continuar la operacion");
+            }
+            node = o.node;
+            auto_free = o.auto_free;
+
+            return *this;
+        }
+        Arithmetic& operator =(Arithmetic&& o)
+        {
+            node = o.node;
+            auto_free = o.auto_free;
+            o.node = NULL;
+            o.auto_free = false;
+            std::cout << "Asignacion de movimiento realizada...\n";
+
+            return *this;
         }
 
     public:
@@ -262,16 +306,15 @@ namespace oct::ec::v1
 
     public:
         Town() = default;
-        Town(size_t s) : TOWN_BASE(s),auto_free(true)
-        {
-        }
 
-        void populate(size_t s)
+        template<class... Args>
+        void populate(size_t s,Args... args)
         {
+            auto_free = true;
             this->resize(s);
             for(size_t i = 0; i < s; i++)
             {
-                this->operator[](i) = new T(T::create_node(),true);
+                this->operator[](i) =  T(args...);
             }
         }
 
