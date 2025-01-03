@@ -4,18 +4,16 @@
 	<CUnit/Basic.h>
 	"v1.hh"
 
-1735919934 /home/azael/develop/octetos/EC/tests/v1.hh
+1735920677 /home/azael/develop/octetos/EC/tests/v1.hh
 	<CUnit/Basic.h>
-	"../1/ec.hh"
+	"../1/math.hh"
 	<core/3/table.hh>
 
-1735919935 source:/home/azael/develop/octetos/EC/tests/v1.cc
+1735920661 source:/home/azael/develop/octetos/EC/tests/v1.cc
 	"v1.hh"
 
-1735920127 /home/azael/develop/octetos/EC/1/ec.hh
+1735921204 /home/azael/develop/octetos/EC/1/ec.hh
 	<core/3/array.hh>
-	<core/3/ast.hh>
-	<random>
 
 1732395672 /home/azael/develop/octetos/core/3/array.hh
 	<iostream>
@@ -54,4 +52,9 @@
 
 1733009504 /home/azael/develop/octetos/core/3/table.hh
 	"array.hh"
+
+1735921105 /home/azael/develop/octetos/EC/1/math.hh
+	"ec.hh"
+	<core/3/ast.hh>
+	<random>
 

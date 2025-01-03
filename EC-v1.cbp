@@ -59,6 +59,9 @@
 		<Unit filename="1/ec.hh">
 			<Option target="TDD" />
 		</Unit>
+		<Unit filename="1/math.hh">
+			<Option target="TDD" />
+		</Unit>
 		<Unit filename="tests/1/develop-formula-1.cc">
 			<Option target="develop-formula-1" />
 		</Unit>

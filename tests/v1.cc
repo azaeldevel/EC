@@ -35,7 +35,7 @@ void v1_developing()
     std::cout << "\n";
     single1.node->print(std::cout);
     std::cout << "\n";*/
-    ec::Town<ec::Arithmetic<3,float>,float> town;
+    ec::ArithmeticTown<ec::Arithmetic<3,float>,float> town;
     town.populate(10,variables);
     town.evaluate();
 }

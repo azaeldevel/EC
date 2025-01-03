@@ -3,7 +3,7 @@
 #define OCTETOS_EC_TDD_V1_HH
 
 #include <CUnit/Basic.h>
-#include "../1/ec.hh"
+#include "../1/math.hh"
 #include <core/3/table.hh>
 
 
