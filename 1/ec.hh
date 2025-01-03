@@ -171,15 +171,20 @@ namespace oct::ec::v1
             node = new core::ast::Arithmetic<N>(core::ast::typen(opr),a,b);
         }
 
+        Arithmetic& pair(const Arithmetic& o)
+        {
+
+        }
+
     public:
         bool auto_free;
         core::ast::Variable<N> (*variables)[S];
 
     public://genes
         core::ast::node<>* node;
-        N mutation;
-        unsigned width;
-        unsigned high;
+        unsigned width;//ancho del arbol
+        unsigned high;//profundidad del arbol
+        N mutability;
 
     public:
 
@@ -321,7 +326,6 @@ namespace oct::ec::v1
             return NULL;
     }
 
-    //template<core::index auto S = 1,core::number N = float> std::random_device Arithmetic<S<N>::rd;
 
     /**
     *\brief Una purblo es el conjunto minimo de poblacion posible

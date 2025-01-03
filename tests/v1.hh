@@ -4,6 +4,7 @@
 
 #include <CUnit/Basic.h>
 #include "../1/ec.hh"
+#include <core/3/table.hh>
 
 
 namespace core = oct::core::v3;

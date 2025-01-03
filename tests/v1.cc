@@ -26,6 +26,7 @@ void v1_developing()
     variables[1].data = 11.984;
     variables[2].name = "z";
     variables[2].data = 34.65417;
+    core::table<core::ast::Variable<float>,3> vars;
 
     ec::Arithmetic<3,float>::init_randsys();
 
