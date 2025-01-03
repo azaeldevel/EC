@@ -26,7 +26,7 @@ namespace oct::ec::v1
     *\brief Representa un individuo
     *\param N tipo de dato usado para calculos
     */
-    template<core::index auto S = 1,core::number N = float>
+    template<core::index auto S,core::number N>
     struct Arithmetic : public Single<N>
     {
     public:
@@ -34,13 +34,13 @@ namespace oct::ec::v1
 
     public:
         Arithmetic() = default;
-        Arithmetic(core::ast::node<N>& nin) : node(nin),auto_free(false)
+        Arithmetic(core::ast::node<>& nin) : node(nin),auto_free(false)
         {
         }
-        Arithmetic(core::ast::node<N>* nin) : node(nin),auto_free(false)
+        Arithmetic(core::ast::node<>* nin) : node(nin),auto_free(false)
         {
         }
-        Arithmetic(core::ast::node<N>* nin,bool free) : node(nin),auto_free(free)
+        Arithmetic(core::ast::node<>* nin,bool free) : node(nin),auto_free(free)
         {
         }
         ~Arithmetic()
@@ -59,7 +59,7 @@ namespace oct::ec::v1
         }
 
 
-        static core::ast::node<N>* create_node()
+        static core::ast::node<>* create_node()
         {
             int opr = operation(generator);
             bool netsa = nesting(generator);
@@ -72,25 +72,25 @@ namespace oct::ec::v1
                 {
                     core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::quotient,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
                     core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::product,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
                 }
                 else if(netsa and !netsb)
                 {
                     core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::quotient,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
                 }
                 else if(!netsa and netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
                     core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
                 }
                 else if(!netsa and !netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
                 }
                 break;
             case 2:
@@ -98,25 +98,25 @@ namespace oct::ec::v1
                 {
                     core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::subtraction,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
                     core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
                 }
                 else if(netsa and !netsb)
                 {
                     core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::product,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
                 }
                 else if(!netsa and netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
                     core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
                 }
                 else if(!netsa and !netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
                 }
                 break;
             case 3:
@@ -124,25 +124,25 @@ namespace oct::ec::v1
                 {
                     core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
                     core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::quotient,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
                 }
                 else if(netsa and !netsb)
                 {
                     core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::subtraction,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
                 }
                 else if(!netsa and netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
                     core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
                 }
                 else if(!netsa and !netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
                 }
                 break;
             case 4:
@@ -150,29 +150,29 @@ namespace oct::ec::v1
                 {
                     core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::quotient,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
                     core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::product,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
                 }
                 else if(netsa and !netsb)
                 {
                     core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
                 }
                 else if(!netsa and netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
                     core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
                 }
                 else if(!netsa and !netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<N>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
                 }
                 break;
             case 5:
-                return (core::ast::node<N>*) new core::ast::Numeric<N>(constant(generator));
+                return (core::ast::node<>*) new core::ast::Numeric<N>(constant(generator));
             case 6:
                 return NULL;//(core::ast::node<N>*) &varaibles[svar(generator)]
             }
@@ -181,7 +181,7 @@ namespace oct::ec::v1
         }
 
     public:
-        core::ast::node<N>* node;
+        core::ast::node<>* node;
         bool auto_free;
 
     public:
@@ -211,7 +211,7 @@ namespace oct::ec::v1
     /**
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
-    template<class T,core::number N = float>
+    template<class T,core::number N>
     struct Town : public core::array<T>
     {
     public:
@@ -228,7 +228,7 @@ namespace oct::ec::v1
             this->resize(s);
             for(size_t i = 0; i < s; i++)
             {
-
+                this->operator[](i) = new T(T::create_node(),true);
             }
         }
 
@@ -241,11 +241,11 @@ namespace oct::ec::v1
     /**
     *\brief Es el conjunto de Pueblos
     */
-    template<class T,core::number N = float>
-    struct City : public core::array<Town<T>>
+    template<class T,core::number N>
+    struct City : public core::array<Town<T,N>>
     {
     public:
-        typedef core::array<Town<T>> CITY_BASE;
+        typedef core::array<Town<T,N>> CITY_BASE;
 
     public:
         City() = default;
@@ -257,11 +257,11 @@ namespace oct::ec::v1
     /**
     *\brief Es el conjunto de Pueblos
     */
-    template<class T,core::number N = float>
-    struct State : public core::array<City<T>>
+    template<class T,core::number N>
+    struct State : public core::array<City<T,N>>
     {
     public:
-        typedef core::array<City<T>> STATE_BASE;
+        typedef core::array<City<T,N>> STATE_BASE;
 
     public:
         State() = default;
@@ -273,11 +273,11 @@ namespace oct::ec::v1
     /**
     *\brief Es el conjunto de Pueblos
     */
-    template<class T,core::number N = float>
-    struct Country : public core::array<State<T>>
+    template<class T,core::number N>
+    struct Country : public core::array<State<T,N>>
     {
     public:
-        typedef core::array<State<T>> COUNTRY_BASE;
+        typedef core::array<State<T,N>> COUNTRY_BASE;
 
     public:
         Country() = default;
