@@ -58,126 +58,50 @@ namespace oct::ec::v1
             return 0;
         }
 
-
-        static core::ast::node<>* create_node()
+        void rand_node(core::ast::Variable<N> (&variables)[S])
         {
-            int opr = operation(generator);
-            bool netsa = nesting(generator);
-            bool netsb = nesting(generator);
-
-            switch(opr)
+            switch(randon_node(generator))
             {
             case 1:
-                if(netsa and netsb)
-                {
-                    core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::quotient,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::product,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
-                }
-                else if(netsa and !netsb)
-                {
-                    core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::quotient,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
-                }
-                else if(!netsa and netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
-                    core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
-                }
-                else if(!netsa and !netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
-                }
+                node = rand_op(variables);
                 break;
             case 2:
-                if(netsa and netsb)
-                {
-                    core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::subtraction,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
-                }
-                else if(netsa and !netsb)
-                {
-                    core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::product,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
-                }
-                else if(!netsa and netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
-                    core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
-                }
-                else if(!netsa and !netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
-                }
+                node = &variables[svariable(generator)];
                 break;
             case 3:
-                if(netsa and netsb)
-                {
-                    core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::quotient,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
-                }
-                else if(netsa and !netsb)
-                {
-                    core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::subtraction,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
-                }
-                else if(!netsa and netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
-                    core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
-                }
-                else if(!netsa and !netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
-                }
+                node = new core::ast::Numeric<N>(constant(generator));
                 break;
-            case 4:
-                if(netsa and netsb)
-                {
-                    core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::quotient,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::product,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
-                }
-                else if(netsa and !netsb)
-                {
-                    core::ast::Arithmetic<N>* da = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
-                }
-                else if(!netsa and netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
-                    core::ast::Arithmetic<N>* db = new core::ast::Arithmetic<N>(core::ast::typen::addition,new core::ast::Numeric<N>(constant(generator)),new core::ast::Numeric<N>(constant(generator)));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
-                }
-                else if(!netsa and !netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(constant(generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(constant(generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
-                }
+            default:
+                node = rand_op(variables);
                 break;
-            case 5:
-                return (core::ast::node<>*) new core::ast::Numeric<N>(constant(generator));
-            case 6:
-                return NULL;//(core::ast::node<N>*) &varaibles[svar(generator)]
+            }
+        }
+        void rand_op(core::ast::Variable<N> (&variables)[S])
+        {
+            int opr = Arithmetic<S,N>::operation(generator);
+            opr = opr + ((int)core::ast::typen::arithmetic);
+
+            core::ast::Numeric<N>* a;
+            if(nesting(generator))
+            {
+                a = &variables[svariable(generator)];
+            }
+            else
+            {
+                a = new core::ast::Numeric<N>(constant(generator));
             }
 
-            return NULL;
+            core::ast::Numeric<N>* b;
+            if(nesting(generator))
+            {
+                b = &variables[svariable(generator)];
+            }
+            else
+            {
+                b = new core::ast::Numeric<N>(constant(generator));
+            }
+
+            node = new core::ast::Arithmetic<N>(core::ast::typen(opr),a,b);
         }
 
     public:
@@ -185,7 +109,7 @@ namespace oct::ec::v1
         bool auto_free;
 
     public:
-        core::ast::Numeric<N> varaibles[S];
+
 
     public:
         static inline std::random_device rd;
@@ -194,17 +118,136 @@ namespace oct::ec::v1
         static inline std::uniform_real_distribution<> constant;
         static inline std::bernoulli_distribution nesting;
         static inline std::uniform_int_distribution<> svariable;
+        static inline std::uniform_int_distribution<> randon_node;
 
         static void init_randsys()
         {
             generator = std::mt19937(rd()); // mersenne_twister_engine seeded with rd()
-            operation = std::uniform_int_distribution<>(1, 6);
+            operation = std::uniform_int_distribution<>(1, 4);
             constant = std::uniform_real_distribution<>(-1.0e6, 1.0e6);
             nesting = std::bernoulli_distribution(0.75);
-            svariable = std::uniform_int_distribution<>(1, S);
+            svariable = std::uniform_int_distribution<>(0, S - 1);
+            randon_node = std::uniform_int_distribution<>(1, 3);//operacion,variable,constante
         }
     };
 
+    template<core::index auto S,core::number N>
+    static core::ast::node<>* create_oper()
+    {
+        int opr = Arithmetic<S,N>::operation(Arithmetic<S,N>::generator);
+        bool netsa = Arithmetic<S,N>::nesting(Arithmetic<S,N>::generator);
+        bool netsb = Arithmetic<S,N>::nesting(Arithmetic<S,N>::generator);
+
+        switch(opr)
+        {
+            case 1:
+                if(netsa and netsb)
+                {
+                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                }
+                else if(netsa and !netsb)
+                {
+                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                }
+                else if(!netsa and netsb)
+                {
+                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                }
+                else if(!netsa and !netsb)
+                {
+                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                }
+                break;
+            case 2:
+                if(netsa and netsb)
+                {
+                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                }
+                else if(netsa and !netsb)
+                {
+                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                }
+                else if(!netsa and netsb)
+                {
+                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                }
+                else if(!netsa and !netsb)
+                {
+                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                }
+                break;
+            case 3:
+                if(netsa and netsb)
+                {
+                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                }
+                else if(netsa and !netsb)
+                {
+                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                }
+                else if(!netsa and netsb)
+                {
+                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                }
+                else if(!netsa and !netsb)
+                {
+                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                }
+                break;
+            case 4:
+                if(netsa and netsb)
+                {
+                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                }
+                else if(netsa and !netsb)
+                {
+                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                }
+                else if(!netsa and netsb)
+                {
+                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                }
+                else if(!netsa and !netsb)
+                {
+                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
+                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                }
+                break;
+        }
+
+            return NULL;
+    }
 
     //template<core::index auto S = 1,core::number N = float> std::random_device Arithmetic<S<N>::rd;
 
