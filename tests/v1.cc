@@ -21,16 +21,20 @@ void v1_developing()
 {
     core::ast::Variable<float> variables[3];
     variables[0].name = "x";
+    variables[0].data = 5.0987;
     variables[1].name = "y";
+    variables[1].data = 11.984;
     variables[2].name = "z";
+    variables[2].data = 34.65417;
 
     ec::Arithmetic<3,float>::init_randsys();
 
-    ec::Arithmetic<3,float> single1;
-    single1.rand_op(variables);
+    /*ec::Arithmetic<3,float> single1;
+    single1.rand_op();
     std::cout << "\n";
     single1.node->print(std::cout);
-    std::cout << "\n";
+    std::cout << "\n";*/
     ec::Town<ec::Arithmetic<3,float>,float> town;
     town.populate(10,variables);
+    town.evaluate();
 }

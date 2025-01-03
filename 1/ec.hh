@@ -34,7 +34,7 @@ namespace oct::ec::v1
 
     public:
         Arithmetic() = default;
-        Arithmetic(const Arithmetic& o) : node(NULL),auto_free(o.auto_free)
+        Arithmetic(const Arithmetic& o) : auto_free(o.auto_free),node(NULL),variables(NULL)
         {
             if(o.auto_free)
             {
@@ -44,24 +44,17 @@ namespace oct::ec::v1
             }
             node = o.node;
             auto_free = o.auto_free;
+            variables = o.variables;
         }
-        Arithmetic(Arithmetic&& o) : node(o.node),auto_free(o.auto_free)
+        Arithmetic(Arithmetic&& o) : auto_free(o.auto_free),node(o.node),variables(o.variables)
         {
             o.node = NULL;
             o.auto_free = false;
+            o.variables = NULL;
         }
-        Arithmetic(core::ast::Variable<N> (&variables)[S]) : node(NULL),auto_free(true)
+        Arithmetic(core::ast::Variable<N> (&vs)[S]) : auto_free(true),node(NULL),variables(&vs)
         {
-            node_op(variables);
-        }
-        Arithmetic(core::ast::node<>& nin) : node(nin),auto_free(false)
-        {
-        }
-        Arithmetic(core::ast::node<>* nin) : node(nin),auto_free(false)
-        {
-        }
-        Arithmetic(core::ast::node<>* nin,bool free) : node(nin),auto_free(free)
-        {
+            this->rand_op();
         }
         virtual ~Arithmetic()
         {
@@ -69,6 +62,8 @@ namespace oct::ec::v1
             {
                 delete node;
                 node = NULL;
+                variables = NULL;
+                auto_free = false;
             }
         }
 
@@ -82,16 +77,21 @@ namespace oct::ec::v1
             }
             node = o.node;
             auto_free = o.auto_free;
+            variables = o.variables;
 
             return *this;
         }
         Arithmetic& operator =(Arithmetic&& o)
         {
+            //
             node = o.node;
             auto_free = o.auto_free;
+            variables = o.variables;
+            //
             o.node = NULL;
             o.auto_free = false;
-            std::cout << "Asignacion de movimiento realizada...\n";
+            o.variables = NULL;
+            //std::cout << "Asignacion de movimiento realizada...\n";
 
             return *this;
         }
@@ -99,36 +99,59 @@ namespace oct::ec::v1
     public:
         virtual N evaluate() const
         {
-            return 0;
+            N n;
+
+            switch(node->type)
+            {
+            case core::ast::typen::addition:
+            case core::ast::typen::subtraction:
+            case core::ast::typen::product:
+            case core::ast::typen::quotient:
+                n = static_cast<core::ast::Arithmetic<N>*>(node)->result();
+                break;
+            case core::ast::typen::number:
+                n = static_cast<core::ast::Numeric<N>*>(node)->result();
+                break;
+            case core::ast::typen::variable:
+                n = static_cast<core::ast::Variable<N>*>(node)->result();
+                break;
+            default:
+                break;
+            }
+            N value = (*variables)[0].data * (*variables)[1].data;
+            //std::cout << "value = " << value << "\n";
+            N eval = N(1)/std::abs(value - n);
+
+            return eval;
         }
 
-        void rand_node(core::ast::Variable<N> (&variables)[S])
+        void rand_node()
         {
             switch(randon_node(generator))
             {
             case 1:
-                node = rand_op(variables);
+                node = rand_op();
                 break;
             case 2:
-                node = &variables[svariable(generator)];
+                node = (*variables)[svariable(generator)];
                 break;
             case 3:
                 node = new core::ast::Numeric<N>(constant(generator));
                 break;
             default:
-                node = rand_op(variables);
+                node = rand_op();
                 break;
             }
         }
-        void rand_op(core::ast::Variable<N> (&variables)[S])
+        void rand_op()
         {
-            int opr = Arithmetic<S,N>::operation(generator);
+            int opr = operation(generator);
             opr = opr + ((int)core::ast::typen::arithmetic);
 
             core::ast::Numeric<N>* a;
             if(nesting(generator))
             {
-                a = &variables[svariable(generator)];
+                a = &(*variables)[svariable(generator)];
             }
             else
             {
@@ -138,7 +161,7 @@ namespace oct::ec::v1
             core::ast::Numeric<N>* b;
             if(nesting(generator))
             {
-                b = &variables[svariable(generator)];
+                b = &(*variables)[svariable(generator)];
             }
             else
             {
@@ -149,11 +172,16 @@ namespace oct::ec::v1
         }
 
     public:
-        core::ast::node<>* node;
         bool auto_free;
+        core::ast::Variable<N> (*variables)[S];
+
+    public://genes
+        core::ast::node<>* node;
+        N mutation;
+        unsigned width;
+        unsigned high;
 
     public:
-
 
     public:
         static inline std::random_device rd;
@@ -307,16 +335,27 @@ namespace oct::ec::v1
     public:
         Town() = default;
 
-        template<class... Args>
-        void populate(size_t s,Args... args)
+        template<core::index auto S>
+        void populate(size_t s, core::ast::Variable<N> (&vs)[S])
         {
             auto_free = true;
             this->resize(s);
             for(size_t i = 0; i < s; i++)
             {
-                this->operator[](i) =  T(args...);
+                this->operator[](i) =  T(vs);
             }
         }
+
+        void evaluate()
+        {
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                std::cout << "evaluate : ";
+                std::cout << this->operator[](i).evaluate();
+                std::cout << "\n";
+            }
+        }
+
 
     public:
         bool auto_free;
