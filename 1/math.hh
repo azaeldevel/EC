@@ -92,7 +92,7 @@ namespace oct::ec::v1
             case core::ast::typen::subtraction:
             case core::ast::typen::product:
             case core::ast::typen::quotient:
-                n = static_cast<core::ast::Arithmetic<N>*>(node)->result();
+                n = static_cast<core::ast::Binopr<N>*>(node)->result();
                 break;
             case core::ast::typen::number:
                 n = static_cast<core::ast::Numeric<N>*>(node)->result();
@@ -128,6 +128,8 @@ namespace oct::ec::v1
                 break;
             }
         }
+
+
         void rand_op()
         {
             int opr = operation(generator);
@@ -153,7 +155,7 @@ namespace oct::ec::v1
                 b = new core::ast::Numeric<N>(constant(generator));
             }
 
-            node = new core::ast::Arithmetic<N>(core::ast::typen(opr),a,b);
+            node = new core::ast::Binopr<N>(core::ast::typen(opr),a,b);
             width = 2;
             high = 1;
         }
@@ -165,7 +167,7 @@ namespace oct::ec::v1
 
         void partial_copy(const Arithmetic& o,const Arithmetic& p)
         {
-            if(selection(generator))
+            if(binary_selection(generator))
             {//coopiar o
 
             }
@@ -227,25 +229,25 @@ namespace oct::ec::v1
                 {
                     core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::addition,da,db);
                 }
                 else if(netsa and !netsb)
                 {
                     core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::addition,da,db);
                 }
                 else if(!netsa and netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::addition,da,db);
                 }
                 else if(!netsa and !netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::addition,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::addition,da,db);
                 }
                 break;
             case 2:
@@ -253,25 +255,25 @@ namespace oct::ec::v1
                 {
                     core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::subtraction,da,db);
                 }
                 else if(netsa and !netsb)
                 {
                     core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::subtraction,da,db);
                 }
                 else if(!netsa and netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::subtraction,da,db);
                 }
                 else if(!netsa and !netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::subtraction,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::subtraction,da,db);
                 }
                 break;
             case 3:
@@ -279,25 +281,25 @@ namespace oct::ec::v1
                 {
                     core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::product,da,db);
                 }
                 else if(netsa and !netsb)
                 {
                     core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::product,da,db);
                 }
                 else if(!netsa and netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::product,da,db);
                 }
                 else if(!netsa and !netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::product,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::product,da,db);
                 }
                 break;
             case 4:
@@ -305,25 +307,25 @@ namespace oct::ec::v1
                 {
                     core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::quotient,da,db);
                 }
                 else if(netsa and !netsb)
                 {
                     core::ast::Variable<N>* da = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::quotient,da,db);
                 }
                 else if(!netsa and netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Variable<N>* db = new core::ast::Variable<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::quotient,da,db);
                 }
                 else if(!netsa and !netsb)
                 {
                     core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
                     core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Arithmetic<S,N>::constant(Arithmetic<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Arithmetic<N>(core::ast::typen::quotient,da,db);
+                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::quotient,da,db);
                 }
                 break;
         }
