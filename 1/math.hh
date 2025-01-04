@@ -154,12 +154,28 @@ namespace oct::ec::v1
             }
 
             node = new core::ast::Arithmetic<N>(core::ast::typen(opr),a,b);
+            width = 2;
+            high = 1;
         }
 
-        Arithmetic& pair(const Arithmetic& o)
+        void from(const Arithmetic& o,const Arithmetic& p)
         {
-
         }
+
+
+        void partial_copy(const Arithmetic& o,const Arithmetic& p)
+        {
+            if(selection(generator))
+            {//coopiar o
+
+            }
+            else
+            {//copiar p
+
+            }
+        }
+
+
 
     public:
         bool auto_free;
@@ -169,7 +185,7 @@ namespace oct::ec::v1
         core::ast::node<>* node;
         unsigned width;//ancho del arbol
         unsigned high;//profundidad del arbol
-        N mutability;
+
 
     public:
 
@@ -181,6 +197,8 @@ namespace oct::ec::v1
         static inline std::bernoulli_distribution nesting;
         static inline std::uniform_int_distribution<> svariable;
         static inline std::uniform_int_distribution<> randon_node;
+        static inline std::bernoulli_distribution mutability;
+        static inline std::bernoulli_distribution binary_selection;
 
         static void init_randsys()
         {
@@ -190,6 +208,8 @@ namespace oct::ec::v1
             nesting = std::bernoulli_distribution(0.75);
             svariable = std::uniform_int_distribution<>(0, S - 1);
             randon_node = std::uniform_int_distribution<>(1, 3);//operacion,variable,constante
+            mutability = std::bernoulli_distribution(0.02);
+            binary_selection = std::bernoulli_distribution(0.5);
         }
     };
 
