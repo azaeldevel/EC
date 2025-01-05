@@ -2,7 +2,7 @@
 #define OCTETOS_EC_V1_MATH_HH_INCLUDED
 
 #include "ec.hh"
-#include <core/3/ast.hh>
+#include <core/3/ast-math.hh>
 #include <core/3/table.hh>
 #include <random>
 
@@ -98,7 +98,7 @@ namespace oct::ec::v1
                 n = static_cast<core::ast::Binopr<N>*>(node)->result();
                 break;
             case core::ast::typen::number:
-                n = static_cast<core::ast::Numeric<N>*>(node)->result();
+                n = static_cast<core::ast::Number<N>*>(node)->result();
                 break;
             case core::ast::typen::variable:
                 n = static_cast<core::ast::Variable<N>*>(node)->result();
@@ -122,10 +122,10 @@ namespace oct::ec::v1
                 node = rand_op();
                 break;
             case 2:
-                node = new Variable<N>;
+                node = new core::ast::Variable<N>(svariable(generator));
                 break;
             case 3:
-                node = new core::ast::Numeric<N>(constant(generator));
+                node = new core::ast::Number<N>(constant(generator));
                 break;
             default:
                 node = rand_op();
@@ -144,21 +144,21 @@ namespace oct::ec::v1
             core::ast::node<>* a;
             if(nesting(generator))
             {
-                a = new Variable<N>(svariable(generator));
+                a = new core::ast::Variable<N>(svariable(generator));
             }
             else
             {
-                a = new core::ast::Numeric<N>(constant(generator));
+                a = new core::ast::Number<N>(constant(generator));
             }
 
             core::ast::node<>* b;
             if(nesting(generator))
             {
-                b = new Variable<N>(svariable(generator));
+                b = new core::ast::Variable<N>(svariable(generator));
             }
             else
             {
-                b = new core::ast::Numeric<N>(constant(generator));
+                b = new core::ast::Number<N>(constant(generator));
             }
 
             return new core::ast::Binopr<N>(core::ast::typen(opr),a,b);
@@ -218,124 +218,6 @@ namespace oct::ec::v1
             binary_selection = std::bernoulli_distribution(0.5);
         }
     };
-
-    template<core::index auto S,core::number N>
-    static core::ast::node<>* create_oper()
-    {
-        int opr = Binopr<S,N>::operation(Binopr<S,N>::generator);
-        bool netsa = Binopr<S,N>::nesting(Binopr<S,N>::generator);
-        bool netsb = Binopr<S,N>::nesting(Binopr<S,N>::generator);
-
-        switch(opr)
-        {
-            case 1:
-                if(netsa and netsb)
-                {
-                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::addition,da,db);
-                }
-                else if(netsa and !netsb)
-                {
-                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::addition,da,db);
-                }
-                else if(!netsa and netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::addition,da,db);
-                }
-                else if(!netsa and !netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::addition,da,db);
-                }
-                break;
-            case 2:
-                if(netsa and netsb)
-                {
-                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::subtraction,da,db);
-                }
-                else if(netsa and !netsb)
-                {
-                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::subtraction,da,db);
-                }
-                else if(!netsa and netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::subtraction,da,db);
-                }
-                else if(!netsa and !netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::subtraction,da,db);
-                }
-                break;
-            case 3:
-                if(netsa and netsb)
-                {
-                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::product,da,db);
-                }
-                else if(netsa and !netsb)
-                {
-                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::product,da,db);
-                }
-                else if(!netsa and netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::product,da,db);
-                }
-                else if(!netsa and !netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::product,da,db);
-                }
-                break;
-            case 4:
-                if(netsa and netsb)
-                {
-                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::quotient,da,db);
-                }
-                else if(netsa and !netsb)
-                {
-                    core::ast::Variable<N>* da = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::quotient,da,db);
-                }
-                else if(!netsa and netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Variable<N>* db = new core::ast::Variable<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::quotient,da,db);
-                }
-                else if(!netsa and !netsb)
-                {
-                    core::ast::Numeric<N>* da = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    core::ast::Numeric<N>* db = new core::ast::Numeric<N>(Binopr<S,N>::constant(Binopr<S,N>::generator));
-                    return (core::ast::node<>*) new core::ast::Binopr<N>(core::ast::typen::quotient,da,db);
-                }
-                break;
-        }
-
-        return NULL;
-    }
 
 
     /**

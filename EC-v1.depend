@@ -31,14 +31,14 @@
 	<cmath>
 	<numbers>
 
-1735979604 /home/azael/develop/octetos/numbers
+1736069156 /home/azael/develop/octetos/numbers
 
 1731726882 /home/azael/develop/octetos/core/3/entity.hh
 	<concepts>
 	<cctype>
 	<cstddef>
 
-1736040308 /home/azael/develop/octetos/core/3/ast.hh
+1736062297 /home/azael/develop/octetos/core/3/ast.hh
 	<typeinfo>
 	"array.hh"
 	"Exception.hh"
@@ -54,9 +54,12 @@
 1733009504 /home/azael/develop/octetos/core/3/table.hh
 	"array.hh"
 
-1736051132 /home/azael/develop/octetos/EC/1/math.hh
+1736110506 /home/azael/develop/octetos/EC/1/math.hh
 	"ec.hh"
-	<core/3/ast.hh>
+	<core/3/ast-math.hh>
 	<core/3/table.hh>
 	<random>
+
+1736109340 /home/azael/develop/octetos/core/3/ast-math.hh
+	"ast.hh"
 
