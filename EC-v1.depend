@@ -9,7 +9,7 @@
 	"../1/math.hh"
 	<core/3/table.hh>
 
-1736042033 source:/home/azael/develop/octetos/EC/tests/v1.cc
+1736042063 source:/home/azael/develop/octetos/EC/tests/v1.cc
 	"v1.hh"
 
 1736035161 /home/azael/develop/octetos/EC/1/ec.hh
@@ -54,7 +54,7 @@
 1733009504 /home/azael/develop/octetos/core/3/table.hh
 	"array.hh"
 
-1736041521 /home/azael/develop/octetos/EC/1/math.hh
+1736051132 /home/azael/develop/octetos/EC/1/math.hh
 	"ec.hh"
 	<core/3/ast.hh>
 	<core/3/table.hh>

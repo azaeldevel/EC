@@ -11,85 +11,6 @@ namespace oct::ec::v1
     template<typename T,core::index auto C = 0,core::index auto R = 0,core::index I = size_t> using inputs = core::table<T,C,R,I>;
 
     /**
-    *\brief Indica una variable(columna) en la tabla de inputs
-    *\param T parametro de plantilla para determinar el tipo de nodo
-    **/
-    template<core::number N,class T = core::ast::typen> struct Variable : public core::ast::node<T>
-    {
-    public:
-        typedef core::ast::node<T> NUMERIC_NODE;
-
-    public:
-        Variable() : NUMERIC_NODE(T::variable)
-        {
-        }
-        Variable(const Variable& o) : NUMERIC_NODE(o)
-        {
-        }
-        Variable(const Variable* o) : NUMERIC_NODE(o)
-        {
-        }
-        Variable(T t) : NUMERIC_NODE(t)
-        {
-        }
-        Variable(size_t d) : NUMERIC_NODE(T::variable,d)
-        {
-        }
-        Variable(const char* n) : NUMERIC_NODE(T::variable),name(n)
-        {
-        }
-        Variable(const std::string& n) : NUMERIC_NODE(T::variable),name(n)
-        {
-        }
-        Variable(const std::string& n,size_t d) : NUMERIC_NODE(T::variable,d),name(n)
-        {
-        }
-        virtual ~Variable()
-        {
-        }
-
-        virtual void print(std::ostream& out) const
-        {
-            switch(this->type)
-            {
-            case T::variable:
-                out << name;
-                break;
-            default:
-                out << "variable-desconocido";
-            }
-        }
-        template<core::index auto S = 1>
-        void print(std::ostream& out,const inputs<N,S>& ins) const
-        {
-            switch(this->type)
-            {
-            case T::variable:
-                out << name;
-                break;
-            default:
-                out << "variable-desconocido";
-            }
-        }
-
-        operator size_t()const
-        {
-            return index;
-        }
-        Variable& operator = (size_t i)
-        {
-            index = i;
-
-            return *this;
-        }
-
-    public:
-        std::string name;
-        size_t index;//dato input
-    };
-
-
-    /**
     *\brief Representa un individuo
     *\param N tipo de dato usado para calculos
     */
@@ -223,7 +144,7 @@ namespace oct::ec::v1
             core::ast::node<>* a;
             if(nesting(generator))
             {
-                a = new Variable<N>;
+                a = new Variable<N>(svariable(generator));
             }
             else
             {
@@ -233,7 +154,7 @@ namespace oct::ec::v1
             core::ast::node<>* b;
             if(nesting(generator))
             {
-                b = new Variable<N>;
+                b = new Variable<N>(svariable(generator));
             }
             else
             {
