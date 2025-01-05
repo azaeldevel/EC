@@ -19,25 +19,19 @@ int v1_clean(void)
 
 void v1_developing()
 {
-    core::ast::Variable<float> variables[3];
-    variables[0].name = "x";
-    variables[0].data = 5.0987;
-    variables[1].name = "y";
-    variables[1].data = 11.984;
-    variables[2].name = "z";
-    variables[2].data = 34.65417;
-
-    ec::inputs<float,3> vars;
-    vars.resize(10);
-
     ec::Binopr<3,float>::init_randsys();
 
-    /*ec::Arithmetic<3,float> single1;
-    single1.rand_op();
-    std::cout << "\n";
-    single1.node->print(std::cout);
-    std::cout << "\n";*/
+    ec::inputs<float,3> vars;
+    vars.resize(2);//cantidad de resgistro
+    vars[0][0] = 1.2;
+    vars[0][1] = 65.964;
+    vars[0][2] = 198.1254832;
+    vars[1][0] = 9653.264;
+    vars[1][1] = 2.3154;
+    vars[1][2] = 198.1254832;
+
     ec::BinoprTown<ec::Binopr<3,float>,float> town;
     town.populate(10,vars);
     town.evaluate();
+
 }
