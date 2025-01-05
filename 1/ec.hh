@@ -7,7 +7,6 @@
 namespace oct::ec::v1
 {
     namespace core = oct::core::v3;
-    namespace ec = oct::ec::v1;
 
     /**
     *\brief Inteface para representa un individuo

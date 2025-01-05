@@ -9,10 +9,10 @@
 	"../1/math.hh"
 	<core/3/table.hh>
 
-1735920661 source:/home/azael/develop/octetos/EC/tests/v1.cc
+1736041523 source:/home/azael/develop/octetos/EC/tests/v1.cc
 	"v1.hh"
 
-1735921204 /home/azael/develop/octetos/EC/1/ec.hh
+1736035161 /home/azael/develop/octetos/EC/1/ec.hh
 	<core/3/array.hh>
 
 1732395672 /home/azael/develop/octetos/core/3/array.hh
@@ -38,7 +38,7 @@
 	<cctype>
 	<cstddef>
 
-1736032522 /home/azael/develop/octetos/core/3/ast.hh
+1736040308 /home/azael/develop/octetos/core/3/ast.hh
 	<typeinfo>
 	"array.hh"
 	"Exception.hh"
@@ -54,8 +54,9 @@
 1733009504 /home/azael/develop/octetos/core/3/table.hh
 	"array.hh"
 
-1736032667 /home/azael/develop/octetos/EC/1/math.hh
+1736041521 /home/azael/develop/octetos/EC/1/math.hh
 	"ec.hh"
 	<core/3/ast.hh>
+	<core/3/table.hh>
 	<random>
 

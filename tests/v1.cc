@@ -26,16 +26,18 @@ void v1_developing()
     variables[1].data = 11.984;
     variables[2].name = "z";
     variables[2].data = 34.65417;
-    core::table<core::ast::Variable<float>,3> vars;
 
-    ec::Arithmetic<3,float>::init_randsys();
+    ec::inputs<float,3> vars;
+    vars.resize(10);
+
+    ec::Binopr<3,float>::init_randsys();
 
     /*ec::Arithmetic<3,float> single1;
     single1.rand_op();
     std::cout << "\n";
     single1.node->print(std::cout);
     std::cout << "\n";*/
-    ec::ArithmeticTown<ec::Arithmetic<3,float>,float> town;
-    town.populate(10,variables);
+    ec::BinoprTown<ec::Binopr<3,float>,float> town;
+    town.populate(10,vars);
     town.evaluate();
 }
