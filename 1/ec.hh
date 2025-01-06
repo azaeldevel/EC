@@ -39,32 +39,7 @@ namespace oct::ec::v1
     public:
         Town() = default;
 
-
-        virtual void evaluate()
-        {
-            for(size_t i = 0; i < this->size(); i++)
-            {
-                this->operator[](i)->ranking = this->operator[](i)->evaluate();
-            }
-            /*for(size_t i = 0; i < this->size(); i++)
-            {
-                std::cout << "evaluate : ";
-                std::cout << this->operator[](i)->ranking;
-                std::cout << "\n";
-            }*/
-            auto cmpfun = [](T* a,T* b)
-            {
-                return  a->ranking > b->ranking;
-            };
-            std::sort(this->begin(),this->end(),cmpfun);
-            for(size_t i = 0; i < this->size(); i++)
-            {
-                std::cout << "evaluate : ";
-                std::cout << this->operator[](i)->ranking;
-                std::cout << "\n";
-            }
-        }
-
+        virtual void evaluate() = 0;
 
     public:
         bool auto_free;

@@ -19,10 +19,11 @@ namespace oct::ec::v1
     {
     public:
         typedef Single<N> SINGLE_BASE;
+        typedef N (*evaluator)(const inputs<N,S>*);
 
     public:
         Binopr() = default;
-        Binopr(const Binopr& o) : auto_free(o.auto_free),variables(NULL),node(NULL)
+        Binopr(const Binopr& o) : auto_free(o.auto_free),variables(NULL),node(NULL),eval_actual(NULL)
         {
             if(o.auto_free)
             {
@@ -33,14 +34,15 @@ namespace oct::ec::v1
             node = o.node;
             auto_free = o.auto_free;
             variables = o.variables;
+            eval_actual = o.eval_actual;
         }
-        Binopr(Binopr&& o) : auto_free(o.auto_free),variables(o.variables),node(o.node)
+        Binopr(Binopr&& o) : auto_free(o.auto_free),variables(o.variables),node(o.node),eval_actual(o.eval_actual)
         {
             o.node = NULL;
             o.auto_free = false;
             o.variables = NULL;
         }
-        Binopr(const inputs<N,S>& ins) : auto_free(true),variables(&ins),node(NULL)
+        Binopr(const inputs<N,S>& ins,evaluator evalr) : auto_free(true),variables(&ins),node(NULL),eval_actual(evalr)
         {
             node = rand_node();
         }
@@ -84,6 +86,11 @@ namespace oct::ec::v1
             return *this;
         }
 
+        static N eval_constant(const inputs<N,S>* vars)
+        {
+            return (*vars)[0][0];
+        }
+
     public:
         virtual N evaluate() const
         {
@@ -106,7 +113,7 @@ namespace oct::ec::v1
             default:
                 break;
             }
-            N value = (*variables)[0][0] * (*variables)[0][1];
+            N value = eval_actual(variables);
             //std::cout << "value = " << value << "\n";
             N eval = N(1)/std::abs(value - n);
 
@@ -295,6 +302,7 @@ namespace oct::ec::v1
     public:
         bool auto_free;
         const inputs<N,S>* variables;
+        evaluator eval_actual;
 
     public://genes
         core::ast::node<>* node;
@@ -361,7 +369,31 @@ namespace oct::ec::v1
             this->resize(s);
             for(size_t i = 0; i < s; i++)
             {
-                this->operator[](i) = new T(vs);
+                this->operator[](i) = new T(vs,T::eval_constant);
+            }
+        }
+        virtual void evaluate()
+        {
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                this->operator[](i)->ranking = this->operator[](i)->evaluate();
+            }
+            /*for(size_t i = 0; i < this->size(); i++)
+            {
+                std::cout << "evaluate : ";
+                std::cout << this->operator[](i)->ranking;
+                std::cout << "\n";
+            }*/
+            auto cmpfun = [](T* a,T* b)
+            {
+                return  a->ranking > b->ranking;
+            };
+            std::sort(this->begin(),this->end(),cmpfun);
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                std::cout << "evaluate : ";
+                std::cout << this->operator[](i)->ranking;
+                std::cout << "\n";
             }
         }
 
