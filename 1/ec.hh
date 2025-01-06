@@ -31,10 +31,10 @@ namespace oct::ec::v1
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
     template<core::number N, class T>
-    struct Town : public std::vector<T*>
+    struct Town : public core::array<T*>
     {
     public:
-        typedef  std::vector<T*> TOWN_BASE;
+        typedef  core::array<T*> TOWN_BASE;
 
     public:
         Town() = default;
@@ -57,7 +57,6 @@ namespace oct::ec::v1
                 return  a->ranking > b->ranking;
             };
             std::sort(this->begin(),this->end(),cmpfun);
-
             for(size_t i = 0; i < this->size(); i++)
             {
                 std::cout << "evaluate : ";
