@@ -27,7 +27,7 @@ void v1_developing()
     vars[0][1] = 65.964;
     vars[0][2] = 198.1254832;
     vars[1][0] = 9653.264;
-    vars[1][1] = 2.3154;
+    vars[1][1] = 1.f/2365.f;
     vars[1][2] = 198.1254832;
 
     ec::BinoprTown<3,float,ec::Binopr<3,float>> town;

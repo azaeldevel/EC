@@ -88,13 +88,13 @@ namespace oct::ec::v1
 
         static N eval_constant(const inputs<N,S>* vars)
         {
-            return (*vars)[0][0];
+            return (*vars)[1][1];
         }
 
     public:
         virtual N evaluate() const
         {
-            N n;
+            N rest;
 
             switch(node->type)
             {
@@ -102,22 +102,53 @@ namespace oct::ec::v1
             case core::ast::typen::subtraction:
             case core::ast::typen::product:
             case core::ast::typen::quotient:
-                n = static_cast<core::ast::Binopr<N>*>(node)->result();
+                rest = static_cast<core::ast::Binopr<N>*>(node)->result();
                 break;
             case core::ast::typen::number:
-                n = static_cast<core::ast::Number<N>*>(node)->result();
+                rest = static_cast<core::ast::Number<N>*>(node)->result();
                 break;
             case core::ast::typen::variable:
-                n = static_cast<core::ast::Variable<N>*>(node)->result();
+                rest = static_cast<core::ast::Variable<N>*>(node)->result();
                 break;
             default:
                 break;
             }
+
+
             N value = eval_actual(variables);
             //std::cout << "value = " << value << "\n";
-            N eval = N(1)/std::abs(value - n);
+            N eval;
+            if(std::isnan(rest))
+            {
+                eval = 0;
+            }
+            else if(std::isinf(rest))
+            {
+                eval = 0;
+            }
+            else if(core::equal(rest,value))
+            {
+                eval = N(1);
+            }
+            else if(core::equal(value,N(0.0)))
+            {
+                eval = rest/std::numeric_limits<N>::max();
+            }
+            else if(core::equal(rest,N(0.0)))
+            {
+                eval = value/std::numeric_limits<N>::max();//ya se
+            }
+            else
+            {
+                eval = (value - rest)/std::numeric_limits<N>::max();
+            }
 
-            return eval;
+            if(core::diff(eval,N(0.0)))
+            {
+                eval = N(1)/eval;
+            }
+
+            return std::abs(eval);
         }
 
         static core::ast::node<>* rand_node()
@@ -297,6 +328,30 @@ namespace oct::ec::v1
 
         }
 
+        virtual void print(std::ostream& out) const
+        {
+            switch(node->type)
+            {
+            case core::ast::typen::addition:
+            case core::ast::typen::subtraction:
+            case core::ast::typen::product:
+            case core::ast::typen::quotient:
+                static_cast<const core::ast::Binopr<N>*>(node)->print(out);
+                break;
+            case core::ast::typen::nest:
+                static_cast<const core::ast::Nest<N>*>(node)->print(out);
+                break;
+            case core::ast::typen::number:
+                static_cast<const core::ast::Number<N>*>(node)->print(out);
+                break;
+            case core::ast::typen::variable:
+                static_cast<const core::ast::Variable<>*>(node)->print(out);
+                break;
+            default:
+                break;
+            }
+        }
+
 
 
     public:
@@ -326,6 +381,9 @@ namespace oct::ec::v1
 
         static void init_randsys()
         {
+
+            std::setprecision(10);
+
             generator = std::mt19937(rd()); // mersenne_twister_engine seeded with rd()
             operation = std::uniform_int_distribution<>(1, 4);
             constant = std::uniform_real_distribution<>(-1.0e6, 1.0e6);
@@ -393,6 +451,8 @@ namespace oct::ec::v1
             {
                 std::cout << "evaluate : ";
                 std::cout << this->operator[](i)->ranking;
+                std::cout << " expre : ";
+                this->operator[](i)->print(std::cout);
                 std::cout << "\n";
             }
         }
