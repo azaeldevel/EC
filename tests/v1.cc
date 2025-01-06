@@ -30,7 +30,7 @@ void v1_developing()
     vars[1][1] = 2.3154;
     vars[1][2] = 198.1254832;
 
-    ec::BinoprTown<ec::Binopr<3,float>,float> town;
+    ec::BinoprTown<3,float,ec::Binopr<3,float>> town;
     town.populate(10,vars);
     town.evaluate();
 

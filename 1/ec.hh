@@ -2,6 +2,10 @@
 #define OCTETOS_EC_V1_EC_HH_INCLUDED
 
 #include <core/3/array.hh>
+#include <map>
+#include <functional>
+#include <bits/stdc++.h>
+
 
 
 namespace oct::ec::v1
@@ -18,16 +22,40 @@ namespace oct::ec::v1
 
     public:
         virtual N evaluate() const = 0;
+
+    public:
+        N ranking;
     };
+
+    /*template<core::number N, class T>
+    struct TownComparer
+    {
+        bool operator()(N* a,N* b) const
+        {
+            return  *a < *b;
+        }
+    };*/
+    /*constexpr bool cmpfun(float* a,float* b)
+    {
+        return  *a < *b;
+    };*/
+    /*struct comp
+    {
+        template <typename T>
+        bool operator()(const T& l, const T& r) const
+        {
+            return *l.first < *r.first;
+        }
+    };*/
 
     /**
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
-    template<class T>
-    struct Town : public core::array<T>
+    template<core::number N, class T>
+    struct Town : public std::map<N*,T*>
     {
     public:
-        typedef  core::array<T> TOWN_BASE;
+        typedef  std::map<N,T> TOWN_BASE;
 
     public:
         Town() = default;
@@ -35,12 +63,17 @@ namespace oct::ec::v1
 
         virtual void evaluate()
         {
-            for(size_t i = 0; i < this->size(); i++)
+            for (auto const& o : *this)
             {
                 std::cout << "evaluate : ";
-                std::cout << this->operator[](i).evaluate();
+                std::cout << o.second->evaluate();
                 std::cout << "\n";
             }
+            /*auto cmpfun = [](const auto& a,const auto& b)
+            {
+                return  *a < *b;
+            };*/
+            //std::sort(this->begin(),this->end());
         }
 
 
@@ -48,21 +81,6 @@ namespace oct::ec::v1
         bool auto_free;
     };
 
-    /**
-    *\brief Es el conjunto de Pueblos
-    */
-    template<class T>
-    struct City : public core::array<Town<T>>
-    {
-    public:
-        typedef core::array<Town<T>> CITY_BASE;
-
-    public:
-        City() = default;
-        City(size_t s) : CITY_BASE(s)
-        {
-        }
-    };
 
 }
 

@@ -42,7 +42,7 @@ namespace oct::ec::v1
         }
         Binopr(const inputs<N,S>& ins) : auto_free(true),variables(&ins),node(NULL)
         {
-            node = rand_op();
+            node = rand_node();
         }
         virtual ~Binopr()
         {
@@ -164,21 +164,130 @@ namespace oct::ec::v1
             return new core::ast::Binopr<N>(core::ast::typen(opr),a,b);
         }
 
+        void inheritance_number_simple_constant_operatio(core::ast::Number<N>* n)
+        {
+            int opr = operation(generator);
+            opr = opr + ((int)core::ast::typen::arithmetic);
+            core::ast::typen type = core::ast::typen(opr);
+            switch(node->type)
+            {
+                case core::ast::typen::addition:
+                    n->data += constant(generator);
+                    break;
+                case core::ast::typen::subtraction:
+                    n->data -= constant(generator);
+                    break;
+                case core::ast::typen::product:
+                    n->data *= constant(generator);
+                    break;
+                case core::ast::typen::quotient:
+                    n->data /= constant(generator);
+                    break;
+                default:
+                    break;
+            }
+        }
+        void inheritance_number_media(core::ast::Number<N>* n, core::ast::Number<N>* o,core::ast::Number<N>* p)
+        {
+            int opr = operation_puls_1(generator);
+            opr = opr + ((int)core::ast::typen::arithmetic);
+            core::ast::typen type = core::ast::typen(opr);
+            switch(node->type)
+            {
+                case core::ast::typen::addition:
+                    n->data += (o->data+p->data)/N(2);
+                    break;
+                case core::ast::typen::subtraction:
+                    n->data -= (o->data+p->data)/N(2);
+                    break;
+                case core::ast::typen::product:
+                    n->data *= (o->data+p->data)/N(2);
+                    break;
+                case core::ast::typen::quotient:
+                    n->data /= (o->data+p->data)/N(2);
+                    break;
+                default:
+                    n->data = (o->data+p->data)/N(2);
+                    break;
+            }
+        }
+
         void from(const Binopr& o,const Binopr& p)
         {
+            //Aseguira que puede encontrar una constante
+            if(o.node->is_number() and p.node->is_number())
+            {
+                if(binary_selection(generator))
+                {
+                    node = copy<N>(o.node);
+                }
+                else
+                {
+                    node = copy<N>(p.node);
+                }
+                auto number = static_cast<core::ast::Number<N>*>(node);
+                if(binary_selection(generator))
+                {
+                    inheritance_number_simple_constant_operatio(number);
+                }
+                else
+                {
+                    inheritance_number_media(number,static_cast<core::ast::Number<N>*>(o->node),static_cast<core::ast::Number<N>*>(p->node));
+                }
+                return;
+            }
+            else
+            {
+                if(o.node->is_number())
+                {
+                    node = copy<N>(o.node);
+                    auto number = static_cast<core::ast::Number<N>*>(node);
+                    if(binary_selection(generator))
+                    {
+                        inheritance_number_simple_constant_operatio(number);
+                    }
+                    else
+                    {
+                        inheritance_number_media(number,static_cast<core::ast::Number<N>*>(o->node),static_cast<core::ast::Number<N>*>(p->node));
+                    }
+                    return;
+                }
+                if(p.node->is_number())
+                {
+                    node = copy<N>(p.node);
+                    auto number = static_cast<core::ast::Number<N>*>(node);
+                    inheritance_number_simple_constant_operatio(number);
+                    if(binary_selection(generator))
+                    {
+                        inheritance_number_simple_constant_operatio(number);
+                    }
+                    else
+                    {
+                        inheritance_number_media(number,static_cast<core::ast::Number<N>*>(o->node),static_cast<core::ast::Number<N>*>(p->node));
+                    }
+                return;
+                }
+            }
+
+            //
+            if(binary_selection(generator))
+            {
+                node = copy<N>(o.node);
+            }
+            else
+            {
+                node = copy<N>(p.node);
+            }
+
+            //Asegurar que puede contrar una funcion lineal
+
+            //Aegurar otras formas
         }
 
 
-        void partial_copy(const Binopr& o,const Binopr& p)
+        void copy_constant(const Binopr& o)
         {
-            if(binary_selection(generator))
-            {//coopiar o
 
-            }
-            else
-            {//copiar p
-
-            }
         }
 
 
@@ -205,6 +314,7 @@ namespace oct::ec::v1
         static inline std::uniform_int_distribution<> randon_node;
         static inline std::bernoulli_distribution mutability;
         static inline std::bernoulli_distribution binary_selection;
+        static inline std::uniform_int_distribution<> operation_puls_1;
 
         static void init_randsys()
         {
@@ -216,6 +326,7 @@ namespace oct::ec::v1
             randon_node = std::uniform_int_distribution<>(1, 3);//operacion,variable,constante
             mutability = std::bernoulli_distribution(0.02);
             binary_selection = std::bernoulli_distribution(0.5);
+            operation_puls_1 = std::uniform_int_distribution<>(1, 5);
         }
     };
 
@@ -223,28 +334,40 @@ namespace oct::ec::v1
     /**
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
-    template<class T,core::number N>
-    struct BinoprTown : public Town<T>
+    template<core::index auto S,core::number N,class T>
+    struct BinoprTown : public Town<N,T>
     {
     public:
-        typedef  Town<T> ARTTOWN_BASE;
+        typedef  Town<N,T> ARTTOWN_BASE;
 
     public:
         BinoprTown() = default;
+        ~BinoprTown()
+        {
+            if(this->auto_free)
+            {
+                for (auto& o : (std::map<N*,T*>&)*this)
+                {
+                    delete o.second;
+                    o.second = NULL;
+                }
+                this->auto_free = false;
+            }
+        }
 
-        template<core::index auto S>
         void populate(size_t s, const inputs<N,S>& vs)
         {
-            auto_free = true;
-            this->resize(s);
+            this->auto_free = true;
+            Single<N>* single;
+            //this->resize(s);
             for(size_t i = 0; i < s; i++)
             {
-                this->operator[](i) =  T(vs);
+                single = new T(vs);
+                this->insert(std::pair<N*,T*>(&single->ranking,static_cast<T*>(single)));
             }
         }
 
     public:
-        bool auto_free;
     };
 
 }
