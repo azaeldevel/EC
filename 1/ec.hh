@@ -27,35 +27,14 @@ namespace oct::ec::v1
         N ranking;
     };
 
-    /*template<core::number N, class T>
-    struct TownComparer
-    {
-        bool operator()(N* a,N* b) const
-        {
-            return  *a < *b;
-        }
-    };*/
-    /*constexpr bool cmpfun(float* a,float* b)
-    {
-        return  *a < *b;
-    };*/
-    /*struct comp
-    {
-        template <typename T>
-        bool operator()(const T& l, const T& r) const
-        {
-            return *l.first < *r.first;
-        }
-    };*/
-
     /**
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
     template<core::number N, class T>
-    struct Town : public std::map<N*,T*>
+    struct Town : public std::vector<T*>
     {
     public:
-        typedef  std::map<N,T> TOWN_BASE;
+        typedef  std::vector<T*> TOWN_BASE;
 
     public:
         Town() = default;
@@ -63,17 +42,21 @@ namespace oct::ec::v1
 
         virtual void evaluate()
         {
-            for (auto const& o : *this)
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                this->operator[](i)->ranking = this->operator[](i)->evaluate();
+            }
+            for(size_t i = 0; i < this->size(); i++)
             {
                 std::cout << "evaluate : ";
-                std::cout << o.second->evaluate();
+                std::cout << this->operator[](i)->ranking;
                 std::cout << "\n";
             }
-            /*auto cmpfun = [](const auto& a,const auto& b)
+            auto cmpfun = [](T* a,T* b)
             {
-                return  *a < *b;
-            };*/
-            //std::sort(this->begin(),this->end());
+                return  a->ranking > b->ranking;
+            };
+            std::sort(this->begin(),this->end(),cmpfun);
         }
 
 

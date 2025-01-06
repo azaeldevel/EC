@@ -346,10 +346,10 @@ namespace oct::ec::v1
         {
             if(this->auto_free)
             {
-                for (auto& o : (std::map<N*,T*>&)*this)
+                for (size_t i = 0; i < this->size();i++)
                 {
-                    delete o.second;
-                    o.second = NULL;
+                    delete this->operator[](i);
+                    this->operator[](i) = NULL;
                 }
                 this->auto_free = false;
             }
@@ -358,12 +358,10 @@ namespace oct::ec::v1
         void populate(size_t s, const inputs<N,S>& vs)
         {
             this->auto_free = true;
-            Single<N>* single;
-            //this->resize(s);
+            this->resize(s);
             for(size_t i = 0; i < s; i++)
             {
-                single = new T(vs);
-                this->insert(std::pair<N*,T*>(&single->ranking,static_cast<T*>(single)));
+                this->operator[](i) = new T(vs);
             }
         }
 
