@@ -36,7 +36,7 @@ void v1_developing()
     town.print(std::cout);
     std::cout << "\n\n";
     town.pair();*/
-    for(size_t i = 0; i < 20; i++)
+    for(size_t i = 0; i < 50; i++)
     {
         town.evaluate();
         //town.print(std::cout);
@@ -44,4 +44,5 @@ void v1_developing()
         std::cout << "\n\n";
         town.pair();
     }
+    town.listing(std::cout);
 }

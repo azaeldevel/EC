@@ -459,7 +459,7 @@ namespace oct::ec::v1
             binary_selection = std::bernoulli_distribution(0.5);
             operation_puls_1 = std::uniform_int_distribution<>(1, 5);//+,-,*,/,?
             selection_firts_pair = std::fisher_f_distribution<N>(1,barrera);
-            selection_second_pair = std::uniform_int_distribution<>(1,population_size);
+            selection_second_pair = std::uniform_int_distribution<>(1,population_size - 1);
             almost_everytime = std::bernoulli_distribution(0.8);
             almost_never = std::bernoulli_distribution(0.2);
             select_pivot = std::uniform_int_distribution<>(0,(pivots_size/2) - 1);//+,-,*,/
@@ -524,6 +524,7 @@ namespace oct::ec::v1
         }
         void resumen(std::ostream& out) const
         {
+            std::cout << "Poblacion : " << this->size() << "\n";
             std::cout << "objetivo : ";
             std::cout << this->operator[](0)->evalr_actual(this->operator[](0)->variables);
             std::cout << "\n";
@@ -540,6 +541,18 @@ namespace oct::ec::v1
             media /= N(this->size());
             std::cout << "Media : " << media << "\n";
         }
+        void listing(std::ostream& out) const
+        {
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                std::cout << i << "\t";
+                std::cout << "evaluacion : ";
+                std::cout << this->operator[](i)->evaluation;
+                //std::cout << "\texpresion : ";
+                //this->operator[](i)->print(std::cout);
+                std::cout << "\n";
+            }
+        }
 
         /**
         *\brief Realiza el apareo
@@ -547,13 +560,14 @@ namespace oct::ec::v1
         */
         virtual void pair()
         {
-            std::cout << "Poblacion : " << this->size() << "\n";
-            core::array<size_t,2> selectd = select_pair_with_comunal();
-            std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
+            core::array<size_t,2> selectd;
+
             size_t pairs = T::population_size/5;
             core::array<T*> borned(pairs),deads(pairs);
             for(size_t i = 0; i < pairs; i++)
             {
+                selectd = select_pair_with_comunal();
+                //std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
                 borned[i] = new T(*variables,T::eval_constant,false);
                 mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
             }
