@@ -36,10 +36,11 @@ void v1_developing()
     town.print(std::cout);
     std::cout << "\n\n";
     town.pair();*/
-    for(size_t i = 0; i < 5; i++)
+    for(size_t i = 0; i < 20; i++)
     {
         town.evaluate();
-        town.print(std::cout);
+        //town.print(std::cout);
+        town.resumen(std::cout);
         std::cout << "\n\n";
         town.pair();
     }

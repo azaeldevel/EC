@@ -522,6 +522,24 @@ namespace oct::ec::v1
                 std::cout << "\n";
             }
         }
+        void resumen(std::ostream& out) const
+        {
+            std::cout << "objetivo : ";
+            std::cout << this->operator[](0)->evalr_actual(this->operator[](0)->variables);
+            std::cout << "\n";
+            unsigned count_constants = 0;
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                if(this->operator[](i)->node->type == core::ast::typen::number) count_constants++;
+            }
+            N media = 0;
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                media += this->operator[](i)->evaluation;
+            }
+            media /= N(this->size());
+            std::cout << "Media : " << media << "\n";
+        }
 
         /**
         *\brief Realiza el apareo
@@ -544,11 +562,11 @@ namespace oct::ec::v1
                 deads[i] =  this->operator[](j);
                 //std::cout << " j : " << j << "\n";
                 //std::cout << " j -> : " << (void*)this->operator[](j) << "\n";
-                //this->operator[](j) = borned[i];
+                this->operator[](j) = borned[i];
             }
             for(size_t i = 0; i < pairs; i++)
             {
-                //delete deads[i];
+                delete deads[i];
             }
         }
 
@@ -583,7 +601,7 @@ namespace oct::ec::v1
         {
         }
 
-        void mesh_gens_constant_parents(T& born, const T& parenta, const T& parentb)
+        core::ast::node<>* mesh_gens_constant_parents(T& born, const T& parenta, const T& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
             const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
@@ -626,11 +644,10 @@ namespace oct::ec::v1
                 break;
             }
 
-            born.node = node;
-            born.auto_free = true;
+            return node;
         }
 
-        void mesh_gens_constant_parents_pivot_one(T& born, const T& parenta, const T& parentb)
+        core::ast::node<>* mesh_gens_constant_parents_pivot_one(T& born, const T& parenta, const T& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
             //const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
@@ -654,11 +671,10 @@ namespace oct::ec::v1
                 break;
             }
 
-            born.node = node;
-            born.auto_free = true;
+            return node;
         }
 
-        void mesh_gens_constant_parents_pivot_big(T& born, const T& parenta, const T& parentb)
+        core::ast::node<>* mesh_gens_constant_parents_pivot_big(T& born, const T& parenta, const T& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
             //const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
@@ -682,10 +698,9 @@ namespace oct::ec::v1
                 break;
             }
 
-            born.node = node;
-            born.auto_free = true;
+            return node;
         }
-        void mesh_gens_constant_parents_pivot_random(T& born, const T& parenta, const T& parentb)
+        core::ast::node<>* mesh_gens_constant_parents_pivot_random(T& born, const T& parenta, const T& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
             //const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
@@ -718,11 +733,10 @@ namespace oct::ec::v1
                 break;
             }
 
-            born.node = node;
-            born.auto_free = true;
+            return node;
         }
 
-        void mesh_gens_constant_single(T& born, const T& parent)
+        core::ast::node<>* mesh_gens_constant_single(T& born, const T& parent)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
 
@@ -749,10 +763,9 @@ namespace oct::ec::v1
                 break;
             }
 
-            born.node = node;
-            born.auto_free = true;
+            return node;
         }
-        void mesh_gens_constant_pivoted(T& born, const T& parent)
+        core::ast::node<>* mesh_gens_constant_pivoted(T& born, const T& parent)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
 
@@ -780,11 +793,10 @@ namespace oct::ec::v1
                 }
             }
 
-            born.node = node;
-            born.auto_free = true;
+            return node;
         }
 
-        void mesh_gens_constant_pivoted_operation(T& born, const T& parent)
+        core::ast::node<>* mesh_gens_constant_pivoted_operation(T& born, const T& parent)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
 
@@ -812,43 +824,42 @@ namespace oct::ec::v1
                 }
             }
 
-            born.node = node;
-            born.auto_free = true;
+            return node;
         }
-        void mesh_gens_constant(T& born, const T& parenta, const T& parentb)
+        core::ast::node<>* mesh_gens_constant(T& born, const T& parenta, const T& parentb)
         {
             if((*born.preference)(T::generator))
             {
                 if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_pivoted_operation(born,parenta);
+                    return mesh_gens_constant_pivoted_operation(born,parenta);
                 }
                 else if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_pivoted(born,parenta);
+                    return mesh_gens_constant_pivoted(born,parenta);
                 }
                 else
                 {
-                     mesh_gens_constant_single(born,parenta);
+                     return mesh_gens_constant_single(born,parenta);
                 }
             }
             else
             {
                 if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_parents(born,parenta,parentb);
+                    return mesh_gens_constant_parents(born,parenta,parentb);
                 }
                 else if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_parents_pivot_one(born,parenta,parentb);
+                    return mesh_gens_constant_parents_pivot_one(born,parenta,parentb);
                 }
                 else if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_parents_pivot_big(born,parenta,parentb);
+                    return mesh_gens_constant_parents_pivot_big(born,parenta,parentb);
                 }
-                else if((*born.preference)(T::generator))
+                else
                 {
-                    mesh_gens_constant_parents_pivot_random(born,parenta,parentb);
+                    return mesh_gens_constant_parents_pivot_random(born,parenta,parentb);
                 }
             }
         }
@@ -873,7 +884,8 @@ namespace oct::ec::v1
                 born.pivot_big = parentb.pivot_big;
                 if(parenta.node->is_number())
                 {
-                    mesh_gens_constant(born,parenta,parentb);
+                    born.node = mesh_gens_constant(born,parenta,parentb);
+                    born.auto_free = true;
                 }
                 else
                 {
@@ -893,7 +905,8 @@ namespace oct::ec::v1
                 born.pivot_big = parenta.pivot_big;
                 if(parentb.node->is_number())
                 {
-                    mesh_gens_constant(born,parentb,parenta);
+                    born.node = mesh_gens_constant(born,parentb,parenta);
+                    born.auto_free = true;
                 }
                 else
                 {
