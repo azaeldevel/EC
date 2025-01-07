@@ -95,7 +95,8 @@ namespace oct::ec::v1
     public:
         static N eval_constant(const inputs<N,S>* vars)
         {
-            return (*vars)[1][1];
+            //return (*vars)[2][0];
+            return std::numbers::pi;
         }
         virtual N evaluate() const
         {
@@ -175,26 +176,30 @@ namespace oct::ec::v1
                 }
                 else if(std::abs(domeval) < N(1))
                 {
-                    eval = domeval;
+                    eval = N(1) - domeval;
                 }
-                else if(core::equal(std::abs(domeval),N(1)))
-                {
-                    if(std::abs(value) > N(1) and std::abs(result) > N(1))
+                else
+                {//la diferencia es 1 o -1
+                    if(value > N(0) and result > N(0))
                     {
-                        eval = N(1) - (N(1)/(value - 1));
+                        eval = N(1) - (value - result);
+                    }
+                    else if(value > N(0) and result < N(0))
+                    {
+                        eval = (N(2) - (value - result))/N(2);
+                    }
+                    else if(value < N(0) and result > N(0))
+                    {
+                        eval = (N(2) - (result - value))/N(2);
+                    }
+                    else if(value < N(0) and result < N(0))
+                    {
+                        eval = N(1) + (value + result);
                     }
                     else
                     {
-                        eval = value/result;
+                        throw core::exception("Erro de logica, algun valor quedo fuera de los rango co nsiderados.");
                     }
-                }
-                else if(core::equal(domeval,N(0)))
-                {
-                    eval = N(1);
-                }
-                else
-                {
-                    throw core::exception("Erro de logica, algun valor quedo fuera de los rango co nsiderados.");
                 }
             }
             else
@@ -203,7 +208,7 @@ namespace oct::ec::v1
             }
 
 
-            return std::abs(eval);
+            return eval;
         }
 
     public://funciones de apareo
@@ -588,6 +593,7 @@ namespace oct::ec::v1
                 media += this->operator[](i)->evaluation;
             }
             media /= N(this->size());
+            std::cout << "Constantes : " << count_constants << "\n";
             std::cout << "Media : " << media << "\n";
         }
         void listing(std::ostream& out) const
@@ -597,8 +603,8 @@ namespace oct::ec::v1
                 std::cout << i << "\t";
                 std::cout << "evaluacion : ";
                 std::cout << this->operator[](i)->evaluation;
-                //std::cout << "\texpresion : ";
-                //this->operator[](i)->print(std::cout);
+                std::cout << "\texpresion : ";
+                this->operator[](i)->print(std::cout);
                 std::cout << "\n";
             }
         }
