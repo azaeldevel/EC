@@ -23,7 +23,7 @@ namespace oct::ec::v1
 
     public:
         Binopr() = default;
-        Binopr(const Binopr& o) : auto_free(o.auto_free),variables(NULL),node(NULL),eval_actual(NULL)
+        Binopr(const Binopr& o) : auto_free(o.auto_free),variables(NULL),node(NULL),evalr_actual(NULL)
         {
             if(o.auto_free)
             {
@@ -34,15 +34,15 @@ namespace oct::ec::v1
             node = o.node;
             auto_free = o.auto_free;
             variables = o.variables;
-            eval_actual = o.eval_actual;
+            evalr_actual = o.evalr_actual;
         }
-        Binopr(Binopr&& o) : auto_free(o.auto_free),variables(o.variables),node(o.node),eval_actual(o.eval_actual)
+        Binopr(Binopr&& o) : auto_free(o.auto_free),variables(o.variables),node(o.node),evalr_actual(o.evalr_actual)
         {
             o.node = NULL;
             o.auto_free = false;
             o.variables = NULL;
         }
-        Binopr(const inputs<N,S>& ins,evaluator evalr) : auto_free(true),variables(&ins),node(NULL),eval_actual(evalr)
+        Binopr(const inputs<N,S>& ins,evaluator evalr) : auto_free(true),variables(&ins),node(NULL),evalr_actual(evalr)
         {
             node = rand_node();
         }
@@ -115,7 +115,7 @@ namespace oct::ec::v1
             }
 
 
-            N value = eval_actual(variables);
+            N value = evalr_actual(variables);
             //std::cout << "value = " << value << "\n";
             N eval;
             if(std::isnan(rest))
@@ -357,7 +357,7 @@ namespace oct::ec::v1
     public:
         bool auto_free;
         const inputs<N,S>* variables;
-        evaluator eval_actual;
+        evaluator evalr_actual;
 
     public://genes
         core::ast::node<>* node;
@@ -378,12 +378,15 @@ namespace oct::ec::v1
         static inline std::bernoulli_distribution mutability;
         static inline std::bernoulli_distribution binary_selection;
         static inline std::uniform_int_distribution<> operation_puls_1;
+        static inline std::fisher_f_distribution<N> selection_firts_pair;
+        static inline std::uniform_int_distribution<> selection_second_pair;
+        static inline unsigned population_size;
 
-        static void init_randsys()
+        static void init_randsys(unsigned size)
         {
-
+            population_size = size;
+            int barrera = population_size/10;
             std::setprecision(10);
-
             generator = std::mt19937(rd()); // mersenne_twister_engine seeded with rd()
             operation = std::uniform_int_distribution<>(1, 4);
             constant = std::uniform_real_distribution<>(-1.0e6, 1.0e6);
@@ -393,6 +396,8 @@ namespace oct::ec::v1
             mutability = std::bernoulli_distribution(0.02);
             binary_selection = std::bernoulli_distribution(0.5);
             operation_puls_1 = std::uniform_int_distribution<>(1, 5);
+            selection_firts_pair = std::fisher_f_distribution<N>(1,barrera);
+            selection_second_pair = std::uniform_int_distribution<>(1,population_size);
         }
     };
 
@@ -408,24 +413,15 @@ namespace oct::ec::v1
 
     public:
         BinoprTown() = default;
-        ~BinoprTown()
+        virtual ~BinoprTown()
         {
-            if(this->auto_free)
-            {
-                for (size_t i = 0; i < this->size();i++)
-                {
-                    delete this->operator[](i);
-                    this->operator[](i) = NULL;
-                }
-                this->auto_free = false;
-            }
         }
 
-        void populate(size_t s, const inputs<N,S>& vs)
+        void populate_random(const inputs<N,S>& vs)
         {
             this->auto_free = true;
-            this->resize(s);
-            for(size_t i = 0; i < s; i++)
+            this->resize(T::population_size/10);
+            for(size_t i = 0; i < this->size(); i++)
             {
                 this->operator[](i) = new T(vs,T::eval_constant);
             }
@@ -436,25 +432,54 @@ namespace oct::ec::v1
             {
                 this->operator[](i)->ranking = this->operator[](i)->evaluate();
             }
-            /*for(size_t i = 0; i < this->size(); i++)
-            {
-                std::cout << "evaluate : ";
-                std::cout << this->operator[](i)->ranking;
-                std::cout << "\n";
-            }*/
             auto cmpfun = [](T* a,T* b)
             {
                 return  a->ranking > b->ranking;
             };
             std::sort(this->begin(),this->end(),cmpfun);
+        }
+
+        virtual void print(std::ostream& out) const
+        {
+            std::cout << "objetivo : ";
+            std::cout << this->operator[](0)->evalr_actual(this->operator[](0)->variables);
+            std::cout << "\n";
             for(size_t i = 0; i < this->size(); i++)
             {
-                std::cout << "evaluate : ";
+                std::cout << i << "\t";
+                std::cout << "evaluacion : ";
                 std::cout << this->operator[](i)->ranking;
-                std::cout << " expre : ";
+                std::cout << "\texpresion : ";
                 this->operator[](i)->print(std::cout);
                 std::cout << "\n";
             }
+        }
+
+        virtual core::array<size_t,2> select_pair_with_comunal()const
+        {
+            core::array<size_t,2> rest;
+            rest[0] = (size_t)T::selection_firts_pair(T::generator);
+            rest[1] = T::selection_second_pair(T::generator);
+            if(rest[0] == rest[1])//asegurar que no son iguales
+            {
+                rest[1] = T::selection_second_pair(T::generator);
+            }
+            if(rest[0] == rest[1])//asegurar que no son iguales
+            {
+                rest[1] = T::selection_second_pair(T::generator);
+            }
+            if(rest[0] == rest[1])//asegurar que no son iguales
+            {
+                rest[0] = (size_t)T::selection_firts_pair(T::generator);
+                rest[1] = T::selection_second_pair(T::generator);
+            }
+
+            return rest;
+        }
+        virtual void pair()
+        {
+            core::array<size_t,2> selectd = select_pair_with_comunal();
+            std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
         }
 
     public:

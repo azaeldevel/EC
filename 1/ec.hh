@@ -22,6 +22,7 @@ namespace oct::ec::v1
 
     public:
         virtual N evaluate() const = 0;
+        virtual void print(std::ostream& out) const = 0;
 
     public:
         N ranking;
@@ -38,8 +39,22 @@ namespace oct::ec::v1
 
     public:
         Town() = default;
+        virtual ~Town()
+        {
+            if(this->auto_free)
+            {
+                for (size_t i = 0; i < this->size();i++)
+                {
+                    delete this->operator[](i);
+                    this->operator[](i) = NULL;
+                }
+                this->auto_free = false;
+            }
+        }
 
         virtual void evaluate() = 0;
+        virtual void print(std::ostream& out) const = 0;
+        virtual void pair() = 0;
 
     public:
         bool auto_free;

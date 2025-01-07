@@ -19,7 +19,7 @@ int v1_clean(void)
 
 void v1_developing()
 {
-    ec::Binopr<3,float>::init_randsys();
+    ec::Binopr<3,float>::init_randsys(100);
 
     ec::inputs<float,3> vars;
     vars.resize(2);//cantidad de resgistro
@@ -31,7 +31,9 @@ void v1_developing()
     vars[1][2] = 198.1254832;
 
     ec::BinoprTown<3,float,ec::Binopr<3,float>> town;
-    town.populate(10,vars);
+    town.populate_random(vars);
     town.evaluate();
-
+    town.print(std::cout);
+    std::cout << "\n\n";
+    town.pair();
 }
