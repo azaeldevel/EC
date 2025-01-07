@@ -23,7 +23,7 @@ namespace oct::ec::v1
 
     public:
         Binopr() = default;
-        Binopr(const Binopr& o) : auto_free(o.auto_free),variables(NULL),node(NULL),evalr_actual(NULL)
+        Binopr(const Binopr& o) : auto_free(o.auto_free),variables(NULL),evalr_actual(NULL),node(NULL)
         {
             if(o.auto_free)
             {
@@ -36,15 +36,21 @@ namespace oct::ec::v1
             variables = o.variables;
             evalr_actual = o.evalr_actual;
         }
-        Binopr(Binopr&& o) : auto_free(o.auto_free),variables(o.variables),node(o.node),evalr_actual(o.evalr_actual)
+        Binopr(Binopr&& o) : auto_free(o.auto_free),variables(o.variables),evalr_actual(o.evalr_actual),node(o.node)
         {
             o.node = NULL;
             o.auto_free = false;
             o.variables = NULL;
         }
-        Binopr(const inputs<N,S>& ins,evaluator evalr) : auto_free(true),variables(&ins),node(NULL),evalr_actual(evalr)
+        /**
+        *\brief Conbtructor principal
+        *\param ins datos de entreda
+        *\param evalr funcion de evaluacion
+        *\param rand true si se asigna los genes al azar, false si se deja con basura los genes
+        **/
+        Binopr(const inputs<N,S>& ins,evaluator evalr,bool rand = true) : auto_free(true),variables(&ins),evalr_actual(evalr),node(NULL)
         {
-            node = rand_node();
+            if(rand) rand_single();
         }
         virtual ~Binopr()
         {
@@ -86,12 +92,11 @@ namespace oct::ec::v1
             return *this;
         }
 
+    public:
         static N eval_constant(const inputs<N,S>* vars)
         {
             return (*vars)[1][1];
         }
-
-    public:
         virtual N evaluate() const
         {
             N rest;
@@ -151,6 +156,32 @@ namespace oct::ec::v1
             return std::abs(eval);
         }
 
+    public://funciones de apareo
+        void rand_single()
+        {
+            node = rand_node();
+            if(binary_selection(generator))
+            {
+                preference = &almost_everytime;
+            }
+            else
+            {
+                preference = &almost_never;
+            }
+            changeable_deep = (*preference)(generator);
+            changeable_constant = (*preference)(generator);
+            changeable_operations = (*preference)(generator);
+            changeable_variables = (*preference)(generator);
+            /*if(binary_selection(generator))
+            {
+                changeable_deep_increment = &almost_everytime;
+            }
+            else
+            {
+                changeable_deep_increment = &almost_never;
+            }*/
+        }
+
         static core::ast::node<>* rand_node()
         {
             core::ast::node<>* node;
@@ -172,7 +203,6 @@ namespace oct::ec::v1
 
             return node;
         }
-
 
         static core::ast::node<>* rand_op()
         {
@@ -361,9 +391,12 @@ namespace oct::ec::v1
 
     public://genes
         core::ast::node<>* node;
-        unsigned width;//ancho del arbol
-        unsigned high;//profundidad del arbol
-
+        std::bernoulli_distribution* preference;//randopn binary selector
+        bool changeable_deep;//si se pude cambiar la profundidad del arboal al aparearse
+        bool changeable_constant;//si se pude cambiar los valores de las constantes
+        bool changeable_operations;//si se pude cambiar las operaciones
+        bool changeable_variables;//si se pude cambiar las variables
+        //std::bernoulli_distribution* changeable_deep_increment;//la preferencia en el cambio de la profundida
 
     public:
 
@@ -380,6 +413,8 @@ namespace oct::ec::v1
         static inline std::uniform_int_distribution<> operation_puls_1;
         static inline std::fisher_f_distribution<N> selection_firts_pair;
         static inline std::uniform_int_distribution<> selection_second_pair;
+        static inline std::bernoulli_distribution almost_everytime;
+        static inline std::bernoulli_distribution almost_never;
         static inline unsigned population_size;
 
         static void init_randsys(unsigned size)
@@ -398,6 +433,8 @@ namespace oct::ec::v1
             operation_puls_1 = std::uniform_int_distribution<>(1, 5);
             selection_firts_pair = std::fisher_f_distribution<N>(1,barrera);
             selection_second_pair = std::uniform_int_distribution<>(1,population_size);
+            almost_everytime = std::bernoulli_distribution(0.8);
+            almost_never = std::bernoulli_distribution(0.2);
         }
     };
 
@@ -416,25 +453,28 @@ namespace oct::ec::v1
         virtual ~BinoprTown()
         {
         }
+        BinoprTown(const inputs<N,S>& vs) : variables(&vs)
+        {
+        }
 
-        void populate_random(const inputs<N,S>& vs)
+        void populate_random()
         {
             this->auto_free = true;
-            this->resize(T::population_size/10);
+            this->resize(T::population_size);
             for(size_t i = 0; i < this->size(); i++)
             {
-                this->operator[](i) = new T(vs,T::eval_constant);
+                this->operator[](i) = new T(*variables,T::eval_constant);
             }
         }
         virtual void evaluate()
         {
             for(size_t i = 0; i < this->size(); i++)
             {
-                this->operator[](i)->ranking = this->operator[](i)->evaluate();
+                this->operator[](i)->evaluation = this->operator[](i)->evaluate();
             }
             auto cmpfun = [](T* a,T* b)
             {
-                return  a->ranking > b->ranking;
+                return  a->evaluation > b->evaluation;
             };
             std::sort(this->begin(),this->end(),cmpfun);
         }
@@ -448,7 +488,7 @@ namespace oct::ec::v1
             {
                 std::cout << i << "\t";
                 std::cout << "evaluacion : ";
-                std::cout << this->operator[](i)->ranking;
+                std::cout << this->operator[](i)->evaluation;
                 std::cout << "\texpresion : ";
                 this->operator[](i)->print(std::cout);
                 std::cout << "\n";
@@ -476,13 +516,65 @@ namespace oct::ec::v1
 
             return rest;
         }
+        void mesh_gens_binopr(T& born, const T& parenta, const T& parentb)
+        {
+        }
+        void mesh_gens_constant(T& born, const T& parenta, const T& parentb)
+        {
+        }
+        void mesh_gens_variable(T& born, const T& parenta, const T& parentb)
+        {
+        }
+        void mesh_gens_random_node(T& born, const T& parenta, const T& parentb)
+        {
+        }
+        /**
+        *\brief Asigna los genees de un individuo a partir de los padres
+        *\param born individuo cuyos genes seran asignados
+        *\param parenta un padre del nuevo individuo
+        *\param parentb un padre del nuevo individuo
+        */
+        void mesh_gens(T& born, const T& parenta, const T& parentb)
+        {
+            if(T::binary_selection(T::generator))
+            {
+                born.preference = parenta.preference;
+                born.changeable_deep = parentb.changeable_deep;
+                born.changeable_constant = parenta.changeable_constant;
+                born.changeable_operations = parentb.changeable_operations;
+                born.changeable_variables = parenta.changeable_variables;
+                //born.changeable_deep_increment = parentb.changeable_deep_increment;
+
+            }
+            else
+            {
+                born.preference = parentb.preference;
+                born.changeable_deep = parenta.changeable_deep;
+                born.changeable_constant = parentb.changeable_constant;
+                born.changeable_operations = parenta.changeable_operations;
+                born.changeable_variables = parentb.changeable_variables;
+                //born.changeable_deep_increment = parenta.changeable_deep_increment;
+            }
+
+
+
+        }
         virtual void pair()
         {
             core::array<size_t,2> selectd = select_pair_with_comunal();
             std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
+            size_t pairs = T::population_size/N(10);
+            core::array<T*> borned(pairs);
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                borned[i] = new T(*variables,T::eval_constant,false);
+                mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
+            }
+            core::array<T*> killed(pairs);
         }
 
     public:
+        const inputs<N,S>* variables;
     };
 
 }

@@ -25,7 +25,7 @@ namespace oct::ec::v1
         virtual void print(std::ostream& out) const = 0;
 
     public:
-        N ranking;
+        N evaluation;
     };
 
     /**

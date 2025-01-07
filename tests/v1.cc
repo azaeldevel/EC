@@ -30,8 +30,8 @@ void v1_developing()
     vars[1][1] = 1.f/2365.f;
     vars[1][2] = 198.1254832;
 
-    ec::BinoprTown<3,float,ec::Binopr<3,float>> town;
-    town.populate_random(vars);
+    ec::BinoprTown<3,float,ec::Binopr<3,float>> town(vars);
+    town.populate_random();
     town.evaluate();
     town.print(std::cout);
     std::cout << "\n\n";
