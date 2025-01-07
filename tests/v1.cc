@@ -32,11 +32,11 @@ void v1_developing()
 
     ec::BinoprTown<3,float,ec::Binopr<3,float>> town(vars);
     town.populate_random();
-    /*town.evaluate();
+    town.evaluate();
     town.print(std::cout);
     std::cout << "\n\n";
-    town.pair();*/
-    for(size_t i = 0; i < 50; i++)
+    town.pair();
+    /*for(size_t i = 0; i < 50; i++)
     {
         town.evaluate();
         //town.print(std::cout);
@@ -44,7 +44,7 @@ void v1_developing()
         std::cout << "\n\n";
         town.pair();
     }
-    town.listing(std::cout);
+    town.listing(std::cout);*/
 
     std::cout << "\n";
 

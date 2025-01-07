@@ -127,6 +127,7 @@ namespace oct::ec::v1
             N value = evalr_actual(variables);
             //std::cout << "value = " << value << "\n";
             N eval;
+
             if(std::isnan(result))
             {
                 eval = 0;
@@ -139,23 +140,68 @@ namespace oct::ec::v1
             {
                 eval = N(1);
             }
-            else if(core::equal(value,N(0.0)))
-            {
-                eval = N(1)/result;
+            else if(core::equal(value,N(0)) and core::equal(result,N(0)))
+            {//caso inecesesario ressult es igaula value
+                eval = N(1);
             }
-            else if(core::equal(result,N(0.0)))
+            else if(core::equal(value,N(0)) and core::diff(result,N(0)))
             {
-                eval = N(1)/value;//ya se
+                if(std::abs(result) > N(1))
+                {
+                    eval = N(1)/result;
+                }
+                else
+                {
+                    eval = result;
+                }
+            }
+            else if(core::diff(value,N(0)) and core::equal(result,N(0)))
+            {
+                if(std::abs(value) > N(1))
+                {
+                    eval = N(1)/value;
+                }
+                else
+                {
+                    eval = value;
+                }
+            }
+            else if(core::diff(value,N(0)) and core::diff(result,N(0)))
+            {
+                N domeval = value - result;
+                if(std::abs(domeval) > N(1))
+                {
+                    eval = N(1)/domeval;
+                }
+                else if(std::abs(domeval) < N(1))
+                {
+                    eval = domeval;
+                }
+                else if(core::equal(std::abs(domeval),N(1)))
+                {
+                    if(std::abs(value) > N(1) and std::abs(result) > N(1))
+                    {
+                        eval = N(1) - (N(1)/(value - 1));
+                    }
+                    else
+                    {
+                        eval = value/result;
+                    }
+                }
+                else if(core::equal(domeval,N(0)))
+                {
+                    eval = N(1);
+                }
+                else
+                {
+                    throw core::exception("Erro de logica, algun valor quedo fuera de los rango co nsiderados.");
+                }
             }
             else
             {
-                eval = N(1)/(value - result);
+                throw core::exception("Erro de logica, algun valor quedo fuera de los rango co nsiderados.");
             }
 
-            if(core::diff(eval,N(0.0)))
-            {
-                eval = N(1)/eval;
-            }
 
             return std::abs(eval);
         }
