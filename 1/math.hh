@@ -533,15 +533,15 @@ namespace oct::ec::v1
                 mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
             }
             core::array<T*> deads(pairs);
-            for(size_t i = 0, j = this->size() - 1; i < pairs; i++,j--)
+            /*for(size_t i = 0, j = this->size() - 1; i < pairs; i++,j--)
             {
                 deads[i] =  this->operator[](j);
                 this->operator[](j) = borned[i];
-            }
-            for(size_t i = 0; i < pairs; i++)
+            }*/
+            /*for(size_t i = 0; i < pairs; i++)
             {
                 delete deads[i];
-            }
+            }*/
         }
 
         virtual core::array<size_t,2> select_pair_with_comunal()const

@@ -41,6 +41,6 @@ void v1_developing()
         town.evaluate();
         town.print(std::cout);
         std::cout << "\n\n";
-        //town.pair();
+        town.pair();
     }
 }
