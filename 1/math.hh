@@ -522,23 +522,30 @@ namespace oct::ec::v1
                 std::cout << "\n";
             }
         }
+
+        /**
+        *\brief Realiza el apareo
+        *
+        */
         virtual void pair()
         {
+            std::cout << "Poblacion : " << this->size() << "\n";
             core::array<size_t,2> selectd = select_pair_with_comunal();
             std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
             size_t pairs = T::population_size/5;
-            core::array<T*> borned(pairs);
+            core::array<T*> borned(pairs),deads(pairs);
             for(size_t i = 0; i < pairs; i++)
             {
                 borned[i] = new T(*variables,T::eval_constant,false);
                 mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
             }
-            core::array<T*> deads(pairs);
-            /*for(size_t i = 0, j = this->size() - 1; i < pairs; i++,j--)
+            for(size_t i = 0, j = this->size() - 1; i < pairs; i++,j--)
             {
                 deads[i] =  this->operator[](j);
-                this->operator[](j) = borned[i];
-            }*/
+                //std::cout << " j : " << j << "\n";
+                //std::cout << " j -> : " << (void*)this->operator[](j) << "\n";
+                //this->operator[](j) = borned[i];
+            }
             /*for(size_t i = 0; i < pairs; i++)
             {
                 delete deads[i];
