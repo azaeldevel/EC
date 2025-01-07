@@ -544,12 +544,12 @@ namespace oct::ec::v1
                 deads[i] =  this->operator[](j);
                 //std::cout << " j : " << j << "\n";
                 //std::cout << " j -> : " << (void*)this->operator[](j) << "\n";
-                //this->operator[](j) = borned[i];
+                this->operator[](j) = borned[i];
             }
-            /*for(size_t i = 0; i < pairs; i++)
+            for(size_t i = 0; i < pairs; i++)
             {
-                delete deads[i];
-            }*/
+                //delete deads[i];
+            }
         }
 
         virtual core::array<size_t,2> select_pair_with_comunal()const
@@ -895,6 +895,10 @@ namespace oct::ec::v1
                 if(parentb.node->is_number())
                 {
                     mesh_gens_constant(born,parentb,parenta);
+                }
+                else
+                {
+                    born.rand_single();
                 }
             }
 
