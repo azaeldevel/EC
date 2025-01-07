@@ -19,6 +19,9 @@ namespace oct::ec::v1
     template<core::number N = float>
     struct Single
     {
+        virtual ~Single()
+        {
+        }
 
     public:
         virtual N evaluate() const = 0;

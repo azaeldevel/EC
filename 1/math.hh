@@ -544,7 +544,7 @@ namespace oct::ec::v1
                 deads[i] =  this->operator[](j);
                 //std::cout << " j : " << j << "\n";
                 //std::cout << " j -> : " << (void*)this->operator[](j) << "\n";
-                this->operator[](j) = borned[i];
+                //this->operator[](j) = borned[i];
             }
             for(size_t i = 0; i < pairs; i++)
             {
@@ -873,7 +873,6 @@ namespace oct::ec::v1
                 born.pivot_big = parentb.pivot_big;
                 if(parenta.node->is_number())
                 {
-
                     mesh_gens_constant(born,parenta,parentb);
                 }
                 else
