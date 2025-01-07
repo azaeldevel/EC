@@ -45,4 +45,28 @@ void v1_developing()
         town.pair();
     }
     town.listing(std::cout);
+
+    std::cout << "\n";
+
+    /*
+    std::cout << "std::log(0.001) = " << std::log(0.001) << "\n";
+    std::cout << "std::log(0.01) = " << std::log(0.01) << "\n";
+    std::cout << "std::log(0.1) = " << std::log(0.1) << "\n";
+    std::cout << "std::log(1) = " << std::log(1) << "\n";
+    std::cout << "std::log(10) = " << std::log(10) << "\n";
+    std::cout << "std::log(100) = " << std::log(100) << "\n";
+    */
+
+    std::cout << "\n";
+
+    /*
+    std::cout << "std::exp(0.001) = " << std::exp(0.001) << "\n";
+    std::cout << "std::exp(0.01) = " << std::exp(0.01) << "\n";
+    std::cout << "std::exp(0.1) = " << std::exp(0.1) << "\n";
+    std::cout << "std::exp(1) = " << std::exp(1) << "\n";
+    std::cout << "std::exp(10) = " << std::exp(10) << "\n";
+    std::cout << "std::exp(100) = " << std::exp(100) << "\n";
+    */
+    //std::cout << "std::exp(1000) = " << std::exp(1000) << "\n";
+    //std::cout << "std::exp(10000) = " << std::exp(10000) << "\n";
 }

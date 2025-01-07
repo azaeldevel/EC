@@ -141,15 +141,15 @@ namespace oct::ec::v1
             }
             else if(core::equal(value,N(0.0)))
             {
-                eval = result/std::numeric_limits<N>::max();
+                eval = N(1)/result;
             }
             else if(core::equal(result,N(0.0)))
             {
-                eval = value/std::numeric_limits<N>::max();//ya se
+                eval = N(1)/value;//ya se
             }
             else
             {
-                eval = (value - result)/std::numeric_limits<N>::max();
+                eval = N(1)/(value - result);
             }
 
             if(core::diff(eval,N(0.0)))
