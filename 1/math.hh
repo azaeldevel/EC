@@ -180,6 +180,27 @@ namespace oct::ec::v1
             {
                 changeable_deep_increment = &almost_never;
             }*/
+            N tempval;
+            for(size_t i = 0; i < 5; i++)
+            {//asgura un numero (0,1)
+                for(size_t j = 0; j < 3; j++)
+                {
+                    tempval = constant(generator);
+                    if(core::diff(tempval,N(0))) break;
+                }
+                pivots[i] = N(1)/tempval;
+            }
+            for(size_t i = 4; i < 10; i++)
+            {//asgura un numero mayor que 1
+                for(size_t j = 0; j < 6; j++)
+                {
+                    tempval = constant(generator);
+                    if( std::abs(tempval) > N(1)) break;
+                }
+                pivots[i] = tempval;
+            }
+            pivot_one = pivots[select_pivot(generator)];
+            pivot_big = pivots[5 + select_pivot(generator)];
         }
 
         static core::ast::node<>* rand_node()
@@ -397,6 +418,10 @@ namespace oct::ec::v1
         bool changeable_operations;//si se pude cambiar las operaciones
         bool changeable_variables;//si se pude cambiar las variables
         //std::bernoulli_distribution* changeable_deep_increment;//la preferencia en el cambio de la profundida
+        static const size_t pivots_size = 10;
+        core::array<N,pivots_size> pivots;
+        size_t pivot_one;
+        size_t pivot_big;
 
     public:
 
@@ -415,6 +440,7 @@ namespace oct::ec::v1
         static inline std::uniform_int_distribution<> selection_second_pair;
         static inline std::bernoulli_distribution almost_everytime;
         static inline std::bernoulli_distribution almost_never;
+        static inline std::uniform_int_distribution<> select_pivot;
         static inline unsigned population_size;
 
         static void init_randsys(unsigned size)
@@ -423,18 +449,19 @@ namespace oct::ec::v1
             int barrera = population_size/10;
             std::setprecision(10);
             generator = std::mt19937(rd()); // mersenne_twister_engine seeded with rd()
-            operation = std::uniform_int_distribution<>(1, 4);
+            operation = std::uniform_int_distribution<>(1, 4);//+,-,*,/
             constant = std::uniform_real_distribution<>(-1.0e6, 1.0e6);
             nesting = std::bernoulli_distribution(0.75);
             svariable = std::uniform_int_distribution<>(0, S - 1);
             randon_node = std::uniform_int_distribution<>(1, 3);//operacion,variable,constante
             mutability = std::bernoulli_distribution(0.02);
             binary_selection = std::bernoulli_distribution(0.5);
-            operation_puls_1 = std::uniform_int_distribution<>(1, 5);
+            operation_puls_1 = std::uniform_int_distribution<>(1, 5);//+,-,*,/,?
             selection_firts_pair = std::fisher_f_distribution<N>(1,barrera);
             selection_second_pair = std::uniform_int_distribution<>(1,population_size);
             almost_everytime = std::bernoulli_distribution(0.8);
             almost_never = std::bernoulli_distribution(0.2);
+            select_pivot = std::uniform_int_distribution<>(0,(pivots_size/2) - 1);//+,-,*,/
         }
     };
 
@@ -494,6 +521,28 @@ namespace oct::ec::v1
                 std::cout << "\n";
             }
         }
+        virtual void pair()
+        {
+            core::array<size_t,2> selectd = select_pair_with_comunal();
+            std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
+            size_t pairs = T::population_size/5;
+            core::array<T*> borned(pairs);
+            for(size_t i = 0; i < pairs; i++)
+            {
+                borned[i] = new T(*variables,T::eval_constant,false);
+                mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
+            }
+            core::array<T*> deads(pairs);
+            for(size_t i = 0, j = this->size() - 1; i < pairs; i++,j--)
+            {
+                deads[i] =  this->operator[](j);
+                this->operator[](j) = borned[i];
+            }
+            for(size_t i = 0; i < pairs; i++)
+            {
+                delete deads[i];
+            }
+        }
 
         virtual core::array<size_t,2> select_pair_with_comunal()const
         {
@@ -519,14 +568,281 @@ namespace oct::ec::v1
         void mesh_gens_binopr(T& born, const T& parenta, const T& parentb)
         {
         }
-        void mesh_gens_constant(T& born, const T& parenta, const T& parentb)
-        {
-        }
         void mesh_gens_variable(T& born, const T& parenta, const T& parentb)
         {
         }
         void mesh_gens_random_node(T& born, const T& parenta, const T& parentb)
         {
+        }
+
+        void mesh_gens_constant_parents(T& born, const T& parenta, const T& parentb)
+        {
+            const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
+            const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
+
+            core::ast::Number<N>* node = new core::ast::Number<N>;
+            N contant = T::constant(T::generator);
+            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
+            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
+            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
+
+            switch(core::ast::typen(T::operation(T::generator)))
+            {
+            case core::ast::typen::addition:
+                node->data = nodea->data + nodeb->data;
+                break;
+            case core::ast::typen::subtraction:
+                node->data = nodea->data - nodeb->data;
+                break;
+            case core::ast::typen::product:
+                if(core::equal(nodeb->data,N(0)))
+                {
+                    node->data = nodea->data * parentb.pivots[0];
+                }
+                else
+                {
+                    node->data = nodea->data * nodeb->data;
+                }
+                break;
+            case core::ast::typen::quotient:
+                if(core::equal(nodeb->data,N(0)))
+                {
+                    node->data = nodea->data / parentb.pivots[0];
+                }
+                else
+                {
+                    node->data = nodea->data / nodeb->data;
+                }
+                break;
+            default:
+                break;
+            }
+
+            born.node = node;
+            born.auto_free = true;
+        }
+
+        void mesh_gens_constant_parents_pivot_one(T& born, const T& parenta, const T& parentb)
+        {
+            const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
+            const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
+
+            core::ast::Number<N>* node = new core::ast::Number<N>;
+            switch(core::ast::typen(T::operation(T::generator)))
+            {
+            case core::ast::typen::addition:
+                node->data = nodea->data + parentb.pivot_one;
+                break;
+            case core::ast::typen::subtraction:
+                node->data = nodea->data - parentb.pivot_one;
+                break;
+            case core::ast::typen::product:
+                node->data = nodea->data * parentb.pivot_one;
+                break;
+            case core::ast::typen::quotient:
+                node->data = nodea->data / parentb.pivot_one;
+                break;
+            default:
+                break;
+            }
+
+            born.node = node;
+            born.auto_free = true;
+        }
+
+        void mesh_gens_constant_parents_pivot_big(T& born, const T& parenta, const T& parentb)
+        {
+            const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
+            const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
+
+            core::ast::Number<N>* node = new core::ast::Number<N>;
+            switch(core::ast::typen(T::operation(T::generator)))
+            {
+            case core::ast::typen::addition:
+                node->data = nodea->data + parentb.pivot_big;
+                break;
+            case core::ast::typen::subtraction:
+                node->data = nodea->data - parentb.pivot_big;
+                break;
+            case core::ast::typen::product:
+                node->data = nodea->data * parentb.pivot_big;
+                break;
+            case core::ast::typen::quotient:
+                node->data = nodea->data / parentb.pivot_one;
+                break;
+            default:
+                break;
+            }
+
+            born.node = node;
+            born.auto_free = true;
+        }
+        void mesh_gens_constant_parents_pivot_random(T& born, const T& parenta, const T& parentb)
+        {
+            const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
+            const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
+
+            core::ast::Number<N>* node = new core::ast::Number<N>;
+            size_t index;
+            if((*born.preference)(T::genrator))
+            {
+                index = T::pivot_select(T::genrator);
+            }
+            else
+            {
+                index = 4 + T::pivot_select(T::genrator);
+            }
+            switch(core::ast::typen(T::operation(T::generator)))
+            {
+            case core::ast::typen::addition:
+                node->data = nodea->data + parentb.pivot_big;
+                break;
+            case core::ast::typen::subtraction:
+                node->data = nodea->data - parentb.pivot_big;
+                break;
+            case core::ast::typen::product:
+                node->data = nodea->data * parentb.pivot_big;
+                break;
+            case core::ast::typen::quotient:
+                node->data = nodea->data / parentb.pivot_one;
+                break;
+            default:
+                break;
+            }
+
+            born.node = node;
+            born.auto_free = true;
+        }
+
+        void mesh_gens_constant_single(T& born, const T& parent)
+        {
+            const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
+
+            core::ast::Number<N>* node = new core::ast::Number<N>;
+            N contant = T::constant(T::generator);
+            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
+            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
+            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
+            switch(core::ast::typen(T::operation(T::generator)))
+            {
+            case core::ast::typen::addition:
+                node->data = nodea->data + contant;
+                break;
+            case core::ast::typen::subtraction:
+                node->data = nodea->data - contant;
+                break;
+            case core::ast::typen::product:
+                node->data = nodea->data * contant;
+                break;
+            case core::ast::typen::quotient:
+                node->data = nodea->data / contant;
+                break;
+            default:
+                break;
+            }
+
+            born.node = node;
+            born.auto_free = true;
+        }
+        void mesh_gens_constant_pivoted(T& born, const T& parent)
+        {
+            const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
+
+            core::ast::Number<N>* node = new core::ast::Number<N>;
+            if((*born.preference)(T::genrator))
+            {
+                if((*born.preference)(T::genrator))
+                {
+                    node->data = nodea->data * parent.pivot_one;
+                }
+                else
+                {
+                    node->data = nodea->data * parent.pivot_big;
+                }
+            }
+            else
+            {
+                if((*born.preference)(T::genrator))
+                {
+                    node->data = nodea->data * (parent.pivots[0]/parent.pivot_one);
+                }
+                else
+                {
+                    node->data = nodea->data * ((parent.pivots[0] - parent.pivots[1])/parent.pivot_one);
+                }
+            }
+
+            born.node = node;
+            born.auto_free = true;
+        }
+
+        void mesh_gens_constant_pivoted_operation(T& born, const T& parent)
+        {
+            const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
+
+            core::ast::Number<N>* node = new core::ast::Number<N>;
+            if((*born.preference)(T::genrator))
+            {
+                if((*born.preference)(T::genrator))
+                {
+                    node->data = nodea->data + parent.pivot_one;
+                }
+                else
+                {
+                    node->data = nodea->data - parent.pivot_one;
+                }
+            }
+            else
+            {
+                if((*born.preference)(T::genrator))
+                {
+                    node->data = (nodea->data - parent.pivot_big)/parent.pivot_big;
+                }
+                else
+                {
+                    node->data =  (nodea->data - parent.pivot_one)/parent.pivot_big;
+                }
+            }
+
+            born.node = node;
+            born.auto_free = true;
+        }
+        void mesh_gens_constant(T& born, const T& parenta, const T& parentb)
+        {
+            if((*born.preference)(T::genrator))
+            {
+                if((*born.preference)(T::genrator))
+                {
+                    mesh_gens_constant_pivoted_operation(parenta);
+                }
+                else if((*born.preference)(T::genrator))
+                {
+                    mesh_gens_constant_pivoted(parenta);
+                }
+                else
+                {
+                     mesh_gens_constant_single(parenta);
+                }
+            }
+            else
+            {
+                if((*born.preference)(T::genrator))
+                {
+                    mesh_gens_constant_parents(parenta,parentb);
+                }
+                else if((*born.preference)(T::genrator))
+                {
+                    mesh_gens_constant_parents_pivot_one(parenta,parentb);
+                }
+                else if((*born.preference)(T::genrator))
+                {
+                    mesh_gens_constant_parents_pivot_big(parenta,parentb);
+                }
+                else if((*born.preference)(T::genrator))
+                {
+                    mesh_gens_constant_parents_pivot_random(parenta,parentb);
+                }
+            }
         }
         /**
         *\brief Asigna los genees de un individuo a partir de los padres
@@ -544,7 +860,18 @@ namespace oct::ec::v1
                 born.changeable_operations = parentb.changeable_operations;
                 born.changeable_variables = parenta.changeable_variables;
                 //born.changeable_deep_increment = parentb.changeable_deep_increment;
+                born.pivots = parentb.pivots;
+                born.pivot_one = parenta.pivot_one;
+                born.pivot_big = parentb.pivot_big;
+                if(parenta.node->is_number())
+                {
 
+                    mesh_gens_constant_parents(born,parenta,parentb);
+                }
+                else
+                {
+                    born.rand_single();
+                }
             }
             else
             {
@@ -554,23 +881,17 @@ namespace oct::ec::v1
                 born.changeable_operations = parenta.changeable_operations;
                 born.changeable_variables = parentb.changeable_variables;
                 //born.changeable_deep_increment = parenta.changeable_deep_increment;
+                born.pivots = parenta.pivots;
+                born.pivot_one = parentb.pivot_one;
+                born.pivot_big = parenta.pivot_big;
+                if(parentb.node->is_number())
+                {
+                    mesh_gens_constant_parents(born,parentb,parenta);
+                }
             }
 
 
 
-        }
-        virtual void pair()
-        {
-            core::array<size_t,2> selectd = select_pair_with_comunal();
-            std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
-            size_t pairs = T::population_size/N(10);
-            core::array<T*> borned(pairs);
-            for(size_t i = 0; i < this->size(); i++)
-            {
-                borned[i] = new T(*variables,T::eval_constant,false);
-                mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
-            }
-            core::array<T*> killed(pairs);
         }
 
     public:
