@@ -100,6 +100,7 @@ namespace oct::ec::v1
         virtual N evaluate() const
         {
             N rest;
+            if(!node) throw core::exception("No se ha asignado el nodo pra la expresion");
 
             switch(node->type)
             {
@@ -684,13 +685,13 @@ namespace oct::ec::v1
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
             size_t index;
-            if((*born.preference)(T::genrator))
+            if((*born.preference)(T::generator))
             {
-                index = T::pivot_select(T::genrator);
+                index = T::select_pivot(T::generator);
             }
             else
             {
-                index = 4 + T::pivot_select(T::genrator);
+                index = 4 + T::select_pivot(T::generator);
             }
             switch(core::ast::typen(T::operation(T::generator)))
             {
@@ -749,9 +750,9 @@ namespace oct::ec::v1
             const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
-            if((*born.preference)(T::genrator))
+            if((*born.preference)(T::generator))
             {
-                if((*born.preference)(T::genrator))
+                if((*born.preference)(T::generator))
                 {
                     node->data = nodea->data * parent.pivot_one;
                 }
@@ -762,7 +763,7 @@ namespace oct::ec::v1
             }
             else
             {
-                if((*born.preference)(T::genrator))
+                if((*born.preference)(T::generator))
                 {
                     node->data = nodea->data * (parent.pivots[0]/parent.pivot_one);
                 }
@@ -781,9 +782,9 @@ namespace oct::ec::v1
             const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
-            if((*born.preference)(T::genrator))
+            if((*born.preference)(T::generator))
             {
-                if((*born.preference)(T::genrator))
+                if((*born.preference)(T::generator))
                 {
                     node->data = nodea->data + parent.pivot_one;
                 }
@@ -794,7 +795,7 @@ namespace oct::ec::v1
             }
             else
             {
-                if((*born.preference)(T::genrator))
+                if((*born.preference)(T::generator))
                 {
                     node->data = (nodea->data - parent.pivot_big)/parent.pivot_big;
                 }
@@ -809,38 +810,38 @@ namespace oct::ec::v1
         }
         void mesh_gens_constant(T& born, const T& parenta, const T& parentb)
         {
-            if((*born.preference)(T::genrator))
+            if((*born.preference)(T::generator))
             {
-                if((*born.preference)(T::genrator))
+                if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_pivoted_operation(parenta);
+                    mesh_gens_constant_pivoted_operation(born,parenta);
                 }
-                else if((*born.preference)(T::genrator))
+                else if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_pivoted(parenta);
+                    mesh_gens_constant_pivoted(born,parenta);
                 }
                 else
                 {
-                     mesh_gens_constant_single(parenta);
+                     mesh_gens_constant_single(born,parenta);
                 }
             }
             else
             {
-                if((*born.preference)(T::genrator))
+                if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_parents(parenta,parentb);
+                    mesh_gens_constant_parents(born,parenta,parentb);
                 }
-                else if((*born.preference)(T::genrator))
+                else if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_parents_pivot_one(parenta,parentb);
+                    mesh_gens_constant_parents_pivot_one(born,parenta,parentb);
                 }
-                else if((*born.preference)(T::genrator))
+                else if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_parents_pivot_big(parenta,parentb);
+                    mesh_gens_constant_parents_pivot_big(born,parenta,parentb);
                 }
-                else if((*born.preference)(T::genrator))
+                else if((*born.preference)(T::generator))
                 {
-                    mesh_gens_constant_parents_pivot_random(parenta,parentb);
+                    mesh_gens_constant_parents_pivot_random(born,parenta,parentb);
                 }
             }
         }
@@ -866,7 +867,7 @@ namespace oct::ec::v1
                 if(parenta.node->is_number())
                 {
 
-                    mesh_gens_constant_parents(born,parenta,parentb);
+                    mesh_gens_constant(born,parenta,parentb);
                 }
                 else
                 {
@@ -886,7 +887,7 @@ namespace oct::ec::v1
                 born.pivot_big = parenta.pivot_big;
                 if(parentb.node->is_number())
                 {
-                    mesh_gens_constant_parents(born,parentb,parenta);
+                    mesh_gens_constant(born,parentb,parenta);
                 }
             }
 
