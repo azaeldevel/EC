@@ -626,7 +626,7 @@ namespace oct::ec::v1
         void mesh_gens_constant_parents_pivot_one(T& born, const T& parenta, const T& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
-            const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
+            //const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
             switch(core::ast::typen(T::operation(T::generator)))
@@ -654,7 +654,7 @@ namespace oct::ec::v1
         void mesh_gens_constant_parents_pivot_big(T& born, const T& parenta, const T& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
-            const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
+            //const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
             switch(core::ast::typen(T::operation(T::generator)))
@@ -681,7 +681,7 @@ namespace oct::ec::v1
         void mesh_gens_constant_parents_pivot_random(T& born, const T& parenta, const T& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
-            const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
+            //const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
             size_t index;
@@ -696,16 +696,16 @@ namespace oct::ec::v1
             switch(core::ast::typen(T::operation(T::generator)))
             {
             case core::ast::typen::addition:
-                node->data = nodea->data + parentb.pivot_big;
+                node->data = nodea->data + parentb.pivots[index];
                 break;
             case core::ast::typen::subtraction:
-                node->data = nodea->data - parentb.pivot_big;
+                node->data = nodea->data - parentb.pivots[index];
                 break;
             case core::ast::typen::product:
-                node->data = nodea->data * parentb.pivot_big;
+                node->data = nodea->data * parentb.pivots[index];
                 break;
             case core::ast::typen::quotient:
-                node->data = nodea->data / parentb.pivot_one;
+                node->data = nodea->data / parentb.pivots[index];
                 break;
             default:
                 break;
