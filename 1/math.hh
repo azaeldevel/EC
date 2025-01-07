@@ -99,7 +99,7 @@ namespace oct::ec::v1
         }
         virtual N evaluate() const
         {
-            N rest;
+            N result;
             if(!node) throw core::exception("No se ha asignado el nodo pra la expresion");
 
             switch(node->type)
@@ -108,13 +108,16 @@ namespace oct::ec::v1
             case core::ast::typen::subtraction:
             case core::ast::typen::product:
             case core::ast::typen::quotient:
-                rest = static_cast<core::ast::Binopr<N>*>(node)->result();
+                result = static_cast<core::ast::Binopr<N>*>(node)->result();
                 break;
             case core::ast::typen::number:
-                rest = static_cast<core::ast::Number<N>*>(node)->result();
+                result = static_cast<core::ast::Number<N>*>(node)->result();
                 break;
             case core::ast::typen::variable:
-                rest = static_cast<core::ast::Variable<N>*>(node)->result();
+                result = static_cast<core::ast::Variable<N>*>(node)->result();
+                break;
+            case core::ast::typen::nest:
+                result = static_cast<core::ast::Nest<N>*>(node)->result();
                 break;
             default:
                 break;
@@ -124,29 +127,29 @@ namespace oct::ec::v1
             N value = evalr_actual(variables);
             //std::cout << "value = " << value << "\n";
             N eval;
-            if(std::isnan(rest))
+            if(std::isnan(result))
             {
                 eval = 0;
             }
-            else if(std::isinf(rest))
+            else if(std::isinf(result))
             {
                 eval = 0;
             }
-            else if(core::equal(rest,value))
+            else if(core::equal(result,value))
             {
                 eval = N(1);
             }
             else if(core::equal(value,N(0.0)))
             {
-                eval = rest/std::numeric_limits<N>::max();
+                eval = result/std::numeric_limits<N>::max();
             }
-            else if(core::equal(rest,N(0.0)))
+            else if(core::equal(result,N(0.0)))
             {
                 eval = value/std::numeric_limits<N>::max();//ya se
             }
             else
             {
-                eval = (value - rest)/std::numeric_limits<N>::max();
+                eval = (value - result)/std::numeric_limits<N>::max();
             }
 
             if(core::diff(eval,N(0.0)))
