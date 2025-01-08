@@ -257,6 +257,51 @@ namespace oct::ec::v1
             pivot_one = pivots[select_pivot(generator)];
             pivot_big = pivots[5 + select_pivot(generator)];
         }
+        void rand_single_constants()
+        {
+            node = new core::ast::Number<N>(constant(generator));
+            if(binary_selection(generator))
+            {
+                preference = &almost_everytime;
+            }
+            else
+            {
+                preference = &almost_never;
+            }
+            changeable_deep = (*preference)(generator);
+            changeable_constant = (*preference)(generator);
+            changeable_operations = (*preference)(generator);
+            changeable_variables = (*preference)(generator);
+            /*if(binary_selection(generator))
+            {
+                changeable_deep_increment = &almost_everytime;
+            }
+            else
+            {
+                changeable_deep_increment = &almost_never;
+            }*/
+            N tempval;
+            for(size_t i = 0; i < 5; i++)
+            {//asgura un numero (0,1)
+                for(size_t j = 0; j < 3; j++)
+                {
+                    tempval = constant(generator);
+                    if(core::diff(tempval,N(0))) break;
+                }
+                pivots[i] = N(1)/tempval;
+            }
+            for(size_t i = 4; i < 10; i++)
+            {//asgura un numero mayor que 1
+                for(size_t j = 0; j < 6; j++)
+                {
+                    tempval = constant(generator);
+                    if( std::abs(tempval) > N(1)) break;
+                }
+                pivots[i] = tempval;
+            }
+            pivot_one = pivots[select_pivot(generator)];
+            pivot_big = pivots[5 + select_pivot(generator)];
+        }
 
         static core::ast::node<>* rand_node()
         {
@@ -545,7 +590,8 @@ namespace oct::ec::v1
             this->resize(T::population_size);
             for(size_t i = 0; i < this->size(); i++)
             {
-                this->operator[](i) = new T(*variables,T::eval_constant);
+                this->operator[](i) = new T(*variables,T::eval_constant,false);
+                this->operator[](i)->rand_single_constants();
             }
         }
         virtual void evaluate()
@@ -571,7 +617,8 @@ namespace oct::ec::v1
                 std::cout << i << "\t";
                 std::cout << "evaluacion : ";
                 std::cout << this->operator[](i)->evaluation;
-                std::cout << "\texpresion : ";
+                std::cout << ",\t" << this->operator[](0)->evalr_actual(this->operator[](0)->variables);
+                std::cout << ",\texpresion : ";
                 this->operator[](i)->print(std::cout);
                 std::cout << "\n";
             }
@@ -603,6 +650,7 @@ namespace oct::ec::v1
                 std::cout << i << "\t";
                 std::cout << "evaluacion : ";
                 std::cout << this->operator[](i)->evaluation;
+                std::cout << ",\t" << this->operator[](i)->evalr_actual(this->operator[](i)->variables);
                 std::cout << "\texpresion : ";
                 this->operator[](i)->print(std::cout);
                 std::cout << "\n";
@@ -958,7 +1006,7 @@ namespace oct::ec::v1
                 }
                 else
                 {
-                    born.rand_single();
+                    born.rand_single_constants();
                 }
             }
             else
@@ -979,7 +1027,7 @@ namespace oct::ec::v1
                 }
                 else
                 {
-                    born.rand_single();
+                    born.rand_single_constants();
                 }
             }
 
