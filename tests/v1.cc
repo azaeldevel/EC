@@ -33,8 +33,8 @@ void v1_developing()
     vars[2][1] = 0.7;
     vars[2][2] = 0.83;
 
-    ec::BinoprTown<3,float,ec::Binopr<3,float>> town(vars);
-    town.populate_random();
+    //ec::BinoprTown<3,float,ec::Binopr<3,float>> town(vars);
+    //town.populate_random();
     /*
     town.evaluate();
     town.print(std::cout);
@@ -42,7 +42,7 @@ void v1_developing()
     */
     //town.pair();
 
-    for(size_t i = 0; i < 1000000; i++)
+    /*for(size_t i = 0; i < 1000000; i++)
     {
         town.evaluate();
         //town.print(std::cout);
@@ -50,7 +50,7 @@ void v1_developing()
         std::cout << "\n\n";
         town.pair();
     }
-    town.listing(std::cout);
+    town.listing(std::cout);*/
 
     std::cout << "\n";
 
@@ -75,4 +75,11 @@ void v1_developing()
     */
     //std::cout << "std::exp(1000) = " << std::exp(1000) << "\n";
     //std::cout << "std::exp(10000) = " << std::exp(10000) << "\n";
+
+    ec::BinoprCity<3,float,ec::Binopr<3,float>> city(vars);
+    city.populate_random(10);
+    city.evaluate();
+    //city.resumen(std::cout);
+    //city.listing(std::cout);
+
 }

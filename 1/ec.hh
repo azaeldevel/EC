@@ -63,6 +63,38 @@ namespace oct::ec::v1
         bool auto_free;
     };
 
+    /**
+    *\brief Una purblo es el conjunto minimo de poblacion posible
+    */
+    template<core::number N, class T>
+    struct City : public core::array<Town<N,T>*>
+    {
+    public:
+        typedef core::array<Town<N,T>*> CITY_BASE;
+
+    public:
+        City() = default;
+        virtual ~City()
+        {
+            if(this->auto_free)
+            {
+                for (size_t i = 0; i < this->size();i++)
+                {
+                    delete this->operator[](i);
+                    this->operator[](i) = NULL;
+                }
+                this->auto_free = false;
+            }
+        }
+
+        virtual void evaluate() = 0;
+        //virtual void print(std::ostream& out) const = 0;
+        //virtual void pair() = 0;
+
+    public:
+        bool auto_free;
+    };
+
 
 }
 

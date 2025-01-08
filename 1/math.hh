@@ -1215,6 +1215,88 @@ namespace oct::ec::v1
         bool active_mutation;
     };
 
+    /**
+    *\brief Una purblo es el conjunto minimo de poblacion posible
+    */
+    template<core::index auto S,core::number N,class T>
+    struct BinoprCity : public City<N,T>
+    {
+    public:
+        typedef City<N,T> CITY_BASE;
+
+    public:
+        BinoprCity() = default;
+        virtual ~BinoprCity()
+        {
+        }
+        BinoprCity(const inputs<N,S>& vs) : variables(&vs)
+        {
+        }
+
+        void populate_random(size_t size)
+        {
+            this->resize(size);
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                this->operator[](i) = new BinoprTown<S,N,T>(*variables);
+            }
+        }
+
+        virtual void evaluate()
+        {
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                static_cast<BinoprTown<S,N,T>*>(this->operator[](i))->evaluate();
+            }
+        }
+
+
+        /**
+        *
+        */
+        void resumen(std::ostream& out) const
+        {
+            BinoprTown<S,N,T>* town;
+            std::cout << "Poblacion : " << Binopr<S,N>::population_size << "\n";
+            std::cout << "\n";
+            N media = 0;
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                town = static_cast<BinoprTown<S,N,T>*>(this->operator[](i));
+                town->evaluate();
+                media += town->operator[](0)->evaluation;
+            }
+            media /= N(this->size());
+            std::cout << "Media : " << media << "\n";
+        }
+
+        /**
+        *
+        */
+        void listing(std::ostream& out) const
+        {
+            BinoprTown<S,N,T>* town;
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                town = static_cast<BinoprTown<S,N,T>*>(this->operator[](i));
+                std::cout << i << "\t";
+                std::cout << "evaluacion : ";
+                std::cout << town->operator[](0)->evaluation;
+                std::cout << ",\t" << town->operator[](0)->evalr_actual(town->operator[](0)->variables);
+                std::cout << "\texpresion : ";
+                town->operator[](0)->print(std::cout);
+                std::cout << "\n";
+            }
+        }
+        //virtual void print(std::ostream& out) const = 0;
+        //virtual void pair() = 0;
+
+    public:
+        const inputs<N,S>* variables;
+
+    public:
+    };
+
 }
 
 #endif // EC_HH_INCLUDED
