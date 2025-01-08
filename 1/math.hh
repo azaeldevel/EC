@@ -176,7 +176,14 @@ namespace oct::ec::v1
                 }
                 else if(std::abs(domeval) < N(1))
                 {
-                    eval = N(1) - domeval;
+                    if(value > result)
+                    {
+                        eval = N(1) - domeval;
+                    }
+                    else
+                    {
+                        eval = N(1) + domeval;
+                    }
                 }
                 else
                 {//la diferencia es 1 o -1
@@ -205,6 +212,11 @@ namespace oct::ec::v1
             else
             {
                 throw core::exception("Erro de logica, algun valor quedo fuera de los rango co nsiderados.");
+            }
+
+            if(std::abs(eval) > N(1))
+            {
+                std::cout << "eval -> value::result \t" << eval << " -> "  << value << " - " << result << "\n";
             }
 
 
@@ -541,6 +553,7 @@ namespace oct::ec::v1
         static inline std::bernoulli_distribution almost_everytime;
         static inline std::bernoulli_distribution almost_never;
         static inline std::uniform_int_distribution<> select_pivot;
+        static inline std::uniform_int_distribution<> select_gen_constant;
         static inline unsigned population_size;
 
         static void init_randsys(unsigned size)
@@ -562,6 +575,7 @@ namespace oct::ec::v1
             almost_everytime = std::bernoulli_distribution(0.8);
             almost_never = std::bernoulli_distribution(0.2);
             select_pivot = std::uniform_int_distribution<>(0,(pivots_size/2) - 1);//+,-,*,/
+            select_gen_constant = std::uniform_int_distribution<>(1,9);
         }
     };
 
@@ -698,6 +712,65 @@ namespace oct::ec::v1
             {
                 delete deads[i];
             }
+        }
+
+        void mutation(T& born)
+        {
+            if((T::binary_selection)(T::generator))
+            {
+                mutation_pivots(born);
+            }
+            else
+            {
+                mutation_node(born);
+            }
+        }
+        void mutation_node(T& born)
+        {
+            born.rand_single_constants();
+        }
+        void mutation_pivots(T& born)
+        {
+
+                N tempval;
+                if((T::binary_selection)(T::generator))
+                {
+                    if((T::binary_selection)(T::generator))
+                    {
+                        for(size_t i = 0; i < 5; i++)
+                        {//asgura un numero (0,1)
+                            for(size_t j = 0; j < 3; j++)
+                            {
+                                tempval = T::constant(T::generator);
+                                if(core::diff(tempval,N(0))) break;
+                            }
+                            born.pivots[T::select_pivot(T::generator)] = N(1)/tempval;
+                        }
+                    }
+                    else
+                    {
+                        for(size_t i = 4; i < 10; i++)
+                        {//asgura un numero mayor que 1
+                            for(size_t j = 0; j < 6; j++)
+                            {
+                                tempval = T::constant(T::generator);
+                                if( std::abs(tempval) > N(1)) break;
+                            }
+                            born.pivots[T::select_pivot(T::generator)] = tempval;
+                        }
+                    }
+                }
+                else
+                {
+                    if((T::binary_selection)(T::generator))
+                    {
+                        born.pivot_one = born.pivots[T::select_pivot(T::generator)];
+                    }
+                    else
+                    {
+                        born.pivot_big = born.pivots[5 + T::select_pivot(T::generator)];
+                    }
+                }
         }
 
         virtual core::array<size_t,2> select_pair_with_comunal()const
@@ -952,11 +1025,11 @@ namespace oct::ec::v1
             {
                 if((*born.preference)(T::generator))
                 {
-                    node->data = nodea->data * (parent.pivots[0]/parent.pivot_one);
+                    node->data = nodea->data * (parent.pivots[T::select_pivot(T::generator)]/parent.pivot_one);
                 }
                 else
                 {
-                    node->data = nodea->data * ((parent.pivots[0] - parent.pivots[1])/parent.pivot_one);
+                    node->data = nodea->data * ((parent.pivots[T::select_pivot(T::generator)] - parent.pivots[T::select_pivot(T::generator)])/parent.pivot_one);
                 }
             }
 
@@ -995,38 +1068,51 @@ namespace oct::ec::v1
         }
         core::ast::node<>* mesh_gens_constant(T& born, const T& parenta, const T& parentb)
         {
+            switch(T::select_gen_constant(T::generator))
+            {
+            case 1:
+                return mesh_gens_constant_pivoted_operation(born,parenta);
+            case 2:
+                return mesh_gens_constant_pivoted(born,parenta);
+            case 3:
+                return mesh_gens_constant_single(born,parenta);
+            case 4:
+                return mesh_gens_constant_parents(born,parenta,parentb);
+            case 5:
+                return mesh_gens_constant_parents_pivot_one(born,parenta,parentb);
+            case 6:
+                return mesh_gens_constant_parents_pivot_big(born,parenta,parentb);
+            case 7:
+                return mesh_gens_constant_parents_pivot_random(born,parenta,parentb);
+            default:
+                return mesh_gens_constant_pivoted(born,parenta);
+                break;
+            }
             if((*born.preference)(T::generator))
             {
                 if((*born.preference)(T::generator))
                 {
-                    return mesh_gens_constant_pivoted_operation(born,parenta);
                 }
                 else if((*born.preference)(T::generator))
                 {
-                    return mesh_gens_constant_pivoted(born,parenta);
                 }
                 else
                 {
-                     return mesh_gens_constant_single(born,parenta);
                 }
             }
             else
             {
                 if((*born.preference)(T::generator))
                 {
-                    return mesh_gens_constant_parents(born,parenta,parentb);
                 }
                 else if((*born.preference)(T::generator))
                 {
-                    return mesh_gens_constant_parents_pivot_one(born,parenta,parentb);
                 }
                 else if((*born.preference)(T::generator))
                 {
-                    return mesh_gens_constant_parents_pivot_big(born,parenta,parentb);
                 }
                 else
                 {
-                    return mesh_gens_constant_parents_pivot_random(born,parenta,parentb);
                 }
             }
         }
@@ -1039,6 +1125,9 @@ namespace oct::ec::v1
         void mesh_gens(T& born, const T& parenta, const T& parentb)
         {
             if(born.node) throw core::exception("El nodo no esta vacio, deve esta vacio para continuar");
+            bool active_mutation = false;
+            unsigned mutation_counter = 0;
+            if(T::mutability(T::generator)) active_mutation = true;
 
             if(T::binary_selection(T::generator))
             {
@@ -1051,14 +1140,28 @@ namespace oct::ec::v1
                 born.pivots = parentb.pivots;
                 born.pivot_one = parenta.pivot_one;
                 born.pivot_big = parentb.pivot_big;
+                if(active_mutation and T::almost_everytime(T::generator))
+                {
+                    mutation_pivots(born);
+                }
+
                 if(parenta.node->is_number())
                 {
-                    born.node = mesh_gens_constant(born,parenta,parentb);
+                    if(active_mutation and T::almost_everytime(T::generator))
+                    {
+                        mutation_counter++;
+                        mutation_node(born);
+                    }
+                    else
+                    {
+                        born.node = mesh_gens_constant(born,parenta,parentb);
+                    }
+
                     born.auto_free = true;
                 }
                 else
                 {
-                    born.rand_single();
+                    born.rand_single_constants();
                 }
             }
             else
@@ -1079,7 +1182,7 @@ namespace oct::ec::v1
                 }
                 else
                 {
-                    born.rand_single();
+                    born.rand_single_constants();
                 }
             }
 

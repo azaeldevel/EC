@@ -42,7 +42,7 @@ void v1_developing()
     */
     //town.pair();
 
-    for(size_t i = 0; i < 1000000; i++)
+    for(size_t i = 0; i < 10000; i++)
     {
         town.evaluate();
         //town.print(std::cout);
