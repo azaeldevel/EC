@@ -124,8 +124,8 @@ namespace oct::ec::v1
                 break;
             }
 
-            //const N ration = N(1) - (N(1)/N(1e4));
-            const N ration = 0.91;
+            const N ration = N(1) - (N(1)/N(1e4));
+            //const N ration = 0.99;
 
             N value = evalr_actual(variables);
             //std::cout << "value = " << value << "\n";
@@ -187,7 +187,7 @@ namespace oct::ec::v1
                     {
                         eval = N(1) + domeval;
                     }
-                    eval *= ration;
+                    //eval /= ration;
                 }
                 else
                 {//la diferencia es 1 o -1
@@ -218,10 +218,10 @@ namespace oct::ec::v1
                 throw core::exception("Erro de logica, algun valor quedo fuera de los rango co nsiderados.");
             }
 
-            /*if(std::abs(eval) > N(1))
+            if(std::abs(eval) > N(1))
             {
                 std::cout << "eval -> value::result \t" << eval << " -> "  << value << " - " << result << "\n";
-            }*/
+            }
 
 
             return eval;

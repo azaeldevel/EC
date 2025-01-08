@@ -19,9 +19,9 @@ int v1_clean(void)
 
 void v1_developing()
 {
-    ec::Binopr<3,float>::init_randsys(100);
+    ec::Binopr<3,double>::init_randsys(100);
 
-    ec::inputs<float,3> vars;
+    ec::inputs<double,3> vars;
     vars.resize(3);//cantidad de resgistro
     vars[0][0] = 1.2;
     vars[0][1] = 65.964;
@@ -76,7 +76,7 @@ void v1_developing()
     //std::cout << "std::exp(1000) = " << std::exp(1000) << "\n";
     //std::cout << "std::exp(10000) = " << std::exp(10000) << "\n";
 
-    ec::BinoprCity<3,float,ec::Binopr<3,float>> city(vars);
+    ec::BinoprCity<3,double,ec::Binopr<3,double>> city(vars);
     city.populate_random(10);
     //
     /*
