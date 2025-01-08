@@ -695,10 +695,30 @@ namespace oct::ec::v1
             core::array<T*> borned(pairs),deads(pairs);
             for(size_t i = 0; i < pairs; i++)
             {
+                if(T::mutability(T::generator)) active_mutation = true;
                 selectd = select_pair_with_comunal();
                 //std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
                 borned[i] = new T(*variables,T::eval_constant,false);
-                mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
+                if(active_mutation and T::almost_never(T::generator))
+                {
+                    borned[i]->rand_single_constants();
+                }
+                else
+                {
+                    mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
+                }
+                if(active_mutation and T::almost_everytime(T::generator))
+                {
+                    if(T::binary_selection(T::generator))
+                    {
+                        mutation_pivots(*this->operator[](selectd[0]));
+                    }
+                    else
+                    {
+                        mutation_pivots(*this->operator[](selectd[1]));
+                    }
+                }
+                active_mutation = false;
             }
             for(size_t i = 0, j = this->size() - 1; i < pairs; i++,j--)
             {
@@ -731,10 +751,9 @@ namespace oct::ec::v1
         }
         void mutation_pivots(T& born)
         {
-
-                N tempval;
-                if((T::binary_selection)(T::generator))
-                {
+            N tempval;
+            if((T::binary_selection)(T::generator))
+            {
                     if((T::binary_selection)(T::generator))
                     {
                         for(size_t i = 0; i < 5; i++)
@@ -759,9 +778,9 @@ namespace oct::ec::v1
                             born.pivots[T::select_pivot(T::generator)] = tempval;
                         }
                     }
-                }
-                else
-                {
+            }
+            else
+            {
                     if((T::binary_selection)(T::generator))
                     {
                         born.pivot_one = born.pivots[T::select_pivot(T::generator)];
@@ -770,7 +789,7 @@ namespace oct::ec::v1
                     {
                         born.pivot_big = born.pivots[5 + T::select_pivot(T::generator)];
                     }
-                }
+            }
         }
 
         virtual core::array<size_t,2> select_pair_with_comunal()const
@@ -1125,9 +1144,8 @@ namespace oct::ec::v1
         void mesh_gens(T& born, const T& parenta, const T& parentb)
         {
             if(born.node) throw core::exception("El nodo no esta vacio, deve esta vacio para continuar");
-            bool active_mutation = false;
-            unsigned mutation_counter = 0;
-            if(T::mutability(T::generator)) active_mutation = true;
+            active_mutation = false;
+
 
             if(T::binary_selection(T::generator))
             {
@@ -1149,7 +1167,7 @@ namespace oct::ec::v1
                 {
                     if(active_mutation and T::almost_everytime(T::generator))
                     {
-                        mutation_counter++;
+                        //mutation_counter++;
                         mutation_node(born);
                     }
                     else
@@ -1192,6 +1210,9 @@ namespace oct::ec::v1
 
     public:
         const inputs<N,S>* variables;
+
+    public:
+        bool active_mutation;
     };
 
 }
