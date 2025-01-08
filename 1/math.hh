@@ -594,6 +594,10 @@ namespace oct::ec::v1
                 this->operator[](i)->rand_single_constants();
             }
         }
+
+        /**
+        *
+        */
         virtual void evaluate()
         {
             for(size_t i = 0; i < this->size(); i++)
@@ -623,6 +627,10 @@ namespace oct::ec::v1
                 std::cout << "\n";
             }
         }
+
+        /**
+        *
+        */
         void resumen(std::ostream& out) const
         {
             std::cout << "Poblacion : " << this->size() << "\n";
@@ -643,6 +651,10 @@ namespace oct::ec::v1
             std::cout << "Constantes : " << count_constants << "\n";
             std::cout << "Media : " << media << "\n";
         }
+
+        /**
+        *
+        */
         void listing(std::ostream& out) const
         {
             for(size_t i = 0; i < this->size(); i++)
@@ -680,6 +692,7 @@ namespace oct::ec::v1
                 //std::cout << " j : " << j << "\n";
                 //std::cout << " j -> : " << (void*)this->operator[](j) << "\n";
                 this->operator[](j) = borned[i];
+                if(not borned[i]->node) throw core::exception("No se asigno el nodo correspondiente.");
             }
             for(size_t i = 0; i < pairs; i++)
             {
@@ -691,6 +704,20 @@ namespace oct::ec::v1
         {
             core::array<size_t,2> rest;
             rest[0] = (size_t)T::selection_firts_pair(T::generator);
+
+            if(rest[0] >= this->size())//asegurar que no son iguales
+            {
+                rest[0] = (size_t)T::selection_firts_pair(T::generator);
+            }
+            if(rest[0] >= this->size())//asegurar que no son iguales
+            {
+                rest[0] = (size_t)T::selection_firts_pair(T::generator);
+            }
+            if(rest[0] >= this->size())//asegurar que no son iguales
+            {
+                rest[0] = (size_t)T::selection_firts_pair(T::generator);
+            }
+
             rest[1] = T::selection_second_pair(T::generator);
             if(rest[0] == rest[1])//asegurar que no son iguales
             {
@@ -705,6 +732,7 @@ namespace oct::ec::v1
                 rest[0] = (size_t)T::selection_firts_pair(T::generator);
                 rest[1] = T::selection_second_pair(T::generator);
             }
+
 
             return rest;
         }
@@ -740,7 +768,14 @@ namespace oct::ec::v1
             case core::ast::typen::product:
                 if(core::equal(nodeb->data,N(0)))
                 {
-                    node->data = nodea->data * parentb.pivots[0];
+                    if((*parenta.preference)(T::generator))
+                    {
+                        node->data = nodea->data * parentb.pivot_one;
+                    }
+                    else
+                    {
+                        node->data = nodea->data * parentb.pivot_big;
+                    }
                 }
                 else
                 {
@@ -750,11 +785,26 @@ namespace oct::ec::v1
             case core::ast::typen::quotient:
                 if(core::equal(nodeb->data,N(0)))
                 {
-                    node->data = nodea->data / parentb.pivots[0];
+                    if((*parenta.preference)(T::generator))
+                    {
+                        node->data = nodea->data / parentb.pivot_one;
+                    }
+                    else
+                    {
+                        node->data = nodea->data / parentb.pivot_big;
+                    }
                 }
                 else
                 {
-                    node->data = nodea->data / nodeb->data;
+                    if((*parenta.preference)(T::generator))
+                    {
+                        node->data = nodea->data / parentb.pivot_one;
+                    }
+                    else
+                    {
+                        node->data = nodea->data / nodeb->data;
+                    }
+
                 }
                 break;
             default:
@@ -809,7 +859,7 @@ namespace oct::ec::v1
                 node->data = nodea->data * parentb.pivot_big;
                 break;
             case core::ast::typen::quotient:
-                node->data = nodea->data / parentb.pivot_one;
+                node->data = nodea->data / parentb.pivot_big;
                 break;
             default:
                 break;
@@ -981,13 +1031,15 @@ namespace oct::ec::v1
             }
         }
         /**
-        *\brief Asigna los genees de un individuo a partir de los padres
+        *\brief Asigna los genes de un individuo a partir de los padres
         *\param born individuo cuyos genes seran asignados
         *\param parenta un padre del nuevo individuo
         *\param parentb un padre del nuevo individuo
         */
         void mesh_gens(T& born, const T& parenta, const T& parentb)
         {
+            if(born.node) throw core::exception("El nodo no esta vacio, deve esta vacio para continuar");
+
             if(T::binary_selection(T::generator))
             {
                 born.preference = parenta.preference;
@@ -1006,7 +1058,7 @@ namespace oct::ec::v1
                 }
                 else
                 {
-                    born.rand_single_constants();
+                    born.rand_single();
                 }
             }
             else
@@ -1027,7 +1079,7 @@ namespace oct::ec::v1
                 }
                 else
                 {
-                    born.rand_single_constants();
+                    born.rand_single();
                 }
             }
 
