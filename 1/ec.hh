@@ -35,14 +35,14 @@ namespace oct::ec::v1
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
     template<core::number N, class T>
-    struct Town : public core::array<T*>
+    struct Group : public core::array<T*>
     {
     public:
         typedef  core::array<T*> TOWN_BASE;
 
     public:
-        Town() = default;
-        virtual ~Town()
+        Group() = default;
+        virtual ~Group()
         {
             if(this->auto_free)
             {
@@ -67,14 +67,14 @@ namespace oct::ec::v1
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
     template<core::number N, class T>
-    struct City : public core::array<Town<N,T>*>
+    struct Community : public core::array<Group<N,T>*>
     {
     public:
-        typedef core::array<Town<N,T>*> CITY_BASE;
+        typedef core::array<Group<N,T>*> CITY_BASE;
 
     public:
-        City() = default;
-        virtual ~City()
+        Community() = default;
+        virtual ~Community()
         {
             if(this->auto_free)
             {

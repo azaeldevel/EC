@@ -588,17 +588,17 @@ namespace oct::ec::v1
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
     template<core::index auto S,core::number N,class T>
-    struct BinoprTown : public Town<N,T>
+    struct BinoprGroup : public Group<N,T>
     {
     public:
-        typedef  Town<N,T> ARTTOWN_BASE;
+        typedef  Group<N,T> ARTTOWN_BASE;
 
     public:
-        BinoprTown() = default;
-        virtual ~BinoprTown()
+        BinoprGroup() = default;
+        virtual ~BinoprGroup()
         {
         }
-        BinoprTown(const inputs<N,S>& vs) : variables(&vs)
+        BinoprGroup(const inputs<N,S>& vs) : variables(&vs)
         {
         }
 
@@ -1216,27 +1216,27 @@ namespace oct::ec::v1
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
     template<core::index auto S,core::number N,class T>
-    struct BinoprCity : public City<N,T>
+    struct BinoprCommunity : public Community<N,T>
     {
     public:
-        typedef City<N,T> CITY_BASE;
+        typedef Community<N,T> CITY_BASE;
 
     public:
-        BinoprCity() = default;
-        virtual ~BinoprCity()
+        BinoprCommunity() = default;
+        virtual ~BinoprCommunity()
         {
         }
-        BinoprCity(const inputs<N,S>& vs) : variables(&vs)
+        BinoprCommunity(const inputs<N,S>& vs) : variables(&vs)
         {
         }
 
         void populate_random(size_t size)
         {
             this->resize(size);
-            BinoprTown<S,N,T>* town;
+            BinoprGroup<S,N,T>* town;
             for(size_t i = 0; i < this->size(); i++)
             {
-                town = new BinoprTown<S,N,T>(*variables);
+                town = new BinoprGroup<S,N,T>(*variables);
                 this->operator[](i) = town;
                 town->populate_random();
             }
@@ -1246,12 +1246,12 @@ namespace oct::ec::v1
         {
             for(size_t i = 0; i < this->size(); i++)
             {
-                static_cast<BinoprTown<S,N,T>*>(this->operator[](i))->evaluate();
+                static_cast<BinoprGroup<S,N,T>*>(this->operator[](i))->evaluate();
             }
             //
-            auto cmpfun = [](Town<N,T>* a,Town<N,T>* b)
+            auto cmpfun = [](Group<N,T>* a,Group<N,T>* b)
             {
-                return static_cast<BinoprTown<S,N,T>*>(a)->operator[](0)->evaluation > static_cast<BinoprTown<S,N,T>*>(b)->operator[](0)->evaluation;
+                return static_cast<BinoprGroup<S,N,T>*>(a)->operator[](0)->evaluation > static_cast<BinoprGroup<S,N,T>*>(b)->operator[](0)->evaluation;
             };
             std::sort(this->begin(),this->end(),cmpfun);
         }
@@ -1262,13 +1262,13 @@ namespace oct::ec::v1
         */
         void resumen(std::ostream& out) const
         {
-            BinoprTown<S,N,T>* town;
+            BinoprGroup<S,N,T>* town;
             std::cout << "Poblacion : " << Binopr<S,N>::population_size << "\n";
             std::cout << "\n";
             N media = 0;
             for(size_t i = 0; i < this->size(); i++)
             {
-                town = static_cast<BinoprTown<S,N,T>*>(this->operator[](i));
+                town = static_cast<BinoprGroup<S,N,T>*>(this->operator[](i));
                 town->evaluate();
                 media += town->operator[](0)->evaluation;
             }
@@ -1281,10 +1281,10 @@ namespace oct::ec::v1
         */
         void listing(std::ostream& out) const
         {
-            BinoprTown<S,N,T>* town;
+            BinoprGroup<S,N,T>* town;
             for(size_t i = 0; i < this->size(); i++)
             {
-                town = static_cast<BinoprTown<S,N,T>*>(this->operator[](i));
+                town = static_cast<BinoprGroup<S,N,T>*>(this->operator[](i));
                 std::cout << i << "\t";
                 std::cout << "evaluacion : ";
                 std::cout << town->operator[](0)->evaluation;
@@ -1293,14 +1293,14 @@ namespace oct::ec::v1
                 town->operator[](0)->print(std::cout);
                 std::cout << "\n";
             }
-            //static_cast<BinoprTown<S,N,T>*>(this->operator[](0))->listing(out);
+            //static_cast<BinoprGroup<S,N,T>*>(this->operator[](0))->listing(out);
         }
         virtual void pair()
         {
-            BinoprTown<S,N,T>* town;
+            BinoprGroup<S,N,T>* town;
             for(size_t i = 0; i < this->size(); i++)
             {
-                town = static_cast<BinoprTown<S,N,T>*>(this->operator[](i));
+                town = static_cast<BinoprGroup<S,N,T>*>(this->operator[](i));
                 town->pair();
             }
         }
