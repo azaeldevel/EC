@@ -124,6 +124,8 @@ namespace oct::ec::v1
                 break;
             }
 
+            //const N ration = N(1) - (N(1)/N(1e4));
+            const N ration = 0.95;
 
             N value = evalr_actual(variables);
             //std::cout << "value = " << value << "\n";
@@ -173,6 +175,7 @@ namespace oct::ec::v1
                 if(std::abs(domeval) > N(1))
                 {
                     eval = N(1)/domeval;
+                    eval *= ration;
                 }
                 else if(std::abs(domeval) < N(1))
                 {
@@ -184,6 +187,7 @@ namespace oct::ec::v1
                     {
                         eval = N(1) + domeval;
                     }
+                    eval *= ration;
                 }
                 else
                 {//la diferencia es 1 o -1
@@ -699,11 +703,11 @@ namespace oct::ec::v1
                 selectd = select_pair_with_comunal();
                 //std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
                 borned[i] = new T(*variables,T::eval_constant,false);
-                if(active_mutation and T::almost_never(T::generator))
+                /*if(active_mutation and T::almost_never(T::generator))
                 {
                     borned[i]->rand_single_constants();
                 }
-                else
+                else*/
                 {
                     mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
                 }
@@ -1203,9 +1207,6 @@ namespace oct::ec::v1
                     born.rand_single_constants();
                 }
             }
-
-
-
         }
 
     public:
@@ -1296,6 +1297,7 @@ namespace oct::ec::v1
                 town->operator[](0)->print(std::cout);
                 std::cout << "\n";
             }
+            //static_cast<BinoprTown<S,N,T>*>(this->operator[](0))->listing(out);
         }
         virtual void pair()
         {
