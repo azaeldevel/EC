@@ -125,7 +125,7 @@ namespace oct::ec::v1
             }
 
             //const N ration = N(1) - (N(1)/N(1e4));
-            const N ration = 0.95;
+            const N ration = 0.91;
 
             N value = evalr_actual(variables);
             //std::cout << "value = " << value << "\n";
@@ -703,15 +703,8 @@ namespace oct::ec::v1
                 selectd = select_pair_with_comunal();
                 //std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
                 borned[i] = new T(*variables,T::eval_constant,false);
-                /*if(active_mutation and T::almost_never(T::generator))
-                {
-                    borned[i]->rand_single_constants();
-                }
-                else*/
-                {
-                    mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
-                }
-                if(active_mutation and T::almost_everytime(T::generator))
+                mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
+                /*if(active_mutation and T::almost_everytime(T::generator))
                 {
                     if(T::binary_selection(T::generator))
                     {
@@ -721,7 +714,7 @@ namespace oct::ec::v1
                     {
                         mutation_pivots(*this->operator[](selectd[1]));
                     }
-                }
+                }*/
                 active_mutation = false;
             }
             for(size_t i = 0, j = this->size() - 1; i < pairs; i++,j--)
