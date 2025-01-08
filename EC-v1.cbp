@@ -49,6 +49,19 @@
 					<Add library="cunit" />
 				</Linker>
 			</Target>
+			<Target title="gui">
+				<Option output="bin/Debug/gui" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config gtkmm-3.0 --libs`" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-pedantic" />
@@ -58,6 +71,15 @@
 		</Compiler>
 		<Unit filename="1/ec.hh">
 			<Option target="TDD" />
+		</Unit>
+		<Unit filename="1/math-application.cc">
+			<Option target="gui" />
+		</Unit>
+		<Unit filename="1/math-application.hh">
+			<Option target="gui" />
+		</Unit>
+		<Unit filename="1/math-gui.cc">
+			<Option target="gui" />
 		</Unit>
 		<Unit filename="1/math.hh">
 			<Option target="TDD" />

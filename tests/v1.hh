@@ -7,7 +7,7 @@
 #include <core/3/table.hh>
 
 
-namespace core = oct::core::v3;
+//namespace core = oct::core::v3;
 namespace ec = oct::ec::v1;
 
 
