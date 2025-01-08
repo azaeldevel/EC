@@ -78,8 +78,20 @@ void v1_developing()
 
     ec::BinoprCity<3,float,ec::Binopr<3,float>> city(vars);
     city.populate_random(10);
+    //
+    /*
     city.evaluate();
-    //city.resumen(std::cout);
-    //city.listing(std::cout);
+    city.resumen(std::cout);
+    city.listing(std::cout);
+    */
+
+    for(size_t i = 0; i < 10000; i++)
+    {
+        city.evaluate();
+        city.resumen(std::cout);
+        city.listing(std::cout);
+        city.pair();
+    }
+
 
 }

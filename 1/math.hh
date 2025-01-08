@@ -214,10 +214,10 @@ namespace oct::ec::v1
                 throw core::exception("Erro de logica, algun valor quedo fuera de los rango co nsiderados.");
             }
 
-            if(std::abs(eval) > N(1))
+            /*if(std::abs(eval) > N(1))
             {
                 std::cout << "eval -> value::result \t" << eval << " -> "  << value << " - " << result << "\n";
-            }
+            }*/
 
 
             return eval;
@@ -1236,9 +1236,12 @@ namespace oct::ec::v1
         void populate_random(size_t size)
         {
             this->resize(size);
+            BinoprTown<S,N,T>* town;
             for(size_t i = 0; i < this->size(); i++)
             {
-                this->operator[](i) = new BinoprTown<S,N,T>(*variables);
+                town = new BinoprTown<S,N,T>(*variables);
+                this->operator[](i) = town;
+                town->populate_random();
             }
         }
 
@@ -1248,6 +1251,12 @@ namespace oct::ec::v1
             {
                 static_cast<BinoprTown<S,N,T>*>(this->operator[](i))->evaluate();
             }
+            //
+            auto cmpfun = [](Town<N,T>* a,Town<N,T>* b)
+            {
+                return static_cast<BinoprTown<S,N,T>*>(a)->operator[](0)->evaluation > static_cast<BinoprTown<S,N,T>*>(b)->operator[](0)->evaluation;
+            };
+            std::sort(this->begin(),this->end(),cmpfun);
         }
 
 
@@ -1288,8 +1297,16 @@ namespace oct::ec::v1
                 std::cout << "\n";
             }
         }
+        virtual void pair()
+        {
+            BinoprTown<S,N,T>* town;
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                town = static_cast<BinoprTown<S,N,T>*>(this->operator[](i));
+                town->pair();
+            }
+        }
         //virtual void print(std::ostream& out) const = 0;
-        //virtual void pair() = 0;
 
     public:
         const inputs<N,S>* variables;
