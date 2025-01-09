@@ -5,6 +5,10 @@
 #include <gtkmm/button.h>
 #include <gtkmm/window.h>
 #include <gtkmm/box.h>
+#include <gtkmm/paned.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/cellrendererprogress.h>
 
 namespace oct::ec::v1
 {
@@ -14,13 +18,15 @@ namespace oct::ec::v1
         enum class Layout
         {
             none,
-            generic,
+            left_paned,
 
         };
 
     public:
         Application();
         virtual ~Application();
+
+        void init();
 
     protected:
         //Signal handlers:
@@ -29,14 +35,53 @@ namespace oct::ec::v1
     private:
         Layout layout;
 
-    private:
+    protected:
         //Member widgets:
         Gtk::Box box_main;
-        Gtk::Box box_panel;
+        Gtk::Box box_top_panel;
         Gtk::Box box_work;
         Gtk::Button m_button;
+        Gtk::Paned paned;
 
 
+    };
+
+    class Panel : public Gtk::TreeView
+    {
+    };
+
+    class GroupPanel : public Panel
+    {
+    public:
+        class ModelColumns : public Gtk::TreeModel::ColumnRecord
+        {
+        public:
+
+            ModelColumns()
+            {
+                add(index);
+                add(evaluation);
+            }
+
+            Gtk::TreeModelColumn<size_t> index;
+            Gtk::TreeModelColumn<double> evaluation;
+        };
+    public:
+        GroupPanel();
+
+    protected:
+            ModelColumns columns;
+            Glib::RefPtr<Gtk::ListStore> ref_tree;
+    };
+
+    class EC : public Application
+    {
+    public:
+        EC();
+        virtual ~EC();
+
+    private:
+        GroupPanel group_tree;
     };
 }
 
