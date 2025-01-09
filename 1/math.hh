@@ -587,11 +587,11 @@ namespace oct::ec::v1
     /**
     *\brief Una purblo es el conjunto minimo de poblacion posible
     */
-    template<core::index auto S,core::number N,class T>
-    struct BinoprGroup : public Group<N,T>
+    template<core::index auto S,core::number N,template<core::index auto,core::number> class T>
+    struct BinoprGroup : public Group<N,T<S,N>>
     {
     public:
-        typedef  Group<N,T> ARTTOWN_BASE;
+        typedef  Group<N,T<S,N>> ARTTOWN_BASE;
 
     public:
         BinoprGroup() = default;
@@ -605,10 +605,10 @@ namespace oct::ec::v1
         void populate_random()
         {
             this->auto_free = true;
-            this->resize(T::population_size);
+            this->resize(T<S,N>::population_size);
             for(size_t i = 0; i < this->size(); i++)
             {
-                this->operator[](i) = new T(*variables,T::eval_constant,false);
+                this->operator[](i) = new T(*variables,T<S,N>::eval_constant,false);
                 this->operator[](i)->rand_single_constants();
             }
         }
@@ -622,7 +622,7 @@ namespace oct::ec::v1
             {
                 this->operator[](i)->evaluation = this->operator[](i)->evaluate();
             }
-            auto cmpfun = [](T* a,T* b)
+            auto cmpfun = [](T<S,N>* a,T<S,N>* b)
             {
                 return  a->evaluation > b->evaluation;
             };
@@ -695,14 +695,14 @@ namespace oct::ec::v1
         {
             core::array<size_t,2> selectd;
 
-            size_t pairs = T::population_size/5;
-            core::array<T*> borned(pairs),deads(pairs);
+            size_t pairs = T<S,N>::population_size/5;
+            core::array<T<S,N>*> borned(pairs),deads(pairs);
             for(size_t i = 0; i < pairs; i++)
             {
-                if(T::mutability(T::generator)) active_mutation = true;
+                if(T<S,N>::mutability(T<S,N>::generator)) active_mutation = true;
                 selectd = select_pair_with_comunal();
                 //std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
-                borned[i] = new T(*variables,T::eval_constant,false);
+                borned[i] = new T(*variables,T<S,N>::eval_constant,false);
                 mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
                 /*if(active_mutation and T::almost_everytime(T::generator))
                 {
@@ -731,9 +731,9 @@ namespace oct::ec::v1
             }
         }
 
-        void mutation(T& born)
+        void mutation(T<S,N>& born)
         {
-            if((T::binary_selection)(T::generator))
+            if((T<S,N>::binary_selection)(T<S,N>::generator))
             {
                 mutation_pivots(born);
             }
@@ -742,25 +742,25 @@ namespace oct::ec::v1
                 mutation_node(born);
             }
         }
-        void mutation_node(T& born)
+        void mutation_node(T<S,N>& born)
         {
             born.rand_single_constants();
         }
-        void mutation_pivots(T& born)
+        void mutation_pivots(T<S,N>& born)
         {
             N tempval;
-            if((T::binary_selection)(T::generator))
+            if((T<S,N>::binary_selection)(T<S,N>::generator))
             {
-                    if((T::binary_selection)(T::generator))
+                    if((T<S,N>::binary_selection)(T<S,N>::generator))
                     {
                         for(size_t i = 0; i < 5; i++)
                         {//asgura un numero (0,1)
                             for(size_t j = 0; j < 3; j++)
                             {
-                                tempval = T::constant(T::generator);
+                                tempval = T<S,N>::constant(T<S,N>::generator);
                                 if(core::diff(tempval,N(0))) break;
                             }
-                            born.pivots[T::select_pivot(T::generator)] = N(1)/tempval;
+                            born.pivots[T<S,N>::select_pivot(T<S,N>::generator)] = N(1)/tempval;
                         }
                     }
                     else
@@ -769,22 +769,22 @@ namespace oct::ec::v1
                         {//asgura un numero mayor que 1
                             for(size_t j = 0; j < 6; j++)
                             {
-                                tempval = T::constant(T::generator);
+                                tempval = T<S,N>::constant(T<S,N>::generator);
                                 if( std::abs(tempval) > N(1)) break;
                             }
-                            born.pivots[T::select_pivot(T::generator)] = tempval;
+                            born.pivots[T<S,N>::select_pivot(T<S,N>::generator)] = tempval;
                         }
                     }
             }
             else
             {
-                    if((T::binary_selection)(T::generator))
+                    if((T<S,N>::binary_selection)(T<S,N>::generator))
                     {
-                        born.pivot_one = born.pivots[T::select_pivot(T::generator)];
+                        born.pivot_one = born.pivots[T<S,N>::select_pivot(T<S,N>::generator)];
                     }
                     else
                     {
-                        born.pivot_big = born.pivots[5 + T::select_pivot(T::generator)];
+                        born.pivot_big = born.pivots[5 + T<S,N>::select_pivot(T<S,N>::generator)];
                     }
             }
         }
@@ -792,53 +792,53 @@ namespace oct::ec::v1
         virtual core::array<size_t,2> select_pair_with_comunal()const
         {
             core::array<size_t,2> rest;
-            rest[0] = (size_t)T::selection_firts_pair(T::generator);
+            rest[0] = (size_t)T<S,N>::selection_firts_pair(T<S,N>::generator);
 
             if(rest[0] >= this->size())//asegurar que no son iguales
             {
-                rest[0] = (size_t)T::selection_firts_pair(T::generator);
+                rest[0] = (size_t)T<S,N>::selection_firts_pair(T<S,N>::generator);
             }
             if(rest[0] >= this->size())//asegurar que no son iguales
             {
-                rest[0] = (size_t)T::selection_firts_pair(T::generator);
+                rest[0] = (size_t)T<S,N>::selection_firts_pair(T<S,N>::generator);
             }
             if(rest[0] >= this->size())//asegurar que no son iguales
             {
-                rest[0] = (size_t)T::selection_firts_pair(T::generator);
+                rest[0] = (size_t)T<S,N>::selection_firts_pair(T<S,N>::generator);
             }
 
-            rest[1] = T::selection_second_pair(T::generator);
+            rest[1] = T<S,N>::selection_second_pair(T<S,N>::generator);
             if(rest[0] == rest[1])//asegurar que no son iguales
             {
-                rest[1] = T::selection_second_pair(T::generator);
+                rest[1] = T<S,N>::selection_second_pair(T<S,N>::generator);
             }
             if(rest[0] == rest[1])//asegurar que no son iguales
             {
-                rest[1] = T::selection_second_pair(T::generator);
+                rest[1] = T<S,N>::selection_second_pair(T<S,N>::generator);
             }
             if(rest[0] == rest[1])//asegurar que no son iguales
             {
-                rest[0] = (size_t)T::selection_firts_pair(T::generator);
-                rest[1] = T::selection_second_pair(T::generator);
+                rest[0] = (size_t)T<S,N>::selection_firts_pair(T<S,N>::generator);
+                rest[1] = T<S,N>::selection_second_pair(T<S,N>::generator);
             }
 
 
             return rest;
         }
-        void mesh_gens_binopr(T& born, const T& parenta, const T& parentb)
+        void mesh_gens_binopr(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
         }
-        void mesh_gens_variable(T& born, const T& parenta, const T& parentb)
+        void mesh_gens_variable(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
         }
-        void mesh_gens_random_node(T& born, const T& parenta, const T& parentb)
+        void mesh_gens_random_node(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
         }
 
 
-        void mesh_gens_constant_parents_random(T& born, const T& parenta, const T& parentb)
+        void mesh_gens_constant_parents_random(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
-            core::ast::Number<N>* node = new core::ast::Number<N>(T::constant(T::generator));
+            core::ast::Number<N>* node = new core::ast::Number<N>(T<S,N>::constant(T<S,N>::generator));
 
             born.node = node;
         }
@@ -855,18 +855,18 @@ namespace oct::ec::v1
             }
         }*/
 
-        void mesh_gens_constant_parents(T& born, const T& parenta, const T& parentb)
+        void mesh_gens_constant_parents(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
             const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
-            N contant = T::constant(T::generator);
-            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
-            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
-            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
+            N contant = T<S,N>::constant(T<S,N>::generator);
+            if(core::equal(contant,N(0))) contant = T<S,N>::constant(T<S,N>::generator);
+            if(core::equal(contant,N(0))) contant = T<S,N>::constant(T<S,N>::generator);
+            if(core::equal(contant,N(0))) contant = T<S,N>::constant(T<S,N>::generator);
 
-            switch(core::ast::typen(T::operation(T::generator)))
+            switch(core::ast::typen(T<S,N>::operation(T<S,N>::generator)))
             {
             case core::ast::typen::addition:
                 node->data = nodea->data + nodeb->data;
@@ -877,7 +877,7 @@ namespace oct::ec::v1
             case core::ast::typen::product:
                 if(core::equal(nodeb->data,N(0)))
                 {
-                    if((*parenta.preference)(T::generator))
+                    if((*parenta.preference)(T<S,N>::generator))
                     {
                         node->data = nodea->data * parentb.pivot_one;
                     }
@@ -894,7 +894,7 @@ namespace oct::ec::v1
             case core::ast::typen::quotient:
                 if(core::equal(nodeb->data,N(0)))
                 {
-                    if((*parenta.preference)(T::generator))
+                    if((*parenta.preference)(T<S,N>::generator))
                     {
                         node->data = nodea->data / parentb.pivot_one;
                     }
@@ -905,7 +905,7 @@ namespace oct::ec::v1
                 }
                 else
                 {
-                    if((*parenta.preference)(T::generator))
+                    if((*parenta.preference)(T<S,N>::generator))
                     {
                         node->data = nodea->data / parentb.pivot_one;
                     }
@@ -923,13 +923,13 @@ namespace oct::ec::v1
             born.node = node;
         }
 
-        void mesh_gens_constant_parents_pivot_one(T& born, const T& parenta, const T& parentb)
+        void mesh_gens_constant_parents_pivot_one(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
             //const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
-            switch(core::ast::typen(T::operation(T::generator)))
+            switch(core::ast::typen(T<S,N>::operation(T<S,N>::generator)))
             {
             case core::ast::typen::addition:
                 node->data = nodea->data + parentb.pivot_one;
@@ -950,13 +950,13 @@ namespace oct::ec::v1
             born.node = node;
         }
 
-        void mesh_gens_constant_parents_pivot_big(T& born, const T& parenta, const T& parentb)
+        void mesh_gens_constant_parents_pivot_big(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
             //const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
-            switch(core::ast::typen(T::operation(T::generator)))
+            switch(core::ast::typen(T<S,N>::operation(T<S,N>::generator)))
             {
             case core::ast::typen::addition:
                 node->data = nodea->data + parentb.pivot_big;
@@ -976,22 +976,22 @@ namespace oct::ec::v1
 
             born.node = node;
         }
-        void mesh_gens_constant_parents_pivot_random(T& born, const T& parenta, const T& parentb)
+        void mesh_gens_constant_parents_pivot_random(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parenta.node);
             //const auto nodeb = static_cast<const core::ast::Number<N>*>(parenta.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
             size_t index;
-            if((*born.preference)(T::generator))
+            if((*born.preference)(T<S,N>::generator))
             {
-                index = T::select_pivot(T::generator);
+                index = T<S,N>::select_pivot(T<S,N>::generator);
             }
             else
             {
-                index = 4 + T::select_pivot(T::generator);
+                index = 4 + T<S,N>::select_pivot(T<S,N>::generator);
             }
-            switch(core::ast::typen(T::operation(T::generator)))
+            switch(core::ast::typen(T<S,N>::operation(T<S,N>::generator)))
             {
             case core::ast::typen::addition:
                 node->data = nodea->data + parentb.pivots[index];
@@ -1012,16 +1012,16 @@ namespace oct::ec::v1
             born.node = node;
         }
 
-        void mesh_gens_constant_single(T& born, const T& parent)
+        void mesh_gens_constant_single(T<S,N>& born, const T<S,N>& parent)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
-            N contant = T::constant(T::generator);
-            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
-            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
-            if(core::equal(contant,N(0))) contant = T::constant(T::generator);
-            switch(core::ast::typen(T::operation(T::generator)))
+            N contant = T<S,N>::constant(T<S,N>::generator);
+            if(core::equal(contant,N(0))) contant = T<S,N>::constant(T<S,N>::generator);
+            if(core::equal(contant,N(0))) contant = T<S,N>::constant(T<S,N>::generator);
+            if(core::equal(contant,N(0))) contant = T<S,N>::constant(T<S,N>::generator);
+            switch(core::ast::typen(T<S,N>::operation(T<S,N>::generator)))
             {
             case core::ast::typen::addition:
                 node->data = nodea->data + contant;
@@ -1041,14 +1041,14 @@ namespace oct::ec::v1
 
             born.node = node;
         }
-        void mesh_gens_constant_pivoted(T& born, const T& parent)
+        void mesh_gens_constant_pivoted(T<S,N>& born, const T<S,N>& parent)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
-            if((*born.preference)(T::generator))
+            if((*born.preference)(T<S,N>::generator))
             {
-                if((*born.preference)(T::generator))
+                if((*born.preference)(T<S,N>::generator))
                 {
                     node->data = nodea->data * parent.pivot_one;
                 }
@@ -1059,27 +1059,27 @@ namespace oct::ec::v1
             }
             else
             {
-                if((*born.preference)(T::generator))
+                if((*born.preference)(T<S,N>::generator))
                 {
-                    node->data = nodea->data * (parent.pivots[T::select_pivot(T::generator)]/parent.pivot_one);
+                    node->data = nodea->data * (parent.pivots[T<S,N>::select_pivot(T<S,N>::generator)]/parent.pivot_one);
                 }
                 else
                 {
-                    node->data = nodea->data * ((parent.pivots[T::select_pivot(T::generator)] - parent.pivots[T::select_pivot(T::generator)])/parent.pivot_one);
+                    node->data = nodea->data * ((parent.pivots[T<S,N>::select_pivot(T<S,N>::generator)] - parent.pivots[T<S,N>::select_pivot(T<S,N>::generator)])/parent.pivot_one);
                 }
             }
 
             born.node = node;
         }
 
-        void mesh_gens_constant_pivoted_operation(T& born, const T& parent)
+        void mesh_gens_constant_pivoted_operation(T<S,N>& born, const T<S,N>& parent)
         {
             const auto nodea = static_cast<const core::ast::Number<N>*>(parent.node);
 
             core::ast::Number<N>* node = new core::ast::Number<N>;
-            if((*born.preference)(T::generator))
+            if((*born.preference)(T<S,N>::generator))
             {
-                if((*born.preference)(T::generator))
+                if((*born.preference)(T<S,N>::generator))
                 {
                     node->data = nodea->data + parent.pivot_one;
                 }
@@ -1090,7 +1090,7 @@ namespace oct::ec::v1
             }
             else
             {
-                if((*born.preference)(T::generator))
+                if((*born.preference)(T<S,N>::generator))
                 {
                     node->data = (nodea->data - parent.pivot_big)/parent.pivot_big;
                 }
@@ -1102,9 +1102,9 @@ namespace oct::ec::v1
 
             born.node = node;
         }
-        void mesh_gens_constant(T& born, const T& parenta, const T& parentb)
+        void mesh_gens_constant(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
-            switch(T::select_gen_constant(T::generator))
+            switch(T<S,N>::select_gen_constant(T<S,N>::generator))
             {
             case 1:
                 mesh_gens_constant_pivoted_operation(born,parenta);
@@ -1142,12 +1142,12 @@ namespace oct::ec::v1
         *\param parenta un padre del nuevo individuo
         *\param parentb un padre del nuevo individuo
         */
-        void mesh_gens(T& born, const T& parenta, const T& parentb)
+        void mesh_gens(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
             if(born.node) throw core::exception("El nodo no esta vacio, deve esta vacio para continuar");
             active_mutation = false;
 
-            if(T::binary_selection(T::generator))
+            if(T<S,N>::binary_selection(T<S,N>::generator))
             {
                 born.preference = parenta.preference;
                 born.changeable_deep = parentb.changeable_deep;
@@ -1158,14 +1158,14 @@ namespace oct::ec::v1
                 born.pivots = parentb.pivots;
                 born.pivot_one = parenta.pivot_one;
                 born.pivot_big = parentb.pivot_big;
-                if(active_mutation and T::almost_everytime(T::generator))
+                if(active_mutation and T<S,N>::almost_everytime(T<S,N>::generator))
                 {
                     mutation_pivots(born);
                 }
 
                 if(parenta.node->is_number())
                 {
-                    if(active_mutation and T::almost_everytime(T::generator))
+                    if(active_mutation and T<S,N>::almost_everytime(T<S,N>::generator))
                     {
                         //mutation_counter++;
                         mutation_node(born);
@@ -1233,10 +1233,10 @@ namespace oct::ec::v1
         void populate_random(size_t size)
         {
             this->resize(size);
-            BinoprGroup<S,N,T<S,N>>* town;
+            BinoprGroup<S,N,T>* town;
             for(size_t i = 0; i < this->size(); i++)
             {
-                town = new BinoprGroup<S,N,T<S,N>>(*variables);
+                town = new BinoprGroup<S,N,T>(*variables);
                 this->operator[](i) = town;
                 town->populate_random();
             }
@@ -1246,12 +1246,12 @@ namespace oct::ec::v1
         {
             for(size_t i = 0; i < this->size(); i++)
             {
-                static_cast<BinoprGroup<S,N,T<S,N>>*>(this->operator[](i))->evaluate();
+                static_cast<BinoprGroup<S,N,T>*>(this->operator[](i))->evaluate();
             }
             //
             auto cmpfun = [](Group<N,T<S,N>>* a,Group<N,T<S,N>>* b)
             {
-                return static_cast<BinoprGroup<S,N,T<S,N>>*>(a)->operator[](0)->evaluation > static_cast<BinoprGroup<S,N,T<S,N>>*>(b)->operator[](0)->evaluation;
+                return static_cast<BinoprGroup<S,N,T>*>(a)->operator[](0)->evaluation > static_cast<BinoprGroup<S,N,T>*>(b)->operator[](0)->evaluation;
             };
             std::sort(this->begin(),this->end(),cmpfun);
         }
@@ -1262,13 +1262,13 @@ namespace oct::ec::v1
         */
         void resumen(std::ostream& out) const
         {
-            BinoprGroup<S,N,T<S,N>>* town;
+            BinoprGroup<S,N,T>* town;
             std::cout << "Poblacion : " << Binopr<S,N>::population_size << "\n";
             std::cout << "\n";
             N media = 0;
             for(size_t i = 0; i < this->size(); i++)
             {
-                town = static_cast<BinoprGroup<S,N,T<S,N>>*>(this->operator[](i));
+                town = static_cast<BinoprGroup<S,N,T>*>(this->operator[](i));
                 town->evaluate();
                 media += town->operator[](0)->evaluation;
             }
@@ -1281,10 +1281,10 @@ namespace oct::ec::v1
         */
         void listing(std::ostream& out) const
         {
-            BinoprGroup<S,N,T<S,N>>* town;
+            BinoprGroup<S,N,T>* town;
             for(size_t i = 0; i < this->size(); i++)
             {
-                town = static_cast<BinoprGroup<S,N,T<S,N>>*>(this->operator[](i));
+                town = static_cast<BinoprGroup<S,N,T>*>(this->operator[](i));
                 std::cout << i << "\t";
                 std::cout << "evaluacion : ";
                 std::cout << town->operator[](0)->evaluation;
@@ -1297,10 +1297,10 @@ namespace oct::ec::v1
         }
         virtual void pair()
         {
-            BinoprGroup<S,N,T<S,N>>* town;
+            BinoprGroup<S,N,T>* town;
             for(size_t i = 0; i < this->size(); i++)
             {
-                town = static_cast<BinoprGroup<S,N,T<S,N>>*>(this->operator[](i));
+                town = static_cast<BinoprGroup<S,N,T>*>(this->operator[](i));
                 town->pair();
             }
         }
