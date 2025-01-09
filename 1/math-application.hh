@@ -77,6 +77,7 @@ namespace oct::ec::v1
         };
 
         void load(const BinoprGroup<3,double,Binopr>& );
+        void clear();
     public:
         GroupPanel();
 
@@ -102,23 +103,31 @@ namespace oct::ec::v1
         MathEC();
         virtual ~MathEC();
 
-        void load(const BinoprGroup<3,double,Binopr>& );
-        bool running();
 
-        virtual void on_menu_start();
-        virtual void on_menu_stop();
 
     private:
         GroupPanel group_tree;
         Glib::RefPtr<Gtk::UIManager> m_refUIManager;
         Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
+        Gtk::Menu* m_pMenuPopup;
+        //
+        virtual bool on_button_press_event(GdkEventButton* event);
+        //
+        virtual bool has_stopped();
+        virtual void stop_work();
+        virtual void on_menu_popup_status();
 
     private:
         inputs<double,3> vars;
         BinoprGroup<3,double,Binopr> town;
         size_t iteration,iterations;
-        bool status;
+        mutable std::mutex m_Mutex;
 
+        Glib::Dispatcher m_Dispatcher;
+        std::thread* m_WorkerThread;
+        bool m_shall_stop,m_has_stopped;
+        void do_work();
+        void load(const BinoprGroup<3,double,Binopr>& );
 
     };
 }

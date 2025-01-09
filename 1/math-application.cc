@@ -57,13 +57,13 @@ namespace oct::ec::v1
         set_model(ref_tree);
 
         //Fill the TreeView's model
-        Gtk::TreeModel::Row row = *(ref_tree->append());
+        /*Gtk::TreeModel::Row row = *(ref_tree->append());
         row[columns.index] = 1;
         row[columns.evaluation] = 1.0;
 
         row = *(ref_tree->append());
         row[columns.index] = 2;
-        row[columns.evaluation] = 2.0;
+        row[columns.evaluation] = 2.0;*/
 
         append_column("ID", columns.index);
         //append_column("Evaluacion", columns.evaluation);
@@ -88,6 +88,10 @@ namespace oct::ec::v1
             row[columns.evaluation] = grp[i]->evaluation;
         }
     }
+    void GroupPanel::clear()
+    {
+        ref_tree->clear();
+    }
 
 
     EC::EC()
@@ -105,7 +109,7 @@ namespace oct::ec::v1
 
 
 
-    MathEC::MathEC() : vars(3), town(vars),iteration(0),iterations(100000),status(false)
+    MathEC::MathEC() : vars(3), town(vars),iteration(0),iterations(100000),m_shall_stop(false),m_has_stopped(false)
     {
         int w,h;
         get_size(w,h);
@@ -140,45 +144,116 @@ namespace oct::ec::v1
         vars[2][2] = 0.83;
 
         town.populate_random();
-        load(town);
+        //load(town);
 
         //https://docs.huihoo.com/gtkmm/gtkmm-2.4/tutorial/html/sec-menus-examples.html
         m_refActionGroup = Gtk::ActionGroup::create();
+        m_refActionGroup->add(Gtk::Action::create("ContextMenu", "Context Menu"));
 
-        m_refActionGroup->add(Gtk::Action::create("Iniciar", Gtk::Stock::NEW, "_New", "Create a new file"), sigc::mem_fun(*this, &MathEC::on_menu_start));
-        m_refActionGroup->add(Gtk::Action::create("Finalizar",Gtk::Stock::NEW, "New Foo", "Create a new foo"), sigc::mem_fun(*this, &MathEC::on_menu_stop));
+        m_refActionGroup->add(Gtk::Action::create("ContextBegin", "Iniciar"),sigc::mem_fun(*this, &MathEC::do_work));
+
+        m_refActionGroup->add(Gtk::Action::create("ContextEnd", "Finalizar"),Gtk::AccelKey("<control>P"), sigc::mem_fun(*this, &MathEC::stop_work));
+
+        m_refActionGroup->add(Gtk::Action::create("ContextStatus", "Estado"),sigc::mem_fun(*this, &MathEC::on_menu_popup_status));
+
+
+        m_refUIManager = Gtk::UIManager::create();
+        m_refUIManager->insert_action_group(m_refActionGroup);
+
+        add_accel_group(m_refUIManager->get_accel_group());
+
+        //Layout the actions in a menubar and toolbar:
+        Glib::ustring ui_info =
+            "<ui>"
+            "  <popup name='PopupMenu'>"
+            "    <menuitem action='ContextBegin'/>"
+            "    <menuitem action='ContextEnd'/>"
+            "    <menuitem action='ContextStatus'/>"
+            "  </popup>"
+            "</ui>";
+
+        std::auto_ptr<Glib::Error> ex;
+        m_refUIManager->add_ui_from_string(ui_info);
+        if(ex.get())
+        {
+            std::cerr << "building menus failed: " <<  ex->what();
+        }
+
+        //Get the menu:
+        m_pMenuPopup = dynamic_cast<Gtk::Menu*>(m_refUIManager->get_widget("/PopupMenu"));
+        if(!m_pMenuPopup) g_warning("menu not found");
 
         show_all_children();
     }
 
     MathEC::~MathEC()
     {
+        m_has_stopped = true;
+    }
+
+
+    bool MathEC::has_stopped()
+    {
+        std::lock_guard<std::mutex> lock(m_Mutex);
+        return m_has_stopped;
+    }
+    void MathEC::stop_work()
+    {
+        std::lock_guard<std::mutex> lock(m_Mutex);
+        m_shall_stop = true;
+    }
+    void MathEC::on_menu_popup_status()
+    {
+    }
+
+    bool MathEC::on_button_press_event(GdkEventButton* event)
+    {
+        if( (event->type == GDK_BUTTON_PRESS) && (event->button == 3) )
+        {
+            if(m_pMenuPopup) m_pMenuPopup->popup(event->button, event->time);
+            return true; //It has been handled.
+        }
+        else return false;
+    }
+    void MathEC::do_work()
+    {
+        {
+            std::lock_guard<std::mutex> lock(m_Mutex);
+            m_has_stopped = false;
+        }
+
+        for(iteration = 0; iteration < iterations; iteration++)
+        {
+            std::cout << "iteration : " << iteration << "\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            {
+                std::lock_guard<std::mutex> lock(m_Mutex);
+                std::cout << "evaluando...\n";
+                town.evaluate();
+                group_tree.clear();
+                group_tree.load(town);
+                if(m_shall_stop)
+                {
+                    break;
+                }
+
+                town.pair();
+            }
+            notify_callbacks();
+        }
+        {
+            std::lock_guard<std::mutex> lock(m_Mutex);
+            m_shall_stop = false;
+            m_has_stopped = true;
+        }
+        notify_callbacks();
     }
     void MathEC::load(const BinoprGroup<3,double,Binopr>& grp)
     {
+        std::lock_guard<std::mutex> lock(m_Mutex);
         group_tree.load(grp);
-    }
-    bool MathEC::running()
-    {
-        for(iteration = 0; iteration < iterations; iteration++)
-        {
-            town.evaluate();
-            //town.print(std::cout);
-            //town.resumen(std::cout);
-            //std::cout << "\n\n";
-            town.pair();
-        }
 
-        return true;
     }
 
-    void MathEC::on_menu_start()
-    {
-      hide(); //Closes the main window to stop the Gtk::Main::run().
-    }
 
-    void MathEC::on_menu_stop()
-    {
-       std::cout << "A File|New menu item was selected." << std::endl;
-    }
 }
