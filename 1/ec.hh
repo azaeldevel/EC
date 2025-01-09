@@ -5,6 +5,7 @@
 #include <map>
 #include <functional>
 #include <bits/stdc++.h>
+#include <type_traits>
 
 
 
@@ -16,7 +17,7 @@ namespace oct::ec::v1
     *\brief Inteface para representa un individuo
     *\param N tipo de dato usado para calculos
     */
-    template<core::number N = float>
+    template<core::number N>
     struct Single
     {
         virtual ~Single()
@@ -30,6 +31,9 @@ namespace oct::ec::v1
     public:
         N evaluation;
     };
+
+    template<class T>
+    concept single = std::is_base_of<Single<float>, T>::value;
 
     /**
     *\brief Una purblo es el conjunto minimo de poblacion posible
