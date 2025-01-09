@@ -9,6 +9,9 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/cellrendererprogress.h>
+#include <gtkmm/scrolledwindow.h>
+
+#include "math.hh"
 
 namespace oct::ec::v1
 {
@@ -41,7 +44,9 @@ namespace oct::ec::v1
         Gtk::Box box_top_panel;
         Gtk::Box box_work;
         Gtk::Button m_button;
+        Gtk::ScrolledWindow paned_scroll;
         Gtk::Paned paned;
+
 
 
     };
@@ -66,6 +71,8 @@ namespace oct::ec::v1
             Gtk::TreeModelColumn<size_t> index;
             Gtk::TreeModelColumn<double> evaluation;
         };
+
+        void load(const BinoprGroup<3,double,Binopr>& );
     public:
         GroupPanel();
 
@@ -74,6 +81,7 @@ namespace oct::ec::v1
             Glib::RefPtr<Gtk::ListStore> ref_tree;
     };
 
+
     class EC : public Application
     {
     public:
@@ -81,7 +89,23 @@ namespace oct::ec::v1
         virtual ~EC();
 
     private:
+
+    };
+
+    class MathEC : public EC
+    {
+    public:
+        MathEC();
+        virtual ~MathEC();
+
+        void load(const BinoprGroup<3,double,Binopr>& );
+
+    private:
         GroupPanel group_tree;
+
+    private:
+        inputs<double,3> vars;
+        BinoprGroup<3,double,Binopr> town;
     };
 }
 

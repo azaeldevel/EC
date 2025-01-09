@@ -35,8 +35,8 @@ namespace oct::ec::v1
             box_main.add(box_top_panel);
             box_main.add(box_work);
 
-            paned.set_orientation(Gtk::Orientation::ORIENTATION_HORIZONTAL);
             box_work.add(paned);
+            paned.set_orientation(Gtk::Orientation::ORIENTATION_HORIZONTAL);
 
         }
 
@@ -77,14 +77,63 @@ namespace oct::ec::v1
         }
     }
 
+    void GroupPanel::load(const BinoprGroup<3,double,Binopr>& grp)
+    {
+        Gtk::TreeModel::Row row;
+        for(size_t i = 0; i < grp.size(); i++)
+        {
+            row = *(ref_tree->append());
+            row[columns.index] = i;
+            row[columns.evaluation] = grp[i]->evaluation;
+        }
+    }
+
 
     EC::EC()
     {
-        paned.add(group_tree);
-        show_all_children();
     }
 
     EC::~EC()
     {
+    }
+
+
+
+
+
+
+
+
+    MathEC::MathEC() : vars(3), town(vars)
+    {
+        paned_scroll.add(group_tree);
+        paned_scroll.set_policy(Gtk::POLICY_AUTOMATIC , Gtk::POLICY_AUTOMATIC );
+        paned.add1(paned_scroll);
+
+        Binopr<3,double>::init_randsys(100);
+
+        //vars.resize(3);//cantidad de resgistro
+        vars[0][0] = 1.2;
+        vars[0][1] = 65.964;
+        vars[0][2] = 198.1254832;
+        vars[1][0] = 9653.264;
+        vars[1][1] = 1.f/2365.f;
+        vars[1][2] = 198.1254832;
+        vars[2][0] = 0.5;
+        vars[2][1] = 0.7;
+        vars[2][2] = 0.83;
+
+        town.populate_random();
+        load(town);
+
+        show_all_children();
+    }
+
+    MathEC::~MathEC()
+    {
+    }
+    void MathEC::load(const BinoprGroup<3,double,Binopr>& grp)
+    {
+        group_tree.load(grp);
     }
 }
