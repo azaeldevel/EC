@@ -105,7 +105,7 @@ namespace oct::ec::v1
 
 
 
-    MathEC::MathEC() : vars(3), town(vars)
+    MathEC::MathEC() : vars(3), town(vars),iteration(0),iterations(100000),status(false)
     {
         int w,h;
         get_size(w,h);
@@ -142,6 +142,12 @@ namespace oct::ec::v1
         town.populate_random();
         load(town);
 
+        //https://docs.huihoo.com/gtkmm/gtkmm-2.4/tutorial/html/sec-menus-examples.html
+        m_refActionGroup = Gtk::ActionGroup::create();
+
+        m_refActionGroup->add(Gtk::Action::create("Iniciar", Gtk::Stock::NEW, "_New", "Create a new file"), sigc::mem_fun(*this, &MathEC::on_menu_start));
+        m_refActionGroup->add(Gtk::Action::create("Finalizar",Gtk::Stock::NEW, "New Foo", "Create a new foo"), sigc::mem_fun(*this, &MathEC::on_menu_stop));
+
         show_all_children();
     }
 
@@ -151,5 +157,28 @@ namespace oct::ec::v1
     void MathEC::load(const BinoprGroup<3,double,Binopr>& grp)
     {
         group_tree.load(grp);
+    }
+    bool MathEC::running()
+    {
+        for(iteration = 0; iteration < iterations; iteration++)
+        {
+            town.evaluate();
+            //town.print(std::cout);
+            //town.resumen(std::cout);
+            //std::cout << "\n\n";
+            town.pair();
+        }
+
+        return true;
+    }
+
+    void MathEC::on_menu_start()
+    {
+      hide(); //Closes the main window to stop the Gtk::Main::run().
+    }
+
+    void MathEC::on_menu_stop()
+    {
+       std::cout << "A File|New menu item was selected." << std::endl;
     }
 }

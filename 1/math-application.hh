@@ -11,7 +11,9 @@
 #include <gtkmm/cellrendererprogress.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/messagedialog.h>
-
+#include <gtkmm.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/actiongroup.h>
 
 #include "math.hh"
 
@@ -101,13 +103,23 @@ namespace oct::ec::v1
         virtual ~MathEC();
 
         void load(const BinoprGroup<3,double,Binopr>& );
+        bool running();
+
+        virtual void on_menu_start();
+        virtual void on_menu_stop();
 
     private:
         GroupPanel group_tree;
+        Glib::RefPtr<Gtk::UIManager> m_refUIManager;
+        Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
 
     private:
         inputs<double,3> vars;
         BinoprGroup<3,double,Binopr> town;
+        size_t iteration,iterations;
+        bool status;
+
+
     };
 }
 
