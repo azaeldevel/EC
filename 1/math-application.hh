@@ -10,6 +10,8 @@
 #include <gtkmm/liststore.h>
 #include <gtkmm/cellrendererprogress.h>
 #include <gtkmm/scrolledwindow.h>
+#include <gtkmm/messagedialog.h>
+
 
 #include "math.hh"
 

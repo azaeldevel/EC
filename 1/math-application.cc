@@ -26,7 +26,8 @@ namespace oct::ec::v1
     }
     void Application::init()
     {
-        set_size_request(800,600);
+        //set_size_request(800,600);
+        set_default_size(800, 600);
 
         if(layout == Layout::left_paned)
         {
@@ -106,8 +107,23 @@ namespace oct::ec::v1
 
     MathEC::MathEC() : vars(3), town(vars)
     {
+        int w,h;
+        get_size(w,h);
+        /*Gtk::MessageDialog dialog(*this, "Message dialog", true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+        dialog.set_title("Title");
+        std::string msg = "Ancho : ";
+        msg += std::to_string(w);
+        dialog.set_message(msg);
+        dialog.set_secondary_text("Secondary message");
+        dialog.set_default_response(Gtk::RESPONSE_YES);
+        int result = dialog.run();*/
+
+        //paned_scroll.set_size_request(get_width()/4,get_height());
+        paned_scroll.set_size_request(w/3,h);
         paned_scroll.add(group_tree);
-        paned_scroll.set_policy(Gtk::POLICY_AUTOMATIC , Gtk::POLICY_AUTOMATIC );
+        //paned_scroll.set_min_content_width(get_width()/3);
+        //paned_scroll.set_border_width(10);
+        //paned_scroll.set_policy(Gtk::POLICY_AUTOMATIC , Gtk::POLICY_ALWAYS );
         paned.add1(paned_scroll);
 
         Binopr<3,double>::init_randsys(100);
