@@ -76,7 +76,7 @@ void v1_developing()
     //std::cout << "std::exp(1000) = " << std::exp(1000) << "\n";
     //std::cout << "std::exp(10000) = " << std::exp(10000) << "\n";
 
-    ec::BinoprCommunity<3,double,ec::Binopr<3,double>> city(vars);
+    ec::BinoprCommunity<3,double,ec::Binopr> city(vars);
     city.populate_random(10);
     //
     /*
