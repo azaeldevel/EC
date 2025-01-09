@@ -30,3 +30,4 @@ tests/sudoku
 .vs
 x64
 vs/dll/vcpkg
+*.depend
