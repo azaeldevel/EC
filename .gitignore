@@ -31,3 +31,4 @@ tests/sudoku
 x64
 vs/dll/vcpkg
 *.depend
+*.layout
