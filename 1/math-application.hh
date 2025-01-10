@@ -16,6 +16,7 @@
 #include <gtkmm/actiongroup.h>
 
 #include "math.hh"
+#include "worker.hh"
 
 namespace oct::ec::v1
 {
@@ -112,10 +113,14 @@ namespace oct::ec::v1
         Gtk::Menu* m_pMenuPopup;
         //
         virtual bool on_button_press_event(GdkEventButton* event);
+        virtual void on_menu_popup_status();
+
         //
         virtual bool has_stopped();
         virtual void stop_work();
-        virtual void on_menu_popup_status();
+        void on_start_button_clicked();
+        void on_stop_button_clicked();
+        void on_quit_button_clicked();
 
     private:
         inputs<double,3> vars;
@@ -125,6 +130,7 @@ namespace oct::ec::v1
 
         Glib::Dispatcher m_Dispatcher;
         std::thread* m_WorkerThread;
+
         bool m_shall_stop,m_has_stopped;
         void do_work();
         void load(const BinoprGroup<3,double,Binopr>& );

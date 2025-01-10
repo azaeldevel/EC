@@ -124,7 +124,7 @@ namespace oct::ec::v1
                 break;
             }
 
-            const N ration = N(1) - (N(1)/N(1e4));
+            const N ration = N(1) - (N(1)/N(1e3));
             //const N ration = 0.99;
 
             N value = evalr_actual(variables);

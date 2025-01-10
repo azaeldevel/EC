@@ -229,6 +229,7 @@ namespace oct::ec::v1
             {
                 std::lock_guard<std::mutex> lock(m_Mutex);
                 std::cout << "evaluando...\n";
+                town.resumen(std::cout);
                 town.evaluate();
                 group_tree.clear();
                 group_tree.load(town);
