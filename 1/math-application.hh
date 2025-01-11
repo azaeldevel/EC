@@ -104,7 +104,15 @@ namespace oct::ec::v1
     class Worker
     {
     public:
-        Worker();
+        Worker() :
+          m_Mutex(),
+          m_shall_stop(false),
+          m_has_stopped(false),
+          m_fraction_done(0.0),
+          m_message()
+        {
+        }
+
 
         // Thread function.
         void do_work(EC* caller)
@@ -159,8 +167,23 @@ namespace oct::ec::v1
             caller->notify();
         }
 
-        void get_data(double* fraction_done, Glib::ustring* message) const;
-        void stop_work();
+        // Accesses to these data are synchronized by a mutex.
+        // Some microseconds can be saved by getting all data at once, instead of having
+        // separate get_fraction_done() and get_message() methods.
+        void get_data(double* fraction_done, Glib::ustring* message) const
+        {
+            std::lock_guard<std::mutex> lock(m_Mutex);
+
+            if (fraction_done) *fraction_done = m_fraction_done;
+
+            if (message) *message = m_message;
+        }
+
+        void stop_work()
+        {
+            std::lock_guard<std::mutex> lock(m_Mutex);
+            m_shall_stop = true;
+        }
         bool has_stopped() const;
 
     private:
