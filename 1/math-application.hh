@@ -94,17 +94,42 @@ namespace oct::ec::v1
         EC();
         virtual ~EC();
 
+        virtual void notify() = 0;
+
     private:
 
     };
+
+
+class Worker
+{
+public:
+  Worker();
+
+  // Thread function.
+  void do_work(EC* caller);
+
+  void get_data(double* fraction_done, Glib::ustring* message) const;
+  void stop_work();
+  bool has_stopped() const;
+
+private:
+  // Synchronizes access to member data.
+  mutable std::mutex m_Mutex;
+
+  // Data used by both GUI thread and worker thread.
+  bool m_shall_stop;
+  bool m_has_stopped;
+  double m_fraction_done;
+  Glib::ustring m_message;
+};
+
 
     class MathEC : public EC
     {
     public:
         MathEC();
         virtual ~MathEC();
-
-
 
     private:
         GroupPanel group_tree;
@@ -114,25 +139,22 @@ namespace oct::ec::v1
         //
         virtual bool on_button_press_event(GdkEventButton* event);
         virtual void on_menu_popup_status();
-
         //
-        virtual bool has_stopped();
-        virtual void stop_work();
         void on_start_button_clicked();
         void on_stop_button_clicked();
         void on_quit_button_clicked();
+        void update_start_stop_buttons();
+        virtual void notify();
+        void on_notification_from_worker_thread();
 
     private:
         inputs<double,3> vars;
         BinoprGroup<3,double,Binopr> town;
         size_t iteration,iterations;
-        mutable std::mutex m_Mutex;
 
-        Glib::Dispatcher m_Dispatcher;
         std::thread* m_WorkerThread;
-
-        bool m_shall_stop,m_has_stopped;
-        void do_work();
+        Worker m_Worker;
+        Glib::Dispatcher m_Dispatcher;
         void load(const BinoprGroup<3,double,Binopr>& );
 
     };

@@ -109,7 +109,7 @@ namespace oct::ec::v1
 
 
 
-    MathEC::MathEC() : vars(3), town(vars),iteration(0),iterations(100000),m_shall_stop(false),m_has_stopped(false)
+    MathEC::MathEC() : vars(3), town(vars),iteration(0),iterations(100000),m_WorkerThread(NULL)
     {
         int w,h;
         get_size(w,h);
@@ -150,9 +150,9 @@ namespace oct::ec::v1
         m_refActionGroup = Gtk::ActionGroup::create();
         m_refActionGroup->add(Gtk::Action::create("ContextMenu", "Context Menu"));
 
-        m_refActionGroup->add(Gtk::Action::create("ContextBegin", "Iniciar"),sigc::mem_fun(*this, &MathEC::do_work));
+        m_refActionGroup->add(Gtk::Action::create("ContextBegin", "Iniciar"),sigc::mem_fun(*this, &MathEC::on_start_button_clicked));
 
-        m_refActionGroup->add(Gtk::Action::create("ContextEnd", "Finalizar"),Gtk::AccelKey("<control>P"), sigc::mem_fun(*this, &MathEC::stop_work));
+        m_refActionGroup->add(Gtk::Action::create("ContextEnd", "Finalizar"),Gtk::AccelKey("<control>P"), sigc::mem_fun(*this, &MathEC::on_stop_button_clicked));
 
         m_refActionGroup->add(Gtk::Action::create("ContextStatus", "Estado"),sigc::mem_fun(*this, &MathEC::on_menu_popup_status));
 
@@ -188,20 +188,9 @@ namespace oct::ec::v1
 
     MathEC::~MathEC()
     {
-        m_has_stopped = true;
     }
 
 
-    bool MathEC::has_stopped()
-    {
-        std::lock_guard<std::mutex> lock(m_Mutex);
-        return m_has_stopped;
-    }
-    void MathEC::stop_work()
-    {
-        std::lock_guard<std::mutex> lock(m_Mutex);
-        m_shall_stop = true;
-    }
     void MathEC::on_menu_popup_status()
     {
     }
@@ -215,46 +204,148 @@ namespace oct::ec::v1
         }
         else return false;
     }
-    void MathEC::do_work()
-    {
-        {
-            std::lock_guard<std::mutex> lock(m_Mutex);
-            m_has_stopped = false;
-        }
-
-        for(iteration = 0; iteration < iterations; iteration++)
-        {
-            std::cout << "iteration : " << iteration << "\n";
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            {
-                std::lock_guard<std::mutex> lock(m_Mutex);
-                std::cout << "evaluando...\n";
-                town.resumen(std::cout);
-                town.evaluate();
-                group_tree.clear();
-                group_tree.load(town);
-                if(m_shall_stop)
-                {
-                    break;
-                }
-
-                town.pair();
-            }
-            notify_callbacks();
-        }
-        {
-            std::lock_guard<std::mutex> lock(m_Mutex);
-            m_shall_stop = false;
-            m_has_stopped = true;
-        }
-        notify_callbacks();
-    }
     void MathEC::load(const BinoprGroup<3,double,Binopr>& grp)
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
         group_tree.load(grp);
 
     }
+
+
+    void MathEC::update_start_stop_buttons()
+    {
+      const bool thread_is_running = m_WorkerThread != nullptr;
+
+      //m_ButtonStart.set_sensitive(!thread_is_running);
+      //m_ButtonStop.set_sensitive(thread_is_running);
+    }
+
+    void MathEC::on_start_button_clicked()
+    {
+      if (m_WorkerThread)
+      {
+        std::cout << "Can't start a worker thread while another one is running." << std::endl;
+      }
+      else
+      {
+        // Start a new worker thread.
+        m_WorkerThread = new std::thread(
+          [this]
+          {
+            m_Worker.do_work(this);
+          });
+      }
+      update_start_stop_buttons();
+    }
+
+    void MathEC::on_stop_button_clicked()
+    {
+      if (!m_WorkerThread)
+      {
+        std::cout << "Can't stop a worker thread. None is running." << std::endl;
+      }
+      else
+      {
+       // Order the worker thread to stop.
+        m_Worker.stop_work();
+        //m_ButtonStop.set_sensitive(false);
+      }
+    }
+
+    void MathEC::notify()
+    {
+        m_Dispatcher.emit();
+    }
+
+
+
+
+
+
+Worker::Worker() :
+  m_Mutex(),
+  m_shall_stop(false),
+  m_has_stopped(false),
+  m_fraction_done(0.0),
+  m_message()
+{
+}
+
+// Accesses to these data are synchronized by a mutex.
+// Some microseconds can be saved by getting all data at once, instead of having
+// separate get_fraction_done() and get_message() methods.
+void Worker::get_data(double* fraction_done, Glib::ustring* message) const
+{
+  std::lock_guard<std::mutex> lock(m_Mutex);
+
+  if (fraction_done)
+    *fraction_done = m_fraction_done;
+
+  if (message)
+    *message = m_message;
+}
+
+void Worker::stop_work()
+{
+  std::lock_guard<std::mutex> lock(m_Mutex);
+  m_shall_stop = true;
+}
+
+bool Worker::has_stopped() const
+{
+  std::lock_guard<std::mutex> lock(m_Mutex);
+  return m_has_stopped;
+}
+
+void Worker::do_work(EC* caller)
+{
+  {
+    std::lock_guard<std::mutex> lock(m_Mutex);
+    m_has_stopped = false;
+    m_fraction_done = 0.0;
+    m_message = "";
+  } // The mutex is unlocked here by lock's destructor.
+
+  // Simulate a long calculation.
+  for (int i = 0; ; ++i) // do until break
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
+    {
+      std::lock_guard<std::mutex> lock(m_Mutex);
+
+      m_fraction_done += 0.01;
+
+      if (i % 4 == 3)
+      {
+        std::ostringstream ostr;
+        ostr << (m_fraction_done * 100.0) << "% done\n";
+        m_message += ostr.str();
+        std::cout << ostr.str();
+      }
+
+      if (m_fraction_done >= 1.0)
+      {
+        m_message += "Finished";
+        break;
+      }
+      if (m_shall_stop)
+      {
+        m_message += "Stopped";
+        break;
+      }
+    }
+
+    caller->notify();
+  }
+
+  {
+    std::lock_guard<std::mutex> lock(m_Mutex);
+    m_shall_stop = false;
+    m_has_stopped = true;
+  }
+
+  caller->notify();
+}
 
 
 }
