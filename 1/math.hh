@@ -646,6 +646,25 @@ namespace oct::ec::v1
             }
         }
 
+
+        /**
+        *\brief
+        */
+        void resumen()
+        {
+            count_constants = 0;
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                if(this->operator[](i)->node->type == core::ast::typen::number) count_constants++;
+            }
+            media = 0;
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                media += this->operator[](i)->evaluation;
+            }
+            media /= N(this->size());
+        }
+
         /**
         *
         */
@@ -1210,6 +1229,8 @@ namespace oct::ec::v1
 
     public:
         bool active_mutation;
+        N media;
+        unsigned count_constants;
     };
 
     /**

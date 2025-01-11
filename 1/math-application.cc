@@ -109,7 +109,7 @@ namespace oct::ec::v1
 
 
 
-    MathEC::MathEC() : vars(3), town(vars),iteration(0),iterations(100000),m_WorkerThread(NULL)
+    MathEC::MathEC() : vars(3), town(vars),iteration(0),iterations(100000),m_WorkerThread(NULL),m_Worker(town)
     {
         int w,h;
         get_size(w,h);
@@ -149,13 +149,9 @@ namespace oct::ec::v1
         //https://docs.huihoo.com/gtkmm/gtkmm-2.4/tutorial/html/sec-menus-examples.html
         m_refActionGroup = Gtk::ActionGroup::create();
         m_refActionGroup->add(Gtk::Action::create("ContextMenu", "Context Menu"));
-
         m_refActionGroup->add(Gtk::Action::create("ContextBegin", "Iniciar"),sigc::mem_fun(*this, &MathEC::on_start_button_clicked));
-
         m_refActionGroup->add(Gtk::Action::create("ContextEnd", "Finalizar"),Gtk::AccelKey("<control>P"), sigc::mem_fun(*this, &MathEC::on_stop_button_clicked));
-
         m_refActionGroup->add(Gtk::Action::create("ContextStatus", "Estado"),sigc::mem_fun(*this, &MathEC::on_menu_popup_status));
-
 
         m_refUIManager = Gtk::UIManager::create();
         m_refUIManager->insert_action_group(m_refActionGroup);

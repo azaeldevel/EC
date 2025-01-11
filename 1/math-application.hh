@@ -101,56 +101,72 @@ namespace oct::ec::v1
     };
 
 
+    template<typename T>
     class Worker
     {
     public:
-        Worker() :
-          m_Mutex(),
-          m_shall_stop(false),
-          m_has_stopped(false),
-          m_fraction_done(0.0),
-          m_message()
+        Worker() = default;
+
+        Worker(T& d) : data(&d),
+            m_shall_stop(false),
+            m_has_stopped(false)
         {
         }
 
 
-        // Thread function.
+        void stop_work()
+        {
+            std::lock_guard<std::mutex> lock(m_Mutex);
+            m_shall_stop = true;
+        }
+        bool has_stopped() const
+        {
+          std::lock_guard<std::mutex> lock(m_Mutex);
+          return m_has_stopped;
+        }
+
+    protected:
+        // Synchronizes access to member data.
+        mutable std::mutex m_Mutex;
+
+        // Data used by both GUI thread and worker thread.
+        bool m_shall_stop;
+        bool m_has_stopped;
+        T* data;
+    };
+
+    template<typename T>
+    class WorkerEC : public Worker<T>
+    {
+    public:
+        WorkerEC() = default;
+        WorkerEC(T& t) : Worker<T>(t)
+        {
+        }
         void do_work(EC* caller)
         {
             {
-                std::lock_guard<std::mutex> lock(m_Mutex);
-                m_has_stopped = false;
-                m_fraction_done = 0.0;
-                m_message = "";
+                std::lock_guard<std::mutex> lock(this->m_Mutex);
+                this->m_has_stopped = false;
             }
 
             for (int i = 0; ; ++i) // do until break
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(250));
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
                 {
-                    std::lock_guard<std::mutex> lock(m_Mutex);
+                    std::lock_guard<std::mutex> lock(this->m_Mutex);
+                    //
 
-                    m_fraction_done += 0.01;
-
-                    if (i % 4 == 3)
-                    {
-                        std::ostringstream ostr;
-                        ostr << (m_fraction_done * 100.0) << "% done\n";
-                        m_message += ostr.str();
-                        std::cout << ostr.str();
-                    }
-
-                    if(m_fraction_done >= 1.0)
-                    {
-                        m_message += "Finished";
-                        break;
-                    }
+                    this->data->evaluate();
+                    //data->print(std::cout);
+                    this->data->resumen();
+                    std::cout << "Media : " << this->data->media << "\n";
+                    this->data->pair();
 
                     //
-                    if (m_shall_stop)
+                    if (this->m_shall_stop)
                     {
-                        m_message += "Stopped";
                         break;
                     }
                 }
@@ -159,42 +175,24 @@ namespace oct::ec::v1
             }
 
             {
-                std::lock_guard<std::mutex> lock(m_Mutex);
-                m_shall_stop = false;
-                m_has_stopped = true;
+                std::lock_guard<std::mutex> lock(this->m_Mutex);
+                this->m_shall_stop = false;
+                this->m_has_stopped = true;
             }
 
             caller->notify();
         }
 
-        // Accesses to these data are synchronized by a mutex.
-        // Some microseconds can be saved by getting all data at once, instead of having
-        // separate get_fraction_done() and get_message() methods.
         void get_data(double* fraction_done, Glib::ustring* message) const
         {
-            std::lock_guard<std::mutex> lock(m_Mutex);
+            std::lock_guard<std::mutex> lock(this->m_Mutex);
 
-            if (fraction_done) *fraction_done = m_fraction_done;
-
-            if (message) *message = m_message;
+            //if (fraction_done) *fraction_done = m_fraction_done;
+            //if (message) *message = m_message;
         }
-
-        void stop_work()
-        {
-            std::lock_guard<std::mutex> lock(m_Mutex);
-            m_shall_stop = true;
-        }
-        bool has_stopped() const;
 
     private:
-        // Synchronizes access to member data.
-        mutable std::mutex m_Mutex;
 
-        // Data used by both GUI thread and worker thread.
-        bool m_shall_stop;
-        bool m_has_stopped;
-        double m_fraction_done;
-        Glib::ustring m_message;
     };
 
 
@@ -226,9 +224,9 @@ namespace oct::ec::v1
         size_t iteration,iterations;
 
         std::thread* m_WorkerThread;
-        Worker m_Worker;
+        WorkerEC<BinoprGroup<3,double,Binopr>> m_Worker;
         Glib::Dispatcher m_Dispatcher;
-        void load(const BinoprGroup<3,double,Binopr>& );
+        void load(const BinoprGroup<3,double,Binopr>&);
 
     };
 }
