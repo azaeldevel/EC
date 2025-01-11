@@ -296,56 +296,6 @@ bool Worker::has_stopped() const
   return m_has_stopped;
 }
 
-void Worker::do_work(EC* caller)
-{
-  {
-    std::lock_guard<std::mutex> lock(m_Mutex);
-    m_has_stopped = false;
-    m_fraction_done = 0.0;
-    m_message = "";
-  } // The mutex is unlocked here by lock's destructor.
-
-  // Simulate a long calculation.
-  for (int i = 0; ; ++i) // do until break
-  {
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
-
-    {
-      std::lock_guard<std::mutex> lock(m_Mutex);
-
-      m_fraction_done += 0.01;
-
-      if (i % 4 == 3)
-      {
-        std::ostringstream ostr;
-        ostr << (m_fraction_done * 100.0) << "% done\n";
-        m_message += ostr.str();
-        std::cout << ostr.str();
-      }
-
-      if (m_fraction_done >= 1.0)
-      {
-        m_message += "Finished";
-        break;
-      }
-      if (m_shall_stop)
-      {
-        m_message += "Stopped";
-        break;
-      }
-    }
-
-    caller->notify();
-  }
-
-  {
-    std::lock_guard<std::mutex> lock(m_Mutex);
-    m_shall_stop = false;
-    m_has_stopped = true;
-  }
-
-  caller->notify();
-}
 
 
 }
