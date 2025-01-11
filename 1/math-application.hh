@@ -114,9 +114,8 @@ namespace oct::ec::v1
                 m_has_stopped = false;
                 m_fraction_done = 0.0;
                 m_message = "";
-            } // The mutex is unlocked here by lock's destructor.
+            }
 
-            // Simulate a long calculation.
             for (int i = 0; ; ++i) // do until break
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -134,11 +133,13 @@ namespace oct::ec::v1
                         std::cout << ostr.str();
                     }
 
-                    if (m_fraction_done >= 1.0)
+                    if(m_fraction_done >= 1.0)
                     {
                         m_message += "Finished";
                         break;
                     }
+
+                    //
                     if (m_shall_stop)
                     {
                         m_message += "Stopped";

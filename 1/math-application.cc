@@ -221,34 +221,45 @@ namespace oct::ec::v1
 
     void MathEC::on_start_button_clicked()
     {
-      if (m_WorkerThread)
-      {
-        std::cout << "Can't start a worker thread while another one is running." << std::endl;
-      }
-      else
-      {
-        // Start a new worker thread.
-        m_WorkerThread = new std::thread(
-          [this]
-          {
-            m_Worker.do_work(this);
-          });
-      }
-      update_start_stop_buttons();
+        if (m_WorkerThread)
+        {
+            //std::cout << "Can't start a worker thread while another one is running." << std::endl;
+            //delete m_WorkerThread;
+            m_WorkerThread = NULL;
+            // Start a new worker thread.
+            m_WorkerThread = new std::thread(
+            [this]
+            {
+                m_Worker.do_work(this);
+            });
+        }
+        else
+        {
+            // Start a new worker thread.
+            m_WorkerThread = new std::thread(
+            [this]
+            {
+                m_Worker.do_work(this);
+            });
+        }
+        update_start_stop_buttons();
     }
 
     void MathEC::on_stop_button_clicked()
     {
-      if (!m_WorkerThread)
-      {
-        std::cout << "Can't stop a worker thread. None is running." << std::endl;
-      }
-      else
-      {
-       // Order the worker thread to stop.
-        m_Worker.stop_work();
-        //m_ButtonStop.set_sensitive(false);
-      }
+        if (!m_WorkerThread)
+        {
+            std::cout << "Can't stop a worker thread. None is running." << std::endl;
+        }
+        else
+        {
+            // Order the worker thread to stop.
+            m_Worker.stop_work();
+            m_WorkerThread->join();
+            //m_ButtonStop.set_sensitive(false);
+            //delete m_WorkerThread;
+            //m_WorkerThread = NULL;
+        }
     }
 
     void MathEC::notify()
