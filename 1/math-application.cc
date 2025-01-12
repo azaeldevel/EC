@@ -50,48 +50,8 @@ namespace oct::ec::v1
     }
 
 
-    GroupPanel::GroupPanel()
-    {
-        //Create the Tree model:
-        ref_tree = Gtk::ListStore::create(columns);
-        set_model(ref_tree);
 
-        //Fill the TreeView's model
-        /*Gtk::TreeModel::Row row = *(ref_tree->append());
-        row[columns.index] = 1;
-        row[columns.evaluation] = 1.0;
 
-        row = *(ref_tree->append());
-        row[columns.index] = 2;
-        row[columns.evaluation] = 2.0;*/
-
-        append_column("ID", columns.index);
-        //append_column("Evaluacion", columns.evaluation);
-        //append_column_numeric("Evaluacion", columns.evaluation,"%010d");
-        //Display a progress bar instead of a decimal number:
-        auto cell = Gtk::make_managed<Gtk::CellRendererProgress>();
-        int column_eval = append_column("evaluacion", *cell);
-        auto hcolumn = get_column(column_eval - 1);
-        if(hcolumn)
-        {
-            hcolumn->add_attribute(cell->property_value(), columns.evaluation);
-        }
-    }
-
-    void GroupPanel::load(const BinoprGroup<3,double,Binopr>& grp)
-    {
-        Gtk::TreeModel::Row row;
-        for(size_t i = 0; i < grp.size(); i++)
-        {
-            row = *(ref_tree->append());
-            row[columns.index] = i;
-            row[columns.evaluation] = grp[i]->evaluation;
-        }
-    }
-    void GroupPanel::clear()
-    {
-        ref_tree->clear();
-    }
 
 
     EC::EC()
@@ -109,7 +69,7 @@ namespace oct::ec::v1
 
 
 
-    MathEC::MathEC() : vars(3), town(vars),iteration(0),iterations(100000),m_WorkerThread(NULL),m_Worker(town)
+    MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_WorkerThread_tv(NULL),m_Worker(town,group_tree)
     {
         int w,h;
         get_size(w,h);
@@ -200,11 +160,6 @@ namespace oct::ec::v1
         }
         else return false;
     }
-    void MathEC::load(const BinoprGroup<3,double,Binopr>& grp)
-    {
-        group_tree.load(grp);
-
-    }
 
 
     void MathEC::update_start_stop_buttons()
@@ -236,6 +191,28 @@ namespace oct::ec::v1
             [this]
             {
                 m_Worker.do_work(this);
+            });
+        }
+        //
+        if(m_WorkerThread_tv)
+        {
+            //std::cout << "Can't start a worker thread while another one is running." << std::endl;
+            //delete m_WorkerThread;
+            m_WorkerThread_tv = NULL;
+            // Start a new worker thread.
+            m_WorkerThread_tv = new std::thread(
+            [this]
+            {
+                m_Worker.load();
+            });
+        }
+        else
+        {
+            // Start a new worker thread.
+            m_WorkerThread_tv = new std::thread(
+            [this]
+            {
+                m_Worker.load();
             });
         }
         update_start_stop_buttons();

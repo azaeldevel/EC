@@ -56,11 +56,18 @@ namespace oct::ec::v1
 
     };
 
-    class Panel : public Gtk::TreeView
+
+
+    /**
+    *
+    *
+    */
+    class TreeView : public Gtk::TreeView
     {
     };
 
-    class GroupPanel : public Panel
+    template<typename T>
+    class GroupTV : public TreeView
     {
     public:
         class ModelColumns : public Gtk::TreeModel::ColumnRecord
@@ -77,14 +84,48 @@ namespace oct::ec::v1
             Gtk::TreeModelColumn<double> evaluation;
         };
 
-        void load(const BinoprGroup<3,double,Binopr>& );
-        void clear();
+        void load(const T& grp)
+        {
+            ref_tree->clear();
+
+            Gtk::TreeModel::Row row;
+            for(size_t i = 0; i < grp.size(); i++)
+            {
+                row = *(ref_tree->append());
+                row[columns.index] = i;
+                row[columns.evaluation] = grp[i]->evaluation * 100.0;
+                //std::cout << "Eval : " << grp[i]->evaluation << "\n";
+            }
+        }
+        void clear()
+        {
+            ref_tree->clear();
+        }
+
     public:
-        GroupPanel();
+        GroupTV()
+        {
+            ref_tree = Gtk::ListStore::create(columns);
+            set_model(ref_tree);
+
+            Gtk::TreeModel::Row row = *(ref_tree->append());
+            row[columns.index] = 0;
+            row[columns.evaluation] = 0;
+
+            append_column("ID", columns.index);
+            auto cell = Gtk::make_managed<Gtk::CellRendererProgress>();
+            int column_eval = append_column("evaluacion", *cell);
+            auto hcolumn = get_column(column_eval - 1);
+            if(hcolumn)
+            {
+                hcolumn->add_attribute(cell->property_value(), columns.evaluation);
+            }
+        }
+
 
     protected:
-            ModelColumns columns;
-            Glib::RefPtr<Gtk::ListStore> ref_tree;
+        ModelColumns columns;
+        Glib::RefPtr<Gtk::ListStore> ref_tree;
     };
 
 
@@ -107,9 +148,7 @@ namespace oct::ec::v1
     public:
         Worker() = default;
 
-        Worker(T& d) : data(&d),
-            m_shall_stop(false),
-            m_has_stopped(false)
+        Worker(T& d) : data(&d), m_shall_stop(false), m_has_stopped(false)
         {
         }
 
@@ -139,8 +178,11 @@ namespace oct::ec::v1
     class WorkerEC : public Worker<T>
     {
     public:
+        size_t iteration,iterations;
+
+    public:
         WorkerEC() = default;
-        WorkerEC(T& t) : Worker<T>(t)
+        WorkerEC(T& t,GroupTV<T>& grp) : Worker<T>(t),grtv(&grp)
         {
         }
         void do_work(EC* caller)
@@ -150,7 +192,7 @@ namespace oct::ec::v1
                 this->m_has_stopped = false;
             }
 
-            for (int i = 0; ; ++i) // do until break
+            while(true) // do until break
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
@@ -161,7 +203,7 @@ namespace oct::ec::v1
                     this->data->evaluate();
                     //data->print(std::cout);
                     this->data->resumen();
-                    std::cout << "Media : " << this->data->media << "\n";
+                    //std::cout << "Media : " << this->data->media << "\n";
                     this->data->pair();
 
                     //
@@ -183,15 +225,24 @@ namespace oct::ec::v1
             caller->notify();
         }
 
-        void get_data(double* fraction_done, Glib::ustring* message) const
+        void load()
         {
-            std::lock_guard<std::mutex> lock(this->m_Mutex);
-
-            //if (fraction_done) *fraction_done = m_fraction_done;
-            //if (message) *message = m_message;
+            while(true)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                {
+                    std::lock_guard<std::mutex> lock(this->m_Mutex);
+                    grtv->load(*this->data);
+                    if (this->m_shall_stop)
+                    {
+                        break;
+                    }
+                }
+            }
         }
 
     private:
+        GroupTV<T>* grtv;
 
     };
 
@@ -203,7 +254,7 @@ namespace oct::ec::v1
         virtual ~MathEC();
 
     private:
-        GroupPanel group_tree;
+        GroupTV<BinoprGroup<3,double,Binopr>> group_tree;
         Glib::RefPtr<Gtk::UIManager> m_refUIManager;
         Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
         Gtk::Menu* m_pMenuPopup;
@@ -221,12 +272,10 @@ namespace oct::ec::v1
     private:
         inputs<double,3> vars;
         BinoprGroup<3,double,Binopr> town;
-        size_t iteration,iterations;
 
-        std::thread* m_WorkerThread;
+        std::thread *m_WorkerThread,*m_WorkerThread_tv;
         WorkerEC<BinoprGroup<3,double,Binopr>> m_Worker;
         Glib::Dispatcher m_Dispatcher;
-        void load(const BinoprGroup<3,double,Binopr>&);
 
     };
 }
