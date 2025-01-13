@@ -69,7 +69,7 @@ namespace oct::ec::v1
 
 
 
-    MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_Worker(town,group_tree)//m_WorkerThread_tv(NULL),
+    MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_WorkerThread_tv(NULL),m_Worker(town,group_tree)//m_WorkerThread_tv(NULL),
     {
         int w,h;
         get_size(w,h);
@@ -194,7 +194,7 @@ namespace oct::ec::v1
             });
         }
         //
-        /*if(m_WorkerThread_tv)
+        if(m_WorkerThread_tv)
         {
             //std::cout << "Can't start a worker thread while another one is running." << std::endl;
             //delete m_WorkerThread;
@@ -214,7 +214,7 @@ namespace oct::ec::v1
             {
                 m_Worker.load();
             });
-        }*/
+        }
         update_start_stop_buttons();
     }
 

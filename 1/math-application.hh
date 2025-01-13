@@ -212,7 +212,7 @@ namespace oct::ec::v1
                     //std::cout << "Media : " << this->data->media << "\n";
                     this->data->pair();
 
-                    grtv->load(*this->data);
+                    //grtv->load(*this->data);
 
                     //
                     if (this->m_shall_stop)
@@ -281,7 +281,7 @@ namespace oct::ec::v1
         inputs<double,3> vars;
         BinoprGroup<3,double,Binopr> town;
 
-        std::thread *m_WorkerThread;//,*m_WorkerThread_tv
+        std::thread *m_WorkerThread,*m_WorkerThread_tv;
         WorkerEC<BinoprGroup<3,double,Binopr>> m_Worker;
         Glib::Dispatcher m_Dispatcher;
 
