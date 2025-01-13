@@ -86,16 +86,23 @@ namespace oct::ec::v1
 
         void load(const T& grp)
         {
-            ref_tree->clear();
-
             Gtk::TreeModel::Row row;
-            for(size_t i = 0; i < grp.size(); i++)
+            for(size_t i = 0; i < (grp.size() - ref_tree->children().size()); i++)
             {
                 row = *(ref_tree->append());
-                row[columns.index] = i;
-                row[columns.evaluation] = grp[i]->evaluation * 100.0;
+                //row[columns.index] = i;
+                //row[columns.evaluation] = grp[i]->evaluation * 100.0;
                 //std::cout << "Eval : " << grp[i]->evaluation << "\n";
             }
+
+            for(size_t i = 0; i < ref_tree->children().size(); i++)
+            {
+                row = ref_tree->children()[i];
+                row[columns.index] = i + 1;
+                row[columns.evaluation] = grp[i]->evaluation;
+                //std::cout << "Eval : " << grp[i]->evaluation << "\n";
+            }
+
         }
         void clear()
         {
@@ -108,11 +115,9 @@ namespace oct::ec::v1
             ref_tree = Gtk::ListStore::create(columns);
             set_model(ref_tree);
 
-            Gtk::TreeModel::Row row = *(ref_tree->append());
-            row[columns.index] = 0;
-            row[columns.evaluation] = 0;
-
             append_column("ID", columns.index);
+            append_column_numeric("Evaluacion", columns.evaluation,"%.10f");
+            /*
             auto cell = Gtk::make_managed<Gtk::CellRendererProgress>();
             int column_eval = append_column("evaluacion", *cell);
             auto hcolumn = get_column(column_eval - 1);
@@ -120,6 +125,7 @@ namespace oct::ec::v1
             {
                 hcolumn->add_attribute(cell->property_value(), columns.evaluation);
             }
+            */
         }
 
 
@@ -201,10 +207,12 @@ namespace oct::ec::v1
                     //
 
                     this->data->evaluate();
-                    //data->print(std::cout);
+                    this->data->print(std::cout);
                     this->data->resumen();
                     //std::cout << "Media : " << this->data->media << "\n";
                     this->data->pair();
+
+                    grtv->load(*this->data);
 
                     //
                     if (this->m_shall_stop)
@@ -273,7 +281,7 @@ namespace oct::ec::v1
         inputs<double,3> vars;
         BinoprGroup<3,double,Binopr> town;
 
-        std::thread *m_WorkerThread,*m_WorkerThread_tv;
+        std::thread *m_WorkerThread;//,*m_WorkerThread_tv
         WorkerEC<BinoprGroup<3,double,Binopr>> m_Worker;
         Glib::Dispatcher m_Dispatcher;
 
