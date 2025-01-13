@@ -78,10 +78,12 @@ namespace oct::ec::v1
             {
                 add(index);
                 add(evaluation);
+                add(value);
             }
 
             Gtk::TreeModelColumn<size_t> index;
             Gtk::TreeModelColumn<double> evaluation;
+            Gtk::TreeModelColumn<double> value;
         };
 
         void load(const T& grp)
@@ -100,6 +102,7 @@ namespace oct::ec::v1
                 row = ref_tree->children()[i];
                 row[columns.index] = i + 1;
                 row[columns.evaluation] = grp[i]->evaluation;
+                row[columns.value] = grp[i]->value();
                 //std::cout << "Eval : " << grp[i]->evaluation << "\n";
             }
 
@@ -116,7 +119,8 @@ namespace oct::ec::v1
             set_model(ref_tree);
 
             append_column("ID", columns.index);
-            append_column_numeric("Evaluacion", columns.evaluation,"%.10f");
+            append_column_numeric("Evaluacion", columns.evaluation,"%.20f");
+            append_column_numeric("Valor", columns.value,"%.20f");
             /*
             auto cell = Gtk::make_managed<Gtk::CellRendererProgress>();
             int column_eval = append_column("evaluacion", *cell);
@@ -188,23 +192,34 @@ namespace oct::ec::v1
 
     public:
         WorkerEC() = default;
-        WorkerEC(T& t,GroupTV<T>& grp) : Worker<T>(t),grtv(&grp)
+        WorkerEC(T& t,GroupTV<T>& grp,Gtk::Label& label,size_t its = 100000) :
+            Worker<T>(t),
+            grtv(&grp),
+            display(&label),
+            iteration(0),
+            iterations(its)
         {
         }
         void do_work(EC* caller)
         {
+            std::string ds;
             {
                 std::lock_guard<std::mutex> lock(this->m_Mutex);
                 this->m_has_stopped = false;
             }
 
-            while(true) // do until break
+            for(;iteration < iterations; iteration++) // do until break
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 {
                     std::lock_guard<std::mutex> lock(this->m_Mutex);
                     //
+                    /*
+                    ds = std::to_string(iteration);
+                    ds += "/";
+                    ds += std::to_string(iterations);
+                    display->set_text(ds);
+                    */
 
                     this->data->evaluate();
                     //this->data->print(std::cout);
@@ -251,6 +266,7 @@ namespace oct::ec::v1
 
     private:
         GroupTV<T>* grtv;
+        Gtk::Label* display;
 
     };
 
@@ -266,6 +282,7 @@ namespace oct::ec::v1
         Glib::RefPtr<Gtk::UIManager> m_refUIManager;
         Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
         Gtk::Menu* m_pMenuPopup;
+        Gtk::Label iteration;
         //
         virtual bool on_button_press_event(GdkEventButton* event);
         virtual void on_menu_popup_status();
@@ -284,7 +301,6 @@ namespace oct::ec::v1
         std::thread *m_WorkerThread,*m_WorkerThread_tv;
         WorkerEC<BinoprGroup<3,double,Binopr>> m_Worker;
         Glib::Dispatcher m_Dispatcher;
-
     };
 }
 

@@ -124,8 +124,8 @@ namespace oct::ec::v1
                 break;
             }
 
-            const N ration = N(1) - (N(1)/N(1e3));
-            //const N ration = 0.99;
+            //const N ration = N(1) - (N(1)/N(1e3));
+            const N ration = 0.8;
 
             N value = evalr_actual(variables);
             //std::cout << "value = " << value << "\n";
@@ -220,11 +220,35 @@ namespace oct::ec::v1
 
             if(std::abs(eval) > N(1))
             {
-                std::cout << "eval -> value::result \t" << eval << " -> "  << value << " - " << result << "\n";
+                std::cout << "eval -> value::result \t" << eval << " -> "  << value << " , " << result << "\n";
             }
 
 
             return eval;
+        }
+
+        virtual N value() const
+        {
+            if(!node) throw core::exception("No se ha asignado el nodo pra la expresion");
+
+            switch(node->type)
+            {
+            case core::ast::typen::addition:
+            case core::ast::typen::subtraction:
+            case core::ast::typen::product:
+            case core::ast::typen::quotient:
+                return static_cast<core::ast::Binopr<N>*>(node)->result();
+            case core::ast::typen::number:
+                return static_cast<core::ast::Number<N>*>(node)->result();
+            case core::ast::typen::variable:
+                return static_cast<core::ast::Variable<N>*>(node)->result();
+            case core::ast::typen::nest:
+                return static_cast<core::ast::Nest<N>*>(node)->result();
+            default:
+                break;
+            }
+
+            return 0;
         }
 
     public://funciones de apareo
@@ -558,6 +582,7 @@ namespace oct::ec::v1
         static inline std::bernoulli_distribution almost_never;
         static inline std::uniform_int_distribution<> select_pivot;
         static inline std::uniform_int_distribution<> select_gen_constant;
+        static inline std::uniform_int_distribution<> selection_pair;
         static inline unsigned population_size;
 
         static void init_randsys(unsigned size)
@@ -567,11 +592,11 @@ namespace oct::ec::v1
             std::setprecision(10);
             generator = std::mt19937(rd()); // mersenne_twister_engine seeded with rd()
             operation = std::uniform_int_distribution<>(1, 4);//+,-,*,/
-            constant = std::uniform_real_distribution<>(-1.0e6, 1.0e6);
+            constant = std::uniform_real_distribution<>(-1.0e20, 1.0e20);
             nesting = std::bernoulli_distribution(0.75);
             svariable = std::uniform_int_distribution<>(0, S - 1);
             randon_node = std::uniform_int_distribution<>(1, 3);//operacion,variable,constante
-            mutability = std::bernoulli_distribution(0.02);
+            mutability = std::bernoulli_distribution(0.09);
             binary_selection = std::bernoulli_distribution(0.5);
             operation_puls_1 = std::uniform_int_distribution<>(1, 5);//+,-,*,/,?
             selection_firts_pair = std::fisher_f_distribution<N>(1,barrera);
@@ -580,6 +605,7 @@ namespace oct::ec::v1
             almost_never = std::bernoulli_distribution(0.2);
             select_pivot = std::uniform_int_distribution<>(0,(pivots_size/2) - 1);//+,-,*,/
             select_gen_constant = std::uniform_int_distribution<>(1,8);
+            selection_pair = std::uniform_int_distribution<>(1,population_size - 1);
         }
     };
 
@@ -719,7 +745,7 @@ namespace oct::ec::v1
             for(size_t i = 0; i < pairs; i++)
             {
                 if(T<S,N>::mutability(T<S,N>::generator)) active_mutation = true;
-                selectd = select_pair_with_comunal();
+                selectd = select_pair_normal();
                 //std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
                 borned[i] = new T(*variables,T<S,N>::eval_constant,false);
                 mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
@@ -844,6 +870,46 @@ namespace oct::ec::v1
 
             return rest;
         }
+
+
+        virtual core::array<size_t,2> select_pair_normal()const
+        {
+            core::array<size_t,2> rest;
+            rest[0] = (size_t)T<S,N>::selection_pair(T<S,N>::generator);
+
+            if(rest[0] >= this->size())//asegurar que no son iguales
+            {
+                rest[0] = (size_t)T<S,N>::selection_pair(T<S,N>::generator);
+            }
+            if(rest[0] >= this->size())//asegurar que no son iguales
+            {
+                rest[0] = (size_t)T<S,N>::selection_pair(T<S,N>::generator);
+            }
+            if(rest[0] >= this->size())//asegurar que no son iguales
+            {
+                rest[0] = (size_t)T<S,N>::selection_pair(T<S,N>::generator);
+            }
+
+            rest[1] = T<S,N>::selection_pair(T<S,N>::generator);
+            if(rest[0] == rest[1])//asegurar que no son iguales
+            {
+                rest[1] = T<S,N>::selection_pair(T<S,N>::generator);
+            }
+            if(rest[0] == rest[1])//asegurar que no son iguales
+            {
+                rest[1] = T<S,N>::selection_pair(T<S,N>::generator);
+            }
+            if(rest[0] == rest[1])//asegurar que no son iguales
+            {
+                rest[0] = (size_t)T<S,N>::selection_pair(T<S,N>::generator);
+                rest[1] = T<S,N>::selection_pair(T<S,N>::generator);
+            }
+
+
+            return rest;
+        }
+
+
         void mesh_gens_binopr(T<S,N>& born, const T<S,N>& parenta, const T<S,N>& parentb)
         {
         }
@@ -1212,9 +1278,23 @@ namespace oct::ec::v1
                 born.pivots = parenta.pivots;
                 born.pivot_one = parentb.pivot_one;
                 born.pivot_big = parenta.pivot_big;
+                if(active_mutation and T<S,N>::almost_everytime(T<S,N>::generator))
+                {
+                    mutation_pivots(born);
+                }
+
                 if(parentb.node->is_number())
                 {
-                    mesh_gens_constant(born,parentb,parenta);
+                    if(active_mutation and T<S,N>::almost_everytime(T<S,N>::generator))
+                    {
+                        //mutation_counter++;
+                        mutation_node(born);
+                    }
+                    else
+                    {
+                        mesh_gens_constant(born,parentb,parenta);
+                    }
+
                     born.auto_free = true;
                 }
                 else

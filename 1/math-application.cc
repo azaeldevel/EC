@@ -69,7 +69,7 @@ namespace oct::ec::v1
 
 
 
-    MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_WorkerThread_tv(NULL),m_Worker(town,group_tree)//m_WorkerThread_tv(NULL),
+    MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_WorkerThread_tv(NULL),m_Worker(town,group_tree,iteration)//m_WorkerThread_tv(NULL),
     {
         int w,h;
         get_size(w,h);
@@ -88,6 +88,8 @@ namespace oct::ec::v1
         //paned_scroll.set_min_content_width(get_width()/3);
         //paned_scroll.set_border_width(10);
         //paned_scroll.set_policy(Gtk::POLICY_AUTOMATIC , Gtk::POLICY_ALWAYS );
+        //iteration.set_size_request();
+        box_work.add(iteration);
         paned.add1(paned_scroll);
 
         Binopr<3,double>::init_randsys(100);
