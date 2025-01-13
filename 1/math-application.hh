@@ -207,7 +207,7 @@ namespace oct::ec::v1
                     //
 
                     this->data->evaluate();
-                    this->data->print(std::cout);
+                    //this->data->print(std::cout);
                     this->data->resumen();
                     //std::cout << "Media : " << this->data->media << "\n";
                     this->data->pair();
