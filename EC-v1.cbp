@@ -62,6 +62,19 @@
 					<Add option="`pkg-config gtkmm-3.0 --libs`" />
 				</Linker>
 			</Target>
+			<Target title="community-gtk">
+				<Option output="bin/Debug/group-gtk" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config gtkmm-3.0 --libs`" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-pedantic" />
@@ -69,6 +82,15 @@
 			<Add option="-std=c++23" />
 			<Add directory="../../octetos" />
 		</Compiler>
+		<Unit filename="1/community-gtk-main.cc">
+			<Option target="community-gtk" />
+		</Unit>
+		<Unit filename="1/community-gtk.cc">
+			<Option target="community-gtk" />
+		</Unit>
+		<Unit filename="1/community-gtk.hh">
+			<Option target="community-gtk" />
+		</Unit>
 		<Unit filename="1/ec.hh">
 			<Option target="TDD" />
 		</Unit>
@@ -83,18 +105,22 @@
 		</Unit>
 		<Unit filename="1/gtk.cc">
 			<Option target="group-gtk" />
+			<Option target="community-gtk" />
 		</Unit>
 		<Unit filename="1/gtk.hh">
 			<Option target="group-gtk" />
+			<Option target="community-gtk" />
 		</Unit>
 		<Unit filename="1/math.hh">
 			<Option target="TDD" />
 		</Unit>
 		<Unit filename="1/worker.cc">
 			<Option target="group-gtk" />
+			<Option target="community-gtk" />
 		</Unit>
 		<Unit filename="1/worker.hh">
 			<Option target="group-gtk" />
+			<Option target="community-gtk" />
 		</Unit>
 		<Unit filename="tests/1/develop-formula-1.cc">
 			<Option target="develop-formula-1" />
