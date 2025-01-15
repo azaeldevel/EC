@@ -49,8 +49,8 @@
 					<Add library="cunit" />
 				</Linker>
 			</Target>
-			<Target title="gui">
-				<Option output="bin/Debug/gui" prefix_auto="1" extension_auto="1" />
+			<Target title="ec-group-gtk">
+				<Option output="bin/Debug/ec-group-gtk" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -69,32 +69,32 @@
 			<Add option="-std=c++23" />
 			<Add directory="../../octetos" />
 		</Compiler>
-		<Unit filename="1/application.cc">
-			<Option target="gui" />
-		</Unit>
-		<Unit filename="1/application.hh">
-			<Option target="gui" />
+		<Unit filename="1/ec-group-gtk.cc">
+			<Option target="ec-group-gtk" />
 		</Unit>
 		<Unit filename="1/ec.hh">
 			<Option target="TDD" />
 		</Unit>
+		<Unit filename="1/group-gtk.cc">
+			<Option target="ec-group-gtk" />
+		</Unit>
+		<Unit filename="1/group-gtk.hh">
+			<Option target="ec-group-gtk" />
+		</Unit>
 		<Unit filename="1/gtk.cc">
-			<Option target="gui" />
+			<Option target="ec-group-gtk" />
 		</Unit>
 		<Unit filename="1/gtk.hh">
-			<Option target="gui" />
-		</Unit>
-		<Unit filename="1/math-gui.cc">
-			<Option target="gui" />
+			<Option target="ec-group-gtk" />
 		</Unit>
 		<Unit filename="1/math.hh">
 			<Option target="TDD" />
 		</Unit>
 		<Unit filename="1/worker.cc">
-			<Option target="gui" />
+			<Option target="ec-group-gtk" />
 		</Unit>
 		<Unit filename="1/worker.hh">
-			<Option target="gui" />
+			<Option target="ec-group-gtk" />
 		</Unit>
 		<Unit filename="tests/1/develop-formula-1.cc">
 			<Option target="develop-formula-1" />
