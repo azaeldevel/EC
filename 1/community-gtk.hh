@@ -221,7 +221,6 @@ namespace oct::ec::v1
         Gtk::Label iteration;
         //
         virtual bool on_button_press_event(GdkEventButton* event);
-        virtual void on_menu_popup_status();
         //
         void on_start_button_clicked();
         void on_stop_button_clicked();
