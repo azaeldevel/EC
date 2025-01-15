@@ -1,5 +1,5 @@
 
-#include "ec-gtk.hh"
+#include "group-gtk.hh"
 #include <iostream>
 
 namespace oct::ec::v1
@@ -87,7 +87,6 @@ namespace oct::ec::v1
 
         m_Dispatcher.connect(sigc::mem_fun(*this, &MathEC::on_notification_from_worker_thread));
 
-
         show_all_children();
     }
 
@@ -95,10 +94,6 @@ namespace oct::ec::v1
     {
     }
 
-
-    void MathEC::on_menu_popup_status()
-    {
-    }
 
     bool MathEC::on_button_press_event(GdkEventButton* event)
     {

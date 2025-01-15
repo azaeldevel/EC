@@ -600,7 +600,7 @@ namespace oct::ec::v1
             nesting = std::bernoulli_distribution(0.75);
             svariable = std::uniform_int_distribution<>(0, S - 1);
             randon_node = std::uniform_int_distribution<>(1, 3);//operacion,variable,constante
-            mutability = std::bernoulli_distribution(0.4);
+            mutability = std::bernoulli_distribution(0.7);
             binary_selection = std::bernoulli_distribution(0.5);
             operation_puls_1 = std::uniform_int_distribution<>(1, 5);//+,-,*,/,?
             selection_firts_pair = std::fisher_f_distribution<N>(1,barrera);
