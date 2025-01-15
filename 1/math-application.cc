@@ -28,7 +28,6 @@ namespace oct::ec::v1
     {
         //set_size_request(800,600);
         set_default_size(800, 600);
-
         if(layout == Layout::left_paned)
         {
             box_main.set_orientation(Gtk::Orientation::ORIENTATION_VERTICAL);
@@ -83,13 +82,13 @@ namespace oct::ec::v1
         int result = dialog.run();*/
 
         //paned_scroll.set_size_request(get_width()/4,get_height());
-        paned_scroll.set_size_request(w/3,h);
+        paned_scroll.set_size_request((2 * w)/3,h);
         paned_scroll.add(group_tree);
         //paned_scroll.set_min_content_width(get_width()/3);
         //paned_scroll.set_border_width(10);
         //paned_scroll.set_policy(Gtk::POLICY_AUTOMATIC , Gtk::POLICY_ALWAYS );
         //iteration.set_size_request();
-        box_work.add(iteration);
+        box_top_panel.add(iteration);
         paned.add1(paned_scroll);
 
         Binopr<3,double>::init_randsys(100);

@@ -79,11 +79,13 @@ namespace oct::ec::v1
                 add(index);
                 add(evaluation);
                 add(value);
+                add(gap);
             }
 
             Gtk::TreeModelColumn<size_t> index;
             Gtk::TreeModelColumn<double> evaluation;
             Gtk::TreeModelColumn<double> value;
+            Gtk::TreeModelColumn<double> gap;
         };
 
         void load(const T& grp)
@@ -103,9 +105,9 @@ namespace oct::ec::v1
                 row[columns.index] = i + 1;
                 row[columns.evaluation] = grp[i]->evaluation;
                 row[columns.value] = grp[i]->value();
+                row[columns.gap] = grp[i]->gap();
                 //std::cout << "Eval : " << grp[i]->evaluation << "\n";
             }
-
         }
         void clear()
         {
@@ -121,6 +123,7 @@ namespace oct::ec::v1
             append_column("ID", columns.index);
             append_column_numeric("Evaluacion", columns.evaluation,"%.20f");
             append_column_numeric("Valor", columns.value,"%.20f");
+            append_column_numeric("Brecha", columns.gap,"%.20f");
             /*
             auto cell = Gtk::make_managed<Gtk::CellRendererProgress>();
             int column_eval = append_column("evaluacion", *cell);
@@ -192,7 +195,7 @@ namespace oct::ec::v1
 
     public:
         WorkerEC() = default;
-        WorkerEC(T& t,GroupTV<T>& grp,Gtk::Label& label,size_t its = 100000) :
+        WorkerEC(T& t,GroupTV<T>& grp,Gtk::Label& label,size_t its = 1000000) :
             Worker<T>(t),
             grtv(&grp),
             display(&label),
@@ -202,39 +205,35 @@ namespace oct::ec::v1
         }
         void do_work(EC* caller)
         {
-            std::string ds;
             {
                 std::lock_guard<std::mutex> lock(this->m_Mutex);
                 this->m_has_stopped = false;
             }
 
-            for(;iteration < iterations; iteration++) // do until break
+            while(true)//for(;iteration < iterations; iteration++) // do until break
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                //{
+                std::lock_guard<std::mutex> lock(this->m_Mutex);
+                if(iteration >= iterations) break;
+                iteration++;
+                //
+
+                this->data->evaluate();
+                //this->data->print(std::cout);
+                this->data->resumen();
+                //std::cout << "Media : " << this->data->media << "\n";
+                this->data->pair();
+
+                //grtv->load(*this->data);
+
+                //
+                if (this->m_shall_stop)
                 {
-                    std::lock_guard<std::mutex> lock(this->m_Mutex);
-                    //
-                    /*
-                    ds = std::to_string(iteration);
-                    ds += "/";
-                    ds += std::to_string(iterations);
-                    display->set_text(ds);
-                    */
-
-                    this->data->evaluate();
-                    //this->data->print(std::cout);
-                    this->data->resumen();
-                    //std::cout << "Media : " << this->data->media << "\n";
-                    this->data->pair();
-
-                    //grtv->load(*this->data);
-
-                    //
-                    if (this->m_shall_stop)
-                    {
-                        break;
-                    }
+                    break;
                 }
+                //}
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
                 caller->notify();
             }
@@ -250,16 +249,24 @@ namespace oct::ec::v1
 
         void load()
         {
+            std::string ds;
             while(true)
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                std::this_thread::sleep_for(std::chrono::milliseconds(900));
                 {
                     std::lock_guard<std::mutex> lock(this->m_Mutex);
                     grtv->load(*this->data);
-                    if (this->m_shall_stop)
+
+                    ds = std::to_string(iteration);
+                    ds += "/";
+                    ds += std::to_string(iterations);
+                    display->set_text(ds);
+
+                    if(this->m_shall_stop)
                     {
                         break;
                     }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 }
             }
         }
