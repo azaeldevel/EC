@@ -69,13 +69,19 @@
 			<Add option="-std=c++23" />
 			<Add directory="../../octetos" />
 		</Compiler>
+		<Unit filename="1/application.cc">
+			<Option target="gui" />
+		</Unit>
+		<Unit filename="1/application.hh">
+			<Option target="gui" />
+		</Unit>
 		<Unit filename="1/ec.hh">
 			<Option target="TDD" />
 		</Unit>
-		<Unit filename="1/math-application.cc">
+		<Unit filename="1/gtk.cc">
 			<Option target="gui" />
 		</Unit>
-		<Unit filename="1/math-application.hh">
+		<Unit filename="1/gtk.hh">
 			<Option target="gui" />
 		</Unit>
 		<Unit filename="1/math-gui.cc">
