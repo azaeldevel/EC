@@ -95,6 +95,8 @@ namespace oct::ec::v1
 
     MathEC::~MathEC()
     {
+        delete m_WorkerThread;
+        m_WorkerThread = NULL;
     }
 
 
@@ -115,10 +117,10 @@ namespace oct::ec::v1
 
     void MathEC::update_start_stop_buttons()
     {
-      const bool thread_is_running = m_WorkerThread != nullptr;
+        const bool thread_is_running = m_WorkerThread != nullptr;
 
-      //m_ButtonStart.set_sensitive(!thread_is_running);
-      //m_ButtonStop.set_sensitive(thread_is_running);
+        m_refActionGroup->get_action("ContextBegin")->set_sensitive(!thread_is_running);
+        m_refActionGroup->get_action("ContextEnd")->set_sensitive(thread_is_running);
     }
 
     void MathEC::on_start_button_clicked()
@@ -144,28 +146,6 @@ namespace oct::ec::v1
                 m_Worker.do_work(this);
             });
         }
-        //
-        /*if(m_WorkerThread_tv)
-        {
-            //std::cout << "Can't start a worker thread while another one is running." << std::endl;
-            //delete m_WorkerThread;
-            m_WorkerThread_tv = NULL;
-            // Start a new worker thread.
-            m_WorkerThread_tv = new std::thread(
-            [this]
-            {
-                m_Worker.load();
-            });
-        }
-        else
-        {
-            // Start a new worker thread.
-            m_WorkerThread_tv = new std::thread(
-            [this]
-            {
-                m_Worker.load();
-            });
-        }*/
         update_start_stop_buttons();
     }
 
@@ -177,12 +157,10 @@ namespace oct::ec::v1
         }
         else
         {
-            // Order the worker thread to stop.
             m_Worker.stop_work();
-            m_WorkerThread->join();
-            //m_ButtonStop.set_sensitive(false);
-            //delete m_WorkerThread;
-            //m_WorkerThread = NULL;
+            //m_WorkerThread->join();
+            const bool thread_is_running = m_WorkerThread != nullptr;
+            m_refActionGroup->get_action("ContextEnd")->set_sensitive(thread_is_running);
         }
     }
 
