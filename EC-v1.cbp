@@ -69,16 +69,16 @@
 			<Add option="-std=c++23" />
 			<Add directory="../../octetos" />
 		</Compiler>
+		<Unit filename="1/ec-gtk.cc">
+			<Option target="group-gtk" />
+		</Unit>
+		<Unit filename="1/ec-gtk.hh">
+			<Option target="group-gtk" />
+		</Unit>
 		<Unit filename="1/ec.hh">
 			<Option target="TDD" />
 		</Unit>
 		<Unit filename="1/group-gtk-main.cc">
-			<Option target="group-gtk" />
-		</Unit>
-		<Unit filename="1/group-gtk.cc">
-			<Option target="group-gtk" />
-		</Unit>
-		<Unit filename="1/group-gtk.hh">
 			<Option target="group-gtk" />
 		</Unit>
 		<Unit filename="1/gtk.cc">

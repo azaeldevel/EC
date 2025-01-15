@@ -1,5 +1,5 @@
 
-#include "group-gtk.hh"
+#include "ec-gtk.hh"
 #include <iostream>
 
 namespace oct::ec::v1
@@ -59,7 +59,6 @@ namespace oct::ec::v1
         m_refActionGroup->add(Gtk::Action::create("ContextMenu", "Context Menu"));
         m_refActionGroup->add(Gtk::Action::create("ContextBegin", "Iniciar"),sigc::mem_fun(*this, &MathEC::on_start_button_clicked));
         m_refActionGroup->add(Gtk::Action::create("ContextEnd", "Finalizar"),Gtk::AccelKey("<control>P"), sigc::mem_fun(*this, &MathEC::on_stop_button_clicked));
-        m_refActionGroup->add(Gtk::Action::create("ContextStatus", "Estado"),sigc::mem_fun(*this, &MathEC::on_menu_popup_status));
 
         m_refUIManager = Gtk::UIManager::create();
         m_refUIManager->insert_action_group(m_refActionGroup);
@@ -72,7 +71,6 @@ namespace oct::ec::v1
             "  <popup name='PopupMenu'>"
             "    <menuitem action='ContextBegin'/>"
             "    <menuitem action='ContextEnd'/>"
-            "    <menuitem action='ContextStatus'/>"
             "  </popup>"
             "</ui>";
 
@@ -95,8 +93,6 @@ namespace oct::ec::v1
 
     MathEC::~MathEC()
     {
-        delete m_WorkerThread;
-        m_WorkerThread = NULL;
     }
 
 
@@ -159,6 +155,8 @@ namespace oct::ec::v1
         {
             m_Worker.stop_work();
             //m_WorkerThread->join();
+            //delete m_WorkerThread;
+            //m_WorkerThread = NULL;
             const bool thread_is_running = m_WorkerThread != nullptr;
             m_refActionGroup->get_action("ContextEnd")->set_sensitive(thread_is_running);
         }
