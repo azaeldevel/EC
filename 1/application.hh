@@ -142,29 +142,28 @@ namespace oct::ec::v1
 
             while(true)//for(;iteration < iterations; iteration++) // do until break
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
-                //{
-                std::lock_guard<std::mutex> lock(*this->m_Mutex);
-                if(iteration >= iterations) break;
-                iteration++;
-                //
-
-                this->data->evaluate();
-                //this->data->print(std::cout);
-                this->data->resumen();
-                //std::cout << "Media : " << this->data->media << "\n";
-                this->data->pair();
-
-                //grtv->load(*this->data);
-
-                //
-                if (this->m_shall_stop)
+                //std::this_thread::sleep_for(std::chrono::milliseconds(5));
                 {
-                    break;
-                }
-                //}
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                    std::lock_guard<std::mutex> lock(*this->m_Mutex);
+                    if(iteration >= iterations) break;
+                    iteration++;
+                    //
 
+                    this->data->evaluate();
+                    //this->data->print(std::cout);
+                    this->data->resumen();
+                    //std::cout << "Media : " << this->data->media << "\n";
+                    this->data->pair();
+
+                    //grtv->load(*this->data);
+
+                    //
+                    if (this->m_shall_stop)
+                    {
+                        break;
+                    }
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 caller->notify();
             }
 
