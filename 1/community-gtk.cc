@@ -13,7 +13,7 @@ namespace oct::ec::v1
     {
     }
 
-    MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_WorkerThread_tv(NULL),m_Worker(town,town_mux,group_tree,iteration)//m_WorkerThread_tv(NULL),
+    MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_WorkerThread_tv(NULL),m_Worker(town,town_mux)//m_WorkerThread_tv(NULL),
     {
         int w,h;
         get_size(w,h);

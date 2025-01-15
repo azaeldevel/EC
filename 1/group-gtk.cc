@@ -5,14 +5,6 @@
 namespace oct::ec::v1
 {
 
-    EC::EC()
-    {
-    }
-
-    EC::~EC()
-    {
-    }
-
     MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_WorkerThread_tv(NULL),m_Worker(town,town_mux)//m_WorkerThread_tv(NULL),
     {
         int w,h;

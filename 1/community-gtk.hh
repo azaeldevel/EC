@@ -32,8 +32,8 @@ namespace oct::ec::v1
             {
                 add(index);
                 add(evaluation);
-                add(value);
-                add(gap);
+                //add(value);
+                //add(gap);
             }
 
             Gtk::TreeModelColumn<size_t> index;
@@ -58,8 +58,8 @@ namespace oct::ec::v1
                 row = ref_tree->children()[i];
                 row[columns.index] = i + 1;
                 row[columns.evaluation] = grp[i]->evaluation;
-                row[columns.value] = grp[i]->value();
-                row[columns.gap] = grp[i]->gap();
+                //row[columns.value] = grp[i]->value();
+                //row[columns.gap] = grp[i]->gap();
                 //std::cout << "Eval : " << grp[i]->evaluation << "\n";
             }
         }
@@ -76,8 +76,8 @@ namespace oct::ec::v1
 
             append_column("ID", columns.index);
             append_column_numeric("Evaluacion", columns.evaluation,"%.20f");
-            append_column_numeric("Valor", columns.value,"%.20f");
-            append_column_numeric("Brecha", columns.gap,"%.20f");
+            //append_column_numeric("Valor", columns.value,"%.20f");
+            //append_column_numeric("Brecha", columns.gap,"%.20f");
             /*
             auto cell = Gtk::make_managed<Gtk::CellRendererProgress>();
             int column_eval = append_column("evaluacion", *cell);
@@ -200,11 +200,11 @@ namespace oct::ec::v1
 
     private:
         inputs<double,3> vars;
-        BinoprGroup<3,double,Binopr> town;
+        BinoprCommunity<3,double,Binopr> town;
         std::mutex town_mux;
 
         std::thread *m_WorkerThread,*m_WorkerThread_tv;
-        WorkerEC<BinoprGroup<3,double,Binopr>> m_Worker;
+        WorkerEC<BinoprCommunity<3,double,Binopr>> m_Worker;
         Glib::Dispatcher m_Dispatcher;
     };
 }
