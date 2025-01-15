@@ -125,10 +125,18 @@ namespace oct::ec::v1
             iterations(its)
         {
         }
+        WorkerEC(T& t,std::mutex& mux,GroupTV<T>& grp,Gtk::Label& label,size_t its = 1000000) :
+            Worker<T>(t,mux),
+            grtv(&grp),
+            display(&label),
+            iteration(0),
+            iterations(its)
+        {
+        }
         void do_work(EC* caller)
         {
             {
-                std::lock_guard<std::mutex> lock(this->m_Mutex);
+                std::lock_guard<std::mutex> lock(*this->m_Mutex);
                 this->m_has_stopped = false;
             }
 
@@ -136,7 +144,7 @@ namespace oct::ec::v1
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(5));
                 //{
-                std::lock_guard<std::mutex> lock(this->m_Mutex);
+                std::lock_guard<std::mutex> lock(*this->m_Mutex);
                 if(iteration >= iterations) break;
                 iteration++;
                 //
@@ -157,11 +165,11 @@ namespace oct::ec::v1
                 //}
                 std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
-                //caller->notify();
+                caller->notify();
             }
 
             {
-                std::lock_guard<std::mutex> lock(this->m_Mutex);
+                std::lock_guard<std::mutex> lock(*this->m_Mutex);
                 this->m_shall_stop = false;
                 this->m_has_stopped = true;
             }
@@ -171,18 +179,18 @@ namespace oct::ec::v1
 
         void load()
         {
-            std::string ds;
+            //std::string ds;
             while(true)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 {
-                    std::lock_guard<std::mutex> lock(this->m_Mutex);
+                    std::lock_guard<std::mutex> lock(*this->m_Mutex);
                     grtv->load(*this->data);
 
-                    ds = std::to_string(iteration);
+                    /*ds = std::to_string(iteration);
                     ds += "/";
                     ds += std::to_string(iterations);
-                    display->set_text(ds);
+                    display->set_text(ds);*/
 
                     if(this->m_shall_stop)
                     {
@@ -222,10 +230,12 @@ namespace oct::ec::v1
         void update_start_stop_buttons();
         virtual void notify();
         void on_notification_from_worker_thread();
+        void update_widgets();
 
     private:
         inputs<double,3> vars;
         BinoprGroup<3,double,Binopr> town;
+        std::mutex town_mux;
 
         std::thread *m_WorkerThread,*m_WorkerThread_tv;
         WorkerEC<BinoprGroup<3,double,Binopr>> m_Worker;

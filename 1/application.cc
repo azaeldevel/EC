@@ -13,18 +13,20 @@ namespace oct::ec::v1
     {
     }
 
-    MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_WorkerThread_tv(NULL),m_Worker(town,group_tree,iteration)//m_WorkerThread_tv(NULL),
+    MathEC::MathEC() : vars(3), town(vars),m_WorkerThread(NULL),m_WorkerThread_tv(NULL),m_Worker(town,town_mux,group_tree,iteration)//m_WorkerThread_tv(NULL),
     {
         int w,h;
         get_size(w,h);
-        /*Gtk::MessageDialog dialog(*this, "Message dialog", true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+        /*
+        Gtk::MessageDialog dialog(*this, "Message dialog", true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
         dialog.set_title("Title");
         std::string msg = "Ancho : ";
         msg += std::to_string(w);
         dialog.set_message(msg);
         dialog.set_secondary_text("Secondary message");
         dialog.set_default_response(Gtk::RESPONSE_YES);
-        int result = dialog.run();*/
+        int result = dialog.run();
+        */
 
         //paned_scroll.set_size_request(get_width()/4,get_height());
         paned_scroll.set_size_request((2 * w)/3,h);
@@ -85,6 +87,9 @@ namespace oct::ec::v1
         m_pMenuPopup = dynamic_cast<Gtk::Menu*>(m_refUIManager->get_widget("/PopupMenu"));
         if(!m_pMenuPopup) g_warning("menu not found");
 
+        m_Dispatcher.connect(sigc::mem_fun(*this, &MathEC::on_notification_from_worker_thread));
+
+
         show_all_children();
     }
 
@@ -140,7 +145,7 @@ namespace oct::ec::v1
             });
         }
         //
-        if(m_WorkerThread_tv)
+        /*if(m_WorkerThread_tv)
         {
             //std::cout << "Can't start a worker thread while another one is running." << std::endl;
             //delete m_WorkerThread;
@@ -160,7 +165,7 @@ namespace oct::ec::v1
             {
                 m_Worker.load();
             });
-        }
+        }*/
         update_start_stop_buttons();
     }
 
@@ -185,5 +190,29 @@ namespace oct::ec::v1
     {
         m_Dispatcher.emit();
     }
+    void MathEC::on_notification_from_worker_thread()
+    {
+        if (m_WorkerThread && m_Worker.has_stopped())
+        {
+            // Work is done.
+            if (m_WorkerThread->joinable()) m_WorkerThread->join();
+            delete m_WorkerThread;
+            m_WorkerThread = nullptr;
+            update_start_stop_buttons();
+        }
+        update_widgets();
+    }
+    void MathEC::update_widgets()
+    {
+        std::string ds;
+        ds = std::to_string(m_Worker.iteration);
+        ds += "/";
+        ds += std::to_string(m_Worker.iterations);
+        iteration.set_text(ds);
 
+        {
+            std::lock_guard<std::mutex> lock(town_mux);
+            group_tree.load(town);
+        }
+    }
 }

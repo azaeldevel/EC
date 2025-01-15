@@ -61,31 +61,35 @@ namespace oct::ec::v1
     {
     public:
         Worker() = default;
-
-        Worker(T& d) : data(&d), m_shall_stop(false), m_has_stopped(false)
+        Worker(T& d) : data(&d),m_Mutex(new std::mutex),auto_free(true), m_shall_stop(false), m_has_stopped(false)
         {
+        }
+        Worker(T& d,std::mutex& mux) : data(&d),m_Mutex(&mux),auto_free(false), m_shall_stop(false), m_has_stopped(false)
+        {
+        }
+        virtual ~Worker()
+        {
+            if(auto_free) delete m_Mutex;
         }
 
 
         void stop_work()
         {
-            std::lock_guard<std::mutex> lock(m_Mutex);
+            std::lock_guard<std::mutex> lock(*m_Mutex);
             m_shall_stop = true;
         }
         bool has_stopped() const
         {
-          std::lock_guard<std::mutex> lock(m_Mutex);
+          std::lock_guard<std::mutex> lock(*m_Mutex);
           return m_has_stopped;
         }
 
     protected:
-        // Synchronizes access to member data.
-        mutable std::mutex m_Mutex;
-
-        // Data used by both GUI thread and worker thread.
+        T* data;
+        mutable std::mutex* m_Mutex;
+        bool auto_free;
         bool m_shall_stop;
         bool m_has_stopped;
-        T* data;
     };
 
     /**

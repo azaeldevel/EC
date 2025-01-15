@@ -1,5 +1,5 @@
 
-#include "math-application.hh"
+#include "application.hh"
 #include <gtkmm/application.h>
 
 
