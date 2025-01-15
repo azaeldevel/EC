@@ -1,5 +1,5 @@
 
-#include "group-gtk.hh"
+#include "community-gtk.hh"
 #include <gtkmm/application.h>
 
 

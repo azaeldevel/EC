@@ -117,18 +117,14 @@ namespace oct::ec::v1
 
     public:
         WorkerEC() = default;
-        WorkerEC(T& t,GroupTV<T>& grp,Gtk::Label& label,size_t its = 1000000) :
+        WorkerEC(T& t,size_t its = 1000000) :
             Worker<T>(t),
-            grtv(&grp),
-            display(&label),
             iteration(0),
             iterations(its)
         {
         }
-        WorkerEC(T& t,std::mutex& mux,GroupTV<T>& grp,Gtk::Label& label,size_t its = 1000000) :
+        WorkerEC(T& t,std::mutex& mux,size_t its = 1000000) :
             Worker<T>(t,mux),
-            grtv(&grp),
-            display(&label),
             iteration(0),
             iterations(its)
         {
@@ -175,34 +171,6 @@ namespace oct::ec::v1
 
             //caller->notify();
         }
-
-        void load()
-        {
-            //std::string ds;
-            while(true)
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                {
-                    std::lock_guard<std::mutex> lock(*this->m_Mutex);
-                    grtv->load(*this->data);
-
-                    /*ds = std::to_string(iteration);
-                    ds += "/";
-                    ds += std::to_string(iterations);
-                    display->set_text(ds);*/
-
-                    if(this->m_shall_stop)
-                    {
-                        break;
-                    }
-                    std::this_thread::sleep_for(std::chrono::milliseconds(900));
-                }
-            }
-        }
-
-    private:
-        GroupTV<T>* grtv;
-        Gtk::Label* display;
 
     };
 
