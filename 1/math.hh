@@ -665,6 +665,22 @@ namespace oct::ec::v1
             return *static_cast<const T<S,N>*>(this->operator[](0));
         }
 
+
+        /*
+        T<S,N>& operator[](size_t i)
+        {
+            return static_cast<T<S,N>&>(this->data[i]);
+        }
+        */
+
+        /*
+        const T<S,N>& operator[](size_t i) const
+        {
+            return static_cast<T<S,N>&>(this->data[i]);
+        }
+        */
+
+
         virtual void print(std::ostream& out) const
         {
             std::cout << "objetivo : ";

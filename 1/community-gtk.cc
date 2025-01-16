@@ -28,6 +28,14 @@ namespace oct::ec::v1
         //paned_scroll.set_border_width(10);
         //paned_scroll.set_policy(Gtk::POLICY_AUTOMATIC , Gtk::POLICY_ALWAYS );
         //iteration.set_size_request();
+        box_top_panel.set_spacing(10);
+        lbTarget.set_text("Objetivo : ");
+        box_top_panel.add(lbTarget);
+        //target.set_resizable(true);
+        target.set_text(std::to_string(std::numbers::pi));
+        box_top_panel.add(target);
+        lbIteration.set_text("Iteracion : ");
+        box_top_panel.add(lbIteration);
         box_top_panel.add(iteration);
         paned.add1(paned_scroll);
 

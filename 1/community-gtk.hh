@@ -108,6 +108,9 @@ namespace oct::ec::v1
         Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
         Gtk::Menu* m_pMenuPopup;
         Gtk::Label iteration;
+        Gtk::Label lbTarget;
+        Gtk::Label target;
+        Gtk::Label lbIteration;
         //
         virtual bool on_button_press_event(GdkEventButton* event);        //
         void on_start_button_clicked();
