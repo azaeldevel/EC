@@ -16,7 +16,7 @@
 #include <gtkmm/actiongroup.h>
 
 #include "math.hh"
-#include "gtk.hh"
+#include "ec-gtk.hh"
 
 namespace oct::ec::v1
 {
@@ -32,8 +32,8 @@ namespace oct::ec::v1
             {
                 add(index);
                 add(evaluation);
-                //add(value);
-                //add(gap);
+                add(value);
+                add(gap);
             }
 
             Gtk::TreeModelColumn<size_t> index;
@@ -58,8 +58,8 @@ namespace oct::ec::v1
                 row = ref_tree->children()[i];
                 row[columns.index] = i + 1;
                 row[columns.evaluation] = grp[i]->evaluation;
-                //row[columns.value] = grp[i]->value();
-                //row[columns.gap] = grp[i]->gap();
+                row[columns.value] = static_cast<const T::GROUP_T*>(grp[i])->get().value();
+                row[columns.gap] = static_cast<const T::GROUP_T*>(grp[i])->get().gap();
                 //std::cout << "Eval : " << grp[i]->evaluation << "\n";
             }
         }
@@ -76,8 +76,8 @@ namespace oct::ec::v1
 
             append_column("ID", columns.index);
             append_column_numeric("Evaluacion", columns.evaluation,"%.20f");
-            //append_column_numeric("Valor", columns.value,"%.20f");
-            //append_column_numeric("Brecha", columns.gap,"%.20f");
+            append_column_numeric("Valor", columns.value,"%.20f");
+            append_column_numeric("Brecha", columns.gap,"%.20f");
             /*
             auto cell = Gtk::make_managed<Gtk::CellRendererProgress>();
             int column_eval = append_column("evaluacion", *cell);
@@ -96,85 +96,6 @@ namespace oct::ec::v1
     };
 
 
-    class EC : public Application
-    {
-    public:
-        EC();
-        virtual ~EC();
-
-        virtual void notify() = 0;
-
-    private:
-
-    };
-
-
-    template<typename T>
-    class WorkerEC : public Worker<T>
-    {
-    public:
-        size_t iteration,iterations;
-
-    public:
-        WorkerEC() = default;
-        WorkerEC(T& t,size_t its = 1000000) :
-            Worker<T>(t),
-            iteration(0),
-            iterations(its)
-        {
-        }
-        WorkerEC(T& t,std::mutex& mux,size_t its = 1000000) :
-            Worker<T>(t,mux),
-            iteration(0),
-            iterations(its)
-        {
-        }
-        void do_work(EC* caller)
-        {
-            {
-                std::lock_guard<std::mutex> lock(*this->m_Mutex);
-                this->m_has_stopped = false;
-            }
-
-            while(true)//for(;iteration < iterations; iteration++) // do until break
-            {
-                //std::this_thread::sleep_for(std::chrono::milliseconds(5));
-                {
-                    std::lock_guard<std::mutex> lock(*this->m_Mutex);
-                    if(iteration >= iterations) break;
-                    iteration++;
-                    //
-
-                    this->data->evaluate();
-                    //this->data->print(std::cout);
-                    this->data->resumen();
-                    //std::cout << "Media : " << this->data->media << "\n";
-                    this->data->pair();
-
-                    //grtv->load(*this->data);
-
-                    //
-                    if (this->m_shall_stop)
-                    {
-                        break;
-                    }
-                }
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                caller->notify();
-            }
-
-            {
-                std::lock_guard<std::mutex> lock(*this->m_Mutex);
-                this->m_shall_stop = false;
-                this->m_has_stopped = true;
-            }
-
-            //caller->notify();
-        }
-
-    };
-
-
     class MathEC : public EC
     {
     public:
@@ -182,14 +103,13 @@ namespace oct::ec::v1
         virtual ~MathEC();
 
     private:
-        CommunityTV<BinoprGroup<3,double,Binopr>> group_tree;
+        CommunityTV<BinoprCommunity<3,double,Binopr>> group_tree;
         Glib::RefPtr<Gtk::UIManager> m_refUIManager;
         Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
         Gtk::Menu* m_pMenuPopup;
         Gtk::Label iteration;
         //
-        virtual bool on_button_press_event(GdkEventButton* event);
-        //
+        virtual bool on_button_press_event(GdkEventButton* event);        //
         void on_start_button_clicked();
         void on_stop_button_clicked();
         void on_quit_button_clicked();

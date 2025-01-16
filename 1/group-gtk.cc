@@ -9,6 +9,7 @@ namespace oct::ec::v1
     {
         int w,h;
         get_size(w,h);
+        set_title("Grupo");
         /*
         Gtk::MessageDialog dialog(*this, "Message dialog", true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
         dialog.set_title("Title");

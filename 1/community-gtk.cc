@@ -9,6 +9,7 @@ namespace oct::ec::v1
     {
         int w,h;
         get_size(w,h);
+        set_title("Communidad");
         /*
         Gtk::MessageDialog dialog(*this, "Message dialog", true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
         dialog.set_title("Title");
@@ -43,7 +44,7 @@ namespace oct::ec::v1
         vars[2][1] = 0.7;
         vars[2][2] = 0.83;
 
-        town.populate_random();
+        town.populate_random(20);
         //load(town);
 
         //https://docs.huihoo.com/gtkmm/gtkmm-2.4/tutorial/html/sec-menus-examples.html

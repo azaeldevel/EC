@@ -65,6 +65,9 @@ namespace oct::ec::v1
 
     public:
         bool auto_free;
+
+    public:
+        N evaluation;
     };
 
     /**

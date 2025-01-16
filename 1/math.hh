@@ -657,6 +657,12 @@ namespace oct::ec::v1
                 return  a->evaluation > b->evaluation;
             };
             std::sort(this->begin(),this->end(),cmpfun);
+            this->evaluation = this->operator[](0)->evaluation;
+        }
+
+        const T<S,N>& get()const
+        {
+            return *static_cast<const T<S,N>*>(this->operator[](0));
         }
 
         virtual void print(std::ostream& out) const
@@ -682,11 +688,6 @@ namespace oct::ec::v1
         */
         void resumen()
         {
-            count_constants = 0;
-            for(size_t i = 0; i < this->size(); i++)
-            {
-                if(this->operator[](i)->node->type == core::ast::typen::number) count_constants++;
-            }
             media = 0;
             for(size_t i = 0; i < this->size(); i++)
             {
@@ -1325,6 +1326,8 @@ namespace oct::ec::v1
     {
     public:
         typedef Community<N,T<S,N>> CITY_BASE;
+        typedef BinoprCommunity<S,N,T> COMMUNITY_T;
+        typedef BinoprGroup<S,N,T> GROUP_T;
 
     public:
         BinoprCommunity() = default;
@@ -1356,7 +1359,7 @@ namespace oct::ec::v1
             //
             auto cmpfun = [](Group<N,T<S,N>>* a,Group<N,T<S,N>>* b)
             {
-                return static_cast<BinoprGroup<S,N,T>*>(a)->operator[](0)->evaluation > static_cast<BinoprGroup<S,N,T>*>(b)->operator[](0)->evaluation;
+                return a->evaluation > b->evaluation;
             };
             std::sort(this->begin(),this->end(),cmpfun);
         }
@@ -1379,6 +1382,23 @@ namespace oct::ec::v1
             }
             media /= N(this->size());
             std::cout << "Media : " << media << "\n";
+        }
+
+
+        /**
+        *
+        */
+        void resumen()
+        {
+            BinoprGroup<S,N,T>* town;
+            media = 0;
+            for(size_t i = 0; i < this->size(); i++)
+            {
+                town = static_cast<BinoprGroup<S,N,T>*>(this->operator[](i));
+                town->evaluate();
+                media += town->operator[](0)->evaluation;
+            }
+            media /= N(this->size());
         }
 
         /**
@@ -1415,6 +1435,7 @@ namespace oct::ec::v1
         const inputs<N,S>* variables;
 
     public:
+        N media;
     };
 
 }
