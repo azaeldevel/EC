@@ -85,14 +85,15 @@ void v1_developing()
     city.listing(std::cout);
     */
 
-    for(size_t i = 0; i < 1000000; i++)
+    /*1for(size_t i = 0; i < 1000000; i++)
     {
         city.evaluate();
         city.resumen(std::cout);
         city.listing(std::cout);
         city.pair();
-    }
+    }*/
     //static_cast<BinoprTown<3,float,ec::Binopr<3,float>>*>(city[0])->listing(out);
 
+    std::cout << "(" << std::numeric_limits<double>::min() << "," << std::numeric_limits<double>::max() << ")\n";
 
 }

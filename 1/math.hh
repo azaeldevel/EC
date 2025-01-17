@@ -596,7 +596,7 @@ namespace oct::ec::v1
             std::setprecision(10);
             generator = std::mt19937(rd()); // mersenne_twister_engine seeded with rd()
             operation = std::uniform_int_distribution<>(1, 4);//+,-,*,/
-            constant = std::uniform_real_distribution<>(-1.0e20, 1.0e20);
+            constant = std::uniform_real_distribution<>(-1.0e21, 1.0e21);
             nesting = std::bernoulli_distribution(0.75);
             svariable = std::uniform_int_distribution<>(0, S - 1);
             randon_node = std::uniform_int_distribution<>(1, 3);//operacion,variable,constante
@@ -767,27 +767,13 @@ namespace oct::ec::v1
             {
                 if(T<S,N>::mutability(T<S,N>::generator)) active_mutation = true;
                 selectd = select_pair_normal();
-                //std::cout << "Aparear : " << selectd[0] << " --> " << selectd[1] << "\n";
                 borned[i] = new T(*variables,T<S,N>::eval_constant,false);
                 mesh_gens(*borned[i],*this->operator[](selectd[0]),*this->operator[](selectd[1]));
-                /*if(active_mutation and T::almost_everytime(T::generator))
-                {
-                    if(T::binary_selection(T::generator))
-                    {
-                        mutation_pivots(*this->operator[](selectd[0]));
-                    }
-                    else
-                    {
-                        mutation_pivots(*this->operator[](selectd[1]));
-                    }
-                }*/
                 active_mutation = false;
             }
             for(size_t i = 0, j = this->size() - 1; i < pairs; i++,j--)
             {
                 deads[i] =  this->operator[](j);
-                //std::cout << " j : " << j << "\n";
-                //std::cout << " j -> : " << (void*)this->operator[](j) << "\n";
                 this->operator[](j) = borned[i];
                 if(not borned[i]->node) throw core::exception("No se asigno el nodo correspondiente.");
             }
